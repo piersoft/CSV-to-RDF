@@ -654,25 +654,15 @@ function showStatus(msg, type) {
 function hideStatus() { document.getElementById('status-bar').className = 'status-bar'; }
 
 // ── PROMPT ───────────────────────────────────────────────────
-function buildPrompt(csvText, meta, ontos, maxRows) {
-  const parsed = parseCSV(csvText);
-  const cols = parsed ? parsed.headers : [];
-  const sample = parsed
-    ? [cols.join(','), ...parsed.rows.slice(0,maxRows).map(r => cols.map(h=>r[h]).join(','))].join('\n')
-    : csvText.split('\n').slice(0,maxRows+1).join('\n');
+// ── CHUNK SIZE ────────────────────────────────────────────────
+const CHUNK_SIZE = 25; // righe per chiamata
 
-  return `Sei un esperto di dati aperti italiani e ontologie del Web Semantico.
-Trasforma il CSV sottostante di una Pubblica Amministrazione italiana in un file Turtle (TTL) RDF valido.
+// ── PROMPT HEADER (prefissi + dataset) ───────────────────────
+function buildPromptHeader(meta, ontos, cols) {
+  const base = meta.ipa ? `https://dati.gov.it/resource/${meta.ipa}` : 'https://dati.gov.it/resource/pa';
+  return `Sei un esperto RDF per la PA italiana. Genera Turtle (TTL) COMPATTO: niente commenti, niente righe vuote tra triple, URI brevi.
 
-## METADATI DCAT-AP_IT 3.0
-- Titolo: ${meta.title || 'Dataset PA'}
-- Descrizione: ${meta.desc || ''}
-- Publisher: ${meta.publisher || 'PA Italiana'}
-- IPA Code: ${meta.ipa || ''}
-- Tema DCAT: ${meta.theme || ''}
-- Licenza: ${meta.license}
-
-## PREFISSI ONTOLOGIE UFFICIALI (github.com/italia/dati-semantic-assets) — usa questi esattamente
+## PREFISSI (usa SOLO questi)
 @prefix clv:  <https://w3id.org/italia/onto/CLV/> .
 @prefix cov:  <https://w3id.org/italia/onto/COV/> .
 @prefix cpv:  <https://w3id.org/italia/onto/CPV/> .
@@ -687,92 +677,94 @@ Trasforma il CSV sottostante di una Pubblica Amministrazione italiana in un file
 @prefix geo:  <http://www.w3.org/2003/01/geo/wgs84_pos#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-Ontologie aggiuntive richieste: ${ontos.join(', ') || 'seleziona automaticamente le più appropriate'}
+Ontologie extra: ${ontos.join(', ') || 'nessuna'}
 
-## CSV DA TRASFORMARE
-Colonne: ${cols.join(', ')}
-\`\`\`csv
-${sample}
-\`\`\`
+## GENERA SOLO il blocco dcat:Dataset (niente entità)
+Titolo: ${meta.title || 'Dataset PA'}
+Descrizione: ${meta.desc || ''}
+Publisher: ${meta.publisher || 'PA Italiana'}
+IPA: ${meta.ipa || ''}
+Tema: ${meta.theme || ''}
+Licenza: ${meta.license}
+URI base dataset: <${base}/dataset/${(meta.title||'dataset').toLowerCase().replace(/[^a-z0-9]+/g,'-')}>
+Colonne CSV: ${cols.join(', ')}
 
-## ISTRUZIONI
-1. Crea il blocco dcat:Dataset con tutti i metadati DCAT-AP_IT 3.0 obbligatori
-2. Per ogni riga CSV genera una risorsa RDF con il tipo più appropriato dalle ontologie ufficiali PA
-3. Mappa ogni colonna alla proprietà ontologica corretta (geo:lat, geo:long, sm:hasTelephone, sm:hasEmail, clv:hasAddress, ecc.)
-4. Usa rdfs:label in italiano per ogni entità
-5. Genera URI basati su IPA code: <https://dati.gov.it/resource/${meta.ipa||'pa'}/...>
-6. Aggiungi commenti TTL (#) per spiegare le scelte ontologiche
-7. Restituisci SOLO il Turtle valido, senza spiegazioni né backtick markdown.`;
+Restituisci SOLO i @prefix e il blocco dcat:Dataset. Niente altro. Niente markdown.`;
 }
 
-// ── CHIAMATA AI ──────────────────────────────────────────────
+// ── PROMPT CHUNK (solo entità) ────────────────────────────────
+function buildPromptChunk(meta, ontos, cols, rows, chunkIndex, totalChunks) {
+  const base = meta.ipa ? `https://dati.gov.it/resource/${meta.ipa}` : 'https://dati.gov.it/resource/pa';
+  const csvChunk = [cols.join(','), ...rows.map(r => cols.map(h => r[h]).join(','))].join('\n');
+  return `Sei un esperto RDF per la PA italiana. Genera Turtle (TTL) COMPATTO: niente commenti, niente righe vuote, niente @prefix (già emessi), URI base <${base}>.
+
+Chunk ${chunkIndex+1}/${totalChunks}. Colonne: ${cols.join(', ')}
+Ontologie: ${ontos.join(', ') || 'CLV, POI, L0'}
+
+CSV:
+${csvChunk}
+
+ISTRUZIONI:
+- Per ogni riga genera una risorsa RDF con tipo ontologico appropriato
+- Mappa ogni colonna alla proprietà corretta (geo:lat, geo:long, sm:hasTelephone, sm:hasEmail, clv:hasAddress, rdfs:label, ecc.)
+- URI: <${base}/risorsa/ID> usando il valore della prima colonna come ID
+- rdfs:label in italiano
+- Output COMPATTO: niente righe vuote, niente commenti, niente @prefix, niente markdown
+- Genera TUTTE le ${rows.length} righe, non fermarti prima`;
+}
+
+// ── CHIAMATA AI (singola) ─────────────────────────────────────
+async function callAI(prompt) {
+  if      (currentProvider === 'mistral') return await callMistral(prompt);
+  else if (currentProvider === 'groq')    return await callGroq(prompt);
+  else if (currentProvider === 'ollama')  return await callOllama(prompt);
+}
+
+function cleanTTL(text) {
+  return text.replace(/^```(turtle|ttl|rdf)?\n?/i,'').replace(/\n?```$/i,'').trim();
+}
+
 async function callMistral(prompt) {
   const key   = document.getElementById('mistral-key').value.trim();
   const model = document.getElementById('mistral-model').value;
   if (!key) throw new Error('Inserisci la tua API key Mistral.');
-
   const res = await fetch('https://api.mistral.ai/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-    body: JSON.stringify({
-      model,
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.1,
-      max_tokens: 32000
-    })
+    body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], temperature: 0.1, max_tokens: 32000 })
   });
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.message || `Mistral error ${res.status}`);
-  }
-  const data = await res.json();
-  return data.choices[0].message.content;
+  if (!res.ok) { const err = await res.json(); throw new Error(err.message || `Mistral error ${res.status}`); }
+  return (await res.json()).choices[0].message.content;
 }
 
 async function callGroq(prompt) {
   const key   = document.getElementById('groq-key').value.trim();
   const model = document.getElementById('groq-model').value;
   if (!key) throw new Error('Inserisci la tua API key Groq.');
-
   const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-    body: JSON.stringify({
-      model,
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.1,
-      max_tokens: 32000
-    })
+    body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], temperature: 0.1, max_tokens: 32000 })
   });
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.error?.message || `Groq error ${res.status}`);
-  }
-  const data = await res.json();
-  return data.choices[0].message.content;
+  if (!res.ok) { const err = await res.json(); throw new Error(err.error?.message || `Groq error ${res.status}`); }
+  return (await res.json()).choices[0].message.content;
 }
 
 async function callOllama(prompt) {
   const url   = (document.getElementById('ollama-url').value.trim()).replace(/\/$/, '');
   const model = document.getElementById('ollama-model').value.trim();
   if (!model) throw new Error('Inserisci il nome del modello Ollama.');
-
   const res = await fetch(`${url}/api/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model,
-      messages: [{ role: 'user', content: prompt }],
-      stream: false,
-      options: { temperature: 0.1 }
-    })
+    body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], stream: false, options: { temperature: 0.1 } })
   });
-  if (!res.ok) throw new Error(`Ollama error ${res.status} — controlla che il server sia in ascolto su ${url}`);
+  if (!res.ok) throw new Error(`Ollama error ${res.status}`);
   const data = await res.json();
   return data.message?.content || data.response || '';
 }
 
-// ── CONVERSIONE PRINCIPALE ───────────────────────────────────
+// ── CONVERSIONE PRINCIPALE CON CHUNKING ──────────────────────
 async function startConversion() {
   const csvText = document.getElementById('csv-input').value.trim();
   if (!csvText) return showStatus('⚠ Incolla prima il contenuto CSV.', 'error');
@@ -785,30 +777,54 @@ async function startConversion() {
     theme:     document.getElementById('meta-theme').value,
     license:   document.getElementById('meta-license').value,
   };
+
+  const parsed  = parseCSV(csvText);
+  if (!parsed)  return showStatus('⚠ CSV non valido.', 'error');
+
   const maxRows = parseInt(document.getElementById('max-rows').value);
-  const prompt  = buildPrompt(csvText, meta, getOntos(), maxRows);
+  const allRows = parsed.rows.slice(0, maxRows);
+  const cols    = parsed.headers;
+  const ontos   = getOntos();
+
+  // Suddividi in chunk
+  const chunks = [];
+  for (let i = 0; i < allRows.length; i += CHUNK_SIZE) {
+    chunks.push(allRows.slice(i, i + CHUNK_SIZE));
+  }
+  const totalChunks = chunks.length;
 
   document.getElementById('btn-convert').disabled = true;
   document.getElementById('btn-download').disabled = true;
   document.getElementById('ttl-output').value = '';
   document.getElementById('output-stats').style.display = 'none';
   setStep(3);
-  showStatus(`⏳ Invio a ${currentProvider}...`, 'info');
 
   try {
-    let ttl = '';
-    if      (currentProvider === 'mistral') ttl = await callMistral(prompt);
-    else if (currentProvider === 'groq')    ttl = await callGroq(prompt);
-    else if (currentProvider === 'ollama')  ttl = await callOllama(prompt);
+    const parts = [];
 
-    // Rimuovi eventuale markdown
-    ttl = ttl.replace(/^```(turtle|ttl|rdf)?\n?/i,'').replace(/\n?```$/i,'').trim();
+    // 1. Chiamata header: prefissi + dcat:Dataset
+    showStatus(`⏳ Chunk 0/${totalChunks} — generazione prefissi e dataset...`, 'info');
+    const headerPrompt = buildPromptHeader(meta, ontos, cols);
+    const headerTTL    = cleanTTL(await callAI(headerPrompt));
+    parts.push(headerTTL);
 
+    // 2. Chiamate chunk: solo entità
+    for (let i = 0; i < chunks.length; i++) {
+      showStatus(`⏳ Chunk ${i+1}/${totalChunks} — elaborazione righe ${i*CHUNK_SIZE+1}-${i*CHUNK_SIZE+chunks[i].length}...`, 'info');
+      const chunkPrompt = buildPromptChunk(meta, ontos, cols, chunks[i], i, totalChunks);
+      let chunkTTL = cleanTTL(await callAI(chunkPrompt));
+      // Rimuovi eventuali @prefix duplicati nei chunk
+      chunkTTL = chunkTTL.replace(/@prefix\s+\w+:.*\.\n?/g, '').trim();
+      parts.push(chunkTTL);
+    }
+
+    const ttl = parts.join('\n\n');
     document.getElementById('ttl-output').value = ttl;
     document.getElementById('btn-download').disabled = false;
     setStep(4);
     updateStats(ttl);
-    showStatus('✓ File TTL generato con successo!', 'success');
+    showStatus(`✓ Completato! ${totalChunks+1} chiamate API — ${allRows.length} righe trasformate.`, 'success');
+
   } catch (err) {
     showStatus(`✕ ${err.message}`, 'error');
   } finally {
@@ -816,7 +832,7 @@ async function startConversion() {
   }
 }
 
-// ── STATS ────────────────────────────────────────────────────
+// ── STATS ─────────────────────────────────────────────────────
 function updateStats(ttl) {
   const lines = ttl.split('\n');
   document.getElementById('stat-triples').textContent  =

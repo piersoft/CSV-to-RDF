@@ -113,6 +113,11 @@
     .info-note { background: #fff8e6; border: 1px solid #ffe0a0; border-radius: 4px; padding: 0.55rem 0.8rem; font-size: 0.78rem; color: #7a5000; margin-top: 0.5rem; }
     .info-note a { color: #5a3800; }
 
+    .btn-auto-onto { background: #1a6b35; color: white; border: none; border-radius: 3px; padding: 0.2rem 0.6rem; font-size: 0.72rem; font-family: var(--mono); font-weight: 600; cursor: pointer; transition: background .15s; }
+    .btn-auto-onto:hover:not(:disabled) { background: #145228; }
+    .btn-auto-onto:disabled { background: var(--dg-border); color: var(--dg-muted); cursor: not-allowed; }
+    .btn-expand-onto { background: none; border: none; color: var(--dg-blue); font-size: 0.75rem; font-family: var(--mono); font-weight: 600; cursor: pointer; padding: 0; text-decoration: underline; }
+    .btn-expand-onto:hover { color: var(--dg-blue-dark); }
     footer { background: #17324d; color: rgba(255,255,255,0.65); text-align: center; padding: 1rem; font-size: 0.73rem; font-family: var(--mono); margin-top: 3rem; }
     footer a { color: #80c0ff; text-decoration: none; }
   </style>
@@ -122,12 +127,12 @@
 <!-- GOV BAR -->
 <div class="it-gov-bar">
   <div class="container d-flex justify-content-between align-items-center">
-    <!-- <span>🇮🇹 Repubblica Italiana — Dati Aperti della PA</span>
+    <!--<span>🇮🇹 Repubblica Italiana — Dati Aperti della PA</span>
     <span>
       <a href="https://dati.gov.it" target="_blank">dati.gov.it</a> ·
       <a href="https://schema.gov.it" target="_blank">schema.gov.it</a> ·
       <a href="https://www.agid.gov.it" target="_blank">AgID</a>
-    </span> -->
+    </span>-->
   </div>
 </div>
 
@@ -243,7 +248,12 @@
               </select>
             </div>
             <div class="col-12">
-              <label class="lbl">Ontologie OntoPiA (clicca per attivare)</label>
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label class="lbl" style="margin:0">Ontologie OntoPiA (clicca per attivare)</label>
+                <button class="btn-auto-onto" id="btn-auto-onto" onclick="autoDetectOnto()" disabled title="Analizza le colonne del CSV e suggerisce le ontologie più adatte">🔍 Auto-detect</button>
+              </div>
+              <div id="auto-onto-msg" style="display:none;font-size:0.72rem;color:#1a6b35;margin-bottom:0.4rem;font-family:var(--mono)"></div>
+              <!-- COMUNI -->
               <div class="pills" id="onto-selector">
                 <span class="pill active" data-onto="CLV">CLV — Indirizzi</span>
                 <span class="pill active" data-onto="COV">COV — Organizzazioni</span>
@@ -253,6 +263,28 @@
                 <span class="pill" data-onto="SM">SM — Social/Contatti</span>
                 <span class="pill" data-onto="RO">RO — Ruoli</span>
                 <span class="pill" data-onto="TI">TI — Tempo</span>
+              </div>
+              <!-- AVANZATE -->
+              <div style="margin-top:0.5rem">
+                <button class="btn-expand-onto" onclick="toggleAdvOnto()" id="btn-adv-onto">▶ Mostra ontologie avanzate</button>
+                <div id="onto-advanced" style="display:none;margin-top:0.5rem">
+                  <div class="pills" id="onto-selector-adv">
+                    <span class="pill" data-onto="ACCO">ACCO — Accommodation</span>
+                    <span class="pill" data-onto="ADMS">ADMS — Asset/Licenze</span>
+                    <span class="pill" data-onto="CPAV">CPAV — Incarichi pubblici</span>
+                    <span class="pill" data-onto="ELP">ELP — Luoghi pubblici</span>
+                    <span class="pill" data-onto="HER">HER — Patrimonio culturale</span>
+                    <span class="pill" data-onto="IOT">IOT — Internet of Things</span>
+                    <span class="pill" data-onto="LANG">LANG — Lingue</span>
+                    <span class="pill" data-onto="MU">MU — Unità di misura</span>
+                    <span class="pill" data-onto="PARK">PARK — Parcheggi</span>
+                    <span class="pill" data-onto="PO">PO — Org. pubbliche</span>
+                    <span class="pill" data-onto="PRICE">PRICE — Prezzi/Tariffe</span>
+                    <span class="pill" data-onto="ROUTE">ROUTE — Percorsi stradali</span>
+                    <span class="pill" data-onto="SERV">SERV — Servizi pubblici</span>
+                    <span class="pill" data-onto="TRANSP">TRANSP — Trasporti</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -463,11 +495,78 @@ function toggleKey(id) {
 }
 
 // ── PILLS ────────────────────────────────────────────────────
-document.querySelectorAll('#onto-selector .pill').forEach(p =>
+document.querySelectorAll('#onto-selector .pill, #onto-selector-adv .pill').forEach(p =>
   p.addEventListener('click', () => p.classList.toggle('active'))
 );
 function getOntos() {
-  return [...document.querySelectorAll('#onto-selector .pill.active')].map(p => p.dataset.onto);
+  return [...document.querySelectorAll('#onto-selector .pill.active, #onto-selector-adv .pill.active')]
+    .map(p => p.dataset.onto);
+}
+
+// ── AVANZATE TOGGLE ──────────────────────────────────────────
+function toggleAdvOnto() {
+  const panel = document.getElementById('onto-advanced');
+  const btn   = document.getElementById('btn-adv-onto');
+  const open  = panel.style.display === 'none';
+  panel.style.display = open ? 'block' : 'none';
+  btn.textContent = (open ? '▼ Nascondi' : '▶ Mostra') + ' ontologie avanzate';
+}
+
+// ── AUTO-DETECT ONTOLOGIE ────────────────────────────────────
+// Mappa parole chiave colonna → ontologie suggerite
+const ONTO_RULES = [
+  { keys: ['lat','lon','lng','latitudine','longitudine','coord','geo','x','y'],         ontos: ['CLV','L0'] },
+  { keys: ['indirizzo','address','via','strada','civico','cap','zip','comune','città'],  ontos: ['CLV'] },
+  { keys: ['telefono','phone','tel','fax','email','mail','sito','web','url'],            ontos: ['SM'] },
+  { keys: ['nome','name','denominazione','titolo','label'],                              ontos: ['L0'] },
+  { keys: ['organizzazione','ente','comune','provincia','regione','istituzione'],        ontos: ['COV','PO'] },
+  { keys: ['persona','nome','cognome','responsabile','referente','contatto'],            ontos: ['CPV'] },
+  { keys: ['ruolo','qualifica','mansione','incarico','funzione'],                        ontos: ['RO','CPAV'] },
+  { keys: ['data','date','ora','time','inizio','fine','apertura','chiusura'],            ontos: ['TI'] },
+  { keys: ['punto','poi','luogo','location','sede','struttura','edificio'],              ontos: ['POI','ELP'] },
+  { keys: ['prezzo','costo','tariffa','importo','euro','fee'],                          ontos: ['PRICE'] },
+  { keys: ['parcheggio','parking','posto','stallo'],                                    ontos: ['PARK'] },
+  { keys: ['servizio','service','prestazione'],                                         ontos: ['SERV'] },
+  { keys: ['hotel','albergo','b&b','accommodation','ricettivo'],                        ontos: ['ACCO'] },
+  { keys: ['patrimonio','bene','culturale','museo','monumento','arte'],                 ontos: ['HER'] },
+  { keys: ['trasporto','bus','metro','tram','fermata','linea','corsa'],                 ontos: ['TRANSP'] },
+  { keys: ['percorso','route','itinerario','tracciato'],                                ontos: ['ROUTE'] },
+  { keys: ['lingua','language','lang'],                                                 ontos: ['LANG'] },
+  { keys: ['misura','unità','unit','valore','value','quantità'],                        ontos: ['MU'] },
+  { keys: ['sensore','iot','device','dispositivo','misurazione'],                       ontos: ['IOT'] },
+];
+
+function autoDetectOnto() {
+  const text = document.getElementById('csv-input').value.trim();
+  if (!text) return;
+  const parsed = parseCSV(text);
+  if (!parsed) return;
+
+  const cols = parsed.headers.map(h => h.toLowerCase());
+  const suggested = new Set(['L0']); // sempre incluso
+
+  ONTO_RULES.forEach(rule => {
+    if (rule.keys.some(k => cols.some(c => c.includes(k)))) {
+      rule.ontos.forEach(o => suggested.add(o));
+    }
+  });
+
+  // Resetta tutto e applica i suggerimenti
+  document.querySelectorAll('#onto-selector .pill, #onto-selector-adv .pill').forEach(p => {
+    p.classList.toggle('active', suggested.has(p.dataset.onto));
+  });
+
+  // Apri avanzate se qualcuna è suggerita lì
+  const advActive = [...document.querySelectorAll('#onto-selector-adv .pill.active')].length > 0;
+  if (advActive) {
+    document.getElementById('onto-advanced').style.display = 'block';
+    document.getElementById('btn-adv-onto').textContent = '▼ Nascondi ontologie avanzate';
+  }
+
+  const list = [...suggested].join(', ');
+  const msg  = document.getElementById('auto-onto-msg');
+  msg.textContent = `✓ Suggerite da colonne CSV: ${list}`;
+  msg.style.display = 'block';
 }
 
 // ── STEP INDICATOR ───────────────────────────────────────────
@@ -509,6 +608,7 @@ function parseAndPreviewCSV() {
   </table>`;
   document.getElementById('csv-preview').style.display = 'block';
   setStep(2);
+  document.getElementById('btn-auto-onto').disabled = false;
   showStatus(`✓ ${parsed.headers.length} colonne · ${parsed.rows.length} righe rilevate`,'success');
 }
 
@@ -517,6 +617,8 @@ function clearCSV() {
   ['csv-preview','columns-detected','output-stats'].forEach(id =>
     document.getElementById(id).style.display = 'none');
   document.getElementById('btn-download').disabled = true;
+  document.getElementById('btn-auto-onto').disabled = true;
+  document.getElementById('auto-onto-msg').style.display = 'none';
   setStep(1); hideStatus();
 }
 

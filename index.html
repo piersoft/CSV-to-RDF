@@ -387,35 +387,17 @@
           <div class="provider-panel" id="panel-ollama">
             <div class="row g-2">
               <div class="col-12">
-                <label class="lbl">Modalità</label>
-                <select class="inp" id="ollama-mode" onchange="switchOllamaMode()">
-                  <option value="local">🏠 Locale (localhost)</option>
-                  <option value="cloud">☁ Ollama Cloud / Server remoto</option>
-                </select>
-              </div>
-              <div class="col-12" id="ollama-url-row">
                 <label class="lbl">URL Ollama</label>
                 <input type="text" class="inp" id="ollama-url" value="http://localhost:11434" placeholder="http://localhost:11434"/>
               </div>
-              <div class="col-12" id="ollama-apikey-row" style="display:none">
-                <label class="lbl">API Key (se richiesta dal server remoto)</label>
-                <div class="apikey-wrap">
-                  <input type="password" class="inp" id="ollama-apikey" placeholder="Opzionale — lascia vuoto se non richiesta"/>
-                  <button class="apikey-toggle" onclick="toggleKey('ollama-apikey')">👁</button>
-                </div>
-              </div>
               <div class="col-12">
-                <label class="lbl">Modello</label>
+                <label class="lbl">Modello (deve essere già scaricato)</label>
                 <input type="text" class="inp" id="ollama-model" value="mistral" placeholder="es. mistral, llama3, gemma2"/>
               </div>
             </div>
-            <div class="info-note mt-2" id="ollama-note-local">
-              🦙 Ollama locale: avvia con CORS abilitato:
+            <div class="info-note mt-2">
+              🦙 Ollama deve girare in locale con CORS abilitato:
               <code style="font-size:0.75rem">OLLAMA_ORIGINS=* ollama serve</code>
-            </div>
-            <div class="info-note mt-2" id="ollama-note-cloud" style="display:none">
-              ☁ Inserisci l'URL del tuo server Ollama remoto (es. VPS, ollama.ai cloud, ecc.).
-              Se il server richiede autenticazione, inserisci la API key.
             </div>
           </div>
 
@@ -536,14 +518,6 @@ function switchProvider(p) {
   document.getElementById(`panel-${p}`).classList.add('active');
 }
 
-function switchOllamaMode() {
-  const mode = document.getElementById('ollama-mode').value;
-  document.getElementById('ollama-apikey-row').style.display  = mode === 'cloud' ? 'block' : 'none';
-  document.getElementById('ollama-note-local').style.display  = mode === 'local' ? 'block' : 'none';
-  document.getElementById('ollama-note-cloud').style.display  = mode === 'cloud' ? 'block' : 'none';
-  if (mode === 'cloud') document.getElementById('ollama-url').value = '';
-  else document.getElementById('ollama-url').value = 'http://localhost:11434';
-}
 
 function toggleKey(id) {
   const el = document.getElementById(id);
@@ -822,18 +796,15 @@ async function callGemini(prompt) {
 }
 
 async function callOllama(prompt) {
-  const url    = (document.getElementById('ollama-url').value.trim()).replace(/\/$/, '');
-  const model  = document.getElementById('ollama-model').value.trim();
-  const apikey = document.getElementById('ollama-apikey')?.value.trim() || '';
+  const url   = (document.getElementById('ollama-url').value.trim()).replace(/\/$/, '');
+  const model = document.getElementById('ollama-model').value.trim();
   if (!model) throw new Error('Inserisci il nome del modello Ollama.');
-  const headers = { 'Content-Type': 'application/json' };
-  if (apikey) headers['Authorization'] = `Bearer ${apikey}`;
   const res = await fetch(`${url}/api/chat`, {
     method: 'POST',
-    headers,
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], stream: false, options: { temperature: 0.1 } })
   });
-  if (!res.ok) throw new Error(`Ollama error ${res.status} — controlla URL e credenziali`);
+  if (!res.ok) throw new Error(`Ollama error ${res.status} — controlla che il server sia in ascolto su ${url}`);
   const data = await res.json();
   return data.message?.content || data.response || '';
 }

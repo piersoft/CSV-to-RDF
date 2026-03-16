@@ -9,7 +9,7 @@ Strumento open source per trasformare dataset CSV della Pubblica Amministrazione
 ## Funzionalità
 
 - Incolla qualsiasi CSV con intestazioni → ottieni il file `.ttl` semantico
-- Metadati DCAT-AP_IT 3.0 (titolo, descrizione, publisher, IPA code, tema DCAT, licenza)
+- Metadati DCAT-AP_IT (titolo, descrizione, publisher, IPA code, tema DCAT, licenza)
 - **Auto-detect ontologie**: analizza automaticamente le colonne del CSV e suggerisce le ontologie più adatte
 - Ontologie comuni sempre visibili + sezione avanzate espandibile
 - Scelta provider AI: **Mistral**, **Groq**, **Ollama** (locale o remoto)

@@ -141,7 +141,7 @@
   <div class="container d-flex justify-content-between align-items-center">
     <div>
       <div class="brand-title">CSV <span style="color:#80c0ff">→</span> RDF/TTL</div>
-      <div class="brand-sub">Strumento semantico per la Pubblica Amministrazione · Ontologie PA / DCAT-AP_IT</div>
+      <div class="brand-sub">Strumento semantico per la Pubblica Amministrazione · Ontologie PA / DCAT-AP_IT 2.1</div>
     </div>
     <div class="header-badge d-none d-md-block">schema.gov.it · dati-semantic-assets · dati.gov.it</div>
   </div>
@@ -158,7 +158,7 @@
     <h1>Trasforma i tuoi dati aperti in RDF semantico</h1>
     <p>Incolla il tuo CSV, aggiungi i metadati e il sistema genera il file Turtle (TTL) arricchito con le ontologie
       <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a>,
-      allineato a DCAT-AP_IT e pronto per <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>.
+      allineato a DCAT-AP_IT 2.1 e pronto per <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>.
       La tua API key non viene mai salvata né trasmessa a terzi.</p>
   </div>
 </div>
@@ -302,7 +302,8 @@
           <div class="provider-tabs">
             <button class="provider-tab active" onclick="switchProvider('mistral')">🟠 Mistral</button>
             <button class="provider-tab"        onclick="switchProvider('groq')">⚡ Groq</button>
-            <button class="provider-tab"        onclick="switchProvider('ollama')">🦙 Ollama (locale)</button>
+            <button class="provider-tab"        onclick="switchProvider('gemini')">✨ Gemini</button>
+            <button class="provider-tab"        onclick="switchProvider('ollama')">🦙 Ollama</button>
           </div>
 
           <!-- MISTRAL -->
@@ -356,22 +357,65 @@
             </div>
           </div>
 
+
+          <!-- GEMINI -->
+          <div class="provider-panel" id="panel-gemini">
+            <div class="row g-2">
+              <div class="col-12">
+                <label class="lbl">Google Gemini API Key</label>
+                <div class="apikey-wrap">
+                  <input type="password" class="inp" id="gemini-key" placeholder="Incolla la tua API key Google AI Studio..."/>
+                  <button class="apikey-toggle" onclick="toggleKey('gemini-key')">👁</button>
+                </div>
+              </div>
+              <div class="col-12">
+                <label class="lbl">Modello</label>
+                <select class="inp" id="gemini-model">
+                  <option value="gemini-2.0-flash">gemini-2.0-flash (consigliato)</option>
+                  <option value="gemini-1.5-pro">gemini-1.5-pro</option>
+                  <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+                </select>
+              </div>
+            </div>
+            <div class="info-note mt-2">
+              🔑 Ottieni la tua API key gratuita su <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>.
+              Piano free: 1500 richieste/giorno · 1M token/minuto. Nessuna carta di credito richiesta.
+            </div>
+          </div>
+
           <!-- OLLAMA -->
           <div class="provider-panel" id="panel-ollama">
             <div class="row g-2">
               <div class="col-12">
+                <label class="lbl">Modalità</label>
+                <select class="inp" id="ollama-mode" onchange="switchOllamaMode()">
+                  <option value="local">🏠 Locale (localhost)</option>
+                  <option value="cloud">☁ Ollama Cloud / Server remoto</option>
+                </select>
+              </div>
+              <div class="col-12" id="ollama-url-row">
                 <label class="lbl">URL Ollama</label>
                 <input type="text" class="inp" id="ollama-url" value="http://localhost:11434" placeholder="http://localhost:11434"/>
               </div>
+              <div class="col-12" id="ollama-apikey-row" style="display:none">
+                <label class="lbl">API Key (se richiesta dal server remoto)</label>
+                <div class="apikey-wrap">
+                  <input type="password" class="inp" id="ollama-apikey" placeholder="Opzionale — lascia vuoto se non richiesta"/>
+                  <button class="apikey-toggle" onclick="toggleKey('ollama-apikey')">👁</button>
+                </div>
+              </div>
               <div class="col-12">
-                <label class="lbl">Modello (deve essere già scaricato)</label>
+                <label class="lbl">Modello</label>
                 <input type="text" class="inp" id="ollama-model" value="mistral" placeholder="es. mistral, llama3, gemma2"/>
               </div>
             </div>
-            <div class="info-note mt-2">
-              🦙 Ollama deve girare in locale con CORS abilitato:
-              <code style="font-size:0.75rem">OLLAMA_ORIGINS=* ollama serve</code><br/>
-              Oppure imposta l'URL del tuo server Ollama remoto.
+            <div class="info-note mt-2" id="ollama-note-local">
+              🦙 Ollama locale: avvia con CORS abilitato:
+              <code style="font-size:0.75rem">OLLAMA_ORIGINS=* ollama serve</code>
+            </div>
+            <div class="info-note mt-2" id="ollama-note-cloud" style="display:none">
+              ☁ Inserisci l'URL del tuo server Ollama remoto (es. VPS, ollama.ai cloud, ecc.).
+              Se il server richiede autenticazione, inserisci la API key.
             </div>
           </div>
 
@@ -455,7 +499,7 @@
               <span class="pill col-pill">TI — Tempo</span>
             </div>
             <div class="mt-2" style="font-size:0.75rem">
-              Standard: <strong>DCAT-AP_IT</strong> · <strong>Dublin Core</strong> · <strong>schema.gov.it</strong> · <strong>W3C GEO</strong>
+              Standard: <strong>DCAT-AP_IT 2.1</strong> · <strong>Dublin Core</strong> · <strong>schema.gov.it</strong> · <strong>W3C GEO</strong>
             </div>
           </div>
         </div>
@@ -486,10 +530,19 @@ let currentProvider = 'mistral';
 function switchProvider(p) {
   currentProvider = p;
   document.querySelectorAll('.provider-tab').forEach((t,i) => {
-    t.classList.toggle('active', ['mistral','groq','ollama'][i] === p);
+    t.classList.toggle('active', ['mistral','groq','gemini','ollama'][i] === p);
   });
   document.querySelectorAll('.provider-panel').forEach(panel => panel.classList.remove('active'));
   document.getElementById(`panel-${p}`).classList.add('active');
+}
+
+function switchOllamaMode() {
+  const mode = document.getElementById('ollama-mode').value;
+  document.getElementById('ollama-apikey-row').style.display  = mode === 'cloud' ? 'block' : 'none';
+  document.getElementById('ollama-note-local').style.display  = mode === 'local' ? 'block' : 'none';
+  document.getElementById('ollama-note-cloud').style.display  = mode === 'cloud' ? 'block' : 'none';
+  if (mode === 'cloud') document.getElementById('ollama-url').value = '';
+  else document.getElementById('ollama-url').value = 'http://localhost:11434';
 }
 
 function toggleKey(id) {
@@ -717,6 +770,7 @@ ISTRUZIONI:
 async function callAI(prompt) {
   if      (currentProvider === 'mistral') return await callMistral(prompt);
   else if (currentProvider === 'groq')    return await callGroq(prompt);
+  else if (currentProvider === 'gemini')  return await callGemini(prompt);
   else if (currentProvider === 'ollama')  return await callOllama(prompt);
 }
 
@@ -750,16 +804,36 @@ async function callGroq(prompt) {
   return (await res.json()).choices[0].message.content;
 }
 
-async function callOllama(prompt) {
-  const url   = (document.getElementById('ollama-url').value.trim()).replace(/\/$/, '');
-  const model = document.getElementById('ollama-model').value.trim();
-  if (!model) throw new Error('Inserisci il nome del modello Ollama.');
-  const res = await fetch(`${url}/api/chat`, {
+async function callGemini(prompt) {
+  const key   = document.getElementById('gemini-key').value.trim();
+  const model = document.getElementById('gemini-model').value;
+  if (!key) throw new Error('Inserisci la tua API key Google Gemini.');
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.1, maxOutputTokens: 32000 }
+    })
+  });
+  if (!res.ok) { const err = await res.json(); throw new Error(err.error?.message || `Gemini error ${res.status}`); }
+  const data = await res.json();
+  return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+}
+
+async function callOllama(prompt) {
+  const url    = (document.getElementById('ollama-url').value.trim()).replace(/\/$/, '');
+  const model  = document.getElementById('ollama-model').value.trim();
+  const apikey = document.getElementById('ollama-apikey')?.value.trim() || '';
+  if (!model) throw new Error('Inserisci il nome del modello Ollama.');
+  const headers = { 'Content-Type': 'application/json' };
+  if (apikey) headers['Authorization'] = `Bearer ${apikey}`;
+  const res = await fetch(`${url}/api/chat`, {
+    method: 'POST',
+    headers,
     body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], stream: false, options: { temperature: 0.1 } })
   });
-  if (!res.ok) throw new Error(`Ollama error ${res.status}`);
+  if (!res.ok) throw new Error(`Ollama error ${res.status} — controlla URL e credenziali`);
   const data = await res.json();
   return data.message?.content || data.response || '';
 }

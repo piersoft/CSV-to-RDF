@@ -1,6 +1,6 @@
 # CSV → RDF/TTL — Strumento semantico per la PA italiana
 
-Strumento open source per trasformare dataset CSV della Pubblica Amministrazione italiana in file **Turtle (TTL) RDF**, allineati a **DCAT-AP_IT 3.0** e alle ontologie ufficiali pubblicate su [github.com/italia/dati-semantic-assets](https://github.com/italia/dati-semantic-assets).
+Strumento open source per trasformare dataset CSV della Pubblica Amministrazione italiana in file **Turtle (TTL) RDF**, allineati a **DCAT-AP_IT** e alle ontologie ufficiali pubblicate su [github.com/italia/dati-semantic-assets](https://github.com/italia/dati-semantic-assets).
 
 👉 **Demo live**: [https://piersoft.github.io/CSV-to-RDF](https://piersoft.github.io/CSV-to-RDF)
 

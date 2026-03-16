@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CSV → RDF/TTL — Ontopia PA</title>
+  <title>CSV → RDF/TTL — Ontologie PA Italiane</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-italia@2.8.0/dist/css/bootstrap-italia.min.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
@@ -127,12 +127,12 @@
 <!-- GOV BAR -->
 <div class="it-gov-bar">
   <div class="container d-flex justify-content-between align-items-center">
-    <!--<span>🇮🇹 Repubblica Italiana — Dati Aperti della PA</span>
+    <span>🇮🇹 Repubblica Italiana — Dati Aperti della PA</span>
     <span>
       <a href="https://dati.gov.it" target="_blank">dati.gov.it</a> ·
       <a href="https://schema.gov.it" target="_blank">schema.gov.it</a> ·
       <a href="https://www.agid.gov.it" target="_blank">AgID</a>
-    </span>-->
+    </span>
   </div>
 </div>
 
@@ -141,9 +141,9 @@
   <div class="container d-flex justify-content-between align-items-center">
     <div>
       <div class="brand-title">CSV <span style="color:#80c0ff">→</span> RDF/TTL</div>
-      <div class="brand-sub">Strumento semantico per la Pubblica Amministrazione · OntoPiA / DCAT-AP_IT</div>
+      <div class="brand-sub">Strumento semantico per la Pubblica Amministrazione · Ontologie PA / DCAT-AP_IT 3.0</div>
     </div>
-    <div class="header-badge d-none d-md-block">OntoPiA · schema.gov.it · dati.gov.it</div>
+    <div class="header-badge d-none d-md-block">schema.gov.it · dati-semantic-assets · dati.gov.it</div>
   </div>
 </div>
 
@@ -151,13 +151,13 @@
 <div class="hero-band">
   <div class="container">
     <div class="mb-2">
-      <span class="badge-onto">OntoPiA</span>
+      
       <span class="badge-onto blue">DCAT-AP_IT</span>
       <span class="badge-onto green">schema.gov.it</span>
     </div>
     <h1>Trasforma i tuoi dati aperti in RDF semantico</h1>
     <p>Incolla il tuo CSV, aggiungi i metadati e il sistema genera il file Turtle (TTL) arricchito con le ontologie
-      <a href="https://github.com/italia/ontopia" target="_blank">OntoPiA</a>,
+      <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a>,
       allineato a DCAT-AP_IT 3.0 e pronto per <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>.
       La tua API key non viene mai salvata né trasmessa a terzi.</p>
   </div>
@@ -249,7 +249,7 @@
             </div>
             <div class="col-12">
               <div class="d-flex justify-content-between align-items-center mb-1">
-                <label class="lbl" style="margin:0">Ontologie OntoPiA (clicca per attivare)</label>
+                <label class="lbl" style="margin:0">Ontologie PA ufficiali (clicca per attivare)</label>
                 <button class="btn-auto-onto" id="btn-auto-onto" onclick="autoDetectOnto()" disabled title="Analizza le colonne del CSV e suggerisce le ontologie più adatte">🔍 Auto-detect</button>
               </div>
               <div id="auto-onto-msg" style="display:none;font-size:0.72rem;color:#1a6b35;margin-bottom:0.4rem;font-family:var(--mono)"></div>
@@ -271,18 +271,20 @@
                   <div class="pills" id="onto-selector-adv">
                     <span class="pill" data-onto="ACCO">ACCO — Accommodation</span>
                     <span class="pill" data-onto="ADMS">ADMS — Asset/Licenze</span>
-                    <span class="pill" data-onto="CPAV">CPAV — Incarichi pubblici</span>
-                    <span class="pill" data-onto="ELP">ELP — Luoghi pubblici</span>
-                    <span class="pill" data-onto="HER">HER — Patrimonio culturale</span>
-                    <span class="pill" data-onto="IOT">IOT — Internet of Things</span>
+                    
+                    
+                    <span class="pill" data-onto="Cultural-ON">Cultural-ON — Patrimonio culturale</span>
+                    <span class="pill" data-onto="IoT">IoT — Internet of Things</span>
                     <span class="pill" data-onto="LANG">LANG — Lingue</span>
-                    <span class="pill" data-onto="MU">MU — Unità di misura</span>
+                    
                     <span class="pill" data-onto="PARK">PARK — Parcheggi</span>
-                    <span class="pill" data-onto="PO">PO — Org. pubbliche</span>
-                    <span class="pill" data-onto="PRICE">PRICE — Prezzi/Tariffe</span>
-                    <span class="pill" data-onto="ROUTE">ROUTE — Percorsi stradali</span>
-                    <span class="pill" data-onto="SERV">SERV — Servizi pubblici</span>
-                    <span class="pill" data-onto="TRANSP">TRANSP — Trasporti</span>
+                    
+                    
+                    <span class="pill" data-onto="Route">Route — Percorsi</span>
+                    <span class="pill" data-onto="CPSV-AP">CPSV-AP — Servizi pubblici</span>
+                    <span class="pill" data-onto="GTFS">GTFS — Trasporto pubblico</span>
+                    <span class="pill" data-onto="AC">AC — Condizioni accesso</span>
+                    <span class="pill" data-onto="Transparency">Transparency — Trasparenza PA</span>
                   </div>
                 </div>
               </div>
@@ -436,11 +438,11 @@
 
       <!-- INFO ONTOLOGIE -->
       <div class="card-pa mt-3">
-        <div class="card-head gray">📚 Ontologie OntoPiA di riferimento</div>
+        <div class="card-head gray">📚 Ontologie ufficiali — github.com/italia/dati-semantic-assets</div>
         <div class="card-body-pa">
           <div style="font-size:0.8rem;line-height:1.7;color:var(--dg-muted)">
-            Il modello seleziona automaticamente le ontologie più adatte dal catalogo
-            <a href="https://github.com/italia/ontopia" target="_blank" style="color:var(--dg-blue)">OntoPiA</a>:
+            Il modello seleziona automaticamente le ontologie più adatte dal catalogo ufficiale
+            <a href="https://github.com/italia/dati-semantic-assets" target="_blank" style="color:var(--dg-blue)">dati-semantic-assets</a>:
             <div class="pills mt-2">
               <span class="pill col-pill">CLV — Luoghi</span>
               <span class="pill col-pill">COV — Organizzazioni</span>
@@ -514,26 +516,27 @@ function toggleAdvOnto() {
 
 // ── AUTO-DETECT ONTOLOGIE ────────────────────────────────────
 // Mappa parole chiave colonna → ontologie suggerite
+// Prefissi basati su github.com/italia/dati-semantic-assets (ontologie verificate)
 const ONTO_RULES = [
-  { keys: ['lat','lon','lng','latitudine','longitudine','coord','geo','x','y'],         ontos: ['CLV','L0'] },
-  { keys: ['indirizzo','address','via','strada','civico','cap','zip','comune','città'],  ontos: ['CLV'] },
-  { keys: ['telefono','phone','tel','fax','email','mail','sito','web','url'],            ontos: ['SM'] },
-  { keys: ['nome','name','denominazione','titolo','label'],                              ontos: ['L0'] },
-  { keys: ['organizzazione','ente','comune','provincia','regione','istituzione'],        ontos: ['COV','PO'] },
-  { keys: ['persona','nome','cognome','responsabile','referente','contatto'],            ontos: ['CPV'] },
-  { keys: ['ruolo','qualifica','mansione','incarico','funzione'],                        ontos: ['RO','CPAV'] },
-  { keys: ['data','date','ora','time','inizio','fine','apertura','chiusura'],            ontos: ['TI'] },
-  { keys: ['punto','poi','luogo','location','sede','struttura','edificio'],              ontos: ['POI','ELP'] },
-  { keys: ['prezzo','costo','tariffa','importo','euro','fee'],                          ontos: ['PRICE'] },
-  { keys: ['parcheggio','parking','posto','stallo'],                                    ontos: ['PARK'] },
-  { keys: ['servizio','service','prestazione'],                                         ontos: ['SERV'] },
-  { keys: ['hotel','albergo','b&b','accommodation','ricettivo'],                        ontos: ['ACCO'] },
-  { keys: ['patrimonio','bene','culturale','museo','monumento','arte'],                 ontos: ['HER'] },
-  { keys: ['trasporto','bus','metro','tram','fermata','linea','corsa'],                 ontos: ['TRANSP'] },
-  { keys: ['percorso','route','itinerario','tracciato'],                                ontos: ['ROUTE'] },
-  { keys: ['lingua','language','lang'],                                                 ontos: ['LANG'] },
-  { keys: ['misura','unità','unit','valore','value','quantità'],                        ontos: ['MU'] },
-  { keys: ['sensore','iot','device','dispositivo','misurazione'],                       ontos: ['IOT'] },
+  { keys: ['lat','lon','lng','latitudine','longitudine','coord','geo','x','y'],        ontos: ['CLV','L0'] },
+  { keys: ['indirizzo','address','via','strada','civico','cap','zip','comune','città'],ontos: ['CLV'] },
+  { keys: ['telefono','phone','tel','fax','email','mail','sito','web','url'],          ontos: ['SM'] },
+  { keys: ['nome','name','denominazione','titolo','label'],                            ontos: ['L0'] },
+  { keys: ['organizzazione','ente','comune','provincia','regione','istituzione'],      ontos: ['COV'] },
+  { keys: ['persona','cognome','responsabile','referente','contatto'],                 ontos: ['CPV'] },
+  { keys: ['ruolo','qualifica','mansione','incarico','funzione'],                      ontos: ['RO'] },
+  { keys: ['data','date','ora','time','inizio','fine','apertura','chiusura'],          ontos: ['TI'] },
+  { keys: ['punto','poi','luogo','location','sede','struttura','edificio'],            ontos: ['POI'] },
+  { keys: ['accesso','orario','prenotazione','chiusura','ingresso'],                   ontos: ['AC'] },
+  { keys: ['parcheggio','parking','posto','stallo','sosta'],                           ontos: ['PARK'] },
+  { keys: ['servizio','service','prestazione','sportello'],                            ontos: ['CPSV-AP'] },
+  { keys: ['hotel','albergo','accommodation','ricettivo'],                             ontos: ['ACCO'] },
+  { keys: ['patrimonio','culturale','museo','monumento','arte'],                       ontos: ['Cultural-ON'] },
+  { keys: ['bus','metro','tram','fermata','linea','corsa'],                            ontos: ['GTFS'] },
+  { keys: ['percorso','route','itinerario','tracciato','cammino'],                     ontos: ['Route'] },
+  { keys: ['lingua','language','lang'],                                                ontos: ['Language'] },
+  { keys: ['sensore','iot','device','dispositivo','misurazione'],                      ontos: ['IoT'] },
+  { keys: ['trasparenza','obbligo','pubblicazione'],                                   ontos: ['Transparency'] },
 ];
 
 function autoDetectOnto() {
@@ -668,7 +671,7 @@ Trasforma il CSV sottostante di una Pubblica Amministrazione italiana in un file
 - Tema DCAT: ${meta.theme || ''}
 - Licenza: ${meta.license}
 
-## PREFISSI ONTOLOGIE OntoPiA (schema.gov.it) — usa questi esattamente
+## PREFISSI ONTOLOGIE UFFICIALI (github.com/italia/dati-semantic-assets) — usa questi esattamente
 @prefix clv:  <https://w3id.org/italia/onto/CLV/> .
 @prefix cov:  <https://w3id.org/italia/onto/COV/> .
 @prefix cpv:  <https://w3id.org/italia/onto/CPV/> .
@@ -693,7 +696,7 @@ ${sample}
 
 ## ISTRUZIONI
 1. Crea il blocco dcat:Dataset con tutti i metadati DCAT-AP_IT 3.0 obbligatori
-2. Per ogni riga CSV genera una risorsa RDF con il tipo OntoPiA più appropriato
+2. Per ogni riga CSV genera una risorsa RDF con il tipo più appropriato dalle ontologie ufficiali PA
 3. Mappa ogni colonna alla proprietà ontologica corretta (geo:lat, geo:long, sm:hasTelephone, sm:hasEmail, clv:hasAddress, ecc.)
 4. Usa rdfs:label in italiano per ogni entità
 5. Genera URI basati su IPA code: <https://dati.gov.it/resource/${meta.ipa||'pa'}/...>

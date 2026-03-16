@@ -22,27 +22,23 @@
     }
     body { font-family: var(--sans); background: var(--dg-gray); color: var(--dg-text); }
 
-    /* GOV BAR */
     .it-gov-bar { background: #004080; padding: 6px 0; font-size: 0.78rem; color: rgba(255,255,255,0.85); }
     .it-gov-bar a { color: rgba(255,255,255,0.85); text-decoration: none; }
     .it-gov-bar a:hover { color: white; text-decoration: underline; }
 
-    /* HEADER */
     .site-header { background: var(--dg-blue); border-bottom: 3px solid var(--dg-orange); }
     .site-header .brand-title { font-size: 1.4rem; font-weight: 700; color: white; margin: 0; }
     .site-header .brand-sub { font-size: 0.82rem; color: rgba(255,255,255,0.7); font-weight: 300; }
     .header-badge { font-size: 0.7rem; font-family: var(--mono); background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: rgba(255,255,255,0.9); padding: 0.25rem 0.65rem; border-radius: 4px; }
 
-    /* HERO */
     .hero-band { background: linear-gradient(135deg, #003d80 0%, #0066cc 100%); color: white; padding: 2rem 0 1.8rem; }
     .hero-band h1 { font-size: 1.65rem; font-weight: 700; margin-bottom: 0.5rem; }
     .hero-band p { font-size: 0.95rem; color: rgba(255,255,255,0.82); max-width: 680px; line-height: 1.65; }
     .hero-band a { color: #80c0ff; }
     .badge-onto { display: inline-block; background: var(--dg-orange); color: white; font-size: 0.68rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.05em; margin-right: 0.3rem; }
-    .badge-onto.blue { background: #004a99; }
+    .badge-onto.blue  { background: #004a99; }
     .badge-onto.green { background: #1a6b35; }
 
-    /* CARDS */
     .card-pa { background: white; border: 1px solid var(--dg-border); border-radius: 6px; overflow: hidden; margin-bottom: 1.25rem; }
     .card-head { padding: 0.6rem 1rem; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; display: flex; align-items: center; gap: 0.5rem; color: white; }
     .card-head.blue   { background: var(--dg-blue); }
@@ -51,25 +47,28 @@
     .card-head.gray   { background: var(--dg-muted); }
     .card-body-pa { padding: 1.1rem; }
 
-    /* FORM */
     .lbl { display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--dg-muted); margin-bottom: 0.3rem; }
     .inp { font-family: var(--sans); font-size: 0.88rem; border: 1px solid var(--dg-border); border-radius: 4px; padding: 0.5rem 0.75rem; width: 100%; color: var(--dg-text); background: white; transition: border-color 0.2s, box-shadow 0.2s; }
     .inp:focus { outline: none; border-color: var(--dg-blue); box-shadow: 0 0 0 3px rgba(0,102,204,0.12); }
     textarea.csv-area { font-family: var(--mono); font-size: 0.77rem; line-height: 1.55; min-height: 240px; background: #fafbfc; resize: vertical; }
-    textarea.ttl-area  { font-family: var(--mono); font-size: 0.75rem; line-height: 1.6; min-height: 380px; background: #0d1b2a; color: #7dd3a8; border-color: #2a3a4a; resize: vertical; }
+    textarea.ttl-area { font-family: var(--mono); font-size: 0.75rem; line-height: 1.6; min-height: 400px; background: #0d1b2a; color: #7dd3a8; border-color: #2a3a4a; resize: vertical; }
     textarea.ttl-area:focus { border-color: #4a7a9a; box-shadow: none; }
 
-    /* BUTTONS */
-    .btn-dg-primary   { background: var(--dg-blue); color: white; border: none; border-radius: 4px; padding: 0.6rem 1.3rem; font-family: var(--sans); font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: background .15s; display: inline-flex; align-items: center; gap: 0.4rem; }
+    /* API KEY field */
+    .apikey-wrap { position: relative; }
+    .apikey-wrap .inp { padding-right: 2.5rem; font-family: var(--mono); font-size: 0.82rem; }
+    .apikey-toggle { position: absolute; right: 0.6rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--dg-muted); font-size: 0.85rem; padding: 0; }
+    .apikey-toggle:hover { color: var(--dg-blue); }
+
+    .btn-dg-primary  { background: var(--dg-blue); color: white; border: none; border-radius: 4px; padding: 0.6rem 1.3rem; font-family: var(--sans); font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: background .15s; display: inline-flex; align-items: center; gap: 0.4rem; }
     .btn-dg-primary:hover:not(:disabled) { background: var(--dg-blue-dark); }
     .btn-dg-primary:disabled { background: var(--dg-border); cursor: not-allowed; }
-    .btn-dg-orange    { background: var(--dg-orange); color: white; border: none; border-radius: 4px; padding: 0.6rem 1.4rem; font-family: var(--sans); font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: background .15s; display: inline-flex; align-items: center; gap: 0.4rem; }
+    .btn-dg-orange   { background: var(--dg-orange); color: white; border: none; border-radius: 4px; padding: 0.6rem 1.4rem; font-family: var(--sans); font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: background .15s; display: inline-flex; align-items: center; gap: 0.4rem; }
     .btn-dg-orange:hover:not(:disabled) { background: var(--dg-orange-dark); }
     .btn-dg-orange:disabled { background: var(--dg-border); cursor: not-allowed; }
-    .btn-dg-sec       { background: white; color: var(--dg-blue); border: 1.5px solid var(--dg-blue); border-radius: 4px; padding: 0.5rem 1rem; font-family: var(--sans); font-size: 0.83rem; font-weight: 600; cursor: pointer; transition: background .15s; display: inline-flex; align-items: center; gap: 0.35rem; }
+    .btn-dg-sec      { background: white; color: var(--dg-blue); border: 1.5px solid var(--dg-blue); border-radius: 4px; padding: 0.5rem 1rem; font-family: var(--sans); font-size: 0.83rem; font-weight: 600; cursor: pointer; transition: background .15s; display: inline-flex; align-items: center; gap: 0.35rem; }
     .btn-dg-sec:hover { background: var(--dg-blue-light); }
 
-    /* STATUS */
     .status-bar { display: none; align-items: center; gap: 0.6rem; padding: 0.6rem 0.9rem; border-radius: 4px; font-size: 0.8rem; font-family: var(--mono); margin-top: 0.75rem; }
     .status-bar.info    { display: flex; background: #e6f0fa; color: #004080; border: 1px solid #b3d1f5; }
     .status-bar.success { display: flex; background: #e6f4ec; color: #1a6b35; border: 1px solid #a3d9b5; }
@@ -77,20 +76,17 @@
     .spinner { width: 13px; height: 13px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin 0.75s linear infinite; flex-shrink: 0; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* CSV PREVIEW */
     .csv-preview-wrap { display: none; margin-top: 0.75rem; overflow-x: auto; border: 1px solid var(--dg-border); border-radius: 4px; max-height: 155px; }
     .csv-preview-wrap table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 0.68rem; }
     .csv-preview-wrap th { background: var(--dg-blue); color: white; padding: 0.3rem 0.55rem; white-space: nowrap; position: sticky; top: 0; }
     .csv-preview-wrap td { padding: 0.22rem 0.55rem; border-bottom: 1px solid #eef0f3; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .csv-preview-wrap tr:nth-child(even) td { background: #f5f6f7; }
 
-    /* PILLS */
     .pills { display: flex; flex-wrap: wrap; gap: 0.35rem; }
     .pill { font-family: var(--mono); font-size: 0.67rem; padding: 0.18rem 0.5rem; border-radius: 99px; background: var(--dg-blue-light); color: var(--dg-blue-dark); border: 1px solid #b3cef0; cursor: pointer; user-select: none; transition: all .15s; }
-    .pill.active { background: var(--dg-blue); color: white; border-color: var(--dg-blue); }
+    .pill.active   { background: var(--dg-blue); color: white; border-color: var(--dg-blue); }
     .pill.col-pill { cursor: default; background: #f0f4f8; color: var(--dg-muted); border-color: var(--dg-border); }
 
-    /* STEP BAR */
     .step-bar { display: flex; margin-bottom: 1.5rem; border-radius: 4px; overflow: hidden; border: 1px solid var(--dg-border); }
     .step { flex: 1; display: flex; align-items: center; gap: 0.45rem; padding: 0.5rem 0.7rem; background: white; font-size: 0.75rem; font-weight: 600; color: var(--dg-muted); border-right: 1px solid var(--dg-border); transition: all .2s; }
     .step:last-child { border-right: none; }
@@ -100,10 +96,22 @@
     .step.active .step-num { background: var(--dg-blue); }
     .step.done .step-num   { background: #1a6b35; }
 
-    /* STAT BOXES */
     .stat-box { border-radius: 4px; padding: 0.55rem; text-align: center; }
     .stat-val  { font-size: 1.25rem; font-weight: 700; }
     .stat-lbl  { font-size: 0.68rem; color: var(--dg-muted); }
+
+    /* Provider switcher */
+    .provider-tabs { display: flex; border: 1px solid var(--dg-border); border-radius: 4px; overflow: hidden; margin-bottom: 0.75rem; }
+    .provider-tab { flex: 1; padding: 0.45rem; text-align: center; font-size: 0.78rem; font-weight: 600; cursor: pointer; background: white; color: var(--dg-muted); border: none; border-right: 1px solid var(--dg-border); transition: all .15s; font-family: var(--sans); }
+    .provider-tab:last-child { border-right: none; }
+    .provider-tab.active { background: var(--dg-blue); color: white; }
+    .provider-tab:hover:not(.active) { background: var(--dg-blue-light); }
+
+    .provider-panel { display: none; }
+    .provider-panel.active { display: block; }
+
+    .info-note { background: #fff8e6; border: 1px solid #ffe0a0; border-radius: 4px; padding: 0.55rem 0.8rem; font-size: 0.78rem; color: #7a5000; margin-top: 0.5rem; }
+    .info-note a { color: #5a3800; }
 
     footer { background: #17324d; color: rgba(255,255,255,0.65); text-align: center; padding: 1rem; font-size: 0.73rem; font-family: var(--mono); margin-top: 3rem; }
     footer a { color: #80c0ff; text-decoration: none; }
@@ -128,7 +136,7 @@
   <div class="container d-flex justify-content-between align-items-center">
     <div>
       <div class="brand-title">CSV <span style="color:#80c0ff">→</span> RDF/TTL</div>
-      <div class="brand-sub">Strumento semantico per la Pubblica Amministrazione · OntoPiA / DCAT-AP_IT</div>
+      <div class="brand-sub">Strumento semantico per la Pubblica Amministrazione · OntoPiA / DCAT-AP_IT 3.0</div>
     </div>
     <div class="header-badge d-none d-md-block">OntoPiA · schema.gov.it · dati.gov.it</div>
   </div>
@@ -145,18 +153,22 @@
     <h1>Trasforma i tuoi dati aperti in RDF semantico</h1>
     <p>Incolla il tuo CSV, aggiungi i metadati e il sistema genera il file Turtle (TTL) arricchito con le ontologie
       <a href="https://github.com/italia/ontopia" target="_blank">OntoPiA</a>,
+<<<<<<< HEAD
       allineato a DCAT-AP_IT e pronto per <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>.</p>
+=======
+      allineato a DCAT-AP_IT 3.0 e pronto per <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>.
+      La tua API key non viene mai salvata né trasmessa a terzi.</p>
+>>>>>>> ac7996c (feat: chiamata diretta Mistral/Groq/Ollama, no VPS)
   </div>
 </div>
 
 <!-- MAIN -->
 <div class="container mt-4">
 
-  <!-- STEP BAR -->
-  <div class="step-bar" id="step-bar">
-    <div class="step active" id="step-1"><span class="step-num">1</span> Incolla CSV</div>
+  <div class="step-bar">
+    <div class="step active" id="step-1"><span class="step-num">1</span> CSV</div>
     <div class="step"        id="step-2"><span class="step-num">2</span> Metadati</div>
-    <div class="step"        id="step-3"><span class="step-num">3</span> Configurazione</div>
+    <div class="step"        id="step-3"><span class="step-num">3</span> AI Provider</div>
     <div class="step"        id="step-4"><span class="step-num">4</span> Risultato TTL</div>
   </div>
 
@@ -178,7 +190,7 @@
             <button class="btn-dg-sec" onclick="clearCSV()">✕ Svuota</button>
           </div>
           <div class="csv-preview-wrap" id="csv-preview"></div>
-          <div id="columns-detected" style="display:none; margin-top:0.6rem;">
+          <div id="columns-detected" style="display:none;margin-top:0.6rem;">
             <label class="lbl">Colonne rilevate</label>
             <div class="pills" id="columns-pills"></div>
           </div>
@@ -231,37 +243,8 @@
                 <option value="https://www.dati.gov.it/content/italian-open-data-license-v20">IODL 2.0</option>
               </select>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- STEP 3: CONFIG -->
-      <div class="card-pa">
-        <div class="card-head dark">⚙ STEP 3 — Configurazione AI</div>
-        <div class="card-body-pa">
-          <div class="row g-2">
             <div class="col-12">
-              <label class="lbl">URL server VPS</label>
-              <input type="text" class="inp" id="server-url" value="http://31.14.139.9:3000/api/chat" placeholder="http://host:porta/api/chat"/>
-            </div>
-            <div class="col-md-6">
-              <label class="lbl">Provider LLM</label>
-              <select class="inp" id="llm-provider">
-                <option value="mistral">Mistral (consigliato)</option>
-                <option value="groq">Groq</option>
-                <option value="ollama">Ollama (locale)</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label class="lbl">Max righe da inviare</label>
-              <select class="inp" id="max-rows">
-                <option value="10">10 righe (veloce)</option>
-                <option value="25" selected>25 righe</option>
-                <option value="50">50 righe (completo)</option>
-              </select>
-            </div>
-            <div class="col-12">
-              <label class="lbl">Ontologie OntoPiA da includere (clicca per attivare)</label>
+              <label class="lbl">Ontologie OntoPiA (clicca per attivare)</label>
               <div class="pills" id="onto-selector">
                 <span class="pill active" data-onto="CLV">CLV — Indirizzi</span>
                 <span class="pill active" data-onto="COV">COV — Organizzazioni</span>
@@ -274,6 +257,101 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: AI PROVIDER -->
+      <div class="card-pa">
+        <div class="card-head dark">⚙ STEP 3 — Provider AI</div>
+        <div class="card-body-pa">
+
+          <!-- TABS PROVIDER -->
+          <div class="provider-tabs">
+            <button class="provider-tab active" onclick="switchProvider('mistral')">🟠 Mistral</button>
+            <button class="provider-tab"        onclick="switchProvider('groq')">⚡ Groq</button>
+            <button class="provider-tab"        onclick="switchProvider('ollama')">🦙 Ollama (locale)</button>
+          </div>
+
+          <!-- MISTRAL -->
+          <div class="provider-panel active" id="panel-mistral">
+            <div class="row g-2">
+              <div class="col-12">
+                <label class="lbl">Mistral API Key</label>
+                <div class="apikey-wrap">
+                  <input type="password" class="inp" id="mistral-key" placeholder="Incolla la tua API key Mistral..."/>
+                  <button class="apikey-toggle" onclick="toggleKey('mistral-key')">👁</button>
+                </div>
+              </div>
+              <div class="col-12">
+                <label class="lbl">Modello</label>
+                <select class="inp" id="mistral-model">
+                  <option value="mistral-large-latest">mistral-large-latest (consigliato)</option>
+                  <option value="mistral-medium-latest">mistral-medium-latest</option>
+                  <option value="mistral-small-latest">mistral-small-latest</option>
+                  <option value="open-mistral-7b">open-mistral-7b</option>
+                </select>
+              </div>
+            </div>
+            <div class="info-note mt-2">
+              🔑 Ottieni la tua API key su <a href="https://console.mistral.ai" target="_blank">console.mistral.ai</a>.
+              La chiave rimane solo nel tuo browser, non viene salvata né trasmessa a server intermedi.
+            </div>
+          </div>
+
+          <!-- GROQ -->
+          <div class="provider-panel" id="panel-groq">
+            <div class="row g-2">
+              <div class="col-12">
+                <label class="lbl">Groq API Key</label>
+                <div class="apikey-wrap">
+                  <input type="password" class="inp" id="groq-key" placeholder="Incolla la tua API key Groq..."/>
+                  <button class="apikey-toggle" onclick="toggleKey('groq-key')">👁</button>
+                </div>
+              </div>
+              <div class="col-12">
+                <label class="lbl">Modello</label>
+                <select class="inp" id="groq-model">
+                  <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile (consigliato)</option>
+                  <option value="llama-3.1-8b-instant">llama-3.1-8b-instant (veloce)</option>
+                  <option value="mixtral-8x7b-32768">mixtral-8x7b-32768</option>
+                  <option value="gemma2-9b-it">gemma2-9b-it</option>
+                </select>
+              </div>
+            </div>
+            <div class="info-note mt-2">
+              🔑 Ottieni la tua API key su <a href="https://console.groq.com" target="_blank">console.groq.com</a> (piano gratuito disponibile).
+            </div>
+          </div>
+
+          <!-- OLLAMA -->
+          <div class="provider-panel" id="panel-ollama">
+            <div class="row g-2">
+              <div class="col-12">
+                <label class="lbl">URL Ollama</label>
+                <input type="text" class="inp" id="ollama-url" value="http://localhost:11434" placeholder="http://localhost:11434"/>
+              </div>
+              <div class="col-12">
+                <label class="lbl">Modello (deve essere già scaricato)</label>
+                <input type="text" class="inp" id="ollama-model" value="mistral" placeholder="es. mistral, llama3, gemma2"/>
+              </div>
+            </div>
+            <div class="info-note mt-2">
+              🦙 Ollama deve girare in locale con CORS abilitato:
+              <code style="font-size:0.75rem">OLLAMA_ORIGINS=* ollama serve</code><br/>
+              Oppure imposta l'URL del tuo server Ollama remoto.
+            </div>
+          </div>
+
+          <!-- MAX RIGHE -->
+          <div class="mt-3">
+            <label class="lbl">Max righe CSV da inviare al modello</label>
+            <select class="inp" id="max-rows">
+              <option value="10">10 righe (veloce, risparmia token)</option>
+              <option value="25" selected>25 righe (bilanciato)</option>
+              <option value="50">50 righe (completo)</option>
+            </select>
+          </div>
+
         </div>
       </div>
 
@@ -297,10 +375,9 @@
           <div class="d-flex gap-2 mt-2 flex-wrap">
             <button class="btn-dg-primary" id="btn-download" onclick="downloadTTL()" disabled>⬇ Scarica .ttl</button>
             <button class="btn-dg-sec" onclick="copyTTL()">📋 Copia</button>
-            <button class="btn-dg-sec" onclick="validateTTL()">✓ Valida online</button>
+            <button class="btn-dg-sec" onclick="validateTTL()">✓ Valida W3C</button>
           </div>
 
-          <!-- STATS -->
           <div id="output-stats" style="display:none;margin-top:0.9rem;">
             <div class="row g-2 text-center">
               <div class="col-4">
@@ -331,7 +408,7 @@
         <div class="card-head gray">📚 Ontologie OntoPiA di riferimento</div>
         <div class="card-body-pa">
           <div style="font-size:0.8rem;line-height:1.7;color:var(--dg-muted)">
-            Il sistema seleziona automaticamente le ontologie più adatte dal catalogo
+            Il modello seleziona automaticamente le ontologie più adatte dal catalogo
             <a href="https://github.com/italia/ontopia" target="_blank" style="color:var(--dg-blue)">OntoPiA</a>:
             <div class="pills mt-2">
               <span class="pill col-pill">CLV — Luoghi</span>
@@ -351,24 +428,42 @@
       </div>
     </div><!-- fine DX -->
 
-  </div><!-- fine row -->
-</div><!-- fine container -->
+  </div>
+</div>
 
 <footer>
   Strumento open source per la PA italiana &nbsp;·&nbsp;
-  <a href="https://github.com/piersoft/ckan-mcp-server-docker-ollama" target="_blank">GitHub piersoft</a> ·
+  <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://schema.gov.it" target="_blank">schema.gov.it</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
 </footer>
 
 <script>
+// ── ESEMPIO ──────────────────────────────────────────────────
 const EXAMPLE_CSV = `id,denominazione,indirizzo,comune,provincia,latitudine,longitudine,telefono,email,accessibile_h24
 1,DAE Stazione Centrale,Piazza Aldo Moro 1,Bari,BA,41.1180,16.8717,0805772500,dae@comune.bari.it,si
 2,DAE Ospedale Policlinico,Piazza Giulio Cesare 11,Bari,BA,41.1140,16.8593,0805592111,dae.policlinico@ospedalebari.it,si
 3,DAE Piazza Ferrarese,Piazza Ferrarese,Bari,BA,41.1271,16.8694,,dae@comune.bari.it,no
 4,DAE Teatro Petruzzelli,Corso Cavour 12,Bari,BA,41.1253,16.8721,0805724111,,si`;
 
-// Pills toggle
+// ── PROVIDER SWITCH ──────────────────────────────────────────
+let currentProvider = 'mistral';
+
+function switchProvider(p) {
+  currentProvider = p;
+  document.querySelectorAll('.provider-tab').forEach((t,i) => {
+    t.classList.toggle('active', ['mistral','groq','ollama'][i] === p);
+  });
+  document.querySelectorAll('.provider-panel').forEach(panel => panel.classList.remove('active'));
+  document.getElementById(`panel-${p}`).classList.add('active');
+}
+
+function toggleKey(id) {
+  const el = document.getElementById(id);
+  el.type = el.type === 'password' ? 'text' : 'password';
+}
+
+// ── PILLS ────────────────────────────────────────────────────
 document.querySelectorAll('#onto-selector .pill').forEach(p =>
   p.addEventListener('click', () => p.classList.toggle('active'))
 );
@@ -376,7 +471,7 @@ function getOntos() {
   return [...document.querySelectorAll('#onto-selector .pill.active')].map(p => p.dataset.onto);
 }
 
-// Step indicator
+// ── STEP INDICATOR ───────────────────────────────────────────
 function setStep(n) {
   for (let i = 1; i <= 4; i++) {
     const el = document.getElementById(`step-${i}`);
@@ -386,36 +481,36 @@ function setStep(n) {
   }
 }
 
-// Parse CSV
+// ── CSV ──────────────────────────────────────────────────────
 function parseCSV(text) {
   const lines = text.trim().split('\n').filter(l => l.trim());
   if (!lines.length) return null;
   const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g,''));
   const rows = lines.slice(1).map(line => {
     const vals = line.split(',').map(v => v.trim().replace(/^"|"$/g,''));
-    return headers.reduce((o, h, i) => { o[h] = vals[i]||''; return o; }, {});
+    return headers.reduce((o,h,i) => { o[h] = vals[i]||''; return o; }, {});
   });
   return { headers, rows };
 }
 
 function parseAndPreviewCSV() {
   const text = document.getElementById('csv-input').value.trim();
-  if (!text) return showStatus('Incolla prima il contenuto CSV.', 'error');
+  if (!text) return showStatus('Incolla prima il contenuto CSV.','error');
   const parsed = parseCSV(text);
-  if (!parsed) return showStatus('Formato CSV non riconosciuto.', 'error');
+  if (!parsed) return showStatus('Formato CSV non riconosciuto.','error');
 
   document.getElementById('columns-pills').innerHTML =
     parsed.headers.map(h => `<span class="pill col-pill">${h}</span>`).join('');
   document.getElementById('columns-detected').style.display = 'block';
 
-  const rows = parsed.rows.slice(0, 5);
+  const rows = parsed.rows.slice(0,5);
   document.getElementById('csv-preview').innerHTML = `<table>
     <thead><tr>${parsed.headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
     <tbody>${rows.map(r=>`<tr>${parsed.headers.map(h=>`<td title="${r[h]}">${r[h]}</td>`).join('')}</tr>`).join('')}</tbody>
   </table>`;
   document.getElementById('csv-preview').style.display = 'block';
   setStep(2);
-  showStatus(`✓ ${parsed.headers.length} colonne · ${parsed.rows.length} righe rilevate`, 'success');
+  showStatus(`✓ ${parsed.headers.length} colonne · ${parsed.rows.length} righe rilevate`,'success');
 }
 
 function clearCSV() {
@@ -443,7 +538,7 @@ function resetAll() {
   document.getElementById('meta-theme').value = '';
 }
 
-// Status
+// ── STATUS ───────────────────────────────────────────────────
 function showStatus(msg, type) {
   const bar = document.getElementById('status-bar');
   bar.innerHTML = type === 'info'
@@ -453,13 +548,13 @@ function showStatus(msg, type) {
 }
 function hideStatus() { document.getElementById('status-bar').className = 'status-bar'; }
 
-// Build prompt
+// ── PROMPT ───────────────────────────────────────────────────
 function buildPrompt(csvText, meta, ontos, maxRows) {
   const parsed = parseCSV(csvText);
   const cols = parsed ? parsed.headers : [];
   const sample = parsed
     ? [cols.join(','), ...parsed.rows.slice(0,maxRows).map(r => cols.map(h=>r[h]).join(','))].join('\n')
-    : csvText.split('\n').slice(0, maxRows+1).join('\n');
+    : csvText.split('\n').slice(0,maxRows+1).join('\n');
 
   return `Sei un esperto di dati aperti italiani e ontologie del Web Semantico.
 Trasforma il CSV sottostante di una Pubblica Amministrazione italiana in un file Turtle (TTL) RDF valido.
@@ -472,7 +567,7 @@ Trasforma il CSV sottostante di una Pubblica Amministrazione italiana in un file
 - Tema DCAT: ${meta.theme || ''}
 - Licenza: ${meta.license}
 
-## ONTOLOGIE OntoPiA (schema.gov.it) — usa questi prefissi ufficiali
+## PREFISSI ONTOLOGIE OntoPiA (schema.gov.it) — usa questi esattamente
 @prefix clv:  <https://w3id.org/italia/onto/CLV/> .
 @prefix cov:  <https://w3id.org/italia/onto/COV/> .
 @prefix cpv:  <https://w3id.org/italia/onto/CPV/> .
@@ -487,29 +582,95 @@ Trasforma il CSV sottostante di una Pubblica Amministrazione italiana in un file
 @prefix geo:  <http://www.w3.org/2003/01/geo/wgs84_pos#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-Ontologie aggiuntive richieste: ${ontos.join(', ') || 'seleziona automaticamente'}
+Ontologie aggiuntive richieste: ${ontos.join(', ') || 'seleziona automaticamente le più appropriate'}
 
-## CSV
+## CSV DA TRASFORMARE
+Colonne: ${cols.join(', ')}
 \`\`\`csv
 ${sample}
 \`\`\`
 
 ## ISTRUZIONI
-1. Crea il blocco dcat:Dataset con tutti i metadati DCAT-AP_IT 3.0 obbligatori e facoltativi rilevanti
+1. Crea il blocco dcat:Dataset con tutti i metadati DCAT-AP_IT 3.0 obbligatori
 2. Per ogni riga CSV genera una risorsa RDF con il tipo OntoPiA più appropriato
 3. Mappa ogni colonna alla proprietà ontologica corretta (geo:lat, geo:long, sm:hasTelephone, sm:hasEmail, clv:hasAddress, ecc.)
 4. Usa rdfs:label in italiano per ogni entità
-5. Genera URI significativi: usa l'IPA code se disponibile (es. <https://dati.gov.it/resource/${meta.ipa||'pa'}/dataset/...)
-6. Aggiungi commenti TTL (#) per le scelte ontologiche principali
-7. Output: SOLO il Turtle valido, nessuna spiegazione né backtick markdown.`;
+5. Genera URI basati su IPA code: <https://dati.gov.it/resource/${meta.ipa||'pa'}/...>
+6. Aggiungi commenti TTL (#) per spiegare le scelte ontologiche
+7. Restituisci SOLO il Turtle valido, senza spiegazioni né backtick markdown.`;
 }
 
-// Conversione principale
+// ── CHIAMATA AI ──────────────────────────────────────────────
+async function callMistral(prompt) {
+  const key   = document.getElementById('mistral-key').value.trim();
+  const model = document.getElementById('mistral-model').value;
+  if (!key) throw new Error('Inserisci la tua API key Mistral.');
+
+  const res = await fetch('https://api.mistral.ai/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+    body: JSON.stringify({
+      model,
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.1,
+      max_tokens: 4096
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || `Mistral error ${res.status}`);
+  }
+  const data = await res.json();
+  return data.choices[0].message.content;
+}
+
+async function callGroq(prompt) {
+  const key   = document.getElementById('groq-key').value.trim();
+  const model = document.getElementById('groq-model').value;
+  if (!key) throw new Error('Inserisci la tua API key Groq.');
+
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+    body: JSON.stringify({
+      model,
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.1,
+      max_tokens: 4096
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error?.message || `Groq error ${res.status}`);
+  }
+  const data = await res.json();
+  return data.choices[0].message.content;
+}
+
+async function callOllama(prompt) {
+  const url   = (document.getElementById('ollama-url').value.trim()).replace(/\/$/, '');
+  const model = document.getElementById('ollama-model').value.trim();
+  if (!model) throw new Error('Inserisci il nome del modello Ollama.');
+
+  const res = await fetch(`${url}/api/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model,
+      messages: [{ role: 'user', content: prompt }],
+      stream: false,
+      options: { temperature: 0.1 }
+    })
+  });
+  if (!res.ok) throw new Error(`Ollama error ${res.status} — controlla che il server sia in ascolto su ${url}`);
+  const data = await res.json();
+  return data.message?.content || data.response || '';
+}
+
+// ── CONVERSIONE PRINCIPALE ───────────────────────────────────
 async function startConversion() {
   const csvText = document.getElementById('csv-input').value.trim();
   if (!csvText) return showStatus('⚠ Incolla prima il contenuto CSV.', 'error');
-  const serverUrl = document.getElementById('server-url').value.trim();
-  if (!serverUrl) return showStatus('⚠ Inserisci l\'URL del server AI.', 'error');
 
   const meta = {
     title:     document.getElementById('meta-title').value.trim(),
@@ -519,30 +680,23 @@ async function startConversion() {
     theme:     document.getElementById('meta-theme').value,
     license:   document.getElementById('meta-license').value,
   };
-  const maxRows  = parseInt(document.getElementById('max-rows').value);
-  const provider = document.getElementById('llm-provider').value;
-  const prompt   = buildPrompt(csvText, meta, getOntos(), maxRows);
+  const maxRows = parseInt(document.getElementById('max-rows').value);
+  const prompt  = buildPrompt(csvText, meta, getOntos(), maxRows);
 
   document.getElementById('btn-convert').disabled = true;
   document.getElementById('btn-download').disabled = true;
   document.getElementById('ttl-output').value = '';
   document.getElementById('output-stats').style.display = 'none';
   setStep(3);
-  showStatus('⏳ Invio al server AI in corso...', 'info');
+  showStatus(`⏳ Invio a ${currentProvider}...`, 'info');
 
   try {
-    const res = await fetch(serverUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: prompt, provider, conversationHistory: [] })
-    });
-    if (!res.ok) throw new Error(`Server ${res.status}: ${await res.text()}`);
-    const data = await res.json();
+    let ttl = '';
+    if      (currentProvider === 'mistral') ttl = await callMistral(prompt);
+    else if (currentProvider === 'groq')    ttl = await callGroq(prompt);
+    else if (currentProvider === 'ollama')  ttl = await callOllama(prompt);
 
-    let ttl = data.response || data.message || data.content
-      || data.choices?.[0]?.message?.content || JSON.stringify(data);
-
-    // Pulizia backtick markdown
+    // Rimuovi eventuale markdown
     ttl = ttl.replace(/^```(turtle|ttl|rdf)?\n?/i,'').replace(/\n?```$/i,'').trim();
 
     document.getElementById('ttl-output').value = ttl;
@@ -551,13 +705,13 @@ async function startConversion() {
     updateStats(ttl);
     showStatus('✓ File TTL generato con successo!', 'success');
   } catch (err) {
-    showStatus(`✕ Errore: ${err.message}`, 'error');
-    setStep(3);
+    showStatus(`✕ ${err.message}`, 'error');
   } finally {
     document.getElementById('btn-convert').disabled = false;
   }
 }
 
+// ── STATS ────────────────────────────────────────────────────
 function updateStats(ttl) {
   const lines = ttl.split('\n');
   document.getElementById('stat-triples').textContent  =
@@ -569,6 +723,7 @@ function updateStats(ttl) {
   document.getElementById('output-stats').style.display = 'block';
 }
 
+// ── DOWNLOAD / COPY ──────────────────────────────────────────
 function downloadTTL() {
   const ttl = document.getElementById('ttl-output').value;
   if (!ttl) return;
@@ -586,7 +741,7 @@ function copyTTL() {
 }
 
 function validateTTL() {
-  window.open('https://www.w3.org/RDF/Validator/', '_blank');
+  window.open('https://www.w3.org/RDF/Validator/','_blank');
 }
 </script>
 </body>

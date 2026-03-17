@@ -1127,8 +1127,7 @@ function buildDeterministicTriples(cols, rows, entityBase, deterMappings) {
     }
     if (triples.length > 0) {
       lines.push(`${uri}`);
-      lines.push(triples.join(' ;
-') + ' .');
+      lines.push(triples.join(' ;\n') + ' .');
       lines.push('');
     }
   }

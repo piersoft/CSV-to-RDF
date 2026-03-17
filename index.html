@@ -981,15 +981,10 @@ async function loadOllamaModels() {
   const proxyUrl = document.getElementById('ollama-proxy-url').value.trim();
   const key      = document.getElementById('ollama-key').value.trim();
   if (!proxyUrl || !key) return showStatus('Inserisci prima URL proxy e API key.', 'error');
-  const mode = document.getElementById('ollama-mode').value;
   try {
     showStatus('⏳ Carico lista modelli...', 'info');
-    const modelsUrl = mode === 'local'
-      ? proxyUrl.replace('/ollama-proxy', '/ollama-local-models')
-      : proxyUrl.replace('/ollama-proxy', '/ollama-models');
-    const body = mode === 'local'
-      ? {}
-      : { ollama_api_key: key };
+    const modelsUrl = proxyUrl.replace('/ollama-proxy', '/ollama-models');
+    const body = { ollama_api_key: key };
     const res = await fetch(modelsUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

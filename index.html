@@ -1308,7 +1308,7 @@ function getEntityType(ontos) {
   return 'resource';
 }
 
-function buildPromptChunk(cols, rows, ontos, chunkIndex, totalChunks, vocabSection='', ontoSection='', skipCols=new Set(), ipa='') {
+function buildPromptChunk(cols, rows, ontos, chunkIndex, totalChunks, vocabSection='', ontoSection='', skipCols=new Set(), ipa='', mainClass='') {
   // Escludi colonne già mappate deterministicamente
   const ambigCols = cols.filter(c => !skipCols.has(c));
   if (ambigCols.length === 0) return null; // tutto già mappato
@@ -1320,7 +1320,7 @@ URI BASE OBBLIGATORIA: tutte le entità DEVONO usare ESCLUSIVAMENTE questo patte
 I @prefix sono già stati emessi. NON aggiungerli.
 Ontologie da usare: ${ontos.join(', ')}
 Chunk ${chunkIndex+1}/${totalChunks} — Colonne: ${cols.join(', ')}
-Base URI entità: https://w3id.org/italia/data/${ipa || 'ipa'}/${getEntityType(ontos)}/ (es. <https://w3id.org/italia/data/${ipa || 'ipa'}/${getEntityType(ontos)}/ID_RIGA>)
+Base URI entità: https://w3id.org/italia/data/${ipa || 'ipa'}/${getEntityTypeSegment(ontos)}/ (es. <https://w3id.org/italia/data/${ipa || 'ipa'}/${getEntityTypeSegment(ontos)}/ID_RIGA>)
 
 CSV:
 ${csvChunk}

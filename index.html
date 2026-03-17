@@ -251,7 +251,6 @@
             <button class="provider-tab active" onclick="switchProvider('mistral')">🟠 Mistral</button>
             <button class="provider-tab"        onclick="switchProvider('groq')">⚡ Groq</button>
             <button class="provider-tab"        onclick="switchProvider('gemini')">✨ Gemini</button>
-            <button class="provider-tab"        onclick="switchProvider('ollama')">🦙 Ollama</button>
           </div>
 
           <div class="provider-panel active" id="panel-mistral">
@@ -319,29 +318,6 @@
             <div class="info-note mt-2">✨ <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a> — piano free: 1500 req/giorno, 1M token/min.</div>
           </div>
 
-          <div class="provider-panel" id="panel-ollama">
-            <div class="row g-2">
-              <div class="col-12">
-                <label class="lbl">URL Ollama</label>
-                <input type="text" class="inp" id="ollama-url" value="http://localhost:11434" placeholder="http://localhost:11434 oppure https://..."/>
-              </div>
-              <div class="col-12">
-                <label class="lbl">Modello</label>
-                <input type="text" class="inp" id="ollama-model" value="mistral" placeholder="es. mistral, llama3, gemma2"/>
-              </div>
-              <div class="col-12">
-                <label class="lbl">API Key (opzionale)</label>
-                <div class="apikey-wrap">
-                  <input type="password" class="inp" id="ollama-apikey" placeholder="Solo per servizi Ollama cloud con autenticazione"/>
-                  <button class="apikey-toggle" onclick="toggleKey('ollama-apikey')">👁</button>
-                </div>
-              </div>
-            </div>
-            <div class="info-note mt-2">
-              🦙 <strong>Locale:</strong> <code>OLLAMA_ORIGINS=* ollama serve</code> — funziona solo se l'app è su HTTP.<br/>
-              ☁ <strong>Cloud:</strong> inserisci l'URL HTTPS di un servizio Ollama remoto con certificato valido (es. <a href="https://openrouter.ai" target="_blank">OpenRouter</a>).
-            </div>
-          </div>
 
           <div class="mt-3">
             <label class="lbl">Max righe CSV per chiamata (chunk)</label>
@@ -439,7 +415,7 @@ let currentProvider = 'mistral';
 function switchProvider(p) {
   currentProvider = p;
   document.querySelectorAll('.provider-tab').forEach((t,i) => {
-    t.classList.toggle('active', ['mistral','groq','gemini','ollama'][i] === p);
+    t.classList.toggle('active', ['mistral','groq','gemini'][i] === p);
   });
   document.querySelectorAll('.provider-panel').forEach(el => el.classList.remove('active'));
   document.getElementById(`panel-${p}`).classList.add('active');
@@ -812,7 +788,6 @@ async function callAI(prompt) {
   if      (currentProvider === 'mistral') return await callMistral(prompt);
   else if (currentProvider === 'groq')    return await callGroq(prompt);
   else if (currentProvider === 'gemini')  return await callGemini(prompt);
-  else if (currentProvider === 'ollama')  return await callOllama(prompt);
 }
 
 function cleanTTL(text) {
@@ -858,22 +833,6 @@ async function callGemini(prompt) {
   return (await res.json()).candidates?.[0]?.content?.parts?.[0]?.text || '';
 }
 
-async function callOllama(prompt) {
-  const url    = (document.getElementById('ollama-url').value.trim()).replace(/\/$/, '');
-  const model  = document.getElementById('ollama-model').value.trim();
-  const apikey = document.getElementById('ollama-apikey')?.value.trim() || '';
-  if (!model) throw new Error('Inserisci il nome del modello Ollama.');
-  const headers = { 'Content-Type': 'application/json' };
-  if (apikey) headers['Authorization'] = `Bearer ${apikey}`;
-  const res = await fetch(`${url}/api/chat`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], stream: false, options: { temperature: 0.1 } })
-  });
-  if (!res.ok) throw new Error(`Ollama error ${res.status}`);
-  const data = await res.json();
-  return data.message?.content || data.response || '';
-}
 
 // ── CONVERSIONE ───────────────────────────────────────────────
 const CHUNK_SIZE = 25;

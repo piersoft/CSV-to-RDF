@@ -235,6 +235,8 @@
                 <span class="pill" data-onto="Language">Language — Lingue</span>
                 <span class="pill" data-onto="IoT">IoT — Internet of Things</span>
                 <span class="pill" data-onto="Transparency">Transparency — Trasparenza</span>
+                <span class="pill" data-onto="SKOS">SKOS — Classificazioni</span>
+                <span class="pill" data-onto="QB">QB — Data Cube (statistiche)</span>
               </div>
             </div>
           </div>
@@ -484,22 +486,51 @@ function autoDetectOnto() {
   const parsed = parseCSV(text);
   if (!parsed) return;
   const cols = parsed.headers.map(h => h.toLowerCase());
-  const suggested = new Set(['L0','CLV','POI','SM']);
+
+  // Parte da zero — nessun default
+  const suggested = new Set();
+
+  // L0 solo se ci sono colonne con nomi/label
+  if (cols.some(c => /nome|name|denominazione|titolo|label|descrizione/.test(c)))
+    suggested.add('L0');
+
+  // Applica le regole
   ONTO_RULES.forEach(rule => {
     if (rule.keys.some(k => cols.some(c => c.includes(k))))
       rule.ontos.forEach(o => suggested.add(o));
   });
+
+  // Regole aggiuntive per dati statistici/demografici
+  if (cols.some(c => /maschi|femmine|gender|sesso|uomini|donne/.test(c)))
+    suggested.add('CPV');
+  if (cols.some(c => /professione|occupazione|lavoro|impiego|mestiere/.test(c)))
+    suggested.add('SKOS');
+  if (cols.some(c => /anno|year|periodo|trimestre|semestre|mese/.test(c)) &&
+      cols.some(c => /maschi|femmine|totale|valore|count|numero|quantita/.test(c)))
+    suggested.add('QB');
+
+  // Se non ha trovato nulla, almeno L0
+  if (suggested.size === 0) suggested.add('L0');
+
+  // Aggiorna pillole — resetta tutto prima
   document.querySelectorAll('#onto-selector .pill, #onto-selector-adv .pill').forEach(p => {
     p.classList.toggle('active', suggested.has(p.dataset.onto));
   });
+
+  // Apri avanzate se qualcuna è lì
   const advActive = [...document.querySelectorAll('#onto-selector-adv .pill.active')].length > 0;
   if (advActive) {
     document.getElementById('onto-advanced').style.display = 'block';
     document.getElementById('btn-adv').textContent = '▼ Nascondi ontologie avanzate';
   }
+
   const msg = document.getElementById('auto-onto-msg');
-  msg.textContent = `✓ Suggerite: ${[...suggested].join(', ')}`;
-  msg.style.display = 'block';
+  if (suggested.size > 0) {
+    msg.textContent = `✓ Suggerite: ${[...suggested].join(', ')}`;
+    msg.style.display = 'block';
+  } else {
+    msg.style.display = 'none';
+  }
 }
 
 // ── CSV ───────────────────────────────────────────────────────
@@ -687,6 +718,10 @@ function buildTTLHeader(paname, ipa) {
 @prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
 @prefix schema:<https://schema.org/> .
 @prefix adms:  <http://www.w3.org/ns/adms#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix qb:    <http://purl.org/linked-data/cube#> .
+@prefix sdmx-dimension: <http://purl.org/linked-data/sdmx/2009/dimension#> .
+@prefix sdmx-measure:   <http://purl.org/linked-data/sdmx/2009/measure#> .
 
 # Titolare del dato
 <${ipaURI}>
@@ -714,7 +749,7 @@ REGOLE:
 - Mappa ogni colonna alla proprietà ontologica corretta
 - geo:lat e geo:long per coordinate, sm:hasTelephone per telefono, sm:hasEmail per email, clv:hasAddress per indirizzo
 - rdfs:label con il nome principale in italiano
-- Usa SOLO questi prefissi: owl, clv, cov, cpv, l0, poi, ro, ti, sm, dcat, dct, foaf, geo, xsd, rdfs, vcard, skos, schema, adms
+- Usa SOLO questi prefissi: owl, clv, cov, cpv, l0, poi, ro, ti, sm, dcat, dct, foaf, geo, xsd, rdfs, vcard, skos, schema, adms, qb, sdmx-dimension, sdmx-measure
 - Output COMPATTO: niente righe vuote, niente commenti, niente @prefix, niente markdown
 - Genera TUTTE le ${rows.length} righe senza fermarti`;
 }

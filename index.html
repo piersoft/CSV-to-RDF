@@ -155,7 +155,7 @@
 
       <!-- CSV -->
       <div class="card-pa">
-        <div class="card-head blue">📄 STEP 1 — Incolla il CSV e clicca Anteprima per la validazione</div>
+        <div class="card-head blue">📄 STEP 1 — Incolla il CSV</div>
         <div class="card-body-pa">
           <label class="lbl">Contenuto CSV (con intestazioni)</label>
           <textarea class="inp csv-area" id="csv-input"
@@ -180,73 +180,9 @@
         </div>
       </div>
 
-      <!-- TITOLARE -->
+      <!-- PROVIDER AI (STEP 2) -->
       <div class="card-pa">
-        <div class="card-head orange">🏛 STEP 2 — Titolare del dato</div>
-        <div class="card-body-pa">
-          <div class="row g-2">
-            <div class="col-md-7">
-              <label class="lbl">Nome PA *</label>
-              <input type="text" class="inp" id="meta-paname" placeholder="es. Comune di Crispiano"/>
-            </div>
-            <div class="col-md-5">
-              <label class="lbl">Codice IPA *</label>
-              <input type="text" class="inp" id="meta-ipa" placeholder="es. c_d171"/>
-            </div>
-          </div>
-          <div class="info-note mt-2" style="font-size:0.75rem">
-            Genera <code>dct:rightsHolder</code> con URI IPA ufficiale:
-            <code>https://w3id.org/italia/data/public-organization/{ipa}</code>
-          </div>
-        </div>
-      </div>
-
-      <!-- ONTOLOGIE -->
-      <div class="card-pa">
-        <div class="card-head dark">🔗 STEP 3 — Ontologie</div>
-        <div class="card-body-pa">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <label class="lbl" style="margin:0">Seleziona le ontologie (clicca per attivare)</label>
-            <button class="btn-auto-onto" id="btn-auto-onto" onclick="autoDetectOnto()" disabled>🔍 Auto-detect</button>
-            <button class="btn-auto-onto" id="btn-ai-onto" onclick="autoDetectOntoAI()" disabled style="background:#0066cc;margin-left:4px">🤖 AI-detect</button>
-          </div>
-          <div id="auto-onto-msg" style="display:none;font-size:0.72rem;color:#1a6b35;margin-bottom:0.4rem;font-family:var(--mono)"></div>
-          <div class="pills" id="onto-selector">
-            <span class="pill active" data-onto="CLV">CLV — Indirizzi</span>
-            <span class="pill active" data-onto="COV">COV — Organizzazioni</span>
-            <span class="pill" data-onto="CPV">CPV — Persone</span>
-            <span class="pill active" data-onto="L0">L0 — Top-level</span>
-            <span class="pill active" data-onto="POI">POI — Punti interesse</span>
-            <span class="pill active" data-onto="SM">SM — Social/Contatti</span>
-            <span class="pill" data-onto="RO">RO — Ruoli</span>
-            <span class="pill active" data-onto="TI">TI — Tempo</span>
-            <span class="pill" data-onto="ADMS">ADMS — Asset</span>
-          </div>
-          <div style="margin-top:0.5rem">
-            <button class="btn-expand" onclick="toggleAdv()" id="btn-adv">▶ Mostra ontologie avanzate</button>
-            <div id="onto-advanced" style="display:none;margin-top:0.5rem">
-              <div class="pills" id="onto-selector-adv">
-                <span class="pill" data-onto="ACCO">ACCO — Accommodation</span>
-                <span class="pill" data-onto="AC">AC — Condizioni accesso</span>
-                <span class="pill" data-onto="PARK">PARK — Parcheggi</span>
-                <span class="pill" data-onto="CPSV-AP">CPSV-AP — Servizi pubblici</span>
-                <span class="pill" data-onto="Cultural-ON">Cultural-ON — Patrimonio</span>
-                <span class="pill" data-onto="GTFS">GTFS — Trasporto pubblico</span>
-                <span class="pill" data-onto="Route">Route — Percorsi</span>
-                <span class="pill" data-onto="Language">Language — Lingue</span>
-                <span class="pill" data-onto="IoT">IoT — Internet of Things</span>
-                <span class="pill" data-onto="Transparency">Transparency — Trasparenza</span>
-                <span class="pill" data-onto="SKOS">SKOS — Classificazioni</span>
-                <span class="pill" data-onto="QB">QB — Data Cube (statistiche)</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PROVIDER AI -->
-      <div class="card-pa">
-        <div class="card-head dark">⚙ STEP 4 — Provider AI</div>
+        <div class="card-head dark">⚙ STEP 2 — Provider AI</div>
         <div class="card-body-pa">
           <div class="provider-tabs">
             <button class="provider-tab active" onclick="switchProvider('mistral')">🟠 Mistral</button>
@@ -260,7 +196,7 @@
               <div class="col-12">
                 <label class="lbl">API Key</label>
                 <div class="apikey-wrap">
-                  <input type="password" class="inp" id="mistral-key" placeholder="Incolla la tua API key Mistral..."/>
+                  <input type="password" class="inp" id="mistral-key" oninput="onApiKeyChange()" placeholder="Incolla la tua API key Mistral..."/>
                   <button class="apikey-toggle" onclick="toggleKey('mistral-key')">👁</button>
                 </div>
               </div>
@@ -282,7 +218,7 @@
               <div class="col-12">
                 <label class="lbl">API Key</label>
                 <div class="apikey-wrap">
-                  <input type="password" class="inp" id="groq-key" placeholder="Incolla la tua API key Groq..."/>
+                  <input type="password" class="inp" id="groq-key" oninput="onApiKeyChange()" placeholder="Incolla la tua API key Groq..."/>
                   <button class="apikey-toggle" onclick="toggleKey('groq-key')">👁</button>
                 </div>
               </div>
@@ -303,7 +239,7 @@
               <div class="col-12">
                 <label class="lbl">API Key</label>
                 <div class="apikey-wrap">
-                  <input type="password" class="inp" id="gemini-key" placeholder="Incolla la tua API key Google AI Studio..."/>
+                  <input type="password" class="inp" id="gemini-key" oninput="onApiKeyChange()" placeholder="Incolla la tua API key Google AI Studio..."/>
                   <button class="apikey-toggle" onclick="toggleKey('gemini-key')">👁</button>
                 </div>
               </div>
@@ -362,6 +298,69 @@
               <option value="500">500 righe</option>
               <option value="999999">Tutte le righe</option>
             </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- ONTOLOGIE -->
+      <div class="card-pa">
+        <div class="card-head dark">🔗 STEP 3 — Ontologie (rilevate automaticamente)</div>
+        <div class="card-body-pa">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <label class="lbl" style="margin:0">Seleziona le ontologie (clicca per attivare)</label>
+            <button class="btn-auto-onto" id="btn-ai-onto" onclick="autoDetectOntoAI()" disabled>🤖 Rileva ontologie</button>
+          </div>
+          <div id="auto-onto-msg" style="display:none;font-size:0.72rem;color:#1a6b35;margin-bottom:0.4rem;font-family:var(--mono)"></div>
+          <div class="pills" id="onto-selector">
+            <span class="pill active" data-onto="CLV">CLV — Indirizzi</span>
+            <span class="pill active" data-onto="COV">COV — Organizzazioni</span>
+            <span class="pill" data-onto="CPV">CPV — Persone</span>
+            <span class="pill active" data-onto="L0">L0 — Top-level</span>
+            <span class="pill active" data-onto="POI">POI — Punti interesse</span>
+            <span class="pill active" data-onto="SM">SM — Social/Contatti</span>
+            <span class="pill" data-onto="RO">RO — Ruoli</span>
+            <span class="pill active" data-onto="TI">TI — Tempo</span>
+            <span class="pill" data-onto="ADMS">ADMS — Asset</span>
+          </div>
+          <div style="margin-top:0.5rem">
+            <button class="btn-expand" onclick="toggleAdv()" id="btn-adv">▶ Mostra ontologie avanzate</button>
+            <div id="onto-advanced" style="display:none;margin-top:0.5rem">
+              <div class="pills" id="onto-selector-adv">
+                <span class="pill" data-onto="ACCO">ACCO — Accommodation</span>
+                <span class="pill" data-onto="AC">AC — Condizioni accesso</span>
+                <span class="pill" data-onto="PARK">PARK — Parcheggi</span>
+                <span class="pill" data-onto="CPSV-AP">CPSV-AP — Servizi pubblici</span>
+                <span class="pill" data-onto="Cultural-ON">Cultural-ON — Patrimonio</span>
+                <span class="pill" data-onto="GTFS">GTFS — Trasporto pubblico</span>
+                <span class="pill" data-onto="Route">Route — Percorsi</span>
+                <span class="pill" data-onto="Language">Language — Lingue</span>
+                <span class="pill" data-onto="IoT">IoT — Internet of Things</span>
+                <span class="pill" data-onto="Transparency">Transparency — Trasparenza</span>
+                <span class="pill" data-onto="SKOS">SKOS — Classificazioni</span>
+                <span class="pill" data-onto="QB">QB — Data Cube (statistiche)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TITOLARE (STEP 4) -->
+      <div class="card-pa">
+        <div class="card-head orange">🏛 STEP 4 — Titolare del dato</div>
+        <div class="card-body-pa">
+          <div class="row g-2">
+            <div class="col-md-7">
+              <label class="lbl">Nome PA *</label>
+              <input type="text" class="inp" id="meta-paname" placeholder="es. Comune di Crispiano"/>
+            </div>
+            <div class="col-md-5">
+              <label class="lbl">Codice IPA *</label>
+              <input type="text" class="inp" id="meta-ipa" placeholder="es. c_d171"/>
+            </div>
+          </div>
+          <div class="info-note mt-2" style="font-size:0.75rem">
+            Genera <code>dct:rightsHolder</code> con URI IPA ufficiale:
+            <code>https://w3id.org/italia/data/public-organization/{ipa}</code>
           </div>
         </div>
       </div>
@@ -821,10 +820,19 @@ function parseAndPreviewCSV() {
     <tbody>${rows.map(r=>`<tr>${parsed.headers.map(h=>`<td title="${r[h]}">${r[h]}</td>`).join('')}</tr>`).join('')}</tbody>
   </table>`;
   document.getElementById('csv-preview').style.display = 'block';
-  document.getElementById('btn-auto-onto').disabled = false;
   document.getElementById('btn-ai-onto').disabled = false;
   validateCSV(parsed);
   autoDetectOnto();
+  // Lancia AI-detect automaticamente se c'è una API key configurata
+  const hasKey = (
+    document.getElementById('mistral-key')?.value.trim() ||
+    document.getElementById('groq-key')?.value.trim() ||
+    document.getElementById('gemini-key')?.value.trim() ||
+    document.getElementById('ollama-key')?.value.trim()
+  );
+  if (hasKey) {
+    setTimeout(() => autoDetectOntoAI(), 300); // piccolo delay per non sovrapporre i messaggi
+  }
   showStatus(`✓ ${parsed.headers.length} colonne · ${parsed.rows.length} righe`, 'success');
 }
 
@@ -844,7 +852,7 @@ function clearAll() {
     document.getElementById(id).style.display = 'none');
   document.getElementById('btn-download-ttl').disabled = true;
     document.getElementById('btn-download-rdf').disabled = true;
-  document.getElementById('btn-auto-onto').disabled = true;
+
   document.getElementById('auto-onto-msg').style.display = 'none';
   hideStatus();
 }
@@ -1435,7 +1443,18 @@ function fixURIs(ttl, ipa) {
   });
 }
 
+function removeEmptyTriples(ttl) {
+  // Rimuove triple con valori vuoti: prop ""^^tipo o prop ""@lang
+  return ttl.split('\n').filter(line => {
+    return !line.match(/["']\s*["']\s*(\^\^|@)/) && // valore vuoto ""^^tipo o ""@lang  
+           !line.match(/geo:lat\s+""/) &&
+           !line.match(/geo:long\s+""/) &&
+           !line.match(/["']["']\s*[;.]/) ; // stringa vuota
+  }).join('\n');
+}
+
 function sanitizeTTL(ttl) {
+  ttl = removeEmptyTriples(ttl);
   const lines = ttl.split('\n');
   const result = [];
   for (const line of lines) {
@@ -1464,6 +1483,17 @@ function sanitizeTTL(ttl) {
 }
 
 // ── CHIAMATE AI ───────────────────────────────────────────────
+
+// Trigger AI-detect automatico quando viene inserita una API key
+function onApiKeyChange() {
+  const csvVal = document.getElementById('csv-input')?.value.trim();
+  if (!csvVal) return; // CSV non ancora inserito
+  const parsed = parseCSV(csvVal);
+  if (!parsed || parsed.rows.length === 0) return;
+  // Lancia AI-detect con piccolo delay
+  clearTimeout(window._aiDetectTimer);
+  window._aiDetectTimer = setTimeout(() => autoDetectOntoAI(), 800);
+}
 
 async function loadOllamaModels() {
   const proxyUrl = document.getElementById('ollama-proxy-url').value.trim();
@@ -1620,7 +1650,7 @@ async function startConversion() {
       let deterTriples = buildDeterministicTriples(cols, chunks[i], entityBase, deterMappings, typeSegment, ontos);
       let llmTriples = prompt ? fixURIs(sanitizeTTL(cleanTTL(await callAI(prompt))), ipa) : '';
       // Mergia: usa LLM per classi/tipo, deterministico per proprietà note
-      let chunk = llmTriples || deterTriples;
+      let chunk = removeEmptyTriples(llmTriples || deterTriples);
       chunk = chunk.replace(/@prefix\s+\S+:\s*<[^>]+>\s*\.\n?/g, '').trim();
       parts.push(chunk);
     }

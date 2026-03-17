@@ -882,6 +882,22 @@ async function fetchVocabularies(detectedOntos) {
 
   if (allConcepts.length === 0) return '';
 
+  // Mostra riepilogo vocabolari caricati
+  const vocabSummary = results
+    .map((r, i) => {
+      const url = [...urlsToFetch][i];
+      const name = url.split('/').slice(-2).join('/');
+      return r.status === 'fulfilled'
+        ? `✓ ${name} (${r.value.length} concetti)`
+        : `✗ ${name} (errore)`;
+    }).join(' · ');
+  showStatus(`📚 Vocabolari: ${vocabSummary}`, 'info');
+  await new Promise(r => setTimeout(r, 2000)); // mostra il messaggio 2 secondi
+
+  // Log dettagliato in console
+  console.log('[Vocabolari] Totale concetti caricati:', allConcepts.length);
+  console.table(allConcepts.slice(0, 20));
+
   // Formatta per il prompt: max 200 concetti per non esplodere i token
   const sample = allConcepts.slice(0, 200);
   const lines = sample.map(c => {

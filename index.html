@@ -103,6 +103,14 @@
     .stat-val  { font-size: 1.25rem; font-weight: 700; }
     .stat-lbl  { font-size: 0.68rem; color: var(--dg-muted); }
 
+    .val-item { display: flex; gap: 0.6rem; align-items: flex-start; padding: 0.5rem 0.65rem; border-radius: 4px; margin-bottom: 0.4rem; font-size: 0.78rem; }
+    .val-item.error   { background: #fdf0f0; border: 1px solid #f5b8c0; color: #8b0000; }
+    .val-item.warning { background: #fff8e6; border: 1px solid #ffe0a0; color: #7a5000; }
+    .val-item.info    { background: #e6f0fa; border: 1px solid #b3d1f5; color: #004080; }
+    .val-item.ok      { background: #e6f4ec; border: 1px solid #a3d9b5; color: #1a6b35; }
+    .val-icon { font-size: 0.9rem; flex-shrink: 0; margin-top: 0.05rem; }
+    .val-text strong { display: block; font-weight: 700; margin-bottom: 0.1rem; }
+    .val-text span   { color: inherit; opacity: 0.85; }
     footer { background: #17324d; color: rgba(255,255,255,0.65); text-align: center; padding: 1rem; font-size: 0.73rem; font-family: var(--mono); margin-top: 3rem; }
     footer a { color: #80c0ff; text-decoration: none; }
   </style>
@@ -161,6 +169,13 @@
           <div id="columns-detected" style="display:none;margin-top:0.6rem;">
             <label class="lbl">Colonne rilevate</label>
             <div class="pills" id="columns-pills"></div>
+          </div>
+          <!-- PANNELLO VALIDAZIONE -->
+          <div id="csv-validation" style="display:none;margin-top:0.9rem;">
+            <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--dg-muted);margin-bottom:0.4rem;">
+              🔍 Analisi qualità CSV
+            </div>
+            <div id="csv-validation-items"></div>
           </div>
         </div>
       </div>
@@ -488,6 +503,107 @@ function autoDetectOnto() {
 }
 
 // ── CSV ───────────────────────────────────────────────────────
+// ── VALIDAZIONE CSV ──────────────────────────────────────────
+function validateCSV(parsed) {
+  const issues = [];
+  const { headers, rows } = parsed;
+
+  // 1. Colonne senza nome o con nomi generici
+  const genericPattern = /^(col(umn)?[\s_]?\d+|field[\s_]?\d+|colonna[\s_]?\d+|f\d+|c\d+|unnamed|noname|_\d+)$/i;
+  headers.forEach((h, i) => {
+    if (!h.trim()) {
+      issues.push({ level:'error', title:`Colonna ${i+1} senza nome`, hint:'Aggiungi un nome descrittivo all'intestazione.' });
+    } else if (genericPattern.test(h.trim())) {
+      issues.push({ level:'warning', title:`Nome generico: "${h}"`, hint:`Rinomina con un nome semantico (es. "latitudine", "denominazione").` });
+    }
+  });
+
+  // 2. Colonne duplicate o simili
+  const normalized = headers.map(h => h.toLowerCase().replace(/[^a-z0-9]/g,''));
+  normalized.forEach((n, i) => {
+    normalized.forEach((m, j) => {
+      if (i < j && n === m) {
+        issues.push({ level:'error', title:`Colonne duplicate: "${headers[i]}" e "${headers[j]}"`, hint:'Rimuovi o rinomina una delle due colonne.' });
+      } else if (i < j && n.length > 2 && (n.includes(m) || m.includes(n)) && Math.abs(n.length - m.length) <= 3) {
+        issues.push({ level:'warning', title:`Colonne simili: "${headers[i]}" e "${headers[j]}"`, hint:'Verifica che non siano la stessa informazione.' });
+      }
+    });
+  });
+
+  // 3. Valori mancanti
+  const missingByCol = {};
+  rows.forEach(row => {
+    headers.forEach(h => {
+      if (!row[h] || row[h].trim() === '') {
+        missingByCol[h] = (missingByCol[h] || 0) + 1;
+      }
+    });
+  });
+  Object.entries(missingByCol).forEach(([col, count]) => {
+    const pct = Math.round(count / rows.length * 100);
+    if (pct >= 50) {
+      issues.push({ level:'warning', title:`"${col}": ${pct}% valori mancanti (${count}/${rows.length})`, hint:'Colonna quasi vuota — valuta se includerla o rimuoverla.' });
+    } else if (pct > 0) {
+      issues.push({ level:'info', title:`"${col}": ${count} valori mancanti (${pct}%)`, hint:'Alcune celle sono vuote — il TTL avrà triple incomplete per queste righe.' });
+    }
+  });
+
+  // 4. Coordinate geografiche mal formate
+  const latCols = headers.filter(h => /lat/i.test(h));
+  const lonCols = headers.filter(h => /lon|lng/i.test(h));
+  [...latCols, ...lonCols].forEach(col => {
+    const bad = rows.filter(r => r[col] && r[col].trim() && isNaN(parseFloat(r[col].replace(',','.'))));
+    if (bad.length > 0) {
+      issues.push({ level:'error', title:`"${col}": ${bad.length} coordinate non numeriche`, hint:`Usa il punto come separatore decimale (es. 40.604 non 40,604). Esempio errato: "${bad[0][col]}"` });
+    } else if (col.toLowerCase().includes('lat')) {
+      const outRange = rows.filter(r => r[col] && r[col].trim()).filter(r => {
+        const v = parseFloat(r[col].replace(',','.'));
+        return v < -90 || v > 90;
+      });
+      if (outRange.length > 0)
+        issues.push({ level:'error', title:`"${col}": ${outRange.length} valori fuori range (-90/+90)`, hint:'La latitudine deve essere compresa tra -90 e +90.' });
+    } else {
+      const outRange = rows.filter(r => r[col] && r[col].trim()).filter(r => {
+        const v = parseFloat(r[col].replace(',','.'));
+        return v < -180 || v > 180;
+      });
+      if (outRange.length > 0)
+        issues.push({ level:'error', title:`"${col}": ${outRange.length} valori fuori range (-180/+180)`, hint:'La longitudine deve essere compresa tra -180 e +180.' });
+    }
+  });
+
+  // 5. Encoding strano (caratteri non ASCII/UTF-8 tipici di ISO-8859)
+  const suspectPattern = /[\x80-\x9F]|Ã |Ã¨|Ã¹|Ã²|Ã |Ã¬/;
+  let encodingIssues = 0;
+  rows.forEach(row => {
+    headers.forEach(h => {
+      if (row[h] && suspectPattern.test(row[h])) encodingIssues++;
+    });
+  });
+  if (encodingIssues > 0) {
+    issues.push({ level:'error', title:`Possibile problema di encoding (${encodingIssues} celle)`, hint:'Il CSV sembra codificato in ISO-8859 invece di UTF-8. Riesporta il file da Excel/LibreOffice selezionando "UTF-8" come encoding.' });
+  }
+
+  // Mostra risultati
+  const panel = document.getElementById('csv-validation');
+  const items = document.getElementById('csv-validation-items');
+
+  if (issues.length === 0) {
+    items.innerHTML = `<div class="val-item ok"><span class="val-icon">✅</span><div class="val-text"><strong>CSV valido</strong><span>Nessun problema rilevato. Puoi procedere con la generazione TTL.</span></div></div>`;
+  } else {
+    const icons = { error:'❌', warning:'⚠️', info:'ℹ️' };
+    items.innerHTML = issues.map(i => `
+      <div class="val-item ${i.level}">
+        <span class="val-icon">${icons[i.level]}</span>
+        <div class="val-text">
+          <strong>${i.title}</strong>
+          <span>${i.hint}</span>
+        </div>
+      </div>`).join('');
+  }
+  panel.style.display = 'block';
+}
+
 function parseCSV(text) {
   const lines = text.trim().split('\n').filter(l => l.trim());
   if (!lines.length) return null;
@@ -514,6 +630,7 @@ function parseAndPreviewCSV() {
   </table>`;
   document.getElementById('csv-preview').style.display = 'block';
   document.getElementById('btn-auto-onto').disabled = false;
+  validateCSV(parsed);
   showStatus(`✓ ${parsed.headers.length} colonne · ${parsed.rows.length} righe`, 'success');
 }
 
@@ -529,7 +646,7 @@ function clearAll() {
   document.getElementById('ttl-output').value = '';
   document.getElementById('meta-paname').value = '';
   document.getElementById('meta-ipa').value = '';
-  ['csv-preview','columns-detected','output-stats'].forEach(id =>
+  ['csv-preview','columns-detected','output-stats','csv-validation'].forEach(id =>
     document.getElementById(id).style.display = 'none');
   document.getElementById('btn-download-ttl').disabled = true;
     document.getElementById('btn-download-rdf').disabled = true;

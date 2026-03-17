@@ -76,7 +76,6 @@ Piano free: **1500 richieste/giorno · 1M token/minuto** — ideale per il chunk
 ```bash
 OLLAMA_ORIGINS=* ollama serve
 ```
-**Remoto / Cloud** — inserisci l'URL del server Ollama remoto e l'eventuale API key per l'autenticazione.
 
 ## Ontologie supportate
 

@@ -1259,6 +1259,12 @@ REGOLE:
 - Output COMPATTO: niente righe vuote, niente commenti, niente @prefix, niente markdown
 - NON usare mai il prefisso ":" (prefisso vuoto) — usa sempre URI completi tra <> o prefissi dichiarati
 - USA SOLO le classi elencate qui sotto per ogni ontologia — NON inventare classi:
+- REGOLA CLASSE PRINCIPALE: usa la classe più specifica disponibile nelle ontologie selezionate:
+  Se ACCO è selezionata → usa acco:AccommodationFacility (NON poi:PointOfInterest per le strutture ricettive)
+  Se PARK è selezionata → usa park:ParkingFacility (NON poi:PointOfInterest per i parcheggi)
+  Se GTFS è selezionata → usa gtfs:Stop per le fermate (NON poi:PointOfInterest)
+  Se Cultural-ON è selezionata → usa cultural-on:CulturalInstituteOrSite (NON poi:PointOfInterest per musei/biblioteche)
+  poi:PointOfInterest va usato SOLO se nessuna classe più specifica è disponibile
   CLV: clv:Address, clv:Feature, clv:Geometry, clv:AdminUnit, clv:Road, clv:StreetNumber
   COV: cov:Organization, cov:PublicOrganization, cov:Company, cov:ActivityType, cov:ContactPoint
   CPV: cpv:Person, cpv:Adult, cpv:Minor, cpv:Senior (CPV=Persone, NON per brevetti/documenti)

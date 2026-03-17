@@ -384,7 +384,9 @@
             <button class="btn-primary" id="btn-download-ttl" onclick="downloadTTL()" disabled>⬇ Scarica .ttl</button>
             <button class="btn-primary" id="btn-download-rdf" onclick="downloadRDF()" disabled style="background:#1a6b35">⬇ Scarica .rdf</button>
             <button class="btn-sec" onclick="copyTTL()">📋 Copia TTL</button>
+            <button id="btn-validate" class="btn-sec" disabled onclick="validateTTL()" style="border-color:#f90;color:#f90">🔍 Valida</button>
           </div>
+          <div id="validation-report" style="display:none; margin-top:12px; padding:12px; background:#1a1a2e; border-radius:8px; font-family:monospace; font-size:12px; max-height:200px; overflow-y:auto"></div>
           <div id="output-stats" style="display:none;margin-top:0.9rem;">
             <div class="row g-2 text-center">
               <div class="col-4">
@@ -799,94 +801,76 @@ function buildTTLHeader(paname, ipa) {
 // ── PROMPT CHUNK ─────────────────────────────────────────────
 
 
-// ── CLASSI DELLE ONTOLOGIE DA dati-semantic-assets ───────────────────────────
-const ONTO_MAP = {
-  'CLV':  'https://raw.githubusercontent.com/italia/daf-ontologie-vocabolari-controllati/master/Ontologie/CLV/latest/CLV-AP_IT.ttl',
-  'COV':  'https://raw.githubusercontent.com/italia/daf-ontologie-vocabolari-controllati/master/Ontologie/COV/latest/COV-AP_IT.ttl',
-  'CPV':  'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/Ontologie/CPV/latest/CPV-AP_IT.ttl',
-  'POI':  'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/Ontologie/POI/latest/POI-AP_IT.ttl',
-  'L0':   'https://raw.githubusercontent.com/italia/daf-ontologie-vocabolari-controllati/master/Ontologie/l0/latest/l0-AP_IT.ttl',
-  'TI':   'https://raw.githubusercontent.com/italia/daf-ontologie-vocabolari-controllati/master/Ontologie/TI/latest/TI-AP_IT.ttl',
-  'SM':   'https://raw.githubusercontent.com/italia/daf-ontologie-vocabolari-controllati/master/Ontologie/SM/latest/SM-AP_IT.ttl',
-  'RO':   'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/Ontologie/RO/latest/RO-AP_IT.ttl',
-  'ADMS': 'https://raw.githubusercontent.com/italia/daf-ontologie-vocabolari-controllati/master/Ontologie/ADMS/latest/ADMS-AP_IT.ttl',
-  'PARK': 'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/Ontologie/PARK/latest/PARK-AP_IT.ttl',
-  'ACCO': 'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/Ontologie/ACCO/latest/ACCO-AP_IT.ttl',
+// ── CLASSI E PROPRIETÀ DELLE ONTOLOGIE (mappa statica verificata) ────────────
+const ONTO_CLASSES = {
+  'CLV': {
+    classes: ['clv:Address (Indirizzo)', 'clv:Feature (Caratteristica geografica)', 'clv:Geometry (Geometria)', 'clv:AdminUnit (Unità amministrativa)', 'clv:Road (Strada)', 'clv:StreetNumber (Numero civico)', 'clv:Identifier (Identificativo)', 'clv:GeographicalDistribution (Ripartizione geografica)'],
+    props:   ['clv:hasAddress', 'clv:hasGeometry', 'clv:hasAdminUnit', 'clv:hasRoad', 'clv:hasStreetNumber', 'clv:hasSpatialCoverage', 'clv:lat', 'clv:long']
+  },
+  'COV': {
+    classes: ['cov:Organization (Organizzazione)', 'cov:PublicOrganization (Organizzazione pubblica)', 'cov:Company (Impresa)', 'cov:ActivityType (Tipo attività)', 'cov:ContactPoint (Punto di contatto)', 'cov:Email (Email)', 'cov:Telephone (Telefono)'],
+    props:   ['cov:hasContactPoint', 'cov:hasActivityType', 'cov:hasLegalStatus', 'cov:hasSubOrganization', 'cov:isPartOf']
+  },
+  'CPV': {
+    classes: ['cpv:Person (Persona — SOLO persone fisiche)', 'cpv:Adult (Adulto)', 'cpv:Minor (Minore)', 'cpv:Senior (Anziano)'],
+    props:   ['cpv:givenName', 'cpv:familyName', 'cpv:taxCode', 'cpv:dateOfBirth', 'cpv:hasResidenceAddress']
+  },
+  'POI': {
+    classes: ['poi:PointOfInterest (Punto di interesse — classe generica per luoghi fisici)'],
+    props:   ['poi:hasPointOfInterest']
+  },
+  'RO': {
+    classes: ['ro:Role (Ruolo)'],
+    props:   ['ro:hasRole', 'ro:isRoleOf', 'ro:withRole']
+  },
+  'TI': {
+    classes: ['ti:TimeInterval (Intervallo temporale)', 'ti:Instant (Istante)'],
+    props:   ['ti:startTime', 'ti:endTime', 'ti:hasTimeInterval', 'ti:hasInstant']
+  },
+  'SM': {
+    classes: ['sm:Email (Email)', 'sm:Telephone (Telefono)', 'sm:WebSite (Sito web)', 'sm:SocialNetworkAccount (Account social)'],
+    props:   ['sm:hasEmail', 'sm:hasTelephone', 'sm:hasWebSite', 'sm:hasSocialNetworkAccount']
+  },
+  'L0': {
+    classes: ['l0:Agent (Agente — persona/organizzazione)', 'l0:Object (Oggetto fisico)', 'l0:EventOrSituation (Evento/Situazione)', 'l0:Collection (Collezione)', 'l0:Location (Luogo)', 'l0:Characteristic (Caratteristica)', 'l0:Description (Descrizione)'],
+    props:   ['l0:name', 'l0:identifier', 'l0:hasDescription', 'l0:isPartOf', 'l0:hasLocation']
+  },
+  'ADMS': {
+    classes: ['adms:SemanticAsset (Asset semantico — brevetti, documenti, software)', 'adms:AssetRepository (Repository di asset)', 'adms:AssetDistribution (Distribuzione asset)'],
+    props:   ['adms:status', 'adms:identifier', 'adms:schemaAgency', 'adms:representationTechnique']
+  },
+  'PARK': {
+    classes: ['park:ParkingFacility (Parcheggio)', 'park:ParkingLot (Area parcheggio)', 'park:ParkingSpace (Posto auto)', 'park:ParkingTariff (Tariffa)', 'park:VehicleCategory (Categoria veicolo)'],
+    props:   ['park:hasParkingLot', 'park:hasParkingSpace', 'park:hasTariff', 'park:hasVehicleCategory', 'park:capacity']
+  },
+  'ACCO': {
+    classes: ['acco:AccommodationFacility (Struttura ricettiva)', 'acco:Hotel (Hotel)', 'acco:Hostel (Ostello)', 'acco:BedAndBreakfast (B&B)', 'acco:Room (Camera)'],
+    props:   ['acco:hasRoom', 'acco:hasStar', 'acco:checkIn', 'acco:checkOut', 'acco:hasAmenity']
+  },
+  'CULTURAL-ON': {
+    classes: ['cultural-on:CulturalInstituteOrSite (Istituto/luogo culturale)', 'cultural-on:Museum (Museo)', 'cultural-on:Library (Biblioteca — NON clv:Biblioteca)', 'cultural-on:Archive (Archivio)', 'cultural-on:Site (Sito)', 'cultural-on:CollectionItem (Oggetto della collezione)'],
+    props:   ['cultural-on:hasCollection', 'cultural-on:hasOpeningHours', 'cultural-on:hasSubject']
+  },
+  'GTFS': {
+    classes: ['gtfs:Agency (Azienda trasporti)', 'gtfs:Stop (Fermata)', 'gtfs:Route (Linea)', 'gtfs:Trip (Corsa)', 'gtfs:StopTime (Orario fermata)', 'gtfs:Service (Servizio)'],
+    props:   ['gtfs:agency', 'gtfs:route', 'gtfs:stop', 'gtfs:departureTime', 'gtfs:arrivalTime']
+  },
 };
 
-// Parser leggero TTL ontologia: estrae classi e proprietà con label@it
-function parseOntologyTTL(ttlText, prefix) {
-  const classes = [];
-  const props   = [];
-  const lines   = ttlText.split('\n');
-  let currentName = null;
-  let currentType = null; // 'class' | 'prop'
-  let label = null;
-
-  for (const line of lines) {
-    const t = line.trim();
-    // Nuova definizione
-    const defMatch = t.match(/^(\w+:\w+)\s+a\s+(.*)/);
-    if (defMatch) {
-      if (currentName && label) {
-        if (currentType === 'class') classes.push({ name: currentName, label });
-        else if (currentType === 'prop') props.push({ name: currentName, label });
-      }
-      currentName = defMatch[1];
-      const types = defMatch[2];
-      currentType = types.includes('owl:Class') ? 'class'
-                  : (types.includes('owl:ObjectProperty') || types.includes('owl:DatatypeProperty')) ? 'prop'
-                  : null;
-      label = null;
-    }
-    // label italiana
-    const lblMatch = t.match(/rdfs:label\s+"([^"]+)"@it/);
-    if (lblMatch && currentName) label = lblMatch[1];
-  }
-  if (currentName && label) {
-    if (currentType === 'class') classes.push({ name: currentName, label });
-    else if (currentType === 'prop') props.push({ name: currentName, label });
-  }
-  return { classes, props };
-}
-
-// Fetch classi e proprietà per le ontologie rilevate
+// Genera sezione classi per il prompt basandosi sulle ontologie rilevate
 async function fetchOntologyClasses(detectedOntos) {
   console.log('[Ontologie] Ontologie rilevate:', detectedOntos);
-  const toFetch = detectedOntos
-    .map(o => o.toUpperCase())
-    .filter(o => ONTO_MAP[o]);
-
-  console.log('[Ontologie] Da fetchare:', toFetch);
-  if (toFetch.length === 0) {
-    console.log('[Ontologie] Nessuna ontologia mappata');
-    return '';
-  }
-
-  const results = await Promise.allSettled(
-    toFetch.map(o =>
-      fetch(ONTO_MAP[o]).then(r => r.ok ? r.text() : Promise.reject(r.status))
-        .then(ttl => ({ onto: o, ...parseOntologyTTL(ttl, o) }))
-    )
-  );
-
   const sections = [];
-  for (let i = 0; i < results.length; i++) {
-    const r = results[i];
-    if (r.status !== 'fulfilled') {
-      console.log('[Ontologie] ERRORE fetch', toFetch[i], ':', r.reason);
+
+  for (const onto of detectedOntos) {
+    const key = onto.toUpperCase();
+    const data = ONTO_CLASSES[key];
+    if (!data) {
+      console.log('[Ontologie]', key, '→ nessuna mappa statica');
       continue;
     }
-    const { onto, classes, props } = r.value;
-    console.log('[Ontologie]', onto, '→', classes.length, 'classi,', props.length, 'proprietà');
-    if (classes.length === 0 && props.length === 0) continue;
-    const prefix = onto.toLowerCase();
-    const classLines = classes.map(c => `${prefix}:${c.name.split(':').pop()} (${c.label})`).join(', ');
-    const propLines  = props.slice(0, 20).map(p => `${prefix}:${p.name.split(':').pop()} (${p.label})`).join(', ');
-    let section = `${onto}:`;
-    if (classLines) section += `\n  Classi: ${classLines}`;
-    if (propLines)  section += `\n  Proprietà: ${propLines}`;
-    sections.push(section);
+    console.log('[Ontologie]', key, '→', data.classes.length, 'classi,', data.props.length, 'proprietà');
+    sections.push(`${key}:\n  Classi: ${data.classes.join(', ')}\n  Proprietà principali: ${data.props.join(', ')}`);
   }
 
   if (sections.length === 0) return '';
@@ -906,10 +890,10 @@ const VOCAB_MAP = {
   ],
   // Trasporto pubblico
   'gtfs': [
-    BASE2 + '/classifications-for-transportation/public-transport-mode/public-transport-mode.ttl',
+    BASE2 + '/classifications-for-routes/route-types/route-types.ttl',
   ],
   'route': [
-    BASE2 + '/classifications-for-transportation/public-transport-mode/public-transport-mode.ttl',
+    BASE2 + '/classifications-for-routes/route-types/route-types.ttl',
   ],
   // Organizzazioni
   'cov': [
@@ -940,18 +924,17 @@ const VOCAB_MAP = {
   // Asset semantici (brevetti, documenti)
   'adms': [
     BASE + '/licences/licences.ttl',
-    BASE2 + '/classifications-for-documents/document-type/document-type.ttl',
   ],
   // Servizi pubblici
   'transp': [
-    BASE2 + '/classifications-for-public-services/service-types/service-types.ttl',
+    BASE2 + '/classifications-for-public-services/life-busines-event/life-event/life-event.ttl',
   ],
   'cpsv': [
-    BASE2 + '/classifications-for-public-services/service-types/service-types.ttl',
+    BASE2 + '/classifications-for-public-services/life-busines-event/life-event/life-event.ttl',
   ],
   // Accesso e orari
   'ac': [
-    BASE2 + '/classifications-for-public-services/service-types/service-types.ttl',
+    BASE2 + '/classifications-for-public-services/life-busines-event/life-event/life-event.ttl',
   ],
   // Eventi pubblici
   'ti': [
@@ -1056,7 +1039,12 @@ REGOLE:
 - Per ogni riga genera una risorsa RDF con il tipo ontologico più appropriato
 - Usa URI significativi basati sul contenuto (es. nome o ID della riga)
 - Mappa ogni colonna alla proprietà ontologica corretta
-- geo:lat e geo:long per coordinate, sm:hasTelephone per telefono, sm:hasEmail per email, clv:hasAddress per indirizzo
+- Per coordinate usa geo:lat e geo:long. Per telefono sm:hasTelephone. Per email sm:hasEmail. Per indirizzo clv:hasAddress. Per data dct:date o ti:startTime/ti:endTime
+- REGOLA CRITICA: usa SOLO proprietà che esistono nelle ontologie dichiarate nei @prefix. NON inventare proprietà con nomi come clv:hasStreetName, clv:hasPostalCode, clv:hasName, clv:hasFeature, sm:hasValue o simili — queste NON esistono.
+- Per i nomi usa rdfs:label o l0:name, NON clv:hasName (clv:hasName NON ESISTE)
+- Per i valori di contatto usa sm:hasTelephone, sm:hasEmail, sm:hasWebSite, NON sm:hasValue
+- Per giorni della settimana e orari usa dct:description "valore"@it, NON ti:hasDayOfWeek
+- Se non conosci la proprietà esatta, usa dct:description "valore"@it
 - rdfs:label con il nome principale in italiano
 - Usa SOLO questi prefissi: owl, clv, cov, cpv, l0, poi, ro, ti, sm, dcat, dct, foaf, geo, xsd, rdfs, vcard, skos, schema, adms, qb, sdmx-dimension, sdmx-measure
 - Output COMPATTO: niente righe vuote, niente commenti, niente @prefix, niente markdown
@@ -1240,6 +1228,9 @@ async function startConversion() {
     document.getElementById('ttl-output').value = ttl;
     document.getElementById('btn-download-ttl').disabled = false;
     document.getElementById('btn-download-rdf').disabled = false;
+    document.getElementById('btn-validate').disabled = false;
+    document.getElementById('btn-validate').disabled = false;
+    document.getElementById('btn-validate').disabled = false;
     updateStats(ttl);
     showStatus(`✓ Completato! ${allRows.length} righe trasformate in ${chunks.length} chunk.`, 'success');
 
@@ -1261,6 +1252,202 @@ function deduplicatePrefixes(ttl) {
     seen.add(tok);
     return true;
   }).join('\n');
+}
+
+
+// ── VALIDAZIONE SU SCHEMA.GOV.IT ─────────────────────────────────────────────
+async function validateTTL() {
+  const ttl = document.getElementById('ttl-output').value;
+  if (!ttl.trim()) return;
+
+  // Estrai tutti i prefissi dichiarati
+  const prefixMap = {};
+  const prefixLines = ttl.match(/@prefix\s+(\S+):\s+<([^>]+)>/g) || [];
+  for (const line of prefixLines) {
+    const m = line.match(/@prefix\s+(\S+):\s+<([^>]+)>/);
+    if (m) prefixMap[m[1]] = m[2];
+  }
+
+  // Estrai tutte le classi usate (pattern: prefisso:Classe dopo "a ")
+  const classesUsed = new Set();
+  const classMatches = ttl.matchAll(/a\s+([a-zA-Z_][\w-]*:[A-Z][a-zA-Z]*)/g);
+  for (const m of classMatches) classesUsed.add(m[1]);
+
+  // Estrai proprietà usate (pattern: prefisso:proprietà prima di spazio/valore)
+  const propsUsed = new Set();
+  const propMatches = ttl.matchAll(/^\s+([a-zA-Z_][\w-]*:[a-z][a-zA-Z]*)\s+/gm);
+  for (const m of propMatches) propsUsed.add(m[1]);
+
+  const allTerms = [...classesUsed, ...propsUsed].filter(t => {
+    const prefix = t.split(':')[0];
+    // Solo termini delle ontologie italiane w3id.org/italia
+    return prefixMap[prefix] && prefixMap[prefix].includes('w3id.org/italia');
+  });
+
+  if (allTerms.length === 0) {
+    showStatus('ℹ Nessun termine italiano da validare (prefissi w3id.org/italia).', 'info');
+    return;
+  }
+
+  showStatus(`🔍 Valido ${allTerms.length} termini su schema.gov.it SPARQL...`, 'info');
+
+  // SPARQL endpoint di schema.gov.it
+  const sparqlEndpoint = 'https://ontopia.collab.recipes/sparql';
+  const results = {};
+
+  // Batch: verifica ogni termine con ASK query
+  await Promise.allSettled(allTerms.map(async term => {
+    const [prefix, local] = term.split(':');
+    const fullUri = prefixMap[prefix] + local;
+    const query = `ASK { <${fullUri}> ?p ?o }`;
+    const url = `${sparqlEndpoint}?query=${encodeURIComponent(query)}&format=json`;
+    try {
+      const res = await fetch(url, { headers: { 'Accept': 'application/sparql-results+json' } });
+      if (res.ok) {
+        const data = await res.json();
+        results[term] = data.boolean ? '✓' : '✗';
+      } else {
+        results[term] = '?';
+      }
+    } catch {
+      results[term] = '?';
+    }
+  }));
+
+  // Mostra report
+  showValidationReport(results, prefixMap);
+}
+
+function showValidationReport(results, prefixMap) {
+  const ok    = Object.entries(results).filter(([,v]) => v === '✓');
+  const fail  = Object.entries(results).filter(([,v]) => v === '✗');
+  const unkn  = Object.entries(results).filter(([,v]) => v === '?');
+
+  let html = `<div style="font-family:monospace;font-size:13px;line-height:1.6">`;
+  html += `<b>📊 Validazione schema.gov.it — ${ok.length} ✓ / ${fail.length} ✗ / ${unkn.length} ?</b><br><br>`;
+
+  if (fail.length > 0) {
+    html += `<b style="color:#c00">⚠ Non trovati (URI inesistenti):</b><br>`;
+    for (const [term] of fail) {
+      const [prefix] = term.split(':');
+      html += `  ✗ <b>${term}</b> → <a href="${prefixMap[prefix]}${term.split(':')[1]}" target="_blank">${prefixMap[prefix]}${term.split(':')[1]}</a><br>`;
+    }
+    html += '<br>';
+  }
+  if (ok.length > 0) {
+    html += `<b style="color:green">✓ Verificati (${ok.length}):</b> ${ok.map(([t]) => t).join(', ')}<br>`;
+  }
+  if (unkn.length > 0) {
+    html += `<b style="color:#888">? Endpoint non raggiungibile (${unkn.length}):</b> ${unkn.map(([t]) => t).join(', ')}`;
+  }
+  html += '</div>';
+
+  // Mostra in un div sotto il TTL
+  let reportDiv = document.getElementById('validation-report');
+  if (!reportDiv) {
+    reportDiv = document.createElement('div');
+    reportDiv.id = 'validation-report';
+    reportDiv.style.cssText = 'margin-top:1rem;padding:1rem;border:1px solid #ccc;border-radius:6px;background:#f9f9f9;max-height:300px;overflow-y:auto';
+    document.getElementById('ttl-output').parentNode.appendChild(reportDiv);
+  }
+  reportDiv.innerHTML = html;
+  hideStatus();
+}
+
+
+// ── VALIDAZIONE TTL ─────────────────────────────────────────────────────────
+async function validateTTL() {
+  const ttl = document.getElementById('ttl-output').value;
+  if (!ttl) return;
+
+  const report = document.getElementById('validation-report');
+  report.style.display = 'block';
+  report.innerHTML = '⏳ Validazione in corso...';
+
+  // 1. Estrai tutti i qname usati come tipo (a xxx:Yyy) e come proprietà
+  const typeMatches    = [...ttl.matchAll(/\ba\s+([a-zA-Z][a-zA-Z0-9_-]*:[A-Z][a-zA-Z0-9_-]*)/g)].map(m => m[1]);
+  const propMatches    = [...ttl.matchAll(/^\s+([a-zA-Z][a-zA-Z0-9_-]*:[a-z][a-zA-Z0-9_-]*)\s/gm)].map(m => m[1]);
+  const allTerms       = [...new Set([...typeMatches, ...propMatches])];
+
+  // 2. Costruisci mappa prefisso→URI dai @prefix del TTL
+  const prefixMap = {};
+  for (const m of ttl.matchAll(/@prefix\s+(\w+):\s+<([^>]+)>/g)) {
+    prefixMap[m[1]] = m[2];
+  }
+
+  // 3. Valida contro ONTO_CLASSES (locale) e tenta schema.gov.it SPARQL
+  const results = [];
+  const checked = new Set();
+
+  for (const term of allTerms) {
+    if (checked.has(term)) continue;
+    checked.add(term);
+
+    const [pfx, local] = term.split(':');
+    const ontoKey = pfx.toUpperCase();
+
+    // Controllo locale prima
+    const localData = ONTO_CLASSES[ontoKey];
+    if (localData) {
+      const allKnown = [...localData.classes, ...localData.props]
+        .map(s => s.split('(')[0].trim().split(':').pop());
+      const found = allKnown.some(k => k.toLowerCase() === local.toLowerCase());
+      results.push({ term, status: found ? 'ok' : 'warn', source: 'locale' });
+      continue;
+    }
+
+    // Per prefissi non in ONTO_CLASSES (geo, xsd, dct, foaf...) → ok di default
+    const knownExternal = ['geo', 'xsd', 'dct', 'foaf', 'rdfs', 'owl', 'skos', 'vcard', 'dcat', 'schema', 'adms', 'qb'];
+    if (knownExternal.includes(pfx.toLowerCase())) {
+      results.push({ term, status: 'ext', source: 'standard W3C/DCAT' });
+      continue;
+    }
+
+    results.push({ term, status: 'unknown', source: '?' });
+  }
+
+  // 4. Tenta anche SPARQL su schema.gov.it per i termini warn/unknown
+  const toCheck = results.filter(r => r.status === 'warn' || r.status === 'unknown');
+  if (toCheck.length > 0) {
+    const sparqlChecks = await Promise.allSettled(
+      toCheck.map(async r => {
+        const [pfx, local] = r.term.split(':');
+        const ns = prefixMap[pfx] || '';
+        if (!ns) return { term: r.term, exists: false };
+        const uri = ns + local;
+        const query = encodeURIComponent(`ASK { <${uri}> ?p ?o }`);
+        const url = `https://schema.gov.it/sparql?query=${query}&format=json`;
+        const res = await fetch(url, { headers: { Accept: 'application/json' } });
+        if (!res.ok) return { term: r.term, exists: false };
+        const data = await res.json();
+        return { term: r.term, exists: data.boolean === true };
+      })
+    );
+    for (const r of sparqlChecks) {
+      if (r.status !== 'fulfilled') continue;
+      const idx = results.findIndex(x => x.term === r.value.term);
+      if (idx >= 0) {
+        results[idx].status = r.value.exists ? 'ok' : 'error';
+        results[idx].source = 'schema.gov.it';
+      }
+    }
+  }
+
+  // 5. Render report
+  const ok      = results.filter(r => r.status === 'ok');
+  const warn    = results.filter(r => r.status === 'warn');
+  const errors  = results.filter(r => r.status === 'error');
+  const ext     = results.filter(r => r.status === 'ext');
+  const unknown = results.filter(r => r.status === 'unknown');
+
+  let html = `<strong>📊 Validazione ontologie (${results.length} termini)</strong><br><br>`;
+  if (ok.length)      html += `<span style="color:#4caf50">✓ Verificati (${ok.length}): ${ok.map(r=>r.term).join(', ')}</span><br>`;
+  if (ext.length)     html += `<span style="color:#888">◦ Standard W3C/DCAT (${ext.length}): ${ext.map(r=>r.term).join(', ')}</span><br>`;
+  if (warn.length)    html += `<span style="color:#ff9800">⚠ Non trovati localmente (${warn.length}): ${warn.map(r=>r.term).join(', ')}</span><br>`;
+  if (errors.length)  html += `<span style="color:#f44336">✗ Non esistono su schema.gov.it (${errors.length}): ${errors.map(r=>r.term).join(', ')}</span><br>`;
+  if (unknown.length) html += `<span style="color:#888">? Prefisso sconosciuto (${unknown.length}): ${unknown.map(r=>r.term).join(', ')}</span><br>`;
+
+  report.innerHTML = html;
 }
 
 // ── STATS ─────────────────────────────────────────────────────

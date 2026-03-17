@@ -689,9 +689,11 @@ const CHUNK_SIZE = 25; // righe per chiamata
 // ── PROMPT HEADER (prefissi + dataset) ───────────────────────
 function buildPromptHeader(meta, ontos, cols) {
   const base = meta.ipa ? `https://dati.gov.it/resource/${meta.ipa}` : 'https://dati.gov.it/resource/pa';
+  const datasetURI = `${base}/dataset/${(meta.title||'dataset').toLowerCase().replace(/[^a-z0-9]+/g,'-')}`;
   return `Sei un esperto RDF per la PA italiana. Genera Turtle (TTL) COMPATTO: niente commenti, niente righe vuote tra triple, URI brevi.
 
-## PREFISSI (usa SOLO questi)
+## PREFISSI (usa TUTTI questi esattamente)
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
 @prefix clv:  <https://w3id.org/italia/onto/CLV/> .
 @prefix cov:  <https://w3id.org/italia/onto/COV/> .
 @prefix cpv:  <https://w3id.org/italia/onto/CPV/> .
@@ -708,17 +710,27 @@ function buildPromptHeader(meta, ontos, cols) {
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 Ontologie extra: ${ontos.join(', ') || 'nessuna'}
 
-## GENERA SOLO il blocco dcat:Dataset (niente entità)
+## GENERA questi due blocchi (niente entità):
+
+### 1. Dichiarazione owl:Ontology (OBBLIGATORIA per validazione schema.gov.it)
+<${datasetURI}>
+    a owl:Ontology ;
+    owl:versionIRI <${datasetURI}/0.1> ;
+    dct:title "${meta.title||'Dataset PA'}"@it ;
+    dct:description "${meta.desc||''}"@it ;
+    owl:versionInfo "0.1" .
+
+### 2. Blocco dcat:Dataset completo DCAT-AP_IT 2.1
 Titolo: ${meta.title || 'Dataset PA'}
 Descrizione: ${meta.desc || ''}
 Publisher: ${meta.publisher || 'PA Italiana'}
 IPA: ${meta.ipa || ''}
 Tema: ${meta.theme || ''}
 Licenza: ${meta.license}
-URI base dataset: <${base}/dataset/${(meta.title||'dataset').toLowerCase().replace(/[^a-z0-9]+/g,'-')}>
+URI dataset: <${datasetURI}>
 Colonne CSV: ${cols.join(', ')}
 
-Restituisci SOLO i @prefix e il blocco dcat:Dataset. Niente altro. Niente markdown.`;
+Restituisci SOLO i @prefix, il blocco owl:Ontology e il blocco dcat:Dataset. Niente entità, niente markdown.`;
 }
 
 // ── PROMPT CHUNK (solo entità) ────────────────────────────────

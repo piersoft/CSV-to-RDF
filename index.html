@@ -800,7 +800,7 @@ function buildTTLHeader(paname, ipa) {
 
 // ── VOCABOLARI CONTROLLATI DA dati-semantic-assets ───────────────────────────
 // Mappa: ontologia rilevata → URL TTL raw su GitHub
-const BASE = 'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/VocabolariControllati';
+const BASE  = 'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/VocabolariControllati';
 const BASE2 = 'https://raw.githubusercontent.com/italia/daf-ontologie-vocabolari-controllati/master/VocabolariControllati';
 
 const VOCAB_MAP = {
@@ -811,15 +811,15 @@ const VOCAB_MAP = {
   ],
   // Trasporto pubblico
   'gtfs': [
-    BASE + '/classifications-for-transportation/transport-mode/transport-mode.ttl',
+    BASE2 + '/classifications-for-transportation/public-transport-mode/public-transport-mode.ttl',
   ],
   'route': [
-    BASE + '/classifications-for-transportation/transport-mode/transport-mode.ttl',
+    BASE2 + '/classifications-for-transportation/public-transport-mode/public-transport-mode.ttl',
   ],
   // Organizzazioni
   'cov': [
     BASE + '/classifications-for-organizations/legal-status/legal-status.ttl',
-    BASE + '/classifications-for-organizations/cofog-2021/cofog-2021.ttl',
+    BASE2 + '/classifications-for-organizations/cofog-2009/cofog-2009.ttl',
   ],
   // Luoghi e territori
   'clv': [
@@ -832,9 +832,9 @@ const VOCAB_MAP = {
   ],
   // Parcheggi
   'park': [
-    BASE + '/classifications-for-transportation/vehicle-classification/vehicle-classification.ttl',
+    BASE2 + '/classifications-for-transportation/vehicle-classification/vehicle-classification.ttl',
   ],
-  // Ruoli — mappato su vocabolari EU per ruoli e licenze
+  // Ruoli e licenze
   'ro': [
     BASE + '/licences/licences.ttl',
   ],
@@ -845,18 +845,22 @@ const VOCAB_MAP = {
   // Asset semantici (brevetti, documenti)
   'adms': [
     BASE + '/licences/licences.ttl',
-    BASE + '/classifications-for-documents/document-type/document-type.ttl',
+    BASE2 + '/classifications-for-documents/document-type/document-type.ttl',
   ],
   // Servizi pubblici
   'transp': [
-    BASE + '/classifications-for-public-services/public-service-type/public-service-type.ttl',
+    BASE2 + '/classifications-for-public-services/service-types/service-types.ttl',
   ],
   'cpsv': [
-    BASE + '/classifications-for-public-services/public-service-type/public-service-type.ttl',
+    BASE2 + '/classifications-for-public-services/service-types/service-types.ttl',
   ],
   // Accesso e orari
   'ac': [
-    BASE + '/classifications-for-public-services/public-service-type/public-service-type.ttl',
+    BASE2 + '/classifications-for-public-services/service-types/service-types.ttl',
+  ],
+  // Eventi pubblici
+  'ti': [
+    BASE2 + '/public-event-types/public-event-types.ttl',
   ],
 };
 

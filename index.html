@@ -707,7 +707,11 @@ function buildPromptHeader(meta, ontos, cols) {
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix geo:  <http://www.w3.org/2003/01/geo/wgs84_pos#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix schema: <https://schema.org/> .
+@prefix adms:  <http://www.w3.org/ns/adms#> .
 Ontologie extra: ${ontos.join(', ') || 'nessuna'}
 
 ## GENERA questi due blocchi (niente entità):
@@ -751,7 +755,9 @@ ISTRUZIONI:
 - URI: <${base}/risorsa/ID> usando il valore della prima colonna come ID
 - rdfs:label in italiano
 - Output COMPATTO: niente righe vuote, niente commenti, niente @prefix, niente markdown
-- Genera TUTTE le ${rows.length} righe, non fermarti prima`;
+- Usa SOLO questi prefissi (già dichiarati): clv, cov, cpv, l0, poi, ro, ti, sm, dcat, dct, foaf, geo, xsd, rdfs, owl, vcard, skos, schema, adms
+- NON usare prefissi non in lista (es. wgs84, dc, terms, ecc.)
+- Genera TUTTE le \${rows.length} righe, non fermarti prima`;
 }
 
 // ── CHIAMATA AI (singola) ─────────────────────────────────────

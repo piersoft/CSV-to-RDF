@@ -537,7 +537,13 @@ function autoDetectOnto() {
 // ── VALIDAZIONE CSV ──────────────────────────────────────────
 function validateCSV(parsed) {
   const issues = [];
-  const { headers, rows } = parsed;
+  const { headers, rows, sep } = parsed;
+
+  // 0. Info separatore rilevato
+  const sepNames = { ',': 'virgola (,)', ';': 'punto e virgola (;)', '\t': 'tabulazione (\\t)', '|': 'pipe (|)' };
+  if (sep && sep !== ',') {
+    issues.push({ level:'info', title:`Separatore rilevato: ${sepNames[sep]||sep}`, hint:'Il CSV è stato analizzato correttamente con questo separatore.' });
+  }
 
   // 1. Colonne senza nome o con nomi generici
   const genericPattern = /^(col(umn)?[\s_]?\d+|field[\s_]?\d+|colonna[\s_]?\d+|f\d+|c\d+|unnamed|noname|_\d+)$/i;
@@ -635,15 +641,51 @@ function validateCSV(parsed) {
   panel.style.display = 'block';
 }
 
+function detectSeparator(firstLine) {
+  // Conta occorrenze dei separatori candidati nella prima riga
+  const candidates = [',', ';', '\t', '|'];
+  let best = ',';
+  let bestCount = 0;
+  candidates.forEach(sep => {
+    const count = firstLine.split(sep).length - 1;
+    if (count > bestCount) { bestCount = count; best = sep; }
+  });
+  return best;
+}
+
 function parseCSV(text) {
   const lines = text.trim().split('\n').filter(l => l.trim());
   if (!lines.length) return null;
-  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g,''));
+
+  const sep = detectSeparator(lines[0]);
+
+  // Parser che gestisce valori quotati con il separatore rilevato
+  function splitLine(line, sep) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        inQuotes = !inQuotes;
+      } else if (ch === sep && !inQuotes) {
+        result.push(current.trim());
+        current = '';
+      } else {
+        current += ch;
+      }
+    }
+    result.push(current.trim());
+    return result;
+  }
+
+  const headers = splitLine(lines[0], sep).map(h => h.replace(/^"|"$/g,'').trim());
   const rows = lines.slice(1).map(line => {
-    const vals = line.split(',').map(v => v.trim().replace(/^"|"$/g,''));
+    const vals = splitLine(line, sep).map(v => v.replace(/^"|"$/g,'').trim());
     return headers.reduce((o,h,i) => { o[h] = vals[i]||''; return o; }, {});
   });
-  return { headers, rows };
+
+  return { headers, rows, sep };
 }
 
 function parseAndPreviewCSV() {

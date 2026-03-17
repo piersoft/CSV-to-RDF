@@ -338,7 +338,13 @@
               </div>
               <div class="col-12">
                 <label class="lbl">Modello</label>
-                <input type="text" class="inp" id="ollama-model" value="gpt-oss:120b" placeholder="es. gpt-oss:120b, mistral-large-3:675b"/>
+                <div class="d-flex gap-2">
+                  <input type="text" class="inp" id="ollama-model" value="gpt-oss:120b" placeholder="es. gpt-oss:120b"/>
+                  <button class="btn-sec" onclick="loadOllamaModels()" style="white-space:nowrap;flex-shrink:0">↺ Carica lista</button>
+                </div>
+                <select class="inp mt-1" id="ollama-model-select" style="display:none" onchange="document.getElementById('ollama-model').value=this.value">
+                  <option value="">— seleziona modello —</option>
+                </select>
               </div>
             </div>
             <div class="info-note mt-2">
@@ -813,6 +819,30 @@ REGOLE:
 
 // ── CHIAMATE AI ───────────────────────────────────────────────
 
+async function loadOllamaModels() {
+  const proxyUrl = document.getElementById('ollama-proxy-url').value.trim();
+  const key      = document.getElementById('ollama-key').value.trim();
+  if (!proxyUrl || !key) return showStatus('Inserisci prima URL proxy e API key.', 'error');
+  try {
+    showStatus('⏳ Carico lista modelli...', 'info');
+    const res = await fetch(proxyUrl.replace('/ollama-proxy', '/ollama-models'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ollama_api_key: key })
+    });
+    if (!res.ok) throw new Error(`${res.status}`);
+    const data = await res.json();
+    const models = data.models || [];
+    const sel = document.getElementById('ollama-model-select');
+    sel.innerHTML = '<option value="">— seleziona modello —</option>' +
+      models.map(m => `<option value="${m.name}">${m.name}</option>`).join('');
+    sel.style.display = 'block';
+    hideStatus();
+  } catch(e) {
+    showStatus('✕ Errore caricamento modelli: ' + e.message, 'error');
+  }
+}
+
 async function callOllama(prompt) {
   const proxyUrl = document.getElementById('ollama-proxy-url').value.trim();
   const key      = document.getElementById('ollama-key').value.trim();
@@ -936,6 +966,19 @@ async function startConversion() {
   } finally {
     document.getElementById('btn-convert').disabled = false;
   }
+}
+
+// ── DEDUPLICA PREFISSI ─────────────────────────────
+
+function deduplicatePrefixes(ttl) {
+  const seen = new Set();
+  return ttl.split('\n').filter(line => {
+    if (!line.trim().startsWith('@prefix')) return true;
+    const tok = line.trim().split(' ')[1];
+    if (!tok || seen.has(tok)) return false;
+    seen.add(tok);
+    return true;
+  }).join('\n');
 }
 
 // ── STATS ─────────────────────────────────────────────────────

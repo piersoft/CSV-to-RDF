@@ -1259,12 +1259,21 @@ REGOLE:
 - Output COMPATTO: niente righe vuote, niente commenti, niente @prefix, niente markdown
 - NON usare mai il prefisso ":" (prefisso vuoto) — usa sempre URI completi tra <> o prefissi dichiarati
 - USA SOLO le classi elencate qui sotto per ogni ontologia — NON inventare classi:
-- REGOLA CLASSE PRINCIPALE: usa la classe più specifica disponibile nelle ontologie selezionate:
-  Se ACCO è selezionata → usa acco:AccommodationFacility (NON poi:PointOfInterest per le strutture ricettive)
-  Se PARK è selezionata → usa park:ParkingFacility (NON poi:PointOfInterest per i parcheggi)
-  Se GTFS è selezionata → usa gtfs:Stop per le fermate (NON poi:PointOfInterest)
-  Se Cultural-ON è selezionata → usa cultural-on:CulturalInstituteOrSite (NON poi:PointOfInterest per musei/biblioteche)
-  poi:PointOfInterest va usato SOLO se nessuna classe più specifica è disponibile
+- REGOLA CLASSE PRINCIPALE: usa la classe più specifica disponibile tra le ontologie selezionate.
+  La classe principale va scelta in questo ordine di priorità (dalla più specifica alla più generica):
+  ACCO selezionata      → acco:AccommodationFacility per strutture ricettive (hotel, B&B, ostelli...)
+  PARK selezionata      → park:ParkingFacility per parcheggi e aree di sosta
+  GTFS selezionata      → gtfs:Stop per fermate, gtfs:Route per linee, gtfs:Agency per aziende di trasporto
+  Cultural-ON selezionata → cultural-on:CulturalInstituteOrSite per musei, biblioteche, archivi, teatri
+  CPSV-AP selezionata   → cpsv:PublicService per servizi pubblici erogati dalla PA
+  COV selezionata       → cov:PublicOrganization per enti pubblici, cov:Company per imprese private
+  CPV selezionata       → cpv:Person per persone fisiche (NON per brevetti o documenti)
+  ADMS selezionata      → adms:SemanticAsset per brevetti, licenze, asset digitali, documenti
+  RO selezionata        → ro:Role per ruoli e incarichi (usato insieme a cpv:Person o cov:Organization)
+  TI selezionata        → ti:TimeInterval per intervalli temporali, ti:Instant per istanti
+  QB selezionata        → qb:Observation per osservazioni statistiche, qb:DataSet per il dataset
+  POI selezionata       → poi:PointOfInterest SOLO se nessuna classe più specifica è disponibile
+  L0 selezionata        → l0:Agent per persone/organizzazioni generiche, l0:Object per oggetti fisici generici
   CLV: clv:Address, clv:Feature, clv:Geometry, clv:AdminUnit, clv:Road, clv:StreetNumber
   COV: cov:Organization, cov:PublicOrganization, cov:Company, cov:ActivityType, cov:ContactPoint
   CPV: cpv:Person, cpv:Adult, cpv:Minor, cpv:Senior (CPV=Persone, NON per brevetti/documenti)

@@ -47,7 +47,7 @@
     .inp { font-family: var(--sans); font-size: 0.88rem; border: 1px solid var(--dg-border); border-radius: 4px; padding: 0.5rem 0.75rem; width: 100%; color: var(--dg-text); background: white; transition: border-color 0.2s, box-shadow 0.2s; }
     .inp:focus { outline: none; border-color: var(--dg-blue); box-shadow: 0 0 0 3px rgba(0,102,204,0.12); }
     textarea.csv-area { font-family: var(--mono); font-size: 0.77rem; line-height: 1.55; min-height: 260px; background: #fafbfc; resize: vertical; }
-    textarea.ttl-area { font-family: var(--mono); font-size: 0.75rem; line-height: 1.6; min-height: 420px; background: #0d1b2a; color: #7dd3a8; border-color: #2a3a4a; resize: vertical; }
+    textarea.ttl-area { font-family: var(--mono); font-size: 0.75rem; line-height: 1.6; min-height: 200px; max-height: calc(100vh - 280px); background: #0d1b2a; color: #7dd3a8; border-color: #2a3a4a; resize: none; overflow-y: auto; }
     textarea.ttl-area:focus { border-color: #4a7a9a; box-shadow: none; }
 
     .apikey-wrap { position: relative; }
@@ -375,9 +375,9 @@
 
     <!-- ══ COLONNA DX ══ -->
     <div class="col-lg-6">
-      <div class="card-pa" style="position:sticky;top:12px;">
+      <div class="card-pa" style="position:sticky;top:12px;max-height:calc(100vh - 24px);display:flex;flex-direction:column;">
         <div class="card-head dark">💻 Output RDF / Turtle (.ttl)</div>
-        <div class="card-body-pa">
+        <div class="card-body-pa" style="overflow-y:auto;flex:1;display:flex;flex-direction:column;">
           <textarea class="inp ttl-area" id="ttl-output" readonly
             placeholder="# Il file Turtle apparirà qui...&#10;#&#10;# Esempio:&#10;# @prefix poi: &lt;https://w3id.org/italia/onto/POI/&gt; .&#10;# @prefix geo: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#&gt; .&#10;# ...&#10;#&#10;# &lt;https://...&gt; a poi:PointOfInterest ;&#10;#     rdfs:label &quot;...&quot;@it ;&#10;#     geo:lat &quot;...&quot;^^xsd:decimal ."></textarea>
           <div class="d-flex gap-2 mt-2 flex-wrap">

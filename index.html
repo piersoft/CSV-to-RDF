@@ -864,7 +864,7 @@ async function fetchVocabularies(detectedOntos) {
   console.log('[Vocabolari] Ontologie rilevate:', detectedOntos);
   const urlsToFetch = new Set();
   for (const onto of detectedOntos) {
-    const key = onto.toLowerCase().replace(/[^a-z-]/g, '');
+    const key = onto.toLowerCase().replace(/[^a-z0-9-]/g, '');
     console.log('[Vocabolari] Chiave:', key, '→ match:', !!VOCAB_MAP[key]);
     if (VOCAB_MAP[key]) VOCAB_MAP[key].forEach(u => urlsToFetch.add(u));
   }

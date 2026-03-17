@@ -533,6 +533,26 @@ function autoDetectOnto() {
       cols.some(c => /maschi|femmine|totale|valore|count|numero|quantita/.test(c)))
     suggested.add('QB');
 
+  // Controllo sui VALORI del campione (prima riga dati)
+  if (parsed.rows && parsed.rows.length > 0) {
+    const sampleValues = Object.values(parsed.rows[0]).map(v => String(v).toLowerCase()).join(' ');
+    // Strutture ricettive
+    if (/bed.?breakfast|b&b|hotel|ostello|hostel|agriturismo|affittacamere|casa.vacanza|resort|albergo/.test(sampleValues))
+      suggested.add('ACCO');
+    // Trasporto pubblico
+    if (/tram|metro|autobus|bus|fermata|linea|corsa|gtfs/.test(sampleValues))
+      suggested.add('GTFS');
+    // Patrimonio culturale
+    if (/museo|biblioteca|archivio|teatro|monumento|chiesa|palazzo|sito.archeolog/.test(sampleValues))
+      suggested.add('Cultural-ON');
+    // Parcheggi
+    if (/parcheggio|parking|garage|stallo|sosta/.test(sampleValues))
+      suggested.add('PARK');
+    // Organizzazioni pubbliche
+    if (/comune|municipio|regione|provincia|asl|azienda.sanitaria|prefettura|questura/.test(sampleValues))
+      suggested.add('COV');
+  }
+
   // Se non ha trovato nulla, almeno L0
   if (suggested.size === 0) suggested.add('L0');
 

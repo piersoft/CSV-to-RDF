@@ -320,27 +320,32 @@
           </div>
 
 
+
+
           <!-- OLLAMA CLOUD -->
           <div class="provider-panel" id="panel-ollama">
             <div class="row g-2">
               <div class="col-12">
-                <label class="lbl">API Key</label>
+                <label class="lbl">URL Proxy</label>
+                <input type="text" class="inp" id="ollama-proxy-url" value="" placeholder="https://tuoserver/api/ollama-proxy"/>
+              </div>
+              <div class="col-12">
+                <label class="lbl">API Key Ollama Cloud</label>
                 <div class="apikey-wrap">
-                  <input type="password" class="inp" id="ollama-key" placeholder="Incolla la tua API key Ollama..."/>
+                  <input type="password" class="inp" id="ollama-key" placeholder="da ollama.com/settings/keys"/>
                   <button class="apikey-toggle" onclick="toggleKey('ollama-key')">👁</button>
                 </div>
               </div>
               <div class="col-12">
                 <label class="lbl">Modello</label>
-                <input type="text" class="inp" id="ollama-model" value="gpt-oss:120b" placeholder="es. gpt-oss:120b, llama3.3:70b-cloud"/>
+                <input type="text" class="inp" id="ollama-model" value="gpt-oss:120b" placeholder="es. gpt-oss:120b, mistral-large-3:675b"/>
               </div>
             </div>
             <div class="info-note mt-2">
-              🦙 Ottieni la tua API key su <a href="https://ollama.com/settings/keys" target="_blank">ollama.com/settings/keys</a>.
-              Endpoint: <code>https://ollama.com/api/chat</code> · stessa interfaccia Ollama locale ma in cloud.
+              🦙 Ollama Cloud blocca le chiamate dirette dal browser (CORS). Il proxy sul tuo server fa da intermediario verso <code>ollama.com</code>.<br/>
+              API key: <a href="https://ollama.com/settings/keys" target="_blank">ollama.com/settings/keys</a>
             </div>
           </div>
-
 
           <div class="mt-3">
             <label class="lbl">Max righe CSV per chiamata (chunk)</label>
@@ -807,16 +812,19 @@ REGOLE:
 }
 
 // ── CHIAMATE AI ───────────────────────────────────────────────
+
 async function callOllama(prompt) {
-  const key   = document.getElementById('ollama-key').value.trim();
-  const model = document.getElementById('ollama-model').value.trim() || 'gpt-oss:120b';
-  if (!key) throw new Error('Inserisci la tua API key Ollama Cloud.');
-  const res = await fetch('https://ollama.com/api/chat', {
+  const proxyUrl = document.getElementById('ollama-proxy-url').value.trim();
+  const key      = document.getElementById('ollama-key').value.trim();
+  const model    = document.getElementById('ollama-model').value.trim() || 'gpt-oss:120b';
+  if (!proxyUrl) throw new Error('Inserisci URL del proxy.');
+  if (!key)      throw new Error('Inserisci la tua API key Ollama Cloud.');
+  const res = await fetch(proxyUrl, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-    body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], stream: false })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], stream: false, ollama_api_key: key })
   });
-  if (!res.ok) { const e = await res.json(); throw new Error(e.error || `Ollama error ${res.status}`); }
+  if (!res.ok) throw new Error(`Proxy error ${res.status}: ${await res.text()}`);
   const data = await res.json();
   return data.message?.content || '';
 }

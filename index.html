@@ -1230,23 +1230,44 @@ function buildDeterministicTriples(cols, rows, entityBase, deterMappings) {
   return lines.join('\n');
 }
 
-function buildPromptChunk(cols, rows, ontos, chunkIndex, totalChunks, vocabSection='', ontoSection='', skipCols=new Set()) {
+function getEntityType(ontos) {
+  // Determina il tipo URI dall'ontologia più specifica selezionata
+  const o = ontos.map(x => x.toUpperCase());
+  if (o.includes('ACCO'))        return 'accommodation';
+  if (o.includes('PARK'))        return 'parking';
+  if (o.includes('GTFS'))        return 'stop';
+  if (o.includes('CULTURAL-ON')) return 'cultural-site';
+  if (o.includes('CPSV-AP'))     return 'public-service';
+  if (o.includes('COV'))         return 'organization';
+  if (o.includes('CPV'))         return 'person';
+  if (o.includes('ADMS'))        return 'asset';
+  if (o.includes('POI'))         return 'poi';
+  return 'resource';
+}
+
+function buildPromptChunk(cols, rows, ontos, chunkIndex, totalChunks, vocabSection='', ontoSection='', skipCols=new Set(), ipa='') {
   // Escludi colonne già mappate deterministicamente
   const ambigCols = cols.filter(c => !skipCols.has(c));
   if (ambigCols.length === 0) return null; // tutto già mappato
   const csvChunk = [ambigCols.join(','), ...rows.map(r => ambigCols.map(h=>r[h]).join(','))].join('\n');
   return `Sei un esperto RDF per la PA italiana. Trasforma le righe CSV in Turtle (TTL) compatto.
 
+URI BASE OBBLIGATORIA: tutte le entità DEVONO usare ESCLUSIVAMENTE questo pattern: <https://w3id.org/italia/data/${ipa}/{tipo}/{id}> — NON usare mai domini come dati.comune.*, http://dati.*, o qualsiasi altro dominio inventato.
+
 I @prefix sono già stati emessi. NON aggiungerli.
 Ontologie da usare: ${ontos.join(', ')}
 Chunk ${chunkIndex+1}/${totalChunks} — Colonne: ${cols.join(', ')}
+Base URI entità: https://w3id.org/italia/data/${ipa || 'ipa'}/${getEntityType(ontos)}/ (es. <https://w3id.org/italia/data/${ipa || 'ipa'}/${getEntityType(ontos)}/ID_RIGA>)
 
 CSV:
 ${csvChunk}
 
 REGOLE:
 - Per ogni riga genera una risorsa RDF con il tipo ontologico più appropriato
-- Usa URI significativi basati sul contenuto (es. nome o ID della riga)
+- Gli URI delle entità DEVONO seguire esattamente questo schema: <https://w3id.org/italia/data/${ipa}/{tipo}/{id}>
+  dove {ipa} è il codice IPA del titolare, {tipo} è il tipo in inglese (accommodation, stop, parking, organization...), {id} è l'identificatore della riga
+  NON usare domini inventati come dati.comune.xxx.it o simili — usa SEMPRE w3id.org/italia/data/
+  NON tradurre {tipo} in italiano (es. NON "accoglienza" ma "accommodation")
 - Mappa ogni colonna alla proprietà ontologica corretta
 - Per coordinate usa geo:lat e geo:long. Per telefono sm:hasTelephone. Per email sm:hasEmail. Per indirizzo clv:hasAddress. Per data dct:date o ti:startTime/ti:endTime
 - REGOLA CRITICA: usa SOLO proprietà che esistono nelle ontologie dichiarate nei @prefix. NON inventare proprietà con nomi come clv:hasStreetName, clv:hasPostalCode, clv:hasName, clv:hasFeature, sm:hasValue o simili — queste NON esistono.
@@ -1333,6 +1354,17 @@ const CLASS_WHITELIST = {
   'sdmx-measure':   [],
   'gtfs': ['Agency','Stop','Route','Trip','StopTime','Service','Shape'],
 };
+
+function fixURIs(ttl, ipa) {
+  // Sostituisce URI con domini inventati con il pattern corretto w3id.org/italia/data/{ipa}
+  const correctBase = `https://w3id.org/italia/data/${ipa}/`;
+  // Trova tutti gli URI usati come soggetti (tra < >) che non sono w3id.org o prefissi standard
+  return ttl.replace(/<(https?:\/\/(?!w3id\.org|www\.w3\.org|purl\.org|xmlns\.com|publications\.europa\.eu|schema\.org)[^>]+)>/g, (match, uri) => {
+    // Estrai solo la parte finale del path come identificatore
+    const parts = uri.replace(/https?:\/\/[^\/]+\//, '').replace(/\//g, '_');
+    return `<${correctBase}${parts}>`;
+  });
+}
 
 function sanitizeTTL(ttl) {
   const lines = ttl.split('\n');
@@ -1514,9 +1546,9 @@ async function startConversion() {
       showStatus(`⏳ Chunk ${i+1}/${chunks.length} — righe ${i*CHUNK_SIZE+1}-${i*CHUNK_SIZE+chunks[i].length}...`, 'info');
       // Delay tra chunk per Groq (rate limit TPM)
       if (i > 0 && currentProvider === 'groq') await new Promise(r => setTimeout(r, 6000));
-      const prompt = buildPromptChunk(cols, chunks[i], ontos, i, chunks.length, vocabSection, ontoSection, skipCols);
+      const prompt = buildPromptChunk(cols, chunks[i], ontos, i, chunks.length, vocabSection, ontoSection, skipCols, ipa);
       let deterTriples = buildDeterministicTriples(cols, chunks[i], entityBase, deterMappings);
-      let llmTriples = prompt ? sanitizeTTL(cleanTTL(await callAI(prompt))) : '';
+      let llmTriples = prompt ? fixURIs(sanitizeTTL(cleanTTL(await callAI(prompt))), ipa) : '';
       // Mergia: usa LLM per classi/tipo, deterministico per proprietà note
       let chunk = llmTriples || deterTriples;
       chunk = chunk.replace(/@prefix\s+\S+:\s*<[^>]+>\s*\.\n?/g, '').trim();

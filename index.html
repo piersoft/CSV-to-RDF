@@ -861,12 +861,18 @@ function parseTTLVocab(ttlText, url) {
 
 // Fetch selettivo dei vocabolari per le ontologie rilevate
 async function fetchVocabularies(detectedOntos) {
+  console.log('[Vocabolari] Ontologie rilevate:', detectedOntos);
   const urlsToFetch = new Set();
   for (const onto of detectedOntos) {
     const key = onto.toLowerCase().replace(/[^a-z-]/g, '');
+    console.log('[Vocabolari] Chiave:', key, '→ match:', !!VOCAB_MAP[key]);
     if (VOCAB_MAP[key]) VOCAB_MAP[key].forEach(u => urlsToFetch.add(u));
   }
-  if (urlsToFetch.size === 0) return '';
+  console.log('[Vocabolari] URL da fetchare:', [...urlsToFetch]);
+  if (urlsToFetch.size === 0) {
+    console.log('[Vocabolari] Nessun vocabolario mappato per queste ontologie');
+    return '';
+  }
 
   showStatus('⏳ Recupero vocabolari controllati da dati-semantic-assets...', 'info');
   const allConcepts = [];

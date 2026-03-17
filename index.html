@@ -965,6 +965,18 @@ REGOLE:
 - rdfs:label con il nome principale in italiano
 - Usa SOLO questi prefissi: owl, clv, cov, cpv, l0, poi, ro, ti, sm, dcat, dct, foaf, geo, xsd, rdfs, vcard, skos, schema, adms, qb, sdmx-dimension, sdmx-measure
 - Output COMPATTO: niente righe vuote, niente commenti, niente @prefix, niente markdown
+- NON usare mai il prefisso ":" (prefisso vuoto) — usa sempre URI completi tra <> o prefissi dichiarati
+- USA SOLO le classi elencate qui sotto per ogni ontologia — NON inventare classi:
+  CLV: clv:Address, clv:Feature, clv:Geometry, clv:AdminUnit, clv:Road, clv:StreetNumber
+  COV: cov:Organization, cov:PublicOrganization, cov:Company, cov:ActivityType, cov:ContactPoint
+  CPV: cpv:Person, cpv:Adult, cpv:Minor, cpv:Senior (CPV=Persone, NON per brevetti/documenti)
+  POI: poi:PointOfInterest (classe generica per luoghi fisici)
+  RO: ro:Role (per ruoli/incarichi)
+  TI: ti:TimeInterval, ti:Instant (per intervalli e istanti temporali)
+  SM: sm:Email, sm:Telephone, sm:WebSite, sm:SocialNetworkAccount
+  L0: l0:Agent, l0:Object, l0:EventOrSituation, l0:Collection, l0:Location, l0:Characteristic
+  ADMS: adms:SemanticAsset (per brevetti, licenze, asset digitali — NON cpv:Patent che non esiste)
+  COV per enti pubblici: cov:PublicOrganization (ENEA, ministeri, comuni)
 - Genera TUTTE le ${rows.length} righe senza fermarti
 
 VOCABOLARI CONTROLLATI — USA SOLO URI IN QUESTA LISTA, altrimenti usa rdfs:label con stringa letterale:
@@ -1119,7 +1131,14 @@ async function startConversion() {
       parts.push(chunk);
     }
 
-    const ttl = deduplicatePrefixes(parts.join('\n\n'));
+    let ttl = deduplicatePrefixes(parts.join('\n\n'));
+    // Fix: se il TTL usa il prefisso ":" non dichiarato, aggiungilo
+    if (ttl.includes(' :') || ttl.match(/^:/m)) {
+      const baseUri = `https://w3id.org/italia/data/${ipa}/`;
+      if (!ttl.includes('@prefix :')) {
+        ttl = `@prefix : <${baseUri}> .\n` + ttl;
+      }
+    }
     document.getElementById('ttl-output').value = ttl;
     document.getElementById('btn-download-ttl').disabled = false;
     document.getElementById('btn-download-rdf').disabled = false;

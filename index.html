@@ -1136,6 +1136,31 @@ const ONTO_URI_TYPE = {
   'L0':          'resource',
 };
 
+// Mappa ontologia → classe RDF principale
+const ONTO_MAIN_CLASS = {
+  'ACCO':        'acco:AccommodationFacility',
+  'PARK':        'park:ParkingFacility',
+  'GTFS':        'gtfs:Stop',
+  'CULTURAL-ON': 'cultural-on:CulturalInstituteOrSite',
+  'CPSV-AP':     'cpsv:PublicService',
+  'COV':         'cov:PublicOrganization',
+  'CPV':         'cpv:Person',
+  'ADMS':        'adms:SemanticAsset',
+  'POI':         'poi:PointOfInterest',
+  'CLV':         'clv:Feature',
+  'L0':          'l0:Object',
+};
+
+function getMainClass(ontos) {
+  const priority = ['ACCO','PARK','GTFS','CULTURAL-ON','CPSV-AP','ADMS','CPV','COV','POI','CLV','L0'];
+  for (const onto of priority) {
+    if (ontos.map(o => o.toUpperCase()).includes(onto)) {
+      return ONTO_MAIN_CLASS[onto] || 'l0:Object';
+    }
+  }
+  return 'l0:Object';
+}
+
 // Determina il tipo-risorsa URI in base alle ontologie selezionate
 function getEntityTypeSegment(ontos) {
   // Priorità: ontologie specializzate prima di quelle generiche
@@ -1220,16 +1245,19 @@ function detectDeterministicMappings(cols, rows) {
 }
 
 // Genera TTL deterministico per le colonne riconoscibili
-function buildDeterministicTriples(cols, rows, entityBase, deterMappings, typeSegment='resource') {
+function buildDeterministicTriples(cols, rows, entityBase, deterMappings, typeSegment='resource', ontos=[]) {
   const lines = [];
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
     // URI entità: usa id/codice se disponibile, altrimenti indice
-    const idCol = cols.find(c => /^(id|codice|cod)$/i.test(c));
-    const entityId = idCol ? String(row[idCol]).trim().replace(/\s+/g, '_') : String(i + 1);
+    const idCol = cols.find(c => /^(id|codice|cod|n_enea|numero|num|pk)$/i.test(c));
+    const entityId = idCol ? String(row[idCol]).trim().replace(/[^a-zA-Z0-9_-]/g, '_') : String(i + 1);
     const uri = `<${entityBase}${typeSegment}/${entityId}>`;
 
     const triples = [];
+    // Aggiungi classe principale deterministica
+    const mainClass = getMainClass(ontos || []);
+    triples.push(`    a ${mainClass}`);
     for (const col of cols) {
       const m = deterMappings[col];
       if (!m) continue;
@@ -1290,7 +1318,7 @@ CSV:
 ${csvChunk}
 
 REGOLE:
-- Per ogni riga genera una risorsa RDF con il tipo ontologico più appropriato
+- Per ogni riga genera una risorsa RDF. La classe principale da usare è: ${mainClass || 'quella più appropriata tra le ontologie selezionate'}
 - Gli URI delle entità DEVONO seguire esattamente questo schema: <https://w3id.org/italia/data/${ipa}/{tipo-risorsa}/{id}>
   dove {ipa} è il codice IPA del titolare, {id} è il valore della colonna ID/codice della riga (NON il nome di una persona)
   {tipo-risorsa} va scelto ESATTAMENTE da questa lista in base alla classe principale usata:
@@ -1310,7 +1338,7 @@ REGOLE:
   NON usare domini inventati — usa SEMPRE w3id.org/italia/data/
   NON usare nomi di persone come {id} — usa sempre l'ID numerico o codice della riga
 - Mappa ogni colonna alla proprietà ontologica corretta
-- Per coordinate usa geo:lat e geo:long. Per telefono sm:hasTelephone. Per email sm:hasEmail. Per indirizzo clv:hasAddress. Per data dct:date o ti:startTime/ti:endTime
+- Per coordinate usa geo:lat e geo:long. Se il valore è vuoto o mancante NON generare la tripla (omettila completamente). Per telefono sm:hasTelephone. Per email sm:hasEmail. Per indirizzo clv:hasAddress. Per data dct:date o ti:startTime/ti:endTime
 - REGOLA CRITICA: usa SOLO proprietà che esistono nelle ontologie dichiarate nei @prefix. NON inventare proprietà con nomi come clv:hasStreetName, clv:hasPostalCode, clv:hasName, clv:hasFeature, sm:hasValue o simili — queste NON esistono.
 - Per i nomi usa rdfs:label o l0:name, NON clv:hasName (clv:hasName NON ESISTE)
 - Per i valori di contatto usa sm:hasTelephone, sm:hasEmail, sm:hasWebSite, NON sm:hasValue
@@ -1589,7 +1617,7 @@ async function startConversion() {
       // Delay tra chunk per Groq (rate limit TPM)
       if (i > 0 && currentProvider === 'groq') await new Promise(r => setTimeout(r, 6000));
       const prompt = buildPromptChunk(cols, chunks[i], ontos, i, chunks.length, vocabSection, ontoSection, skipCols, ipa);
-      let deterTriples = buildDeterministicTriples(cols, chunks[i], entityBase, deterMappings, typeSegment);
+      let deterTriples = buildDeterministicTriples(cols, chunks[i], entityBase, deterMappings, typeSegment, ontos);
       let llmTriples = prompt ? fixURIs(sanitizeTTL(cleanTTL(await callAI(prompt))), ipa) : '';
       // Mergia: usa LLM per classi/tipo, deterministico per proprietà note
       let chunk = llmTriples || deterTriples;

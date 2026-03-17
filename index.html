@@ -1071,48 +1071,42 @@ VOCABOLARI CONTROLLATI — USA SOLO URI IN QUESTA LISTA, altrimenti usa rdfs:lab
 }
 
 // ── SANITIZE TTL (rimuove proprietà inventate) ───────────────────────────────
-const PROP_REPLACEMENTS = {
-  // CLV inventate
-  'clv:hasName':               'rdfs:label',
-  'clv:hasFeature':            'dct:description',
-  'clv:hasStreetName':         'dct:description',
-  'clv:hasPostalCode':         'dct:description',
-  'clv:hasBuildingName':       'dct:description',
-  'clv:hasLocality':           'dct:description',
-  'clv:hasCountry':            'dct:description',
-  'clv:hasFloor':              'dct:description',
-  'clv:hasRoom':               'dct:description',
-  'clv:hasAddressLine':        'dct:description',
-  'clv:hasSpatialReferenceSystem': 'dct:description',
-  'l0:hasCharacteristic':      'dct:description',
-  'l0:hasValue':               'rdfs:label',
-  'l0:hasType':                'dct:type',
-  'l0:hasQuantity':            'dct:description',
-  'sdmx-measure:observationValue': 'sdmx-measure:obsValue',
-  'clv:hasOpeningHours':       'dct:description',
-  // SM inventate
-  'sm:hasValue':               'rdfs:label',
-  'sm:hasName':                'rdfs:label',
-  // TI inventate
-  'ti:hasDayOfWeek':           'dct:description',
-  'ti:hasDay':                 'dct:description',
-  'ti:hasHour':                'dct:description',
-  // COV inventate
-  'cov:hasName':               'rdfs:label',
-  'cov:hasDescription':        'dct:description',
-  // CPV inventate
-  'cpv:hasName':               'rdfs:label',
-  'cpv:Patent':                'adms:SemanticAsset',
+// Whitelist proprietà approvate per prefisso — tutto ciò che NON è in lista → dct:description
+const PROP_WHITELIST = {
+  'clv':  ['hasAddress','hasGeometry','hasSpatialCoverage','hasStreetNumber','hasAdminUnit','hasRoad','hasIdentifier'],
+  'cov':  ['hasContactPoint','hasActivityType','hasLegalStatus','hasSubOrganization','isPartOf'],
+  'cpv':  ['givenName','familyName','taxCode','dateOfBirth','hasResidenceAddress'],
+  'poi':  ['hasPointOfInterest'],
+  'ro':   ['withRole','hasRole','isRoleOf'],
+  'ti':   ['startTime','endTime','hasTimeInterval','hasInstant'],
+  'sm':   ['hasTelephone','hasEmail','hasWebSite','hasSocialNetworkAccount'],
+  'l0':   ['name','identifier','hasDescription','isPartOf','hasLocation'],
+  'adms': ['status','identifier','schemaAgency'],
+  'park': ['hasParkingLot','hasParkingSpace','hasTariff','capacity'],
+  'acco': ['hasRoom','hasStar','checkIn','checkOut'],
+  'qb':   ['dataSet','dimension','measure','attribute','observation','slice'],
+  'sdmx-dimension': ['refArea','timePeriod','sex','age','occupation'],
+  'sdmx-measure':   ['obsValue'],
+  'gtfs': ['agency','route','stop','trip','departureTime','arrivalTime','stopSequence'],
 };
+const SAFE_PREFIXES = new Set(['rdf','rdfs','owl','xsd','dct','dcat','foaf','geo','skos','vcard','schema']);
 
 function sanitizeTTL(ttl) {
-  let result = ttl;
-  for (const [wrong, correct] of Object.entries(PROP_REPLACEMENTS)) {
-    // Sostituisce come proprietà (all'inizio di riga con spazi/tab)
-    const re = new RegExp('(^|\n)(\\s+)' + wrong.replace(':', '\\:') + '(\\s)', 'g');
-    result = result.replace(re, '$1$2' + correct + '$3');
+  const lines = ttl.split('\n');
+  const result = [];
+  for (const line of lines) {
+    const t = line.trim();
+    const m = t.match(/^([a-zA-Z][a-zA-Z0-9_-]+):([a-zA-Z][a-zA-Z0-9_-]+)[\s;,.]/) ;
+    if (m) {
+      const pfx = m[1], local = m[2];
+      if (!SAFE_PREFIXES.has(pfx) && PROP_WHITELIST[pfx] && !PROP_WHITELIST[pfx].includes(local)) {
+        result.push(line.replace(pfx + ':' + local, 'dct:description'));
+        continue;
+      }
+    }
+    result.push(line);
   }
-  return result;
+  return result.join('\n');
 }
 
 // ── CHIAMATE AI ───────────────────────────────────────────────

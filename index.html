@@ -322,29 +322,24 @@
           <div class="provider-panel" id="panel-ollama">
             <div class="row g-2">
               <div class="col-12">
-                <label class="lbl">Modalità</label>
-                <select class="inp" id="ollama-mode" onchange="toggleOllamaMode()">
-                  <option value="local">🏠 Locale (localhost)</option>
-                  <option value="proxy">🔀 Proxy server (HTTPS → HTTP)</option>
-                </select>
-              </div>
-              <div id="ollama-local-row" class="col-12">
                 <label class="lbl">URL Ollama</label>
-                <input type="text" class="inp" id="ollama-url" value="http://localhost:11434" placeholder="http://localhost:11434"/>
-              </div>
-              <div id="ollama-proxy-row" class="col-12" style="display:none">
-                <label class="lbl">URL Proxy (endpoint HTTPS sul tuo server)</label>
-                <input type="text" class="inp" id="ollama-proxy-url" value="https://31.14.139.9:8443/api/ollama-proxy" placeholder="https://tuoserver/api/ollama-proxy"/>
+                <input type="text" class="inp" id="ollama-url" value="http://localhost:11434" placeholder="http://localhost:11434 oppure https://..."/>
               </div>
               <div class="col-12">
                 <label class="lbl">Modello</label>
                 <input type="text" class="inp" id="ollama-model" value="mistral" placeholder="es. mistral, llama3, gemma2"/>
               </div>
+              <div class="col-12">
+                <label class="lbl">API Key (opzionale)</label>
+                <div class="apikey-wrap">
+                  <input type="password" class="inp" id="ollama-apikey" placeholder="Solo per servizi Ollama cloud con autenticazione"/>
+                  <button class="apikey-toggle" onclick="toggleKey('ollama-apikey')">👁</button>
+                </div>
+              </div>
             </div>
-            <div class="info-note mt-2" id="ollama-note-local">🦙 Avvia con: <code>OLLAMA_ORIGINS=* ollama serve</code></div>
-            <div class="info-note mt-2" id="ollama-note-proxy" style="display:none">
-              🔀 Il browser chiama il proxy HTTPS che inoltra internamente a Ollama HTTP.<br/>
-              Aggiungi <code>/api/ollama-proxy</code> al tuo server Node.js backend.
+            <div class="info-note mt-2">
+              🦙 <strong>Locale:</strong> <code>OLLAMA_ORIGINS=* ollama serve</code> — funziona solo se l'app è su HTTP.<br/>
+              ☁ <strong>Cloud:</strong> inserisci l'URL HTTPS di un servizio Ollama remoto con certificato valido (es. <a href="https://openrouter.ai" target="_blank">OpenRouter</a>).
             </div>
           </div>
 
@@ -863,45 +858,21 @@ async function callGemini(prompt) {
   return (await res.json()).candidates?.[0]?.content?.parts?.[0]?.text || '';
 }
 
-function toggleOllamaMode() {
-  const mode = document.getElementById('ollama-mode').value;
-  document.getElementById('ollama-local-row').style.display  = mode === 'local' ? 'block' : 'none';
-  document.getElementById('ollama-proxy-row').style.display  = mode === 'proxy' ? 'block' : 'none';
-  document.getElementById('ollama-note-local').style.display = mode === 'local' ? 'block' : 'none';
-  document.getElementById('ollama-note-proxy').style.display = mode === 'proxy' ? 'block' : 'none';
-}
-
 async function callOllama(prompt) {
-  const mode  = document.getElementById('ollama-mode').value;
-  const model = document.getElementById('ollama-model').value.trim();
+  const url    = (document.getElementById('ollama-url').value.trim()).replace(/\/$/, '');
+  const model  = document.getElementById('ollama-model').value.trim();
+  const apikey = document.getElementById('ollama-apikey')?.value.trim() || '';
   if (!model) throw new Error('Inserisci il nome del modello Ollama.');
-
-  const messages = [{ role: 'user', content: prompt }];
-
-  if (mode === 'proxy') {
-    // Chiama il proxy HTTPS sul server Node.js
-    const proxyUrl = document.getElementById('ollama-proxy-url').value.trim();
-    if (!proxyUrl) throw new Error('Inserisci URL del proxy.');
-    const res = await fetch(proxyUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model, messages, stream: false, options: { temperature: 0.1 } })
-    });
-    if (!res.ok) throw new Error(`Proxy error ${res.status}: ${await res.text()}`);
-    const data = await res.json();
-    return data.message?.content || data.response || '';
-  } else {
-    // Chiamata diretta locale
-    const url = (document.getElementById('ollama-url').value.trim()).replace(/\/$/, '');
-    const res = await fetch(`${url}/api/chat`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model, messages, stream: false, options: { temperature: 0.1 } })
-    });
-    if (!res.ok) throw new Error(`Ollama error ${res.status}`);
-    const data = await res.json();
-    return data.message?.content || data.response || '';
-  }
+  const headers = { 'Content-Type': 'application/json' };
+  if (apikey) headers['Authorization'] = `Bearer ${apikey}`;
+  const res = await fetch(`${url}/api/chat`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], stream: false, options: { temperature: 0.1 } })
+  });
+  if (!res.ok) throw new Error(`Ollama error ${res.status}`);
+  const data = await res.json();
+  return data.message?.content || data.response || '';
 }
 
 // ── CONVERSIONE ───────────────────────────────────────────────

@@ -878,7 +878,7 @@ async function startConversion() {
       parts.push(chunk);
     }
 
-    const ttl = parts.join('\n\n');
+    const ttl = deduplicatePrefixes(parts.join('\n\n'));
     document.getElementById('ttl-output').value = ttl;
     document.getElementById('btn-download-ttl').disabled = false;
     document.getElementById('btn-download-rdf').disabled = false;

@@ -208,6 +208,10 @@
               <input type="text" class="inp" id="meta-title" placeholder="es. Defibrillatori pubblici del Comune di Bari"/>
             </div>
             <div class="col-12">
+              <label class="lbl">URI dataset (URL sul portale opendata della PA) *</label>
+              <input type="text" class="inp" id="meta-uri" placeholder="es. https://dati.comune.bari.it/dataset/defibrillatori-pubblici"/>
+            </div>
+            <div class="col-12">
               <label class="lbl">Descrizione</label>
               <input type="text" class="inp" id="meta-desc" placeholder="es. Elenco DAE presenti sul territorio con localizzazione geografica"/>
             </div>
@@ -246,6 +250,31 @@
                 <option value="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</option>
                 <option value="https://www.dati.gov.it/content/italian-open-data-license-v20">IODL 2.0</option>
               </select>
+            </div>
+            <div class="col-md-6">
+              <label class="lbl">Titolare (rightsHolder)</label>
+              <input type="text" class="inp" id="meta-rightsholder" placeholder="es. Comune di Bari"/>
+            </div>
+            <div class="col-md-6">
+              <label class="lbl">Frequenza aggiornamento</label>
+              <select class="inp" id="meta-periodicity">
+                <option value="http://publications.europa.eu/resource/authority/frequency/ANNUAL">Annuale</option>
+                <option value="http://publications.europa.eu/resource/authority/frequency/BIANNUAL">Semestrale</option>
+                <option value="http://publications.europa.eu/resource/authority/frequency/QUARTERLY">Trimestrale</option>
+                <option value="http://publications.europa.eu/resource/authority/frequency/MONTHLY">Mensile</option>
+                <option value="http://publications.europa.eu/resource/authority/frequency/WEEKLY">Settimanale</option>
+                <option value="http://publications.europa.eu/resource/authority/frequency/DAILY">Giornaliera</option>
+                <option value="http://publications.europa.eu/resource/authority/frequency/IRREG">Irregolare</option>
+                <option value="http://publications.europa.eu/resource/authority/frequency/NEVER">Mai</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="lbl">Data ultima modifica</label>
+              <input type="date" class="inp" id="meta-modified"/>
+            </div>
+            <div class="col-md-6">
+              <label class="lbl">Versione</label>
+              <input type="text" class="inp" id="meta-version" value="0.1" placeholder="es. 0.1"/>
             </div>
             <div class="col-12">
               <div class="d-flex justify-content-between align-items-center mb-1">
@@ -689,7 +718,7 @@ const CHUNK_SIZE = 25; // righe per chiamata
 // ── PROMPT HEADER (prefissi + dataset) ───────────────────────
 function buildPromptHeader(meta, ontos, cols) {
   const base = meta.ipa ? `https://dati.gov.it/resource/${meta.ipa}` : 'https://dati.gov.it/resource/pa';
-  const datasetURI = `${base}/dataset/${(meta.title||'dataset').toLowerCase().replace(/[^a-z0-9]+/g,'-')}`;
+  const datasetURI = meta.uri || `${base}/dataset/${(meta.title||'dataset').toLowerCase().replace(/[^a-z0-9]+/g,'-')}`;
   return `Sei un esperto RDF per la PA italiana. Genera Turtle (TTL) COMPATTO: niente commenti, niente righe vuote tra triple, URI brevi.
 
 ## PREFISSI (usa TUTTI questi esattamente)
@@ -717,21 +746,30 @@ Ontologie extra: ${ontos.join(', ') || 'nessuna'}
 ## GENERA questi due blocchi (niente entità):
 
 ### 1. Dichiarazione owl:Ontology (OBBLIGATORIA per validazione schema.gov.it)
+Genera esattamente:
 <${datasetURI}>
     a owl:Ontology ;
-    owl:versionIRI <${datasetURI}/0.1> ;
+    owl:versionIRI <${datasetURI}/${meta.version}> ;
     dct:title "${meta.title||'Dataset PA'}"@it ;
     dct:description "${meta.desc||''}"@it ;
-    owl:versionInfo "0.1" .
+    owl:versionInfo "${meta.version}" .
 
 ### 2. Blocco dcat:Dataset completo DCAT-AP_IT 2.1
-Titolo: ${meta.title || 'Dataset PA'}
-Descrizione: ${meta.desc || ''}
-Publisher: ${meta.publisher || 'PA Italiana'}
-IPA: ${meta.ipa || ''}
-Tema: ${meta.theme || ''}
-Licenza: ${meta.license}
+Includi OBBLIGATORIAMENTE queste proprietà:
+- dct:title, dct:description, dct:identifier
+- dct:publisher → URI IPA: <https://w3id.org/italia/data/public-organization/${meta.ipa||'pa'}>
+- dct:rightsHolder → <https://w3id.org/italia/data/public-organization/${meta.ipa||'pa'}>  ← OBBLIGATORIO
+- dcat:theme → <${meta.theme||'http://publications.europa.eu/resource/authority/data-theme/GOVE'}>
+- dct:license → <${meta.license}>
+- dct:modified → "${meta.modified}"^^xsd:date  ← OBBLIGATORIO
+- dct:accrualPeriodicity → <${meta.periodicity}>  ← OBBLIGATORIO
+- adms:hasSemanticAssetDistribution → crea nodo blank con dcat:downloadURL e dct:format  ← OBBLIGATORIO
+- owl:versionInfo → "${meta.version}"
+- dct:language → <http://publications.europa.eu/resource/authority/language/ITA>
+
 URI dataset: <${datasetURI}>
+IPA: ${meta.ipa || ''}
+Titolare: ${meta.rightsholder || meta.publisher || 'PA Italiana'}
 Colonne CSV: ${cols.join(', ')}
 
 Restituisci SOLO i @prefix, il blocco owl:Ontology e il blocco dcat:Dataset. Niente entità, niente markdown.`;
@@ -835,12 +873,17 @@ async function startConversion() {
   if (!csvText) return showStatus('⚠ Incolla prima il contenuto CSV.', 'error');
 
   const meta = {
-    title:     document.getElementById('meta-title').value.trim(),
-    desc:      document.getElementById('meta-desc').value.trim(),
-    publisher: document.getElementById('meta-publisher').value.trim(),
-    ipa:       document.getElementById('meta-ipa').value.trim(),
-    theme:     document.getElementById('meta-theme').value,
-    license:   document.getElementById('meta-license').value,
+    title:        document.getElementById('meta-title').value.trim(),
+    uri:          document.getElementById('meta-uri').value.trim(),
+    desc:         document.getElementById('meta-desc').value.trim(),
+    publisher:    document.getElementById('meta-publisher').value.trim(),
+    ipa:          document.getElementById('meta-ipa').value.trim(),
+    theme:        document.getElementById('meta-theme').value,
+    license:      document.getElementById('meta-license').value,
+    rightsholder: document.getElementById('meta-rightsholder').value.trim(),
+    periodicity:  document.getElementById('meta-periodicity').value,
+    modified:     document.getElementById('meta-modified').value || new Date().toISOString().split('T')[0],
+    version:      document.getElementById('meta-version').value.trim() || '0.1',
   };
 
   const parsed  = parseCSV(csvText);

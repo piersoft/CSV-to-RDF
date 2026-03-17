@@ -814,7 +814,14 @@ REGOLE:
 - rdfs:label con il nome principale in italiano
 - Usa SOLO questi prefissi: owl, clv, cov, cpv, l0, poi, ro, ti, sm, dcat, dct, foaf, geo, xsd, rdfs, vcard, skos, schema, adms, qb, sdmx-dimension, sdmx-measure
 - Output COMPATTO: niente righe vuote, niente commenti, niente @prefix, niente markdown
-- Genera TUTTE le ${rows.length} righe senza fermarti`;
+- Genera TUTTE le ${rows.length} righe senza fermarti
+
+VOCABOLARI CONTROLLATI — USA SOLO URI IN QUESTA LISTA, altrimenti usa rdfs:label con stringa letterale:
+- Ruoli (publications.europa.eu/resource/authority/role/): CHAIR, EDITOR, MEMBER, MAYOR, MINISTER, DIRECTOR, PUBLISHER, COMPILER, CONTRIB, TRANSL, SIGN, REPR, OBSERVER, AUTHORI, AUT, JUDGE, AMBASSADOR, REGISTRAR, TREASURER, MEDIATOR, COLLECTOR, OPERATOR
+- Lingue (publications.europa.eu/resource/authority/language/): ITA, ENG, FRA, DEU, SPA, POR
+- Frequenze (publications.europa.eu/resource/authority/frequency/): ANNUAL, BIANNUAL, QUARTERLY, MONTHLY, WEEKLY, DAILY, IRREG, NEVER, UPDATE_CONT
+- Temi DCAT (publications.europa.eu/resource/authority/data-theme/): AGRI, ECON, EDUC, ENER, ENVI, GOVE, HEAL, JUST, REGI, SCIE, SOCI, TECH, TRAN
+- REGOLA CRITICA: NON inventare codici URI nei vocabolari controllati. Se il valore non è nella lista, usa rdfs:label "valore"@it`;
 }
 
 // ── CHIAMATE AI ───────────────────────────────────────────────

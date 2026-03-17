@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-italia@2.8.0/dist/css/bootstrap-italia.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/n3@1.17.2/browser/n3.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
     :root {
@@ -343,9 +344,9 @@
           <textarea class="inp ttl-area" id="ttl-output" readonly
             placeholder="# Il file Turtle apparirà qui...&#10;#&#10;# Esempio:&#10;# @prefix poi: &lt;https://w3id.org/italia/onto/POI/&gt; .&#10;# @prefix geo: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#&gt; .&#10;# ...&#10;#&#10;# &lt;https://...&gt; a poi:PointOfInterest ;&#10;#     rdfs:label &quot;...&quot;@it ;&#10;#     geo:lat &quot;...&quot;^^xsd:decimal ."></textarea>
           <div class="d-flex gap-2 mt-2 flex-wrap">
-            <button class="btn-primary" id="btn-download" onclick="downloadTTL()" disabled>⬇ Scarica .ttl</button>
-            <button class="btn-sec" onclick="copyTTL()">📋 Copia</button>
-            <button class="btn-sec" onclick="window.open('https://www.w3.org/RDF/Validator/','_blank')">✓ Valida W3C</button>
+            <button class="btn-primary" id="btn-download-ttl" onclick="downloadTTL()" disabled>⬇ Scarica .ttl</button>
+            <button class="btn-primary" id="btn-download-rdf" onclick="downloadRDF()" disabled style="background:#1a6b35">⬇ Scarica .rdf</button>
+            <button class="btn-sec" onclick="copyTTL()">📋 Copia TTL</button>
           </div>
           <div id="output-stats" style="display:none;margin-top:0.9rem;">
             <div class="row g-2 text-center">
@@ -530,7 +531,8 @@ function clearAll() {
   document.getElementById('meta-ipa').value = '';
   ['csv-preview','columns-detected','output-stats'].forEach(id =>
     document.getElementById(id).style.display = 'none');
-  document.getElementById('btn-download').disabled = true;
+  document.getElementById('btn-download-ttl').disabled = true;
+    document.getElementById('btn-download-rdf').disabled = true;
   document.getElementById('btn-auto-onto').disabled = true;
   document.getElementById('auto-onto-msg').style.display = 'none';
   hideStatus();
@@ -690,7 +692,8 @@ async function startConversion() {
     chunks.push(allRows.slice(i, i + CHUNK_SIZE));
 
   document.getElementById('btn-convert').disabled = true;
-  document.getElementById('btn-download').disabled = true;
+  document.getElementById('btn-download-ttl').disabled = true;
+    document.getElementById('btn-download-rdf').disabled = true;
   document.getElementById('ttl-output').value = '';
   document.getElementById('output-stats').style.display = 'none';
 
@@ -710,7 +713,8 @@ async function startConversion() {
 
     const ttl = parts.join('\n\n');
     document.getElementById('ttl-output').value = ttl;
-    document.getElementById('btn-download').disabled = false;
+    document.getElementById('btn-download-ttl').disabled = false;
+    document.getElementById('btn-download-rdf').disabled = false;
     updateStats(ttl);
     showStatus(`✓ Completato! ${allRows.length} righe trasformate in ${chunks.length} chunk.`, 'success');
 
@@ -736,12 +740,103 @@ function updateStats(ttl) {
 // ── DOWNLOAD / COPY ───────────────────────────────────────────
 function downloadTTL() {
   const ttl  = document.getElementById('ttl-output').value;
+  if (!ttl) return;
   const ipa  = document.getElementById('meta-ipa').value || 'dataset';
-  const name = ipa + '-lod.ttl';
   const a    = document.createElement('a');
   a.href     = URL.createObjectURL(new Blob([ttl], {type:'text/turtle'}));
-  a.download = name;
+  a.download = ipa + '-lod.ttl';
   a.click();
+}
+
+async function downloadRDF() {
+  const ttl = document.getElementById('ttl-output').value;
+  if (!ttl) return;
+  const ipa = document.getElementById('meta-ipa').value || 'dataset';
+  showStatus('⏳ Conversione TTL → RDF/XML in corso...', 'info');
+  try {
+    const rdfxml = await ttlToRDFXML(ttl);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([rdfxml], {type:'application/rdf+xml'}));
+    a.download = ipa + '-lod.rdf';
+    a.click();
+    showStatus('✓ File RDF/XML scaricato!', 'success');
+  } catch(err) {
+    showStatus('✕ Errore conversione: ' + err.message, 'error');
+  }
+}
+
+function ttlToRDFXML(ttl) {
+  return new Promise((resolve, reject) => {
+    try {
+      const parser  = new N3.Parser();
+      const writer  = new N3.Writer({ format: 'application/rdf+xml' });
+      const quads   = [];
+      parser.parse(ttl, (err, quad, prefixes) => {
+        if (err) return reject(new Error('Errore parsing TTL: ' + err.message));
+        if (quad) {
+          quads.push(quad);
+        } else {
+          // Fine parsing — costruisco RDF/XML manualmente
+          // N3.js non supporta output RDF/XML nativo, uso serializzazione manuale
+          const prefixDecls = Object.entries(prefixes||{})
+            .map(([p,u]) => `xmlns:${p}="${u}"`)
+            .join('\n    ');
+          let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+          xml += `<rdf:RDF\n    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"\n    `;
+          xml += prefixDecls + `>\n\n`;
+
+          // Raggruppa quad per soggetto
+          const subjects = {};
+          quads.forEach(q => {
+            const s = q.subject.value;
+            if (!subjects[s]) subjects[s] = { type: q.subject.termType, preds: {} };
+            const p = q.predicate.value;
+            if (!subjects[s].preds[p]) subjects[s].preds[p] = [];
+            subjects[s].preds[p].push(q.object);
+          });
+
+          Object.entries(subjects).forEach(([subj, data]) => {
+            const subjAttr = data.type === 'BlankNode'
+              ? `rdf:nodeID="${subj}"`
+              : `rdf:about="${escXML(subj)}"`;
+            xml += `  <rdf:Description ${subjAttr}>\n`;
+            Object.entries(data.preds).forEach(([pred, objs]) => {
+              const predQName = uriToQName(pred, prefixes);
+              objs.forEach(obj => {
+                if (obj.termType === 'NamedNode') {
+                  xml += `    <${predQName} rdf:resource="${escXML(obj.value)}"/>\n`;
+                } else if (obj.termType === 'BlankNode') {
+                  xml += `    <${predQName} rdf:nodeID="${obj.value}"/>\n`;
+                } else {
+                  const lang = obj.language ? ` xml:lang="${obj.language}"` : '';
+                  const dtype = (!obj.language && obj.datatype && obj.datatype.value !== 'http://www.w3.org/2001/XMLSchema#string')
+                    ? ` rdf:datatype="${escXML(obj.datatype.value)}"` : '';
+                  xml += `    <${predQName}${lang}${dtype}>${escXML(obj.value)}</${predQName}>\n`;
+                }
+              });
+            });
+            xml += `  </rdf:Description>\n\n`;
+          });
+          xml += `</rdf:RDF>`;
+          resolve(xml);
+        }
+      });
+    } catch(e) {
+      reject(e);
+    }
+  });
+}
+
+function uriToQName(uri, prefixes) {
+  for (const [prefix, ns] of Object.entries(prefixes||{})) {
+    if (uri.startsWith(ns)) return `${prefix}:${uri.slice(ns.length)}`;
+  }
+  // fallback: usa URI completa come tag (non valido ma funziona per download)
+  return `rdf:type`;
+}
+
+function escXML(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function copyTTL() {

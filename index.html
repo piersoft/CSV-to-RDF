@@ -1,46 +1,41 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CSV → RDF/TTL — Ontologie PA Italiane</title>
+  <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-italia@2.8.0/dist/css/bootstrap-italia.min.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --dg-blue:        #0066cc;
-      --dg-blue-dark:   #004a99;
-      --dg-blue-light:  #e6f0fa;
-      --dg-orange:      #f07b05;
-      --dg-orange-dark: #c45e00;
-      --dg-gray:        #f5f6f7;
-      --dg-border:      #d6dce3;
-      --dg-text:        #17324d;
-      --dg-muted:       #5c6f82;
+      --dg-blue:       #0066cc;
+      --dg-blue-dark:  #004a99;
+      --dg-blue-light: #e6f0fa;
+      --dg-orange:     #f07b05;
+      --dg-orange-dark:#c45e00;
+      --dg-gray:       #f5f6f7;
+      --dg-border:     #d6dce3;
+      --dg-text:       #17324d;
+      --dg-muted:      #5c6f82;
       --mono: 'Roboto Mono', monospace;
       --sans: 'Titillium Web', sans-serif;
     }
     body { font-family: var(--sans); background: var(--dg-gray); color: var(--dg-text); }
 
-    .it-gov-bar { background: #004080; padding: 6px 0; font-size: 0.78rem; color: rgba(255,255,255,0.85); }
-    .it-gov-bar a { color: rgba(255,255,255,0.85); text-decoration: none; }
-    .it-gov-bar a:hover { color: white; text-decoration: underline; }
-
     .site-header { background: var(--dg-blue); border-bottom: 3px solid var(--dg-orange); }
-    .site-header .brand-title { font-size: 1.4rem; font-weight: 700; color: white; margin: 0; }
-    .site-header .brand-sub { font-size: 0.82rem; color: rgba(255,255,255,0.7); font-weight: 300; }
+    .brand-title  { font-size: 1.4rem; font-weight: 700; color: white; margin: 0; }
+    .brand-sub    { font-size: 0.82rem; color: rgba(255,255,255,0.7); font-weight: 300; }
     .header-badge { font-size: 0.7rem; font-family: var(--mono); background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: rgba(255,255,255,0.9); padding: 0.25rem 0.65rem; border-radius: 4px; }
 
-    .hero-band { background: linear-gradient(135deg, #003d80 0%, #0066cc 100%); color: white; padding: 2rem 0 1.8rem; }
-    .hero-band h1 { font-size: 1.65rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .hero-band p { font-size: 0.95rem; color: rgba(255,255,255,0.82); max-width: 680px; line-height: 1.65; }
-    .hero-band a { color: #80c0ff; }
-    .badge-onto { display: inline-block; background: var(--dg-orange); color: white; font-size: 0.68rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.05em; margin-right: 0.3rem; }
-    .badge-onto.blue  { background: #004a99; }
-    .badge-onto.green { background: #1a6b35; }
+    .hero-band    { background: linear-gradient(135deg, #003d80 0%, #0066cc 100%); color: white; padding: 1.8rem 0 1.5rem; }
+    .hero-band h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .hero-band p  { font-size: 0.92rem; color: rgba(255,255,255,0.82); max-width: 700px; line-height: 1.6; }
+    .hero-band a  { color: #80c0ff; }
+    .badge-ont    { display: inline-block; background: var(--dg-orange); color: white; font-size: 0.68rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.05em; margin-right: 0.3rem; }
+    .badge-ont.blue { background: #004a99; }
 
-    .card-pa { background: white; border: 1px solid var(--dg-border); border-radius: 6px; overflow: hidden; margin-bottom: 1.25rem; }
-    .card-head { padding: 0.6rem 1rem; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; display: flex; align-items: center; gap: 0.5rem; color: white; }
+    .card-pa      { background: white; border: 1px solid var(--dg-border); border-radius: 6px; overflow: hidden; margin-bottom: 1.25rem; }
+    .card-head    { padding: 0.6rem 1rem; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; display: flex; align-items: center; gap: 0.5rem; color: white; }
     .card-head.blue   { background: var(--dg-blue); }
     .card-head.orange { background: var(--dg-orange); }
     .card-head.dark   { background: #17324d; }
@@ -50,33 +45,32 @@
     .lbl { display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--dg-muted); margin-bottom: 0.3rem; }
     .inp { font-family: var(--sans); font-size: 0.88rem; border: 1px solid var(--dg-border); border-radius: 4px; padding: 0.5rem 0.75rem; width: 100%; color: var(--dg-text); background: white; transition: border-color 0.2s, box-shadow 0.2s; }
     .inp:focus { outline: none; border-color: var(--dg-blue); box-shadow: 0 0 0 3px rgba(0,102,204,0.12); }
-    textarea.csv-area { font-family: var(--mono); font-size: 0.77rem; line-height: 1.55; min-height: 240px; background: #fafbfc; resize: vertical; }
-    textarea.ttl-area { font-family: var(--mono); font-size: 0.75rem; line-height: 1.6; min-height: 400px; background: #0d1b2a; color: #7dd3a8; border-color: #2a3a4a; resize: vertical; }
+    textarea.csv-area { font-family: var(--mono); font-size: 0.77rem; line-height: 1.55; min-height: 260px; background: #fafbfc; resize: vertical; }
+    textarea.ttl-area { font-family: var(--mono); font-size: 0.75rem; line-height: 1.6; min-height: 420px; background: #0d1b2a; color: #7dd3a8; border-color: #2a3a4a; resize: vertical; }
     textarea.ttl-area:focus { border-color: #4a7a9a; box-shadow: none; }
 
-    /* API KEY field */
     .apikey-wrap { position: relative; }
     .apikey-wrap .inp { padding-right: 2.5rem; font-family: var(--mono); font-size: 0.82rem; }
     .apikey-toggle { position: absolute; right: 0.6rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--dg-muted); font-size: 0.85rem; padding: 0; }
     .apikey-toggle:hover { color: var(--dg-blue); }
 
-    .btn-dg-primary  { background: var(--dg-blue); color: white; border: none; border-radius: 4px; padding: 0.6rem 1.3rem; font-family: var(--sans); font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: background .15s; display: inline-flex; align-items: center; gap: 0.4rem; }
-    .btn-dg-primary:hover:not(:disabled) { background: var(--dg-blue-dark); }
-    .btn-dg-primary:disabled { background: var(--dg-border); cursor: not-allowed; }
-    .btn-dg-orange   { background: var(--dg-orange); color: white; border: none; border-radius: 4px; padding: 0.6rem 1.4rem; font-family: var(--sans); font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: background .15s; display: inline-flex; align-items: center; gap: 0.4rem; }
-    .btn-dg-orange:hover:not(:disabled) { background: var(--dg-orange-dark); }
-    .btn-dg-orange:disabled { background: var(--dg-border); cursor: not-allowed; }
-    .btn-dg-sec      { background: white; color: var(--dg-blue); border: 1.5px solid var(--dg-blue); border-radius: 4px; padding: 0.5rem 1rem; font-family: var(--sans); font-size: 0.83rem; font-weight: 600; cursor: pointer; transition: background .15s; display: inline-flex; align-items: center; gap: 0.35rem; }
-    .btn-dg-sec:hover { background: var(--dg-blue-light); }
+    .btn-primary  { background: var(--dg-blue); color: white; border: none; border-radius: 4px; padding: 0.6rem 1.3rem; font-family: var(--sans); font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: background .15s; display: inline-flex; align-items: center; gap: 0.4rem; }
+    .btn-primary:hover:not(:disabled) { background: var(--dg-blue-dark); }
+    .btn-primary:disabled { background: var(--dg-border); cursor: not-allowed; }
+    .btn-orange   { background: var(--dg-orange); color: white; border: none; border-radius: 4px; padding: 0.65rem 1.5rem; font-family: var(--sans); font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background .15s; display: inline-flex; align-items: center; gap: 0.4rem; }
+    .btn-orange:hover:not(:disabled) { background: var(--dg-orange-dark); }
+    .btn-orange:disabled { background: var(--dg-border); cursor: not-allowed; }
+    .btn-sec      { background: white; color: var(--dg-blue); border: 1.5px solid var(--dg-blue); border-radius: 4px; padding: 0.5rem 1rem; font-family: var(--sans); font-size: 0.83rem; font-weight: 600; cursor: pointer; transition: background .15s; display: inline-flex; align-items: center; gap: 0.35rem; }
+    .btn-sec:hover { background: var(--dg-blue-light); }
 
-    .status-bar { display: none; align-items: center; gap: 0.6rem; padding: 0.6rem 0.9rem; border-radius: 4px; font-size: 0.8rem; font-family: var(--mono); margin-top: 0.75rem; }
+    .status-bar { display: none; align-items: center; gap: 0.6rem; padding: 0.65rem 0.9rem; border-radius: 4px; font-size: 0.8rem; font-family: var(--mono); margin-top: 0.75rem; }
     .status-bar.info    { display: flex; background: #e6f0fa; color: #004080; border: 1px solid #b3d1f5; }
     .status-bar.success { display: flex; background: #e6f4ec; color: #1a6b35; border: 1px solid #a3d9b5; }
     .status-bar.error   { display: flex; background: #fdf0f0; color: #b00020; border: 1px solid #f5b8c0; }
     .spinner { width: 13px; height: 13px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin 0.75s linear infinite; flex-shrink: 0; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .csv-preview-wrap { display: none; margin-top: 0.75rem; overflow-x: auto; border: 1px solid var(--dg-border); border-radius: 4px; max-height: 155px; }
+    .csv-preview-wrap { display: none; margin-top: 0.75rem; overflow-x: auto; border: 1px solid var(--dg-border); border-radius: 4px; max-height: 150px; }
     .csv-preview-wrap table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 0.68rem; }
     .csv-preview-wrap th { background: var(--dg-blue); color: white; padding: 0.3rem 0.55rem; white-space: nowrap; position: sticky; top: 0; }
     .csv-preview-wrap td { padding: 0.22rem 0.55rem; border-bottom: 1px solid #eef0f3; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -87,63 +81,41 @@
     .pill.active   { background: var(--dg-blue); color: white; border-color: var(--dg-blue); }
     .pill.col-pill { cursor: default; background: #f0f4f8; color: var(--dg-muted); border-color: var(--dg-border); }
 
-    .step-bar { display: flex; margin-bottom: 1.5rem; border-radius: 4px; overflow: hidden; border: 1px solid var(--dg-border); }
-    .step { flex: 1; display: flex; align-items: center; gap: 0.45rem; padding: 0.5rem 0.7rem; background: white; font-size: 0.75rem; font-weight: 600; color: var(--dg-muted); border-right: 1px solid var(--dg-border); transition: all .2s; }
-    .step:last-child { border-right: none; }
-    .step.active { background: var(--dg-blue-light); color: var(--dg-blue); }
-    .step.done   { background: #e6f4ec; color: #1a6b35; }
-    .step-num { width: 19px; height: 19px; border-radius: 50%; background: var(--dg-border); color: white; font-size: 0.68rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 700; }
-    .step.active .step-num { background: var(--dg-blue); }
-    .step.done .step-num   { background: #1a6b35; }
-
-    .stat-box { border-radius: 4px; padding: 0.55rem; text-align: center; }
-    .stat-val  { font-size: 1.25rem; font-weight: 700; }
-    .stat-lbl  { font-size: 0.68rem; color: var(--dg-muted); }
-
-    /* Provider switcher */
     .provider-tabs { display: flex; border: 1px solid var(--dg-border); border-radius: 4px; overflow: hidden; margin-bottom: 0.75rem; }
-    .provider-tab { flex: 1; padding: 0.45rem; text-align: center; font-size: 0.78rem; font-weight: 600; cursor: pointer; background: white; color: var(--dg-muted); border: none; border-right: 1px solid var(--dg-border); transition: all .15s; font-family: var(--sans); }
+    .provider-tab  { flex: 1; padding: 0.45rem; text-align: center; font-size: 0.78rem; font-weight: 600; cursor: pointer; background: white; color: var(--dg-muted); border: none; border-right: 1px solid var(--dg-border); transition: all .15s; font-family: var(--sans); }
     .provider-tab:last-child { border-right: none; }
     .provider-tab.active { background: var(--dg-blue); color: white; }
     .provider-tab:hover:not(.active) { background: var(--dg-blue-light); }
-
     .provider-panel { display: none; }
     .provider-panel.active { display: block; }
 
     .info-note { background: #fff8e6; border: 1px solid #ffe0a0; border-radius: 4px; padding: 0.55rem 0.8rem; font-size: 0.78rem; color: #7a5000; margin-top: 0.5rem; }
     .info-note a { color: #5a3800; }
 
+    .btn-expand { background: none; border: none; color: var(--dg-blue); font-size: 0.75rem; font-family: var(--mono); font-weight: 600; cursor: pointer; padding: 0; text-decoration: underline; }
+    .btn-expand:hover { color: var(--dg-blue-dark); }
     .btn-auto-onto { background: #1a6b35; color: white; border: none; border-radius: 3px; padding: 0.2rem 0.6rem; font-size: 0.72rem; font-family: var(--mono); font-weight: 600; cursor: pointer; transition: background .15s; }
     .btn-auto-onto:hover:not(:disabled) { background: #145228; }
     .btn-auto-onto:disabled { background: var(--dg-border); color: var(--dg-muted); cursor: not-allowed; }
-    .btn-expand-onto { background: none; border: none; color: var(--dg-blue); font-size: 0.75rem; font-family: var(--mono); font-weight: 600; cursor: pointer; padding: 0; text-decoration: underline; }
-    .btn-expand-onto:hover { color: var(--dg-blue-dark); }
+
+    .stat-box { border-radius: 4px; padding: 0.55rem; text-align: center; }
+    .stat-val  { font-size: 1.25rem; font-weight: 700; }
+    .stat-lbl  { font-size: 0.68rem; color: var(--dg-muted); }
+
     footer { background: #17324d; color: rgba(255,255,255,0.65); text-align: center; padding: 1rem; font-size: 0.73rem; font-family: var(--mono); margin-top: 3rem; }
     footer a { color: #80c0ff; text-decoration: none; }
   </style>
 </head>
 <body>
 
-<!-- GOV BAR -->
-<div class="it-gov-bar">
-  <div class="container d-flex justify-content-between align-items-center">
-    <!--<span>🇮🇹 Repubblica Italiana — Dati Aperti della PA</span>
-    <span>
-      <a href="https://dati.gov.it" target="_blank">dati.gov.it</a> ·
-      <a href="https://schema.gov.it" target="_blank">schema.gov.it</a> ·
-      <a href="https://www.agid.gov.it" target="_blank">AgID</a>
-    </span>-->
-  </div>
-</div>
-
 <!-- HEADER -->
 <div class="site-header py-3">
   <div class="container d-flex justify-content-between align-items-center">
     <div>
       <div class="brand-title">CSV <span style="color:#80c0ff">→</span> RDF/TTL</div>
-      <div class="brand-sub">Strumento semantico per la Pubblica Amministrazione · Ontologie PA / DCAT-AP_IT 2.1</div>
+      <div class="brand-sub">Trasforma i dati aperti della PA in Linked Open Data</div>
     </div>
-    <div class="header-badge d-none d-md-block">schema.gov.it · dati-semantic-assets · dati.gov.it</div>
+    <div class="header-badge d-none d-md-block">github.com/italia/dati-semantic-assets</div>
   </div>
 </div>
 
@@ -151,44 +123,38 @@
 <div class="hero-band">
   <div class="container">
     <div class="mb-2">
-      
-      <span class="badge-onto blue">DCAT-AP_IT</span>
-      <span class="badge-onto green">schema.gov.it</span>
+      <span class="badge-ont">LOD</span>
+      <span class="badge-ont blue">DCAT-AP_IT</span>
+      <span class="badge-ont" style="background:#1a6b35">dati-semantic-assets</span>
     </div>
-    <h1>Trasforma i tuoi dati aperti in RDF semantico</h1>
-    <p>Incolla il tuo CSV, aggiungi i metadati e il sistema genera il file Turtle (TTL) arricchito con le ontologie
-      <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a>,
-      allineato a DCAT-AP_IT 2.1 e pronto per <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>.
-      La tua API key non viene mai salvata né trasmessa a terzi.</p>
+    <h1>Da CSV a Linked Open Data in pochi click</h1>
+    <p>
+      La PA ha già pubblicato il suo dataset su dati.gov.it o sul portale opendata locale.
+      Questo strumento genera la <strong>distribuzione TTL</strong> da aggiungere al catalogo,
+      arricchendo i dati con le ontologie ufficiali di
+      <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a>.
+    </p>
   </div>
 </div>
 
 <!-- MAIN -->
 <div class="container mt-4">
-
-  <div class="step-bar">
-    <div class="step active" id="step-1"><span class="step-num">1</span> CSV</div>
-    <div class="step"        id="step-2"><span class="step-num">2</span> Metadati</div>
-    <div class="step"        id="step-3"><span class="step-num">3</span> AI Provider</div>
-    <div class="step"        id="step-4"><span class="step-num">4</span> Risultato TTL</div>
-  </div>
-
   <div class="row g-4">
 
     <!-- ══ COLONNA SX ══ -->
     <div class="col-lg-6">
 
-      <!-- STEP 1: CSV -->
+      <!-- CSV -->
       <div class="card-pa">
-        <div class="card-head blue">📄 STEP 1 — Incolla il tuo CSV</div>
+        <div class="card-head blue">📄 STEP 1 — Incolla il CSV</div>
         <div class="card-body-pa">
           <label class="lbl">Contenuto CSV (con intestazioni)</label>
           <textarea class="inp csv-area" id="csv-input"
-            placeholder="Incolla qui il contenuto del tuo file CSV...&#10;&#10;Esempio:&#10;id,nome,indirizzo,latitudine,longitudine&#10;1,Comune di Bari,Piazza Libertà 1,41.1256,16.8699"></textarea>
+            placeholder="Incolla qui il contenuto del tuo file CSV...&#10;&#10;id,nome,indirizzo,latitudine,longitudine&#10;1,Teatro Comunale,Piazza Garibaldi,40.604,17.231"></textarea>
           <div class="d-flex gap-2 mt-2 flex-wrap">
-            <button class="btn-dg-sec" onclick="parseAndPreviewCSV()">👁 Anteprima</button>
-            <button class="btn-dg-sec" onclick="loadExample()">📋 Esempio defibrillatori</button>
-            <button class="btn-dg-sec" onclick="clearCSV()">✕ Svuota</button>
+            <button class="btn-sec" onclick="parseAndPreviewCSV()">👁 Anteprima</button>
+            <button class="btn-sec" onclick="loadExample()">📋 Esempio</button>
+            <button class="btn-sec" onclick="clearAll()">✕ Svuota</button>
           </div>
           <div class="csv-preview-wrap" id="csv-preview"></div>
           <div id="columns-detected" style="display:none;margin-top:0.6rem;">
@@ -198,134 +164,71 @@
         </div>
       </div>
 
-      <!-- STEP 2: METADATI -->
+      <!-- TITOLARE -->
       <div class="card-pa">
-        <div class="card-head orange">🏷 STEP 2 — Metadati dataset (DCAT-AP_IT)</div>
+        <div class="card-head orange">🏛 STEP 2 — Titolare del dato</div>
         <div class="card-body-pa">
           <div class="row g-2">
-            <div class="col-12">
-              <label class="lbl">Titolo dataset *</label>
-              <input type="text" class="inp" id="meta-title" placeholder="es. Defibrillatori pubblici del Comune di Bari"/>
-            </div>
-            <div class="col-12">
-              <label class="lbl">URI dataset (URL sul portale opendata della PA) *</label>
-              <input type="text" class="inp" id="meta-uri" placeholder="es. https://dati.comune.bari.it/dataset/defibrillatori-pubblici"/>
-            </div>
-            <div class="col-12">
-              <label class="lbl">Descrizione</label>
-              <input type="text" class="inp" id="meta-desc" placeholder="es. Elenco DAE presenti sul territorio con localizzazione geografica"/>
-            </div>
-
-            <div class="col-md-6">
-              <label class="lbl">IPA Code</label>
-              <input type="text" class="inp" id="meta-ipa" placeholder="es. c_a662"/>
-            </div>
-            <div class="col-12">
+            <div class="col-md-7">
               <label class="lbl">Nome PA *</label>
               <input type="text" class="inp" id="meta-paname" placeholder="es. Comune di Crispiano"/>
             </div>
-            <div class="col-md-7">
-              <label class="lbl">Tema DCAT</label>
-              <select class="inp" id="meta-theme">
-                <option value="">— Seleziona —</option>
-                <option value="http://publications.europa.eu/resource/authority/data-theme/HEAL">Salute (HEAL)</option>
-                <option value="http://publications.europa.eu/resource/authority/data-theme/TRAN">Trasporti (TRAN)</option>
-                <option value="http://publications.europa.eu/resource/authority/data-theme/GOVE">Governo (GOVE)</option>
-                <option value="http://publications.europa.eu/resource/authority/data-theme/ENVI">Ambiente (ENVI)</option>
-                <option value="http://publications.europa.eu/resource/authority/data-theme/SOCI">Popolazione (SOCI)</option>
-                <option value="http://publications.europa.eu/resource/authority/data-theme/EDUC">Istruzione (EDUC)</option>
-                <option value="http://publications.europa.eu/resource/authority/data-theme/ECON">Economia (ECON)</option>
-                <option value="http://publications.europa.eu/resource/authority/data-theme/JUST">Giustizia (JUST)</option>
-                <option value="http://publications.europa.eu/resource/authority/data-theme/AGRI">Agricoltura (AGRI)</option>
-                <option value="http://publications.europa.eu/resource/authority/data-theme/ENER">Energia (ENER)</option>
-                <option value="http://publications.europa.eu/resource/authority/data-theme/REGI">Regioni e città (REGI)</option>
-                <option value="http://publications.europa.eu/resource/authority/data-theme/SCIE">Scienza e tecnologia (SCIE)</option>
-                <option value="http://publications.europa.eu/resource/authority/data-theme/TECH">Tecnologia (TECH)</option>
-              </select>
-            </div>
             <div class="col-md-5">
-              <label class="lbl">Licenza</label>
-              <select class="inp" id="meta-license">
-                <option value="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</option>
-                <option value="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</option>
-                <option value="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</option>
-                <option value="https://www.dati.gov.it/content/italian-open-data-license-v20">IODL 2.0</option>
-              </select>
+              <label class="lbl">Codice IPA *</label>
+              <input type="text" class="inp" id="meta-ipa" placeholder="es. c_d171"/>
             </div>
+          </div>
+          <div class="info-note mt-2" style="font-size:0.75rem">
+            Genera <code>dct:rightsHolder</code> con URI IPA ufficiale:
+            <code>https://w3id.org/italia/data/public-organization/{ipa}</code>
+          </div>
+        </div>
+      </div>
 
-            <div class="col-md-6">
-              <label class="lbl">Frequenza aggiornamento</label>
-              <select class="inp" id="meta-periodicity">
-                <option value="http://publications.europa.eu/resource/authority/frequency/ANNUAL">Annuale</option>
-                <option value="http://publications.europa.eu/resource/authority/frequency/BIANNUAL">Semestrale</option>
-                <option value="http://publications.europa.eu/resource/authority/frequency/QUARTERLY">Trimestrale</option>
-                <option value="http://publications.europa.eu/resource/authority/frequency/MONTHLY">Mensile</option>
-                <option value="http://publications.europa.eu/resource/authority/frequency/WEEKLY">Settimanale</option>
-                <option value="http://publications.europa.eu/resource/authority/frequency/DAILY">Giornaliera</option>
-                <option value="http://publications.europa.eu/resource/authority/frequency/IRREG">Irregolare</option>
-                <option value="http://publications.europa.eu/resource/authority/frequency/NEVER">Mai</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label class="lbl">Data ultima modifica</label>
-              <input type="date" class="inp" id="meta-modified"/>
-            </div>
-            <div class="col-md-6">
-              <label class="lbl">Versione</label>
-              <input type="text" class="inp" id="meta-version" value="0.1" placeholder="es. 0.1"/>
-            </div>
-            <div class="col-12">
-              <div class="d-flex justify-content-between align-items-center mb-1">
-                <label class="lbl" style="margin:0">Ontologie PA ufficiali (clicca per attivare)</label>
-                <button class="btn-auto-onto" id="btn-auto-onto" onclick="autoDetectOnto()" disabled title="Analizza le colonne del CSV e suggerisce le ontologie più adatte">🔍 Auto-detect</button>
-              </div>
-              <div id="auto-onto-msg" style="display:none;font-size:0.72rem;color:#1a6b35;margin-bottom:0.4rem;font-family:var(--mono)"></div>
-              <!-- COMUNI -->
-              <div class="pills" id="onto-selector">
-                <span class="pill active" data-onto="CLV">CLV — Indirizzi</span>
-                <span class="pill active" data-onto="COV">COV — Organizzazioni</span>
-                <span class="pill" data-onto="CPV">CPV — Persone</span>
-                <span class="pill" data-onto="L0">L0 — Top-level</span>
-                <span class="pill" data-onto="POI">POI — Punti interesse</span>
-                <span class="pill" data-onto="SM">SM — Social/Contatti</span>
-                <span class="pill" data-onto="RO">RO — Ruoli</span>
-                <span class="pill" data-onto="TI">TI — Tempo</span>
-              </div>
-              <!-- AVANZATE -->
-              <div style="margin-top:0.5rem">
-                <button class="btn-expand-onto" onclick="toggleAdvOnto()" id="btn-adv-onto">▶ Mostra ontologie avanzate</button>
-                <div id="onto-advanced" style="display:none;margin-top:0.5rem">
-                  <div class="pills" id="onto-selector-adv">
-                    <span class="pill" data-onto="ACCO">ACCO — Accommodation</span>
-                    <span class="pill" data-onto="ADMS">ADMS — Asset/Licenze</span>
-                    
-                    
-                    <span class="pill" data-onto="Cultural-ON">Cultural-ON — Patrimonio culturale</span>
-                    <span class="pill" data-onto="IoT">IoT — Internet of Things</span>
-                    <span class="pill" data-onto="LANG">LANG — Lingue</span>
-                    
-                    <span class="pill" data-onto="PARK">PARK — Parcheggi</span>
-                    
-                    
-                    <span class="pill" data-onto="Route">Route — Percorsi</span>
-                    <span class="pill" data-onto="CPSV-AP">CPSV-AP — Servizi pubblici</span>
-                    <span class="pill" data-onto="GTFS">GTFS — Trasporto pubblico</span>
-                    <span class="pill" data-onto="AC">AC — Condizioni accesso</span>
-                    <span class="pill" data-onto="Transparency">Transparency — Trasparenza PA</span>
-                  </div>
-                </div>
+      <!-- ONTOLOGIE -->
+      <div class="card-pa">
+        <div class="card-head dark">🔗 STEP 3 — Ontologie</div>
+        <div class="card-body-pa">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <label class="lbl" style="margin:0">Seleziona le ontologie (clicca per attivare)</label>
+            <button class="btn-auto-onto" id="btn-auto-onto" onclick="autoDetectOnto()" disabled>🔍 Auto-detect</button>
+          </div>
+          <div id="auto-onto-msg" style="display:none;font-size:0.72rem;color:#1a6b35;margin-bottom:0.4rem;font-family:var(--mono)"></div>
+          <div class="pills" id="onto-selector">
+            <span class="pill active" data-onto="CLV">CLV — Indirizzi</span>
+            <span class="pill active" data-onto="COV">COV — Organizzazioni</span>
+            <span class="pill" data-onto="CPV">CPV — Persone</span>
+            <span class="pill active" data-onto="L0">L0 — Top-level</span>
+            <span class="pill active" data-onto="POI">POI — Punti interesse</span>
+            <span class="pill active" data-onto="SM">SM — Social/Contatti</span>
+            <span class="pill" data-onto="RO">RO — Ruoli</span>
+            <span class="pill active" data-onto="TI">TI — Tempo</span>
+            <span class="pill" data-onto="ADMS">ADMS — Asset</span>
+          </div>
+          <div style="margin-top:0.5rem">
+            <button class="btn-expand" onclick="toggleAdv()" id="btn-adv">▶ Mostra ontologie avanzate</button>
+            <div id="onto-advanced" style="display:none;margin-top:0.5rem">
+              <div class="pills" id="onto-selector-adv">
+                <span class="pill" data-onto="ACCO">ACCO — Accommodation</span>
+                <span class="pill" data-onto="AC">AC — Condizioni accesso</span>
+                <span class="pill" data-onto="PARK">PARK — Parcheggi</span>
+                <span class="pill" data-onto="CPSV-AP">CPSV-AP — Servizi pubblici</span>
+                <span class="pill" data-onto="Cultural-ON">Cultural-ON — Patrimonio</span>
+                <span class="pill" data-onto="GTFS">GTFS — Trasporto pubblico</span>
+                <span class="pill" data-onto="Route">Route — Percorsi</span>
+                <span class="pill" data-onto="Language">Language — Lingue</span>
+                <span class="pill" data-onto="IoT">IoT — Internet of Things</span>
+                <span class="pill" data-onto="Transparency">Transparency — Trasparenza</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- STEP 3: AI PROVIDER -->
+      <!-- PROVIDER AI -->
       <div class="card-pa">
-        <div class="card-head dark">⚙ STEP 3 — Provider AI</div>
+        <div class="card-head dark">⚙ STEP 4 — Provider AI</div>
         <div class="card-body-pa">
-
-          <!-- TABS PROVIDER -->
           <div class="provider-tabs">
             <button class="provider-tab active" onclick="switchProvider('mistral')">🟠 Mistral</button>
             <button class="provider-tab"        onclick="switchProvider('groq')">⚡ Groq</button>
@@ -333,11 +236,10 @@
             <button class="provider-tab"        onclick="switchProvider('ollama')">🦙 Ollama</button>
           </div>
 
-          <!-- MISTRAL -->
           <div class="provider-panel active" id="panel-mistral">
             <div class="row g-2">
               <div class="col-12">
-                <label class="lbl">Mistral API Key</label>
+                <label class="lbl">API Key</label>
                 <div class="apikey-wrap">
                   <input type="password" class="inp" id="mistral-key" placeholder="Incolla la tua API key Mistral..."/>
                   <button class="apikey-toggle" onclick="toggleKey('mistral-key')">👁</button>
@@ -353,17 +255,13 @@
                 </select>
               </div>
             </div>
-            <div class="info-note mt-2">
-              🔑 Ottieni la tua API key su <a href="https://console.mistral.ai" target="_blank">console.mistral.ai</a>.
-              La chiave rimane solo nel tuo browser, non viene salvata né trasmessa a server intermedi.
-            </div>
+            <div class="info-note mt-2">🔑 <a href="https://console.mistral.ai" target="_blank">console.mistral.ai</a> — consigliato per dataset grandi.</div>
           </div>
 
-          <!-- GROQ -->
           <div class="provider-panel" id="panel-groq">
             <div class="row g-2">
               <div class="col-12">
-                <label class="lbl">Groq API Key</label>
+                <label class="lbl">API Key</label>
                 <div class="apikey-wrap">
                   <input type="password" class="inp" id="groq-key" placeholder="Incolla la tua API key Groq..."/>
                   <button class="apikey-toggle" onclick="toggleKey('groq-key')">👁</button>
@@ -373,23 +271,18 @@
                 <label class="lbl">Modello</label>
                 <select class="inp" id="groq-model">
                   <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile (consigliato)</option>
-                  <option value="llama-3.1-8b-instant">llama-3.1-8b-instant (veloce)</option>
+                  <option value="llama-3.1-8b-instant">llama-3.1-8b-instant</option>
                   <option value="mixtral-8x7b-32768">mixtral-8x7b-32768</option>
-                  <option value="gemma2-9b-it">gemma2-9b-it</option>
                 </select>
               </div>
             </div>
-            <div class="info-note mt-2">
-              🔑 Ottieni la tua API key su <a href="https://console.groq.com" target="_blank">console.groq.com</a> (piano gratuito disponibile).
-            </div>
+            <div class="info-note mt-2">⚡ <a href="https://console.groq.com" target="_blank">console.groq.com</a> — veloce, rate limit sul piano free.</div>
           </div>
 
-
-          <!-- GEMINI -->
           <div class="provider-panel" id="panel-gemini">
             <div class="row g-2">
               <div class="col-12">
-                <label class="lbl">Google Gemini API Key</label>
+                <label class="lbl">API Key</label>
                 <div class="apikey-wrap">
                   <input type="password" class="inp" id="gemini-key" placeholder="Incolla la tua API key Google AI Studio..."/>
                   <button class="apikey-toggle" onclick="toggleKey('gemini-key')">👁</button>
@@ -399,20 +292,15 @@
                 <label class="lbl">Modello</label>
                 <select class="inp" id="gemini-model">
                   <option value="gemini-2.0-flash">gemini-2.0-flash (consigliato)</option>
-                  <option value="gemini-2.0-flash-lite">gemini-2.0-flash-lite (veloce)</option>
+                  <option value="gemini-2.0-flash-lite">gemini-2.0-flash-lite</option>
                   <option value="gemini-1.5-flash">gemini-1.5-flash</option>
-                  <option value="gemini-1.5-flash-8b">gemini-1.5-flash-8b</option>
                   <option value="gemini-1.5-pro">gemini-1.5-pro</option>
                 </select>
               </div>
             </div>
-            <div class="info-note mt-2">
-              🔑 Ottieni la tua API key gratuita su <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>.
-              Piano free: 1500 richieste/giorno · 1M token/minuto. Nessuna carta di credito richiesta.
-            </div>
+            <div class="info-note mt-2">✨ <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a> — piano free: 1500 req/giorno, 1M token/min.</div>
           </div>
 
-          <!-- OLLAMA -->
           <div class="provider-panel" id="panel-ollama">
             <div class="row g-2">
               <div class="col-12">
@@ -420,19 +308,15 @@
                 <input type="text" class="inp" id="ollama-url" value="http://localhost:11434" placeholder="http://localhost:11434"/>
               </div>
               <div class="col-12">
-                <label class="lbl">Modello (deve essere già scaricato)</label>
+                <label class="lbl">Modello</label>
                 <input type="text" class="inp" id="ollama-model" value="mistral" placeholder="es. mistral, llama3, gemma2"/>
               </div>
             </div>
-            <div class="info-note mt-2">
-              🦙 Ollama deve girare in locale con CORS abilitato:
-              <code style="font-size:0.75rem">OLLAMA_ORIGINS=* ollama serve</code>
-            </div>
+            <div class="info-note mt-2">🦙 Avvia con: <code>OLLAMA_ORIGINS=* ollama serve</code></div>
           </div>
 
-          <!-- MAX RIGHE -->
           <div class="mt-3">
-            <label class="lbl">Max righe CSV da inviare al modello</label>
+            <label class="lbl">Max righe CSV per chiamata (chunk)</label>
             <select class="inp" id="max-rows">
               <option value="25" selected>25 righe</option>
               <option value="100">100 righe</option>
@@ -440,14 +324,12 @@
               <option value="999999">Tutte le righe</option>
             </select>
           </div>
-
         </div>
       </div>
 
-      <!-- AZIONE -->
       <div class="d-flex gap-2 flex-wrap mb-3">
-        <button class="btn-dg-orange" id="btn-convert" onclick="startConversion()">⚡ Genera RDF/TTL</button>
-        <button class="btn-dg-sec" onclick="resetAll()">↺ Reset</button>
+        <button class="btn-orange" id="btn-convert" onclick="startConversion()">⚡ Genera TTL</button>
+        <button class="btn-sec" onclick="clearAll()">↺ Reset</button>
       </div>
       <div class="status-bar" id="status-bar"></div>
 
@@ -456,17 +338,15 @@
     <!-- ══ COLONNA DX ══ -->
     <div class="col-lg-6">
       <div class="card-pa" style="position:sticky;top:12px;">
-        <div class="card-head dark">💻 STEP 4 — Output RDF / Turtle (.ttl)</div>
+        <div class="card-head dark">💻 Output RDF / Turtle (.ttl)</div>
         <div class="card-body-pa">
           <textarea class="inp ttl-area" id="ttl-output" readonly
-            placeholder="# Il file Turtle generato apparirà qui...&#10;#&#10;# @prefix dcat: &lt;http://www.w3.org/ns/dcat#&gt; .&#10;# @prefix clv:  &lt;https://w3id.org/italia/onto/CLV/&gt; .&#10;# ..."></textarea>
-
+            placeholder="# Il file Turtle apparirà qui...&#10;#&#10;# Esempio:&#10;# @prefix poi: &lt;https://w3id.org/italia/onto/POI/&gt; .&#10;# @prefix geo: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#&gt; .&#10;# ...&#10;#&#10;# &lt;https://...&gt; a poi:PointOfInterest ;&#10;#     rdfs:label &quot;...&quot;@it ;&#10;#     geo:lat &quot;...&quot;^^xsd:decimal ."></textarea>
           <div class="d-flex gap-2 mt-2 flex-wrap">
-            <button class="btn-dg-primary" id="btn-download" onclick="downloadTTL()" disabled>⬇ Scarica .ttl</button>
-            <button class="btn-dg-sec" onclick="copyTTL()">📋 Copia</button>
-            <button class="btn-dg-sec" onclick="validateTTL()">✓ Valida W3C</button>
+            <button class="btn-primary" id="btn-download" onclick="downloadTTL()" disabled>⬇ Scarica .ttl</button>
+            <button class="btn-sec" onclick="copyTTL()">📋 Copia</button>
+            <button class="btn-sec" onclick="window.open('https://www.w3.org/RDF/Validator/','_blank')">✓ Valida W3C</button>
           </div>
-
           <div id="output-stats" style="display:none;margin-top:0.9rem;">
             <div class="row g-2 text-center">
               <div class="col-4">
@@ -492,27 +372,17 @@
         </div>
       </div>
 
-      <!-- INFO ONTOLOGIE -->
+      <!-- INFO -->
       <div class="card-pa mt-3">
-        <div class="card-head gray">📚 Ontologie ufficiali — github.com/italia/dati-semantic-assets</div>
-        <div class="card-body-pa">
-          <div style="font-size:0.8rem;line-height:1.7;color:var(--dg-muted)">
-            Il modello seleziona automaticamente le ontologie più adatte dal catalogo ufficiale
-            <a href="https://github.com/italia/dati-semantic-assets" target="_blank" style="color:var(--dg-blue)">dati-semantic-assets</a>:
-            <div class="pills mt-2">
-              <span class="pill col-pill">CLV — Luoghi</span>
-              <span class="pill col-pill">COV — Organizzazioni</span>
-              <span class="pill col-pill">CPV — Persone</span>
-              <span class="pill col-pill">L0 — Top-level</span>
-              <span class="pill col-pill">POI — Punti di interesse</span>
-              <span class="pill col-pill">SM — Social</span>
-              <span class="pill col-pill">RO — Ruoli</span>
-              <span class="pill col-pill">TI — Tempo</span>
-            </div>
-            <div class="mt-2" style="font-size:0.75rem">
-              Standard: <strong>DCAT-AP_IT 2.1</strong> · <strong>Dublin Core</strong> · <strong>schema.gov.it</strong> · <strong>W3C GEO</strong>
-            </div>
-          </div>
+        <div class="card-head gray">ℹ Come funziona</div>
+        <div class="card-body-pa" style="font-size:0.82rem;line-height:1.7;color:var(--dg-muted)">
+          <p>La PA ha già pubblicato il dataset su <strong>dati.gov.it</strong> o sul portale opendata locale con tutti i metadati DCAT. Questo strumento genera la <strong>distribuzione TTL</strong> da aggiungere al catalogo.</p>
+          <p>Il file TTL contiene:</p>
+          <ul style="margin:0;padding-left:1.2rem">
+            <li>Il <strong>titolare</strong> (<code>dct:rightsHolder</code>) con URI IPA ufficiale</li>
+            <li>Le <strong>entità LOD</strong> per ogni riga del CSV, tipizzate con le ontologie ufficiali di <a href="https://github.com/italia/dati-semantic-assets" target="_blank" style="color:var(--dg-blue)">dati-semantic-assets</a></li>
+          </ul>
+          <p class="mt-2">Il file generato va aggiunto come <strong>nuova distribuzione</strong> al dataset già esistente.</p>
         </div>
       </div>
     </div><!-- fine DX -->
@@ -523,7 +393,7 @@
 <footer>
   Strumento open source per la PA italiana &nbsp;·&nbsp;
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
-  <a href="https://schema.gov.it" target="_blank">schema.gov.it</a> ·
+  <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
 </footer>
 
@@ -535,7 +405,7 @@ const EXAMPLE_CSV = `id,denominazione,indirizzo,comune,provincia,latitudine,long
 3,DAE Piazza Ferrarese,Piazza Ferrarese,Bari,BA,41.1271,16.8694,,dae@comune.bari.it,no
 4,DAE Teatro Petruzzelli,Corso Cavour 12,Bari,BA,41.1253,16.8721,0805724111,,si`;
 
-// ── PROVIDER SWITCH ──────────────────────────────────────────
+// ── PROVIDER ─────────────────────────────────────────────────
 let currentProvider = 'mistral';
 
 function switchProvider(p) {
@@ -543,57 +413,53 @@ function switchProvider(p) {
   document.querySelectorAll('.provider-tab').forEach((t,i) => {
     t.classList.toggle('active', ['mistral','groq','gemini','ollama'][i] === p);
   });
-  document.querySelectorAll('.provider-panel').forEach(panel => panel.classList.remove('active'));
+  document.querySelectorAll('.provider-panel').forEach(el => el.classList.remove('active'));
   document.getElementById(`panel-${p}`).classList.add('active');
 }
-
 
 function toggleKey(id) {
   const el = document.getElementById(id);
   el.type = el.type === 'password' ? 'text' : 'password';
 }
 
-// ── PILLS ────────────────────────────────────────────────────
+// ── ONTOLOGIE ────────────────────────────────────────────────
 document.querySelectorAll('#onto-selector .pill, #onto-selector-adv .pill').forEach(p =>
   p.addEventListener('click', () => p.classList.toggle('active'))
 );
+
 function getOntos() {
   return [...document.querySelectorAll('#onto-selector .pill.active, #onto-selector-adv .pill.active')]
     .map(p => p.dataset.onto);
 }
 
-// ── AVANZATE TOGGLE ──────────────────────────────────────────
-function toggleAdvOnto() {
+function toggleAdv() {
   const panel = document.getElementById('onto-advanced');
-  const btn   = document.getElementById('btn-adv-onto');
+  const btn   = document.getElementById('btn-adv');
   const open  = panel.style.display === 'none';
   panel.style.display = open ? 'block' : 'none';
   btn.textContent = (open ? '▼ Nascondi' : '▶ Mostra') + ' ontologie avanzate';
 }
 
-// ── AUTO-DETECT ONTOLOGIE ────────────────────────────────────
-// Mappa parole chiave colonna → ontologie suggerite
-// Prefissi basati su github.com/italia/dati-semantic-assets (ontologie verificate)
 const ONTO_RULES = [
-  { keys: ['lat','lon','lng','latitudine','longitudine','coord','geo','x','y'],        ontos: ['CLV','L0'] },
-  { keys: ['indirizzo','address','via','strada','civico','cap','zip','comune','città'],ontos: ['CLV'] },
-  { keys: ['telefono','phone','tel','fax','email','mail','sito','web','url'],          ontos: ['SM'] },
-  { keys: ['nome','name','denominazione','titolo','label'],                            ontos: ['L0'] },
-  { keys: ['organizzazione','ente','comune','provincia','regione','istituzione'],      ontos: ['COV'] },
-  { keys: ['persona','cognome','responsabile','referente','contatto'],                 ontos: ['CPV'] },
-  { keys: ['ruolo','qualifica','mansione','incarico','funzione'],                      ontos: ['RO'] },
-  { keys: ['data','date','ora','time','inizio','fine','apertura','chiusura'],          ontos: ['TI'] },
-  { keys: ['punto','poi','luogo','location','sede','struttura','edificio'],            ontos: ['POI'] },
-  { keys: ['accesso','orario','prenotazione','chiusura','ingresso'],                   ontos: ['AC'] },
-  { keys: ['parcheggio','parking','posto','stallo','sosta'],                           ontos: ['PARK'] },
-  { keys: ['servizio','service','prestazione','sportello'],                            ontos: ['CPSV-AP'] },
-  { keys: ['hotel','albergo','accommodation','ricettivo'],                             ontos: ['ACCO'] },
-  { keys: ['patrimonio','culturale','museo','monumento','arte'],                       ontos: ['Cultural-ON'] },
-  { keys: ['bus','metro','tram','fermata','linea','corsa'],                            ontos: ['GTFS'] },
-  { keys: ['percorso','route','itinerario','tracciato','cammino'],                     ontos: ['Route'] },
-  { keys: ['lingua','language','lang'],                                                ontos: ['Language'] },
-  { keys: ['sensore','iot','device','dispositivo','misurazione'],                      ontos: ['IoT'] },
-  { keys: ['trasparenza','obbligo','pubblicazione'],                                   ontos: ['Transparency'] },
+  { keys: ['lat','lon','lng','latitudine','longitudine','coord'],          ontos: ['CLV','L0'] },
+  { keys: ['indirizzo','address','via','strada','civico','cap','comune'],  ontos: ['CLV'] },
+  { keys: ['telefono','phone','tel','email','mail','sito','web','url'],    ontos: ['SM'] },
+  { keys: ['nome','name','denominazione','titolo'],                        ontos: ['L0'] },
+  { keys: ['organizzazione','ente','comune','provincia','regione'],        ontos: ['COV'] },
+  { keys: ['persona','cognome','responsabile','referente'],                ontos: ['CPV'] },
+  { keys: ['ruolo','qualifica','mansione','incarico'],                     ontos: ['RO'] },
+  { keys: ['data','date','ora','time','inizio','fine','apertura'],         ontos: ['TI'] },
+  { keys: ['punto','poi','luogo','location','sede','struttura'],           ontos: ['POI'] },
+  { keys: ['accesso','orario','prenotazione','ingresso'],                  ontos: ['AC'] },
+  { keys: ['parcheggio','parking','posto','stallo'],                       ontos: ['PARK'] },
+  { keys: ['servizio','service','prestazione','sportello'],                ontos: ['CPSV-AP'] },
+  { keys: ['hotel','albergo','accommodation','ricettivo'],                 ontos: ['ACCO'] },
+  { keys: ['patrimonio','culturale','museo','monumento','arte'],           ontos: ['Cultural-ON'] },
+  { keys: ['bus','metro','tram','fermata','linea','corsa'],                ontos: ['GTFS'] },
+  { keys: ['percorso','route','itinerario','tracciato'],                   ontos: ['Route'] },
+  { keys: ['lingua','language','lang'],                                    ontos: ['Language'] },
+  { keys: ['sensore','iot','device','dispositivo','misurazione'],          ontos: ['IoT'] },
+  { keys: ['trasparenza','obbligo','pubblicazione'],                       ontos: ['Transparency'] },
 ];
 
 function autoDetectOnto() {
@@ -601,45 +467,26 @@ function autoDetectOnto() {
   if (!text) return;
   const parsed = parseCSV(text);
   if (!parsed) return;
-
   const cols = parsed.headers.map(h => h.toLowerCase());
-  const suggested = new Set(['L0']); // sempre incluso
-
+  const suggested = new Set(['L0','CLV','POI','SM']);
   ONTO_RULES.forEach(rule => {
-    if (rule.keys.some(k => cols.some(c => c.includes(k)))) {
+    if (rule.keys.some(k => cols.some(c => c.includes(k))))
       rule.ontos.forEach(o => suggested.add(o));
-    }
   });
-
-  // Resetta tutto e applica i suggerimenti
   document.querySelectorAll('#onto-selector .pill, #onto-selector-adv .pill').forEach(p => {
     p.classList.toggle('active', suggested.has(p.dataset.onto));
   });
-
-  // Apri avanzate se qualcuna è suggerita lì
   const advActive = [...document.querySelectorAll('#onto-selector-adv .pill.active')].length > 0;
   if (advActive) {
     document.getElementById('onto-advanced').style.display = 'block';
-    document.getElementById('btn-adv-onto').textContent = '▼ Nascondi ontologie avanzate';
+    document.getElementById('btn-adv').textContent = '▼ Nascondi ontologie avanzate';
   }
-
-  const list = [...suggested].join(', ');
-  const msg  = document.getElementById('auto-onto-msg');
-  msg.textContent = `✓ Suggerite da colonne CSV: ${list}`;
+  const msg = document.getElementById('auto-onto-msg');
+  msg.textContent = `✓ Suggerite: ${[...suggested].join(', ')}`;
   msg.style.display = 'block';
 }
 
-// ── STEP INDICATOR ───────────────────────────────────────────
-function setStep(n) {
-  for (let i = 1; i <= 4; i++) {
-    const el = document.getElementById(`step-${i}`);
-    el.classList.remove('active','done');
-    if (i < n) el.classList.add('done');
-    if (i === n) el.classList.add('active');
-  }
-}
-
-// ── CSV ──────────────────────────────────────────────────────
+// ── CSV ───────────────────────────────────────────────────────
 function parseCSV(text) {
   const lines = text.trim().split('\n').filter(l => l.trim());
   if (!lines.length) return null;
@@ -653,54 +500,43 @@ function parseCSV(text) {
 
 function parseAndPreviewCSV() {
   const text = document.getElementById('csv-input').value.trim();
-  if (!text) return showStatus('Incolla prima il contenuto CSV.','error');
+  if (!text) return showStatus('Incolla prima il CSV.', 'error');
   const parsed = parseCSV(text);
-  if (!parsed) return showStatus('Formato CSV non riconosciuto.','error');
-
+  if (!parsed) return showStatus('Formato CSV non riconosciuto.', 'error');
   document.getElementById('columns-pills').innerHTML =
     parsed.headers.map(h => `<span class="pill col-pill">${h}</span>`).join('');
   document.getElementById('columns-detected').style.display = 'block';
-
   const rows = parsed.rows.slice(0,5);
   document.getElementById('csv-preview').innerHTML = `<table>
     <thead><tr>${parsed.headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
     <tbody>${rows.map(r=>`<tr>${parsed.headers.map(h=>`<td title="${r[h]}">${r[h]}</td>`).join('')}</tr>`).join('')}</tbody>
   </table>`;
   document.getElementById('csv-preview').style.display = 'block';
-  setStep(2);
   document.getElementById('btn-auto-onto').disabled = false;
-  showStatus(`✓ ${parsed.headers.length} colonne · ${parsed.rows.length} righe rilevate`,'success');
+  showStatus(`✓ ${parsed.headers.length} colonne · ${parsed.rows.length} righe`, 'success');
 }
 
-function clearCSV() {
-  ['csv-input','ttl-output'].forEach(id => document.getElementById(id).value = '');
+function loadExample() {
+  document.getElementById('csv-input').value = EXAMPLE_CSV;
+  document.getElementById('meta-paname').value = 'Comune di Bari';
+  document.getElementById('meta-ipa').value = 'c_a662';
+  parseAndPreviewCSV();
+}
+
+function clearAll() {
+  document.getElementById('csv-input').value = '';
+  document.getElementById('ttl-output').value = '';
+  document.getElementById('meta-paname').value = '';
+  document.getElementById('meta-ipa').value = '';
   ['csv-preview','columns-detected','output-stats'].forEach(id =>
     document.getElementById(id).style.display = 'none');
   document.getElementById('btn-download').disabled = true;
   document.getElementById('btn-auto-onto').disabled = true;
   document.getElementById('auto-onto-msg').style.display = 'none';
-  setStep(1); hideStatus();
+  hideStatus();
 }
 
-function loadExample() {
-  document.getElementById('csv-input').value = EXAMPLE_CSV;
-  document.getElementById('meta-title').value = 'Defibrillatori pubblici del Comune di Bari';
-  document.getElementById('meta-desc').value = 'Elenco dei defibrillatori DAE presenti sul territorio comunale con localizzazione geografica';
-
-  document.getElementById('meta-ipa').value = 'c_a662';
-  document.getElementById('meta-paname').value = 'Comune di Bari';
-  document.getElementById('meta-theme').value = 'http://publications.europa.eu/resource/authority/data-theme/HEAL';
-  parseAndPreviewCSV();
-}
-
-function resetAll() {
-  clearCSV();
-  ['meta-title','meta-uri','meta-desc','meta-ipa','meta-paname'].forEach(id =>
-    document.getElementById(id).value = '');
-  document.getElementById('meta-theme').value = '';
-}
-
-// ── STATUS ───────────────────────────────────────────────────
+// ── STATUS ────────────────────────────────────────────────────
 function showStatus(msg, type) {
   const bar = document.getElementById('status-bar');
   bar.innerHTML = type === 'info'
@@ -710,17 +546,9 @@ function showStatus(msg, type) {
 }
 function hideStatus() { document.getElementById('status-bar').className = 'status-bar'; }
 
-// ── PROMPT ───────────────────────────────────────────────────
-// ── CHUNK SIZE ────────────────────────────────────────────────
-const CHUNK_SIZE = 25; // righe per chiamata
-
-// ── HEADER TTL GENERATO DIRETTAMENTE IN JS (non dal LLM) ────
-function buildTTLHeader(meta, ontos) {
-  const ipaURI     = `https://w3id.org/italia/data/public-organization/${meta.ipa||'pa'}`;
-  const datasetURI = meta.uri || `https://dati.gov.it/resource/${meta.ipa||'pa'}/dataset/${(meta.title||'dataset').toLowerCase().replace(/[^a-z0-9]+/g,'-')}`;
-  const distURI    = `${datasetURI}/distribution/1`;
-  const today      = meta.modified || new Date().toISOString().split('T')[0];
-
+// ── HEADER TTL (generato in JS, non dal LLM) ──────────────────
+function buildTTLHeader(paname, ipa) {
+  const ipaURI = `https://w3id.org/italia/data/public-organization/${ipa}`;
   return `@prefix owl:   <http://www.w3.org/2002/07/owl#> .
 @prefix clv:   <https://w3id.org/italia/onto/CLV/> .
 @prefix cov:   <https://w3id.org/italia/onto/COV/> .
@@ -741,89 +569,38 @@ function buildTTLHeader(meta, ontos) {
 @prefix schema:<https://schema.org/> .
 @prefix adms:  <http://www.w3.org/ns/adms#> .
 
-# --- Organizzazione (publisher / rightsHolder) ---
+# Titolare del dato
 <${ipaURI}>
     a foaf:Agent ;
-    foaf:name "${meta.paname || 'Pubblica Amministrazione'}"@it ;
-    dct:identifier "${meta.ipa||'pa'}" .
-
-# --- Dichiarazione owl:Ontology ---
-<${datasetURI}>
-    a owl:Ontology ;
-    owl:versionIRI <${datasetURI}/${meta.version}> ;
-    dct:title "${(meta.title||'Dataset PA').replace(/"/g,"'")}"@it ;
-    dct:description "${(meta.desc||'Dataset della Pubblica Amministrazione italiana').replace(/"/g,"'")}"@it ;
-    owl:versionInfo "${meta.version}" .
-
-# --- Dataset DCAT-AP_IT 2.1 ---
-<${datasetURI}>
-    a dcat:Dataset ;
-    dct:identifier "${datasetURI}" ;
-    dct:title "${(meta.title||'Dataset PA').replace(/"/g,"'")}"@it ;
-    dct:description "${(meta.desc||'Dataset della Pubblica Amministrazione italiana').replace(/"/g,"'")}"@it ;
-    dct:modified "${today}"^^xsd:date ;
-    dct:accrualPeriodicity <${meta.periodicity}> ;
-    dct:language <http://publications.europa.eu/resource/authority/language/ITA> ;
-    dct:license <${meta.license}> ;
-    dcat:theme <${meta.theme||'http://publications.europa.eu/resource/authority/data-theme/GOVE'}> ;
-    dct:publisher <${ipaURI}> ;
-    dct:rightsHolder <${ipaURI}> ;
-    owl:versionInfo "${meta.version}" ;
-    dct:issued "${today}"^^xsd:date ;
-    adms:prefix "${(meta.uri||datasetURI).replace(/.*\/([^\/]+)$/,'$1')}" ;
-    <https://w3id.org/italia/onto/ADMS/hasOntologyLanguage> <https://w3id.org/italia/onto/ADMS/OWL> ;
-    dct:conformsTo <https://w3id.org/italia/onto/ADMS> ;
-    adms:hasSemanticAssetDistribution <${distURI}> .
-
-# --- Distribuzione semantica ---
-<${distURI}>
-    a owl:NamedIndividual, <https://w3id.org/italia/onto/ADMS/SemanticAssetDistribution> ;
-    dct:title "Distribuzione RDF/Turtle di ${(meta.title||'Dataset PA').replace(/"/g,"'")}"@it ;
-    dct:description "Distribuzione in formato RDF/Turtle del dataset ${(meta.title||'Dataset PA').replace(/"/g,"'")}"@it ;
-    dct:format <http://publications.europa.eu/resource/authority/file-type/RDF_TURTLE> ;
-    dcat:downloadURL <${datasetURI}.ttl> ;
-    dct:license <${meta.license}> .
+    foaf:name "${paname}"@it ;
+    dct:identifier "${ipa}" .
 `;
 }
 
-// ── PROMPT HEADER (solo per le entità — prefissi già emessi da buildTTLHeader) ───────────────────────
-function buildPromptHeader(meta, ontos, cols) {
-  const base = meta.ipa ? `https://dati.gov.it/resource/${meta.ipa}` : 'https://dati.gov.it/resource/pa';
-  const datasetURI = meta.uri || `${base}/dataset/${(meta.title||'dataset').toLowerCase().replace(/[^a-z0-9]+/g,'-')}`;
-  return `Sei un esperto RDF per la PA italiana.
+// ── PROMPT CHUNK ─────────────────────────────────────────────
+function buildPromptChunk(cols, rows, ontos, chunkIndex, totalChunks) {
+  const csvChunk = [cols.join(','), ...rows.map(r => cols.map(h=>r[h]).join(','))].join('\n');
+  return `Sei un esperto RDF per la PA italiana. Trasforma le righe CSV in Turtle (TTL) compatto.
+
 I @prefix sono già stati emessi. NON aggiungerli.
-Genera SOLO le entità RDF delle righe CSV che seguiranno nei prossimi chunk.
-URI base: <${base}>
-Ontologie da usare: ${ontos.join(', ') || 'CLV, POI, L0'}
-Colonne CSV: ${cols.join(', ')}
-Usa SOLO questi prefissi: owl, clv, cov, cpv, l0, poi, ro, ti, sm, dcat, dct, foaf, geo, xsd, rdfs, vcard, skos, schema, adms
-NON generare nulla ora. Rispondi solo "OK, pronto per i chunk." `;
-}
-
-// ── PROMPT CHUNK (solo entità) ────────────────────────────────
-function buildPromptChunk(meta, ontos, cols, rows, chunkIndex, totalChunks) {
-  const base = meta.ipa ? `https://dati.gov.it/resource/${meta.ipa}` : 'https://dati.gov.it/resource/pa';
-  const csvChunk = [cols.join(','), ...rows.map(r => cols.map(h => r[h]).join(','))].join('\n');
-  return `Sei un esperto RDF per la PA italiana. Genera Turtle (TTL) COMPATTO: niente commenti, niente righe vuote, niente @prefix (già emessi), URI base <${base}>.
-
-Chunk ${chunkIndex+1}/${totalChunks}. Colonne: ${cols.join(', ')}
-Ontologie: ${ontos.join(', ') || 'CLV, POI, L0'}
+Ontologie da usare: ${ontos.join(', ')}
+Chunk ${chunkIndex+1}/${totalChunks} — Colonne: ${cols.join(', ')}
 
 CSV:
 ${csvChunk}
 
-ISTRUZIONI:
-- Per ogni riga genera una risorsa RDF con tipo ontologico appropriato
-- Mappa ogni colonna alla proprietà corretta (geo:lat, geo:long, sm:hasTelephone, sm:hasEmail, clv:hasAddress, rdfs:label, ecc.)
-- URI: <${base}/risorsa/ID> usando il valore della prima colonna come ID
-- rdfs:label in italiano
+REGOLE:
+- Per ogni riga genera una risorsa RDF con il tipo ontologico più appropriato
+- Usa URI significativi basati sul contenuto (es. nome o ID della riga)
+- Mappa ogni colonna alla proprietà ontologica corretta
+- geo:lat e geo:long per coordinate, sm:hasTelephone per telefono, sm:hasEmail per email, clv:hasAddress per indirizzo
+- rdfs:label con il nome principale in italiano
+- Usa SOLO questi prefissi: owl, clv, cov, cpv, l0, poi, ro, ti, sm, dcat, dct, foaf, geo, xsd, rdfs, vcard, skos, schema, adms
 - Output COMPATTO: niente righe vuote, niente commenti, niente @prefix, niente markdown
-- Usa SOLO questi prefissi (già dichiarati): clv, cov, cpv, l0, poi, ro, ti, sm, dcat, dct, foaf, geo, xsd, rdfs, owl, vcard, skos, schema, adms
-- NON usare prefissi non in lista (es. wgs84, dc, terms, ecc.)
-- Genera TUTTE le \${rows.length} righe, non fermarti prima`;
+- Genera TUTTE le ${rows.length} righe senza fermarti`;
 }
 
-// ── CHIAMATA AI (singola) ─────────────────────────────────────
+// ── CHIAMATE AI ───────────────────────────────────────────────
 async function callAI(prompt) {
   if      (currentProvider === 'mistral') return await callMistral(prompt);
   else if (currentProvider === 'groq')    return await callGroq(prompt);
@@ -838,44 +615,40 @@ function cleanTTL(text) {
 async function callMistral(prompt) {
   const key   = document.getElementById('mistral-key').value.trim();
   const model = document.getElementById('mistral-model').value;
-  if (!key) throw new Error('Inserisci la tua API key Mistral.');
+  if (!key) throw new Error('Inserisci la API key Mistral.');
   const res = await fetch('https://api.mistral.ai/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
     body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], temperature: 0.1, max_tokens: 32000 })
   });
-  if (!res.ok) { const err = await res.json(); throw new Error(err.message || `Mistral error ${res.status}`); }
+  if (!res.ok) { const e = await res.json(); throw new Error(e.message || `Mistral error ${res.status}`); }
   return (await res.json()).choices[0].message.content;
 }
 
 async function callGroq(prompt) {
   const key   = document.getElementById('groq-key').value.trim();
   const model = document.getElementById('groq-model').value;
-  if (!key) throw new Error('Inserisci la tua API key Groq.');
+  if (!key) throw new Error('Inserisci la API key Groq.');
   const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
     body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], temperature: 0.1, max_tokens: 32000 })
   });
-  if (!res.ok) { const err = await res.json(); throw new Error(err.error?.message || `Groq error ${res.status}`); }
+  if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || `Groq error ${res.status}`); }
   return (await res.json()).choices[0].message.content;
 }
 
 async function callGemini(prompt) {
   const key   = document.getElementById('gemini-key').value.trim();
   const model = document.getElementById('gemini-model').value;
-  if (!key) throw new Error('Inserisci la tua API key Google Gemini.');
+  if (!key) throw new Error('Inserisci la API key Gemini.');
   const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.1, maxOutputTokens: 32000 }
-    })
+    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.1, maxOutputTokens: 32000 } })
   });
-  if (!res.ok) { const err = await res.json(); throw new Error(err.error?.message || `Gemini error ${res.status}`); }
-  const data = await res.json();
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || `Gemini error ${res.status}`); }
+  return (await res.json()).candidates?.[0]?.content?.parts?.[0]?.text || '';
 }
 
 async function callOllama(prompt) {
@@ -887,74 +660,59 @@ async function callOllama(prompt) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], stream: false, options: { temperature: 0.1 } })
   });
-  if (!res.ok) throw new Error(`Ollama error ${res.status} — controlla che il server sia in ascolto su ${url}`);
+  if (!res.ok) throw new Error(`Ollama error ${res.status}`);
   const data = await res.json();
   return data.message?.content || data.response || '';
 }
 
-// ── CONVERSIONE PRINCIPALE CON CHUNKING ──────────────────────
+// ── CONVERSIONE ───────────────────────────────────────────────
+const CHUNK_SIZE = 25;
+
 async function startConversion() {
   const csvText = document.getElementById('csv-input').value.trim();
-  if (!csvText) return showStatus('⚠ Incolla prima il contenuto CSV.', 'error');
+  const paname  = document.getElementById('meta-paname').value.trim();
+  const ipa     = document.getElementById('meta-ipa').value.trim();
 
-  const meta = {
-    title:       document.getElementById('meta-title').value.trim(),
-    uri:         document.getElementById('meta-uri').value.trim(),
-    desc:        document.getElementById('meta-desc').value.trim(),
-    ipa:         document.getElementById('meta-ipa').value.trim(),
-    theme:       document.getElementById('meta-theme').value,
-    license:     document.getElementById('meta-license').value,
-    periodicity: document.getElementById('meta-periodicity').value,
-    modified:    document.getElementById('meta-modified').value || new Date().toISOString().split('T')[0],
-    version:     document.getElementById('meta-version').value.trim() || '0.1',
-  };
+  if (!csvText) return showStatus('⚠ Incolla prima il CSV.', 'error');
+  if (!paname)  return showStatus('⚠ Inserisci il Nome PA.', 'error');
+  if (!ipa)     return showStatus('⚠ Inserisci il Codice IPA.', 'error');
 
-  const parsed  = parseCSV(csvText);
-  if (!parsed)  return showStatus('⚠ CSV non valido.', 'error');
-  if (!meta.ipa)     return showStatus('⚠ Inserisci il codice IPA.', 'error');
-  if (!meta.paname)  return showStatus('⚠ Inserisci il Nome PA.', 'error');
+  const parsed = parseCSV(csvText);
+  if (!parsed) return showStatus('⚠ CSV non valido.', 'error');
 
   const maxRows = parseInt(document.getElementById('max-rows').value);
   const allRows = parsed.rows.slice(0, maxRows);
   const cols    = parsed.headers;
   const ontos   = getOntos();
 
-  // Suddividi in chunk
   const chunks = [];
-  for (let i = 0; i < allRows.length; i += CHUNK_SIZE) {
+  for (let i = 0; i < allRows.length; i += CHUNK_SIZE)
     chunks.push(allRows.slice(i, i + CHUNK_SIZE));
-  }
-  const totalChunks = chunks.length;
 
   document.getElementById('btn-convert').disabled = true;
   document.getElementById('btn-download').disabled = true;
   document.getElementById('ttl-output').value = '';
   document.getElementById('output-stats').style.display = 'none';
-  setStep(3);
 
   try {
     const parts = [];
 
-    // 1. Header TTL generato direttamente in JS (sempre corretto)
-    showStatus(`⏳ Preparazione header TTL...`, 'info');
-    parts.push(buildTTLHeader(meta, ontos));
+    // Header generato in JS
+    parts.push(buildTTLHeader(paname, ipa));
 
-    // 2. Chiamate chunk: solo entità
+    // Chunk dal LLM
     for (let i = 0; i < chunks.length; i++) {
-      showStatus(`⏳ Chunk ${i+1}/${totalChunks} — elaborazione righe ${i*CHUNK_SIZE+1}-${i*CHUNK_SIZE+chunks[i].length}...`, 'info');
-      const chunkPrompt = buildPromptChunk(meta, ontos, cols, chunks[i], i, totalChunks);
-      let chunkTTL = cleanTTL(await callAI(chunkPrompt));
-      // Rimuovi eventuali @prefix duplicati nei chunk
-      chunkTTL = chunkTTL.replace(/@prefix\s+\w+:.*\.\n?/g, '').trim();
-      parts.push(chunkTTL);
+      showStatus(`⏳ Chunk ${i+1}/${chunks.length} — righe ${i*CHUNK_SIZE+1}-${i*CHUNK_SIZE+chunks[i].length}...`, 'info');
+      let chunk = cleanTTL(await callAI(buildPromptChunk(cols, chunks[i], ontos, i, chunks.length)));
+      chunk = chunk.replace(/@prefix\s+\S+:\s*<[^>]+>\s*\.\n?/g, '').trim();
+      parts.push(chunk);
     }
 
     const ttl = parts.join('\n\n');
     document.getElementById('ttl-output').value = ttl;
     document.getElementById('btn-download').disabled = false;
-    setStep(4);
     updateStats(ttl);
-    showStatus(`✓ Completato! ${totalChunks+1} chiamate API — ${allRows.length} righe trasformate.`, 'success');
+    showStatus(`✓ Completato! ${allRows.length} righe trasformate in ${chunks.length} chunk.`, 'success');
 
   } catch (err) {
     showStatus(`✕ ${err.message}`, 'error');
@@ -975,25 +733,21 @@ function updateStats(ttl) {
   document.getElementById('output-stats').style.display = 'block';
 }
 
-// ── DOWNLOAD / COPY ──────────────────────────────────────────
+// ── DOWNLOAD / COPY ───────────────────────────────────────────
 function downloadTTL() {
-  const ttl = document.getElementById('ttl-output').value;
-  if (!ttl) return;
-  const name = (document.getElementById('meta-title').value || 'dataset')
-    .toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') + '.ttl';
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([ttl],{type:'text/turtle'}));
-  a.download = name; a.click();
+  const ttl  = document.getElementById('ttl-output').value;
+  const ipa  = document.getElementById('meta-ipa').value || 'dataset';
+  const name = ipa + '-lod.ttl';
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(new Blob([ttl], {type:'text/turtle'}));
+  a.download = name;
+  a.click();
 }
 
 function copyTTL() {
   const ttl = document.getElementById('ttl-output').value;
-  if (!ttl) return showStatus('Nessun contenuto da copiare.','error');
-  navigator.clipboard.writeText(ttl).then(() => showStatus('✓ Copiato negli appunti!','success'));
-}
-
-function validateTTL() {
-  window.open('https://www.w3.org/RDF/Validator/','_blank');
+  if (!ttl) return showStatus('Nessun contenuto da copiare.', 'error');
+  navigator.clipboard.writeText(ttl).then(() => showStatus('✓ Copiato negli appunti!', 'success'));
 }
 </script>
 </body>

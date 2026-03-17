@@ -208,6 +208,7 @@
           <div class="d-flex justify-content-between align-items-center mb-2">
             <label class="lbl" style="margin:0">Seleziona le ontologie (clicca per attivare)</label>
             <button class="btn-auto-onto" id="btn-auto-onto" onclick="autoDetectOnto()" disabled>🔍 Auto-detect</button>
+            <button class="btn-auto-onto" id="btn-ai-onto" onclick="autoDetectOntoAI()" disabled style="background:#0066cc;margin-left:4px">🤖 AI-detect</button>
           </div>
           <div id="auto-onto-msg" style="display:none;font-size:0.72rem;color:#1a6b35;margin-bottom:0.4rem;font-family:var(--mono)"></div>
           <div class="pills" id="onto-selector">
@@ -494,7 +495,7 @@ const ONTO_RULES = [
   { keys: ['accesso','orario','prenotazione','ingresso'],                  ontos: ['AC'] },
   { keys: ['parcheggio','parking','posto','stallo'],                       ontos: ['PARK'] },
   { keys: ['servizio','service','prestazione','sportello'],                ontos: ['CPSV-AP'] },
-  { keys: ['hotel','albergo','accommodation','ricettivo'],                 ontos: ['ACCO'] },
+  { keys: ['hotel','albergo','accommodation','ricettivo','posti.letto','posti_letto','camere','stelle'],  ontos: ['ACCO'] },
   { keys: ['patrimonio','culturale','museo','monumento','arte'],           ontos: ['Cultural-ON'] },
   { keys: ['tecnologia','area_tecnologica','settore','disciplina','campo'],  ontos: ['ADMS','L0'] },
   { keys: ['bus','metro','tram','fermata','linea','corsa'],                ontos: ['GTFS'] },
@@ -503,6 +504,65 @@ const ONTO_RULES = [
   { keys: ['sensore','iot','device','dispositivo','misurazione'],          ontos: ['IoT'] },
   { keys: ['trasparenza','obbligo','pubblicazione'],                       ontos: ['Transparency'] },
 ];
+
+async function autoDetectOntoAI() {
+  const text = document.getElementById('csv-input').value.trim();
+  if (!text) return;
+  const parsed = parseCSV(text);
+  if (!parsed) return;
+
+  // Costruisci campione: header + prime 5 righe
+  const sample = [
+    parsed.headers.join(','),
+    ...parsed.rows.slice(0, 5).map(r => parsed.headers.map(h => r[h] || '').join(','))
+  ].join('\n');
+
+  const prompt = `Sei un esperto di Linked Open Data per la PA italiana.
+Le ontologie ufficiali sono su https://github.com/italia/dati-semantic-assets
+
+Analizza queste intestazioni CSV e le prime righe di dati:
+${sample}
+
+Rispondi SOLO con una lista JSON dei prefissi ontologici più appropriati tra questi valori esatti:
+CLV, COV, CPV, L0, POI, SM, RO, TI, ADMS, ACCO, PARK, GTFS, Cultural-ON, CPSV-AP, QB, SKOS
+
+Esempio di risposta valida: ["ACCO", "CLV", "L0"]
+Non aggiungere spiegazioni, solo il JSON.`;
+
+  const btn = document.getElementById('btn-ai-onto');
+  btn.disabled = true;
+  btn.textContent = '⏳ Analisi...';
+
+  try {
+    const raw = await callAI(prompt);
+    // Estrai il JSON dalla risposta
+    const match = raw.match(/\[.*?\]/s);
+    if (!match) throw new Error('Risposta non valida');
+    const ontos = JSON.parse(match[0]);
+
+    // Attiva le pillole suggerite
+    document.querySelectorAll('#onto-selector .pill, #onto-selector-adv .pill').forEach(p => {
+      p.classList.toggle('active', ontos.map(o => o.toUpperCase()).includes(p.dataset.onto.toUpperCase()));
+    });
+
+    // Apri avanzate se necessario
+    const advActive = [...document.querySelectorAll('#onto-selector-adv .pill.active')].length > 0;
+    if (advActive) {
+      document.getElementById('onto-advanced').style.display = 'block';
+      document.getElementById('btn-adv').textContent = '▼ Nascondi ontologie avanzate';
+    }
+
+    const msg = document.getElementById('auto-onto-msg');
+    msg.textContent = `🤖 AI suggerisce: ${ontos.join(', ')}`;
+    msg.style.display = 'block';
+
+  } catch(e) {
+    showStatus('✕ AI-detect fallito: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🤖 AI-detect';
+  }
+}
 
 function autoDetectOnto() {
   const text = document.getElementById('csv-input').value.trim();
@@ -533,9 +593,24 @@ function autoDetectOnto() {
       cols.some(c => /maschi|femmine|totale|valore|count|numero|quantita/.test(c)))
     suggested.add('QB');
 
-  // Controllo sui VALORI del campione (prima riga dati)
+  // Controlla anche se esiste una colonna TIPOLOGIA con valori ricettivi
+  if (cols.some(c => /^tipologia$|^tipo_struttura$|^tipo.attivita/.test(c))) {
+    const tipCol = parsed.headers.find(h => /^tipologia$|^tipo/i.test(h));
+    if (tipCol && parsed.rows.length > 0) {
+      const tipVals = parsed.rows.slice(0,5).map(r => String(r[tipCol]||'').toLowerCase()).join(' ');
+      if (/bed.?breakfast|b&b|hotel|ostello|agriturismo|affittacamere|casa.vacanza|resort|albergo/.test(tipVals))
+        suggested.add('ACCO');
+    }
+  }
+
+  // Controllo sui VALORI del campione (tutte le righe, non solo la prima)
   if (parsed.rows && parsed.rows.length > 0) {
-    const sampleValues = Object.values(parsed.rows[0]).map(v => String(v).toLowerCase()).join(' ');
+    // Prendi fino a 5 righe per avere un campione più rappresentativo
+    const sampleRows = parsed.rows.slice(0, 5);
+    const sampleValues = sampleRows
+      .flatMap(r => Object.values(r))
+      .map(v => String(v).toLowerCase())
+      .join(' ');
     // Strutture ricettive
     if (/bed.?breakfast|b&b|hotel|ostello|hostel|agriturismo|affittacamere|casa.vacanza|resort|albergo/.test(sampleValues))
       suggested.add('ACCO');
@@ -747,6 +822,7 @@ function parseAndPreviewCSV() {
   </table>`;
   document.getElementById('csv-preview').style.display = 'block';
   document.getElementById('btn-auto-onto').disabled = false;
+  document.getElementById('btn-ai-onto').disabled = false;
   validateCSV(parsed);
   autoDetectOnto();
   showStatus(`✓ ${parsed.headers.length} colonne · ${parsed.rows.length} righe`, 'success');

@@ -684,13 +684,14 @@ function loadExample() {
   document.getElementById('meta-desc').value = 'Elenco dei defibrillatori DAE presenti sul territorio comunale con localizzazione geografica';
 
   document.getElementById('meta-ipa').value = 'c_a662';
+  document.getElementById('meta-paname').value = 'Comune di Bari';
   document.getElementById('meta-theme').value = 'http://publications.europa.eu/resource/authority/data-theme/HEAL';
   parseAndPreviewCSV();
 }
 
 function resetAll() {
   clearCSV();
-  ['meta-title','meta-desc','meta-publisher','meta-ipa'].forEach(id =>
+  ['meta-title','meta-uri','meta-desc','meta-ipa','meta-paname'].forEach(id =>
     document.getElementById(id).value = '');
   document.getElementById('meta-theme').value = '';
 }
@@ -739,7 +740,7 @@ function buildTTLHeader(meta, ontos) {
 # --- Organizzazione (publisher / rightsHolder) ---
 <${ipaURI}>
     a foaf:Agent ;
-    foaf:name "${meta.title ? meta.title.replace(/dataset.*/i,'').trim() : 'PA Italiana'}"@it ;
+    foaf:name "${meta.paname || meta.ipa || 'PA Italiana'}"@it ;
     dct:identifier "${meta.ipa||'pa'}" .
 
 # --- Dichiarazione owl:Ontology ---

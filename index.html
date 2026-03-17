@@ -1070,6 +1070,44 @@ VOCABOLARI CONTROLLATI — USA SOLO URI IN QUESTA LISTA, altrimenti usa rdfs:lab
 - REGOLA CRITICA: NON inventare codici URI nei vocabolari controllati. Se il valore non è nella lista, usa rdfs:label "valore"@it`;
 }
 
+// ── SANITIZE TTL (rimuove proprietà inventate) ───────────────────────────────
+const PROP_REPLACEMENTS = {
+  // CLV inventate
+  'clv:hasName':               'rdfs:label',
+  'clv:hasFeature':            'dct:description',
+  'clv:hasStreetName':         'dct:description',
+  'clv:hasPostalCode':         'dct:description',
+  'clv:hasBuildingName':       'dct:description',
+  'clv:hasLocality':           'dct:description',
+  'clv:hasCountry':            'dct:description',
+  'clv:hasFloor':              'dct:description',
+  'clv:hasRoom':               'dct:description',
+  'clv:hasOpeningHours':       'dct:description',
+  // SM inventate
+  'sm:hasValue':               'rdfs:label',
+  'sm:hasName':                'rdfs:label',
+  // TI inventate
+  'ti:hasDayOfWeek':           'dct:description',
+  'ti:hasDay':                 'dct:description',
+  'ti:hasHour':                'dct:description',
+  // COV inventate
+  'cov:hasName':               'rdfs:label',
+  'cov:hasDescription':        'dct:description',
+  // CPV inventate
+  'cpv:hasName':               'rdfs:label',
+  'cpv:Patent':                'adms:SemanticAsset',
+};
+
+function sanitizeTTL(ttl) {
+  let result = ttl;
+  for (const [wrong, correct] of Object.entries(PROP_REPLACEMENTS)) {
+    // Sostituisce come proprietà (all'inizio di riga con spazi/tab)
+    const re = new RegExp('(^|\n)(\\s+)' + wrong.replace(':', '\\:') + '(\\s)', 'g');
+    result = result.replace(re, '$1$2' + correct + '$3');
+  }
+  return result;
+}
+
 // ── CHIAMATE AI ───────────────────────────────────────────────
 
 async function loadOllamaModels() {
@@ -1212,7 +1250,7 @@ async function startConversion() {
       showStatus(`⏳ Chunk ${i+1}/${chunks.length} — righe ${i*CHUNK_SIZE+1}-${i*CHUNK_SIZE+chunks[i].length}...`, 'info');
       // Delay tra chunk per Groq (rate limit TPM)
       if (i > 0 && currentProvider === 'groq') await new Promise(r => setTimeout(r, 6000));
-      let chunk = cleanTTL(await callAI(buildPromptChunk(cols, chunks[i], ontos, i, chunks.length, vocabSection, ontoSection)));
+      let chunk = sanitizeTTL(cleanTTL(await callAI(buildPromptChunk(cols, chunks[i], ontos, i, chunks.length, vocabSection, ontoSection))));
       chunk = chunk.replace(/@prefix\s+\S+:\s*<[^>]+>\s*\.\n?/g, '').trim();
       parts.push(chunk);
     }

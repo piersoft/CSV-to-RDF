@@ -823,12 +823,19 @@ async function loadOllamaModels() {
   const proxyUrl = document.getElementById('ollama-proxy-url').value.trim();
   const key      = document.getElementById('ollama-key').value.trim();
   if (!proxyUrl || !key) return showStatus('Inserisci prima URL proxy e API key.', 'error');
+  const mode = document.getElementById('ollama-mode').value;
   try {
     showStatus('⏳ Carico lista modelli...', 'info');
-    const res = await fetch(proxyUrl.replace('/ollama-proxy', '/ollama-models'), {
+    const modelsUrl = mode === 'local'
+      ? proxyUrl.replace('/ollama-proxy', '/ollama-local-models')
+      : proxyUrl.replace('/ollama-proxy', '/ollama-models');
+    const body = mode === 'local'
+      ? {}
+      : { ollama_api_key: key };
+    const res = await fetch(modelsUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ollama_api_key: key })
+      body: JSON.stringify(body)
     });
     if (!res.ok) throw new Error(`${res.status}`);
     const data = await res.json();
@@ -949,6 +956,8 @@ async function startConversion() {
     // Chunk dal LLM
     for (let i = 0; i < chunks.length; i++) {
       showStatus(`⏳ Chunk ${i+1}/${chunks.length} — righe ${i*CHUNK_SIZE+1}-${i*CHUNK_SIZE+chunks[i].length}...`, 'info');
+      // Delay tra chunk per Groq (rate limit TPM)
+      if (i > 0 && currentProvider === 'groq') await new Promise(r => setTimeout(r, 6000));
       let chunk = cleanTTL(await callAI(buildPromptChunk(cols, chunks[i], ontos, i, chunks.length)));
       chunk = chunk.replace(/@prefix\s+\S+:\s*<[^>]+>\s*\.\n?/g, '').trim();
       parts.push(chunk);

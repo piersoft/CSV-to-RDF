@@ -226,8 +226,8 @@
                 <label class="lbl">Modello</label>
                 <select class="inp" id="groq-model">
                   <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile (consigliato)</option>
+                  <option value="qwen/qwen3-32b">qwen/qwen3-32b</option>
                   <option value="llama-3.1-8b-instant">llama-3.1-8b-instant</option>
-                  <option value="mixtral-8x7b-32768">mixtral-8x7b-32768</option>
                 </select>
               </div>
             </div>
@@ -533,15 +533,22 @@ Non aggiungere spiegazioni, solo il JSON.`;
   btn.textContent = '⏳ Analisi...';
 
   try {
-    // Per l'AI-detect usa sempre il modello più leggero se disponibile
+    // Per l'AI-detect usa sempre il modello più leggero disponibile per provider
+  const AI_DETECT_MODELS = {
+    'mistral': 'open-mistral-7b',
+    'groq':    'llama-3.1-8b-instant',
+    'ollama':  'gpt-oss:20b',
+  };
   let raw;
-  if (currentProvider === 'mistral') {
-    const savedModel = document.getElementById('mistral-model').value;
-    document.getElementById('mistral-model').value = 'open-mistral-7b';
+  const lightModel = AI_DETECT_MODELS[currentProvider];
+  if (lightModel) {
+    const modelEl = document.getElementById(`${currentProvider}-model`);
+    const savedModel = modelEl?.value;
+    if (modelEl) modelEl.value = lightModel;
     raw = await callAI(prompt);
-    document.getElementById('mistral-model').value = savedModel; // ripristina
+    if (modelEl && savedModel) modelEl.value = savedModel; // ripristina
   } else {
-    raw = await callAI(prompt);
+    raw = await callAI(prompt); // gemini: usa il modello configurato
   }
     // Estrai il JSON dalla risposta
     const match = raw.match(/\[.*?\]/s);

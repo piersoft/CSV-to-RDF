@@ -512,7 +512,7 @@ function validateCSV(parsed) {
   const genericPattern = /^(col(umn)?[\s_]?\d+|field[\s_]?\d+|colonna[\s_]?\d+|f\d+|c\d+|unnamed|noname|_\d+)$/i;
   headers.forEach((h, i) => {
     if (!h.trim()) {
-      issues.push({ level:'error', title:`Colonna ${i+1} senza nome`, hint:'Aggiungi un nome descrittivo all'intestazione.' });
+      issues.push({ level:'error', title:`Colonna ${i+1} senza nome`, hint:'Aggiungi un nome descrittivo all\'intestazione.' });
     } else if (genericPattern.test(h.trim())) {
       issues.push({ level:'warning', title:`Nome generico: "${h}"`, hint:`Rinomina con un nome semantico (es. "latitudine", "denominazione").` });
     }

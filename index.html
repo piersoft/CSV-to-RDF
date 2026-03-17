@@ -662,6 +662,7 @@ function parseAndPreviewCSV() {
   document.getElementById('csv-preview').style.display = 'block';
   document.getElementById('btn-auto-onto').disabled = false;
   validateCSV(parsed);
+  autoDetectOnto();
   showStatus(`✓ ${parsed.headers.length} colonne · ${parsed.rows.length} righe`, 'success');
 }
 

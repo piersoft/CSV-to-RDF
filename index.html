@@ -798,6 +798,91 @@ function buildTTLHeader(paname, ipa) {
 
 // ── PROMPT CHUNK ─────────────────────────────────────────────
 
+
+// ── CLASSI DELLE ONTOLOGIE DA dati-semantic-assets ───────────────────────────
+const ONTO_MAP = {
+  'CLV':  'https://raw.githubusercontent.com/italia/daf-ontologie-vocabolari-controllati/master/Ontologie/CLV/latest/CLV-AP_IT.ttl',
+  'COV':  'https://raw.githubusercontent.com/italia/daf-ontologie-vocabolari-controllati/master/Ontologie/COV/latest/COV-AP_IT.ttl',
+  'CPV':  'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/Ontologie/CPV/latest/CPV-AP_IT.ttl',
+  'POI':  'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/Ontologie/POI/latest/POI-AP_IT.ttl',
+  'L0':   'https://raw.githubusercontent.com/italia/daf-ontologie-vocabolari-controllati/master/Ontologie/l0/latest/l0-AP_IT.ttl',
+  'TI':   'https://raw.githubusercontent.com/italia/daf-ontologie-vocabolari-controllati/master/Ontologie/TI/latest/TI-AP_IT.ttl',
+  'SM':   'https://raw.githubusercontent.com/italia/daf-ontologie-vocabolari-controllati/master/Ontologie/SM/latest/SM-AP_IT.ttl',
+  'RO':   'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/Ontologie/RO/latest/RO-AP_IT.ttl',
+  'ADMS': 'https://raw.githubusercontent.com/italia/daf-ontologie-vocabolari-controllati/master/Ontologie/ADMS/latest/ADMS-AP_IT.ttl',
+  'PARK': 'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/Ontologie/PARK/latest/PARK-AP_IT.ttl',
+  'ACCO': 'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/Ontologie/ACCO/latest/ACCO-AP_IT.ttl',
+};
+
+// Parser leggero TTL ontologia: estrae classi e proprietà con label@it
+function parseOntologyTTL(ttlText, prefix) {
+  const classes = [];
+  const props   = [];
+  const lines   = ttlText.split('\n');
+  let currentName = null;
+  let currentType = null; // 'class' | 'prop'
+  let label = null;
+
+  for (const line of lines) {
+    const t = line.trim();
+    // Nuova definizione
+    const defMatch = t.match(/^(\w+:\w+)\s+a\s+(.*)/);
+    if (defMatch) {
+      if (currentName && label) {
+        if (currentType === 'class') classes.push({ name: currentName, label });
+        else if (currentType === 'prop') props.push({ name: currentName, label });
+      }
+      currentName = defMatch[1];
+      const types = defMatch[2];
+      currentType = types.includes('owl:Class') ? 'class'
+                  : (types.includes('owl:ObjectProperty') || types.includes('owl:DatatypeProperty')) ? 'prop'
+                  : null;
+      label = null;
+    }
+    // label italiana
+    const lblMatch = t.match(/rdfs:label\s+"([^"]+)"@it/);
+    if (lblMatch && currentName) label = lblMatch[1];
+  }
+  if (currentName && label) {
+    if (currentType === 'class') classes.push({ name: currentName, label });
+    else if (currentType === 'prop') props.push({ name: currentName, label });
+  }
+  return { classes, props };
+}
+
+// Fetch classi e proprietà per le ontologie rilevate
+async function fetchOntologyClasses(detectedOntos) {
+  const toFetch = detectedOntos
+    .map(o => o.toUpperCase())
+    .filter(o => ONTO_MAP[o]);
+
+  if (toFetch.length === 0) return '';
+
+  const results = await Promise.allSettled(
+    toFetch.map(o =>
+      fetch(ONTO_MAP[o]).then(r => r.ok ? r.text() : Promise.reject(r.status))
+        .then(ttl => ({ onto: o, ...parseOntologyTTL(ttl, o) }))
+    )
+  );
+
+  const sections = [];
+  for (const r of results) {
+    if (r.status !== 'fulfilled') continue;
+    const { onto, classes, props } = r.value;
+    if (classes.length === 0 && props.length === 0) continue;
+    const prefix = onto.toLowerCase();
+    const classLines = classes.map(c => `${prefix}:${c.name.split(':').pop()} (${c.label})`).join(', ');
+    const propLines  = props.slice(0, 20).map(p => `${prefix}:${p.name.split(':').pop()} (${p.label})`).join(', ');
+    let section = `${onto}:`;
+    if (classLines) section += `\n  Classi: ${classLines}`;
+    if (propLines)  section += `\n  Proprietà: ${propLines}`;
+    sections.push(section);
+  }
+
+  if (sections.length === 0) return '';
+  return `\nCLASSI E PROPRIETÀ VERIFICATE — usa SOLO queste, NON inventarne altre:\n${sections.join('\n')}`;
+}
+
 // ── VOCABOLARI CONTROLLATI DA dati-semantic-assets ───────────────────────────
 // Mappa: ontologia rilevata → URL TTL raw su GitHub
 const BASE  = 'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/VocabolariControllati';
@@ -946,7 +1031,7 @@ async function fetchVocabularies(detectedOntos) {
   return `\nVOCABOLARI CONTROLLATI VERIFICATI (usa SOLO questi URI):\n${lines.join('\n')}\nSe il valore non corrisponde a nessuno → usa rdfs:label "valore"@it`;
 }
 
-function buildPromptChunk(cols, rows, ontos, chunkIndex, totalChunks, vocabSection='') {
+function buildPromptChunk(cols, rows, ontos, chunkIndex, totalChunks, vocabSection='', ontoSection='') {
   const csvChunk = [cols.join(','), ...rows.map(r => cols.map(h=>r[h]).join(','))].join('\n');
   return `Sei un esperto RDF per la PA italiana. Trasforma le righe CSV in Turtle (TTL) compatto.
 
@@ -1118,15 +1203,18 @@ async function startConversion() {
     // Header generato in JS
     parts.push(buildTTLHeader(paname, ipa));
 
-    // Fetch vocabolari controllati per le ontologie rilevate
-    const vocabSection = await fetchVocabularies(ontos);
+    // Fetch in parallelo: vocabolari controllati + classi ontologie
+    const [vocabSection, ontoSection] = await Promise.all([
+      fetchVocabularies(ontos),
+      fetchOntologyClasses(ontos)
+    ]);
 
     // Chunk dal LLM
     for (let i = 0; i < chunks.length; i++) {
       showStatus(`⏳ Chunk ${i+1}/${chunks.length} — righe ${i*CHUNK_SIZE+1}-${i*CHUNK_SIZE+chunks[i].length}...`, 'info');
       // Delay tra chunk per Groq (rate limit TPM)
       if (i > 0 && currentProvider === 'groq') await new Promise(r => setTimeout(r, 6000));
-      let chunk = cleanTTL(await callAI(buildPromptChunk(cols, chunks[i], ontos, i, chunks.length, vocabSection)));
+      let chunk = cleanTTL(await callAI(buildPromptChunk(cols, chunks[i], ontos, i, chunks.length, vocabSection, ontoSection)));
       chunk = chunk.replace(/@prefix\s+\S+:\s*<[^>]+>\s*\.\n?/g, '').trim();
       parts.push(chunk);
     }

@@ -795,7 +795,103 @@ function buildTTLHeader(paname, ipa) {
 }
 
 // ── PROMPT CHUNK ─────────────────────────────────────────────
-function buildPromptChunk(cols, rows, ontos, chunkIndex, totalChunks) {
+
+// ── VOCABOLARI CONTROLLATI DA dati-semantic-assets ───────────────────────────
+// Mappa: ontologia rilevata → URL TTL raw su GitHub
+const VOCAB_MAP = {
+  'cultural-on': [
+    'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/VocabolariControllati/classifications-for-culture/cultural-interest-places/cultural-interest-places.ttl',
+    'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/VocabolariControllati/classifications-for-culture/subject-disciplines/subject-disciplines.ttl',
+  ],
+  'gtfs': [
+    'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/VocabolariControllati/transport-mode/transport-mode.ttl',
+  ],
+  'cov': [
+    'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/VocabolariControllati/legal-status/legal-status.ttl',
+    'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/VocabolariControllati/classifications-for-organizations/cofog-2021/cofog-2021.ttl',
+  ],
+  'clv': [
+    'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/VocabolariControllati/territorial-classifications/regions/regions.ttl',
+    'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/VocabolariControllati/territorial-classifications/cities/cities.ttl',
+  ],
+  'poi': [
+    'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/VocabolariControllati/classifications-for-culture/cultural-interest-places/cultural-interest-places.ttl',
+  ],
+  'park': [
+    'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/VocabolariControllati/classifications-for-transportation/vehicle-classification/vehicle-classification.ttl',
+  ],
+  'ro': [
+    'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/VocabolariControllati/classifications-for-people/licences/licences.ttl',
+  ],
+  'transp': [
+    'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/VocabolariControllati/classifications-for-public-services/service-type/public-service-type.ttl',
+  ],
+  'cpsv': [
+    'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/VocabolariControllati/classifications-for-public-services/service-type/public-service-type.ttl',
+  ],
+};
+
+// Parsing TTL leggero: estrae URI + skos:prefLabel@it + skos:notation
+function parseTTLVocab(ttlText, url) {
+  const concepts = [];
+  const baseUri = url.replace(/\/[^\/]+$/, '');
+  const lines = ttlText.split('\n');
+  let currentUri = null;
+  let label = null;
+  let notation = null;
+
+  for (const line of lines) {
+    const t = line.trim();
+    // Nuova risorsa
+    const uriMatch = t.match(/^<([^>]+)>\s+a\s+.*skos:Concept/);
+    if (uriMatch) {
+      if (currentUri && label) concepts.push({ uri: currentUri, label, notation });
+      currentUri = uriMatch[1]; label = null; notation = null;
+    }
+    // prefLabel italiano
+    const lblMatch = t.match(/skos:prefLabel\s+"([^"]+)"@it/);
+    if (lblMatch && currentUri) label = lblMatch[1];
+    // notation
+    const notMatch = t.match(/skos:notation\s+"([^"]+)"/);
+    if (notMatch && currentUri) notation = notMatch[1];
+  }
+  if (currentUri && label) concepts.push({ uri: currentUri, label, notation });
+  return concepts;
+}
+
+// Fetch selettivo dei vocabolari per le ontologie rilevate
+async function fetchVocabularies(detectedOntos) {
+  const urlsToFetch = new Set();
+  for (const onto of detectedOntos) {
+    const key = onto.toLowerCase().replace(/[^a-z-]/g, '');
+    if (VOCAB_MAP[key]) VOCAB_MAP[key].forEach(u => urlsToFetch.add(u));
+  }
+  if (urlsToFetch.size === 0) return '';
+
+  showStatus('⏳ Recupero vocabolari controllati da dati-semantic-assets...', 'info');
+  const allConcepts = [];
+  const results = await Promise.allSettled(
+    [...urlsToFetch].map(url =>
+      fetch(url).then(r => r.ok ? r.text() : Promise.reject(r.status))
+        .then(ttl => parseTTLVocab(ttl, url))
+    )
+  );
+  for (const r of results) {
+    if (r.status === 'fulfilled') allConcepts.push(...r.value);
+  }
+
+  if (allConcepts.length === 0) return '';
+
+  // Formatta per il prompt: max 200 concetti per non esplodere i token
+  const sample = allConcepts.slice(0, 200);
+  const lines = sample.map(c => {
+    const id = c.notation || c.uri.split('/').pop();
+    return `  ${id}: "${c.label}" → <${c.uri}>`;
+  });
+  return `\nVOCABOLARI CONTROLLATI VERIFICATI (usa SOLO questi URI):\n${lines.join('\n')}\nSe il valore non corrisponde a nessuno → usa rdfs:label "valore"@it`;
+}
+
+function buildPromptChunk(cols, rows, ontos, chunkIndex, totalChunks, vocabSection='') {
   const csvChunk = [cols.join(','), ...rows.map(r => cols.map(h=>r[h]).join(','))].join('\n');
   return `Sei un esperto RDF per la PA italiana. Trasforma le righe CSV in Turtle (TTL) compatto.
 
@@ -960,12 +1056,15 @@ async function startConversion() {
     // Header generato in JS
     parts.push(buildTTLHeader(paname, ipa));
 
+    // Fetch vocabolari controllati per le ontologie rilevate
+    const vocabSection = await fetchVocabularies(ontos);
+
     // Chunk dal LLM
     for (let i = 0; i < chunks.length; i++) {
       showStatus(`⏳ Chunk ${i+1}/${chunks.length} — righe ${i*CHUNK_SIZE+1}-${i*CHUNK_SIZE+chunks[i].length}...`, 'info');
       // Delay tra chunk per Groq (rate limit TPM)
       if (i > 0 && currentProvider === 'groq') await new Promise(r => setTimeout(r, 6000));
-      let chunk = cleanTTL(await callAI(buildPromptChunk(cols, chunks[i], ontos, i, chunks.length)));
+      let chunk = cleanTTL(await callAI(buildPromptChunk(cols, chunks[i], ontos, i, chunks.length, vocabSection)));
       chunk = chunk.replace(/@prefix\s+\S+:\s*<[^>]+>\s*\.\n?/g, '').trim();
       parts.push(chunk);
     }

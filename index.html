@@ -1024,8 +1024,122 @@ async function fetchVocabularies(detectedOntos) {
   return `\nVOCABOLARI CONTROLLATI VERIFICATI (usa SOLO questi URI):\n${lines.join('\n')}\nSe il valore non corrisponde a nessuno → usa rdfs:label "valore"@it`;
 }
 
-function buildPromptChunk(cols, rows, ontos, chunkIndex, totalChunks, vocabSection='', ontoSection='') {
-  const csvChunk = [cols.join(','), ...rows.map(r => cols.map(h=>r[h]).join(','))].join('\n');
+
+// ── MAPPER DETERMINISTICO COLONNA → PROPRIETÀ RDF ────────────────────────────
+const COLUMN_RULES = [
+  // Coordinate geografiche
+  { names: /^(lat|latitude|latitudine|lat_y|y_lat|coord_lat|lat_wgs84)$/i,
+    value: /^-?\d{1,3}\.\d+$/,
+    prop: 'geo:lat', type: 'xsd:decimal' },
+  { names: /^(lon|lng|long|longitude|longitudine|lon_x|x_lon|long_x|lng_x|coord_lon|lon_wgs84|long_wgs84)$/i,
+    value: /^-?\d{1,3}\.\d+$/,
+    prop: 'geo:long', type: 'xsd:decimal' },
+  // Contatti
+  { names: /^(email|e.mail|mail|pec|posta.elettronica)$/i,
+    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    prop: 'sm:hasEmail', type: 'xsd:string' },
+  { names: /^(tel|telefono|phone|telephone|cellulare|mobile|fax)$/i,
+    value: null,
+    prop: 'sm:hasTelephone', type: 'xsd:string' },
+  { names: /^(sito|website|web|url|link|www|homepage|portale)$/i,
+    value: /^https?:\/\//i,
+    prop: 'sm:hasWebSite', type: 'xsd:anyURI' },
+  // Identificatori
+  { names: /^(id|codice|code|cod|identifier|identificativo|istat|ipa)$/i,
+    value: null,
+    prop: 'dct:identifier', type: 'xsd:string' },
+  { names: /^(cf|codice.fiscale|fiscal.code|partita.iva|piva|vat)$/i,
+    value: null,
+    prop: 'dct:identifier', type: 'xsd:string' },
+  // Nomi e label
+  { names: /^(nome|name|denominazione|titolo|title|label|descrizione.breve|intestazione)$/i,
+    value: null,
+    prop: 'rdfs:label', type: '@it' },
+  // Descrizioni
+  { names: /^(descrizione|description|note|notes|abstract|sommario|riassunto|testo)$/i,
+    value: null,
+    prop: 'dct:description', type: '@it' },
+  // Date
+  { names: /^(data|date|data_nascita|birthdate|data_deposito|data_inizio|data_fine|anno|year)$/i,
+    value: /^\d{4}(-\d{2}-\d{2})?$/,
+    prop: 'dct:date', type: 'xsd:date' },
+  // Indirizzo
+  { names: /^(indirizzo|address|via|strada|civico|cap|zip|citta|city|comune|municipio|provincia|regione)$/i,
+    value: null,
+    prop: 'clv:hasAddress', type: null },
+  // Tipo / categoria
+  { names: /^(tipo|type|tipologia|categoria|category|classe|class|settore|area.tematica)$/i,
+    value: null,
+    prop: 'dct:type', type: '@it' },
+  // Stato
+  { names: /^(stato|status|vigente|attivo|active|state)$/i,
+    value: null,
+    prop: 'adms:status', type: '@it' },
+];
+
+// Analizza le colonne e restituisce quelle mappabili deterministicamente
+function detectDeterministicMappings(cols, rows) {
+  const mappings = {}; // col → {prop, type}
+  const sampleRow = rows[0] || {};
+
+  for (const col of cols) {
+    const val = String(sampleRow[col] || '').trim();
+    for (const rule of COLUMN_RULES) {
+      const nameMatch = rule.names.test(col);
+      const valueMatch = !rule.value || rule.value.test(val);
+      if (nameMatch && valueMatch) {
+        mappings[col] = { prop: rule.prop, type: rule.type };
+        break;
+      }
+    }
+  }
+  return mappings;
+}
+
+// Genera TTL deterministico per le colonne riconoscibili
+function buildDeterministicTriples(cols, rows, entityBase, deterMappings) {
+  const lines = [];
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    // URI entità: usa id/codice se disponibile, altrimenti indice
+    const idCol = cols.find(c => /^(id|codice|cod)$/i.test(c));
+    const entityId = idCol ? String(row[idCol]).trim().replace(/\s+/g, '_') : String(i + 1);
+    const uri = `<${entityBase}${entityId}>`;
+
+    const triples = [];
+    for (const col of cols) {
+      const m = deterMappings[col];
+      if (!m) continue;
+      const val = String(row[col] || '').trim();
+      if (!val || val === 'null' || val === 'N/A') continue;
+
+      if (m.type === 'xsd:decimal') {
+        triples.push(`    ${m.prop} "${val}"^^xsd:decimal`);
+      } else if (m.type === 'xsd:date') {
+        triples.push(`    ${m.prop} "${val}"^^xsd:date`);
+      } else if (m.type === 'xsd:anyURI') {
+        triples.push(`    ${m.prop} <${val}>`);
+      } else if (m.type === '@it') {
+        triples.push(`    ${m.prop} "${val.replace(/"/g, "'")}"@it`);
+      } else {
+        triples.push(`    ${m.prop} "${val.replace(/"/g, "'")}"^^xsd:string`);
+      }
+    }
+    if (triples.length > 0) {
+      lines.push(`${uri}`);
+      lines.push(triples.join(' ;
+') + ' .');
+      lines.push('');
+    }
+  }
+  return lines.join('\n');
+}
+
+function buildPromptChunk(cols, rows, ontos, chunkIndex, totalChunks, vocabSection='', ontoSection='', skipCols=new Set()) {
+  // Escludi colonne già mappate deterministicamente
+  const ambigCols = cols.filter(c => !skipCols.has(c));
+  if (ambigCols.length === 0) return null; // tutto già mappato
+  const csvChunk = [ambigCols.join(','), ...rows.map(r => ambigCols.map(h=>r[h]).join(','))].join('\n');
   return `Sei un esperto RDF per la PA italiana. Trasforma le righe CSV in Turtle (TTL) compatto.
 
 I @prefix sono già stati emessi. NON aggiungerli.
@@ -1275,12 +1389,26 @@ async function startConversion() {
       fetchOntologyClasses(ontos)
     ]);
 
+    // Analisi deterministica colonne
+    const deterMappings = detectDeterministicMappings(cols, allRows);
+    const skipCols = new Set(Object.keys(deterMappings));
+    const entityBase = `https://w3id.org/italia/data/${ipa}/`;
+
+    if (skipCols.size > 0) {
+      showStatus(`⚡ ${skipCols.size} colonne mappate deterministicamente: ${[...skipCols].join(', ')}`, 'info');
+      await new Promise(r => setTimeout(r, 1500));
+    }
+
     // Chunk dal LLM
     for (let i = 0; i < chunks.length; i++) {
       showStatus(`⏳ Chunk ${i+1}/${chunks.length} — righe ${i*CHUNK_SIZE+1}-${i*CHUNK_SIZE+chunks[i].length}...`, 'info');
       // Delay tra chunk per Groq (rate limit TPM)
       if (i > 0 && currentProvider === 'groq') await new Promise(r => setTimeout(r, 6000));
-      let chunk = sanitizeTTL(cleanTTL(await callAI(buildPromptChunk(cols, chunks[i], ontos, i, chunks.length, vocabSection, ontoSection))));
+      const prompt = buildPromptChunk(cols, chunks[i], ontos, i, chunks.length, vocabSection, ontoSection, skipCols);
+      let deterTriples = buildDeterministicTriples(cols, chunks[i], entityBase, deterMappings);
+      let llmTriples = prompt ? sanitizeTTL(cleanTTL(await callAI(prompt))) : '';
+      // Mergia: usa LLM per classi/tipo, deterministico per proprietà note
+      let chunk = llmTriples || deterTriples;
       chunk = chunk.replace(/@prefix\s+\S+:\s*<[^>]+>\s*\.\n?/g, '').trim();
       parts.push(chunk);
     }

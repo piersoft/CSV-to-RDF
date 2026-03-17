@@ -210,7 +210,7 @@
                 </select>
               </div>
             </div>
-            <div class="info-note mt-2">🔑 <a href="https://console.mistral.ai" target="_blank">console.mistral.ai</a> — consigliato per dataset grandi.</div>
+            <div class="info-note mt-2">🔑 <a href="https://console.mistral.ai" target="_blank">console.mistral.ai</a> — <strong>mistral-large-latest</strong> consigliato per la generazione TTL · <strong>open-mistral-7b</strong> consigliato per il rilevamento ontologie (AI-detect).</div>
           </div>
 
           <div class="provider-panel" id="panel-groq">
@@ -533,7 +533,16 @@ Non aggiungere spiegazioni, solo il JSON.`;
   btn.textContent = '⏳ Analisi...';
 
   try {
-    const raw = await callAI(prompt);
+    // Per l'AI-detect usa sempre il modello più leggero se disponibile
+  let raw;
+  if (currentProvider === 'mistral') {
+    const savedModel = document.getElementById('mistral-model').value;
+    document.getElementById('mistral-model').value = 'open-mistral-7b';
+    raw = await callAI(prompt);
+    document.getElementById('mistral-model').value = savedModel; // ripristina
+  } else {
+    raw = await callAI(prompt);
+  }
     // Estrai il JSON dalla risposta
     const match = raw.match(/\[.*?\]/s);
     if (!match) throw new Error('Risposta non valida');

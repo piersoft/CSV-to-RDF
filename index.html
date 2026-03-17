@@ -1091,14 +1091,43 @@ const PROP_WHITELIST = {
 };
 const SAFE_PREFIXES = new Set(['rdf','rdfs','owl','xsd','dct','dcat','foaf','geo','skos','vcard','schema']);
 
+// Whitelist classi approvate per prefisso
+const CLASS_WHITELIST = {
+  'clv':  ['Address','Feature','Geometry','AdminUnit','Road','StreetNumber','Identifier'],
+  'cov':  ['Organization','PublicOrganization','Company','ActivityType','ContactPoint'],
+  'cpv':  ['Person','Adult','Minor','Senior'],
+  'poi':  ['PointOfInterest'],
+  'ro':   ['Role'],
+  'ti':   ['TimeInterval','Instant'],
+  'sm':   ['Email','Telephone','WebSite','SocialNetworkAccount'],
+  'l0':   ['Agent','Object','EventOrSituation','Collection','Location','Characteristic','Description'],
+  'adms': ['SemanticAsset','AssetRepository','AssetDistribution'],
+  'park': ['ParkingFacility','ParkingLot','ParkingSpace','ParkingTariff','VehicleCategory'],
+  'acco': ['AccommodationFacility','Hotel','Hostel','BedAndBreakfast','Room'],
+  'qb':   ['DataSet','Observation','DimensionProperty','MeasureProperty','AttributeProperty','ComponentSpecification','DataStructureDefinition','Slice','SliceKey'],
+  'sdmx-dimension': [],
+  'sdmx-measure':   [],
+  'gtfs': ['Agency','Stop','Route','Trip','StopTime','Service','Shape'],
+};
+
 function sanitizeTTL(ttl) {
   const lines = ttl.split('\n');
   const result = [];
   for (const line of lines) {
     const t = line.trim();
-    const m = t.match(/^([a-zA-Z][a-zA-Z0-9_-]+):([a-zA-Z][a-zA-Z0-9_-]+)[\s;,.]/) ;
-    if (m) {
-      const pfx = m[1], local = m[2];
+    // Controlla classi (dopo "a " o ", ")
+    const classM = t.match(/(?:^a|,)\s+([a-zA-Z][a-zA-Z0-9_-]+):([A-Z][a-zA-Z0-9_-]+)/);
+    if (classM) {
+      const pfx = classM[1], local = classM[2];
+      if (!SAFE_PREFIXES.has(pfx) && CLASS_WHITELIST[pfx] !== undefined && !CLASS_WHITELIST[pfx].includes(local)) {
+        result.push(line.replace(pfx + ':' + local, 'l0:Object'));
+        continue;
+      }
+    }
+    // Controlla proprietà (minuscola dopo prefisso)
+    const propM = t.match(/^([a-zA-Z][a-zA-Z0-9_-]+):([a-z][a-zA-Z0-9_-]+)[\s;,.]/);
+    if (propM) {
+      const pfx = propM[1], local = propM[2];
       if (!SAFE_PREFIXES.has(pfx) && PROP_WHITELIST[pfx] && !PROP_WHITELIST[pfx].includes(local)) {
         result.push(line.replace(pfx + ':' + local, 'dct:description'));
         continue;

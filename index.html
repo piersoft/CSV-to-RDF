@@ -1121,6 +1121,33 @@ async function fetchVocabularies(detectedOntos) {
 }
 
 
+// ── MAPPA ONTOLOGIA → TIPO-RISORSA URI ──────────────────────────────────────
+const ONTO_URI_TYPE = {
+  'ACCO':        'accommodation-facility',
+  'PARK':        'parking-facility',
+  'GTFS':        'stop',
+  'Cultural-ON': 'cultural-institute',
+  'CPSV-AP':     'public-service',
+  'COV':         'organization',
+  'CPV':         'person',
+  'ADMS':        'asset',
+  'POI':         'point-of-interest',
+  'CLV':         'place',
+  'L0':          'resource',
+};
+
+// Determina il tipo-risorsa URI in base alle ontologie selezionate
+function getEntityTypeSegment(ontos) {
+  // Priorità: ontologie specializzate prima di quelle generiche
+  const priority = ['ACCO','PARK','GTFS','Cultural-ON','CPSV-AP','ADMS','CPV','COV','POI','CLV','L0'];
+  for (const onto of priority) {
+    if (ontos.map(o => o.toUpperCase()).includes(onto.toUpperCase())) {
+      return ONTO_URI_TYPE[onto] || 'resource';
+    }
+  }
+  return 'resource';
+}
+
 // ── MAPPER DETERMINISTICO COLONNA → PROPRIETÀ RDF ────────────────────────────
 const COLUMN_RULES = [
   // Coordinate geografiche
@@ -1193,14 +1220,14 @@ function detectDeterministicMappings(cols, rows) {
 }
 
 // Genera TTL deterministico per le colonne riconoscibili
-function buildDeterministicTriples(cols, rows, entityBase, deterMappings) {
+function buildDeterministicTriples(cols, rows, entityBase, deterMappings, typeSegment='resource') {
   const lines = [];
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
     // URI entità: usa id/codice se disponibile, altrimenti indice
     const idCol = cols.find(c => /^(id|codice|cod)$/i.test(c));
     const entityId = idCol ? String(row[idCol]).trim().replace(/\s+/g, '_') : String(i + 1);
-    const uri = `<${entityBase}${entityId}>`;
+    const uri = `<${entityBase}${typeSegment}/${entityId}>`;
 
     const triples = [];
     for (const col of cols) {
@@ -1264,10 +1291,24 @@ ${csvChunk}
 
 REGOLE:
 - Per ogni riga genera una risorsa RDF con il tipo ontologico più appropriato
-- Gli URI delle entità DEVONO seguire esattamente questo schema: <https://w3id.org/italia/data/${ipa}/{tipo}/{id}>
-  dove {ipa} è il codice IPA del titolare, {tipo} è il tipo in inglese (accommodation, stop, parking, organization...), {id} è l'identificatore della riga
-  NON usare domini inventati come dati.comune.xxx.it o simili — usa SEMPRE w3id.org/italia/data/
-  NON tradurre {tipo} in italiano (es. NON "accoglienza" ma "accommodation")
+- Gli URI delle entità DEVONO seguire esattamente questo schema: <https://w3id.org/italia/data/${ipa}/{tipo-risorsa}/{id}>
+  dove {ipa} è il codice IPA del titolare, {id} è il valore della colonna ID/codice della riga (NON il nome di una persona)
+  {tipo-risorsa} va scelto ESATTAMENTE da questa lista in base alla classe principale usata:
+    acco:AccommodationFacility   → accommodation-facility
+    park:ParkingFacility         → parking-facility
+    gtfs:Stop                    → stop
+    gtfs:Route                   → route
+    gtfs:Agency                  → agency
+    cultural-on:CulturalInstituteOrSite → cultural-institute
+    cov:PublicOrganization       → public-organization
+    cov:Company                  → organization
+    cpv:Person                   → person
+    adms:SemanticAsset           → asset
+    poi:PointOfInterest          → point-of-interest
+    l0:Object                    → object
+    l0:Agent                     → agent
+  NON usare domini inventati — usa SEMPRE w3id.org/italia/data/
+  NON usare nomi di persone come {id} — usa sempre l'ID numerico o codice della riga
 - Mappa ogni colonna alla proprietà ontologica corretta
 - Per coordinate usa geo:lat e geo:long. Per telefono sm:hasTelephone. Per email sm:hasEmail. Per indirizzo clv:hasAddress. Per data dct:date o ti:startTime/ti:endTime
 - REGOLA CRITICA: usa SOLO proprietà che esistono nelle ontologie dichiarate nei @prefix. NON inventare proprietà con nomi come clv:hasStreetName, clv:hasPostalCode, clv:hasName, clv:hasFeature, sm:hasValue o simili — queste NON esistono.
@@ -1535,6 +1576,7 @@ async function startConversion() {
     const deterMappings = detectDeterministicMappings(cols, allRows);
     const skipCols = new Set(Object.keys(deterMappings));
     const entityBase = `https://w3id.org/italia/data/${ipa}/`;
+    const typeSegment = getEntityTypeSegment(ontos);
 
     if (skipCols.size > 0) {
       showStatus(`⚡ ${skipCols.size} colonne mappate deterministicamente: ${[...skipCols].join(', ')}`, 'info');
@@ -1547,7 +1589,7 @@ async function startConversion() {
       // Delay tra chunk per Groq (rate limit TPM)
       if (i > 0 && currentProvider === 'groq') await new Promise(r => setTimeout(r, 6000));
       const prompt = buildPromptChunk(cols, chunks[i], ontos, i, chunks.length, vocabSection, ontoSection, skipCols, ipa);
-      let deterTriples = buildDeterministicTriples(cols, chunks[i], entityBase, deterMappings);
+      let deterTriples = buildDeterministicTriples(cols, chunks[i], entityBase, deterMappings, typeSegment);
       let llmTriples = prompt ? fixURIs(sanitizeTTL(cleanTTL(await callAI(prompt))), ipa) : '';
       // Mergia: usa LLM per classi/tipo, deterministico per proprietà note
       let chunk = llmTriples || deterTriples;

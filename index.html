@@ -769,13 +769,20 @@ function buildTTLHeader(meta, ontos) {
     dct:publisher <${ipaURI}> ;
     dct:rightsHolder <${ipaURI}> ;
     owl:versionInfo "${meta.version}" ;
+    dct:issued "${today}"^^xsd:date ;
+    adms:prefix "${(meta.uri||datasetURI).replace(/.*\/([^\/]+)$/,'$1')}" ;
+    <https://w3id.org/italia/onto/ADMS/hasOntologyLanguage> <https://w3id.org/italia/onto/ADMS/OWL> ;
+    dct:conformsTo <https://w3id.org/italia/onto/ADMS> ;
     adms:hasSemanticAssetDistribution <${distURI}> .
 
 # --- Distribuzione semantica ---
 <${distURI}>
-    a adms:SemanticAssetDistribution ;
+    a owl:NamedIndividual, <https://w3id.org/italia/onto/ADMS/SemanticAssetDistribution> ;
+    dct:title "Distribuzione RDF/Turtle di ${(meta.title||'Dataset PA').replace(/"/g,"'")}"@it ;
+    dct:description "Distribuzione in formato RDF/Turtle del dataset ${(meta.title||'Dataset PA').replace(/"/g,"'")}"@it ;
     dct:format <http://publications.europa.eu/resource/authority/file-type/RDF_TURTLE> ;
-    dcat:downloadURL <${datasetURI}.ttl> .
+    dcat:downloadURL <${datasetURI}.ttl> ;
+    dct:license <${meta.license}> .
 `;
 }
 

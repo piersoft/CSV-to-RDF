@@ -215,10 +215,7 @@
               <label class="lbl">Descrizione</label>
               <input type="text" class="inp" id="meta-desc" placeholder="es. Elenco DAE presenti sul territorio con localizzazione geografica"/>
             </div>
-            <div class="col-md-6">
-              <label class="lbl">Ente / Publisher</label>
-              <input type="text" class="inp" id="meta-publisher" placeholder="es. Comune di Bari"/>
-            </div>
+
             <div class="col-md-6">
               <label class="lbl">IPA Code</label>
               <input type="text" class="inp" id="meta-ipa" placeholder="es. c_a662"/>
@@ -251,10 +248,7 @@
                 <option value="https://www.dati.gov.it/content/italian-open-data-license-v20">IODL 2.0</option>
               </select>
             </div>
-            <div class="col-md-6">
-              <label class="lbl">Titolare (rightsHolder)</label>
-              <input type="text" class="inp" id="meta-rightsholder" placeholder="es. Comune di Bari"/>
-            </div>
+
             <div class="col-md-6">
               <label class="lbl">Frequenza aggiornamento</label>
               <select class="inp" id="meta-periodicity">
@@ -688,7 +682,7 @@ function loadExample() {
   document.getElementById('csv-input').value = EXAMPLE_CSV;
   document.getElementById('meta-title').value = 'Defibrillatori pubblici del Comune di Bari';
   document.getElementById('meta-desc').value = 'Elenco dei defibrillatori DAE presenti sul territorio comunale con localizzazione geografica';
-  document.getElementById('meta-publisher').value = 'Comune di Bari';
+
   document.getElementById('meta-ipa').value = 'c_a662';
   document.getElementById('meta-theme').value = 'http://publications.europa.eu/resource/authority/data-theme/HEAL';
   parseAndPreviewCSV();
@@ -715,64 +709,83 @@ function hideStatus() { document.getElementById('status-bar').className = 'statu
 // ── CHUNK SIZE ────────────────────────────────────────────────
 const CHUNK_SIZE = 25; // righe per chiamata
 
-// ── PROMPT HEADER (prefissi + dataset) ───────────────────────
-function buildPromptHeader(meta, ontos, cols) {
-  const base = meta.ipa ? `https://dati.gov.it/resource/${meta.ipa}` : 'https://dati.gov.it/resource/pa';
-  const datasetURI = meta.uri || `${base}/dataset/${(meta.title||'dataset').toLowerCase().replace(/[^a-z0-9]+/g,'-')}`;
-  return `Sei un esperto RDF per la PA italiana. Genera Turtle (TTL) COMPATTO: niente commenti, niente righe vuote tra triple, URI brevi.
+// ── HEADER TTL GENERATO DIRETTAMENTE IN JS (non dal LLM) ────
+function buildTTLHeader(meta, ontos) {
+  const ipaURI     = `https://w3id.org/italia/data/public-organization/${meta.ipa||'pa'}`;
+  const datasetURI = meta.uri || `https://dati.gov.it/resource/${meta.ipa||'pa'}/dataset/${(meta.title||'dataset').toLowerCase().replace(/[^a-z0-9]+/g,'-')}`;
+  const distURI    = `${datasetURI}/distribution/1`;
+  const today      = meta.modified || new Date().toISOString().split('T')[0];
 
-## PREFISSI (usa TUTTI questi esattamente)
-@prefix owl:  <http://www.w3.org/2002/07/owl#> .
-@prefix clv:  <https://w3id.org/italia/onto/CLV/> .
-@prefix cov:  <https://w3id.org/italia/onto/COV/> .
-@prefix cpv:  <https://w3id.org/italia/onto/CPV/> .
-@prefix l0:   <https://w3id.org/italia/onto/l0/> .
-@prefix poi:  <https://w3id.org/italia/onto/POI/> .
-@prefix ro:   <https://w3id.org/italia/onto/RO/> .
-@prefix ti:   <https://w3id.org/italia/onto/TI/> .
-@prefix sm:   <https://w3id.org/italia/onto/SM/> .
-@prefix dcat: <http://www.w3.org/ns/dcat#> .
-@prefix dct:  <http://purl.org/dc/terms/> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix geo:  <http://www.w3.org/2003/01/geo/wgs84_pos#> .
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+  return `@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix clv:   <https://w3id.org/italia/onto/CLV/> .
+@prefix cov:   <https://w3id.org/italia/onto/COV/> .
+@prefix cpv:   <https://w3id.org/italia/onto/CPV/> .
+@prefix l0:    <https://w3id.org/italia/onto/l0/> .
+@prefix poi:   <https://w3id.org/italia/onto/POI/> .
+@prefix ro:    <https://w3id.org/italia/onto/RO/> .
+@prefix ti:    <https://w3id.org/italia/onto/TI/> .
+@prefix sm:    <https://w3id.org/italia/onto/SM/> .
+@prefix dcat:  <http://www.w3.org/ns/dcat#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix geo:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
 @prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
-@prefix schema: <https://schema.org/> .
+@prefix schema:<https://schema.org/> .
 @prefix adms:  <http://www.w3.org/ns/adms#> .
-Ontologie extra: ${ontos.join(', ') || 'nessuna'}
 
-## GENERA questi due blocchi (niente entità):
+# --- Organizzazione (publisher / rightsHolder) ---
+<${ipaURI}>
+    a foaf:Agent ;
+    foaf:name "${meta.title ? meta.title.replace(/dataset.*/i,'').trim() : 'PA Italiana'}"@it ;
+    dct:identifier "${meta.ipa||'pa'}" .
 
-### 1. Dichiarazione owl:Ontology (OBBLIGATORIA per validazione schema.gov.it)
-Genera esattamente:
+# --- Dichiarazione owl:Ontology ---
 <${datasetURI}>
     a owl:Ontology ;
     owl:versionIRI <${datasetURI}/${meta.version}> ;
-    dct:title "${meta.title||'Dataset PA'}"@it ;
-    dct:description "${meta.desc||''}"@it ;
+    dct:title "${(meta.title||'Dataset PA').replace(/"/g,"'")}"@it ;
+    dct:description "${(meta.desc||'Dataset della Pubblica Amministrazione italiana').replace(/"/g,"'")}"@it ;
     owl:versionInfo "${meta.version}" .
 
-### 2. Blocco dcat:Dataset completo DCAT-AP_IT 2.1
-Includi OBBLIGATORIAMENTE queste proprietà:
-- dct:title, dct:description, dct:identifier
-- dct:publisher → URI IPA: <https://w3id.org/italia/data/public-organization/${meta.ipa||'pa'}>
-- dct:rightsHolder → <https://w3id.org/italia/data/public-organization/${meta.ipa||'pa'}>  ← OBBLIGATORIO
-- dcat:theme → <${meta.theme||'http://publications.europa.eu/resource/authority/data-theme/GOVE'}>
-- dct:license → <${meta.license}>
-- dct:modified → "${meta.modified}"^^xsd:date  ← OBBLIGATORIO
-- dct:accrualPeriodicity → <${meta.periodicity}>  ← OBBLIGATORIO
-- adms:hasSemanticAssetDistribution → crea nodo blank con dcat:downloadURL e dct:format  ← OBBLIGATORIO
-- owl:versionInfo → "${meta.version}"
-- dct:language → <http://publications.europa.eu/resource/authority/language/ITA>
+# --- Dataset DCAT-AP_IT 2.1 ---
+<${datasetURI}>
+    a dcat:Dataset ;
+    dct:identifier "${datasetURI}" ;
+    dct:title "${(meta.title||'Dataset PA').replace(/"/g,"'")}"@it ;
+    dct:description "${(meta.desc||'Dataset della Pubblica Amministrazione italiana').replace(/"/g,"'")}"@it ;
+    dct:modified "${today}"^^xsd:date ;
+    dct:accrualPeriodicity <${meta.periodicity}> ;
+    dct:language <http://publications.europa.eu/resource/authority/language/ITA> ;
+    dct:license <${meta.license}> ;
+    dcat:theme <${meta.theme||'http://publications.europa.eu/resource/authority/data-theme/GOVE'}> ;
+    dct:publisher <${ipaURI}> ;
+    dct:rightsHolder <${ipaURI}> ;
+    owl:versionInfo "${meta.version}" ;
+    adms:hasSemanticAssetDistribution <${distURI}> .
 
-URI dataset: <${datasetURI}>
-IPA: ${meta.ipa || ''}
-Titolare: ${meta.rightsholder || meta.publisher || 'PA Italiana'}
+# --- Distribuzione semantica ---
+<${distURI}>
+    a adms:SemanticAssetDistribution ;
+    dct:format <http://publications.europa.eu/resource/authority/file-type/RDF_TURTLE> ;
+    dcat:downloadURL <${datasetURI}.ttl> .
+`;
+}
+
+// ── PROMPT HEADER (solo per le entità — prefissi già emessi da buildTTLHeader) ───────────────────────
+function buildPromptHeader(meta, ontos, cols) {
+  const base = meta.ipa ? `https://dati.gov.it/resource/${meta.ipa}` : 'https://dati.gov.it/resource/pa';
+  const datasetURI = meta.uri || `${base}/dataset/${(meta.title||'dataset').toLowerCase().replace(/[^a-z0-9]+/g,'-')}`;
+  return `Sei un esperto RDF per la PA italiana.
+I @prefix sono già stati emessi. NON aggiungerli.
+Genera SOLO le entità RDF delle righe CSV che seguiranno nei prossimi chunk.
+URI base: <${base}>
+Ontologie da usare: ${ontos.join(', ') || 'CLV, POI, L0'}
 Colonne CSV: ${cols.join(', ')}
-
-Restituisci SOLO i @prefix, il blocco owl:Ontology e il blocco dcat:Dataset. Niente entità, niente markdown.`;
+Usa SOLO questi prefissi: owl, clv, cov, cpv, l0, poi, ro, ti, sm, dcat, dct, foaf, geo, xsd, rdfs, vcard, skos, schema, adms
+NON generare nulla ora. Rispondi solo "OK, pronto per i chunk." `;
 }
 
 // ── PROMPT CHUNK (solo entità) ────────────────────────────────
@@ -873,17 +886,15 @@ async function startConversion() {
   if (!csvText) return showStatus('⚠ Incolla prima il contenuto CSV.', 'error');
 
   const meta = {
-    title:        document.getElementById('meta-title').value.trim(),
-    uri:          document.getElementById('meta-uri').value.trim(),
-    desc:         document.getElementById('meta-desc').value.trim(),
-    publisher:    document.getElementById('meta-publisher').value.trim(),
-    ipa:          document.getElementById('meta-ipa').value.trim(),
-    theme:        document.getElementById('meta-theme').value,
-    license:      document.getElementById('meta-license').value,
-    rightsholder: document.getElementById('meta-rightsholder').value.trim(),
-    periodicity:  document.getElementById('meta-periodicity').value,
-    modified:     document.getElementById('meta-modified').value || new Date().toISOString().split('T')[0],
-    version:      document.getElementById('meta-version').value.trim() || '0.1',
+    title:       document.getElementById('meta-title').value.trim(),
+    uri:         document.getElementById('meta-uri').value.trim(),
+    desc:        document.getElementById('meta-desc').value.trim(),
+    ipa:         document.getElementById('meta-ipa').value.trim(),
+    theme:       document.getElementById('meta-theme').value,
+    license:     document.getElementById('meta-license').value,
+    periodicity: document.getElementById('meta-periodicity').value,
+    modified:    document.getElementById('meta-modified').value || new Date().toISOString().split('T')[0],
+    version:     document.getElementById('meta-version').value.trim() || '0.1',
   };
 
   const parsed  = parseCSV(csvText);
@@ -910,11 +921,9 @@ async function startConversion() {
   try {
     const parts = [];
 
-    // 1. Chiamata header: prefissi + dcat:Dataset
-    showStatus(`⏳ Chunk 0/${totalChunks} — generazione prefissi e dataset...`, 'info');
-    const headerPrompt = buildPromptHeader(meta, ontos, cols);
-    const headerTTL    = cleanTTL(await callAI(headerPrompt));
-    parts.push(headerTTL);
+    // 1. Header TTL generato direttamente in JS (sempre corretto)
+    showStatus(`⏳ Preparazione header TTL...`, 'info');
+    parts.push(buildTTLHeader(meta, ontos));
 
     // 2. Chiamate chunk: solo entità
     for (let i = 0; i < chunks.length; i++) {

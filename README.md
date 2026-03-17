@@ -16,23 +16,88 @@ La PA ha già pubblicato il dataset su dati.gov.it o sul portale opendata locale
 - **Auto-detect ontologie**: analizza le colonne e suggerisce le ontologie più adatte
 - Ontologie comuni + sezione avanzate espandibile (SKOS, QB, Cultural-ON, GTFS, PARK...)
 - Solo due campi obbligatori: **Nome PA** e **Codice IPA** (per `dct:rightsHolder`)
-- **Chunking automatico**: il CSV viene suddiviso in blocchi da 25 righe, trasformato con chiamate API separate e unito in un unico TTL completo
+- **Architettura ibrida**: colonne riconoscibili mappate deterministicamente, colonne ambigue elaborate dal LLM
+- **Vocabolari controllati verificati**: fetch automatico da `dati-semantic-assets` per le ontologie rilevate
+- **Sanitizzazione TTL**: whitelist di classi e proprietà verificate — le allucinazioni del LLM vengono corrette automaticamente
+- **Validazione post-generazione**: verifica ogni termine usato contro mappa locale e SPARQL endpoint di `schema.gov.it`
+- **Chunking automatico**: il CSV viene suddiviso in blocchi, trasformato con chiamate API separate e unito in un unico TTL completo
 - **Prefissi deduplicati** automaticamente nel TTL finale
 - Download diretto del file `.ttl` e del file `.rdf` (RDF/XML, convertito nel browser via N3.js)
 - Provider AI: **Mistral**, **Groq**, **Google Gemini**, **Ollama Cloud** (tramite proxy)
 - UI **Bootstrap Italia** — conforme alle linee guida AgID
 
-## Architettura
+---
+
+## Architettura ibrida: deterministico + LLM
+
+Lo strumento non affida tutto al LLM. Per ogni colonna del CSV viene applicata una logica a quattro livelli:
 
 ```
-Browser (GitHub Pages o self-hosted)
-    ├── → Mistral API   (api.mistral.ai)       — chiamata diretta
-    ├── → Groq API      (api.groq.com)          — chiamata diretta
-    ├── → Gemini API    (generativelanguage.googleapis.com) — chiamata diretta
-    └── → Ollama Cloud  (ollama.com)            — richiede proxy server (vedi sotto)
+CSV
+ ↓
+1. MAPPER DETERMINISTICO (JS puro, zero token)
+   ├── nome colonna in lista pattern noti? (lat, lon, email, tel, cap...)
+   └── valore corrisponde a formato riconoscibile? (regex)
+         ↓ sì → mappatura diretta, proprietà RDF garantita
+         ↓ no ↓
+2. LLM (solo per colonne semanticamente ambigue)
+   ├── riceve solo le colonne non risolte deterministicamente
+   ├── prompt con classi/proprietà verificate dalle ontologie OntoPiA
+   └── vocabolari controllati reali fetchati da dati-semantic-assets
+         ↓
+3. SANITIZZAZIONE (whitelist JS)
+   ├── proprietà ontologiche verificate contro whitelist
+   ├── classi verificate contro whitelist
+   └── termini non in whitelist → sostituiti con fallback sicuri
+         ↓
+4. VALIDAZIONE (opzionale, pulsante 🔍 Valida)
+   ├── mappa locale ONTO_CLASSES
+   └── SPARQL ASK su schema.gov.it/sparql
 ```
 
-Mistral, Groq e Gemini funzionano **100% nel browser**, senza backend. Le API key rimangono solo nel browser dell'utente.
+### Criteri per la mappatura deterministica
+
+Una colonna viene mappata senza LLM se il nome corrisponde a un pattern noto e il valore del campione corrisponde al formato atteso:
+
+| Pattern nome colonna | Proprietà RDF | Tipo XSD |
+|---------------------|---------------|----------|
+| `lat`, `latitude`, `latitudine`, `lat_y`, `lat_wgs84` | `geo:lat` | `xsd:decimal` |
+| `lon`, `lng`, `long`, `longitude`, `lon_x`, `lon_wgs84` | `geo:long` | `xsd:decimal` |
+| `email`, `mail`, `pec` | `sm:hasEmail` | `xsd:string` |
+| `tel`, `telefono`, `phone`, `fax`, `cellulare` | `sm:hasTelephone` | `xsd:string` |
+| `sito`, `website`, `url`, `web`, `link` | `sm:hasWebSite` | `xsd:anyURI` |
+| `id`, `codice`, `cod`, `identifier`, `istat`, `ipa` | `dct:identifier` | `xsd:string` |
+| `cf`, `codice_fiscale`, `piva`, `partita_iva` | `dct:identifier` | `xsd:string` |
+| `nome`, `name`, `denominazione`, `titolo` | `rdfs:label` | `@it` |
+| `descrizione`, `description`, `note`, `abstract`, `riassunto` | `dct:description` | `@it` |
+| `data`, `date`, `anno`, `year`, `data_deposito` | `dct:date` | `xsd:date` |
+| `indirizzo`, `address`, `via`, `comune`, `cap`, `provincia` | `clv:hasAddress` | — |
+| `tipo`, `tipologia`, `categoria`, `settore` | `dct:type` | `@it` |
+| `stato`, `status`, `attivo` | `adms:status` | `@it` |
+
+Il criterio è **nome + valore**: se il nome corrisponde ma il valore non ha il formato atteso (es. una colonna `lat` con testo invece di numeri), la colonna viene passata al LLM.
+
+### Criteri per la sanitizzazione (whitelist)
+
+Dopo la generazione LLM, ogni riga del TTL viene analizzata:
+
+- **Proprietà** con prefisso OntoPiA non in whitelist → sostituita con `dct:description`
+- **Classe** con prefisso OntoPiA non in whitelist → sostituita con `l0:Object`
+- Prefissi standard W3C/DCAT (`rdf`, `rdfs`, `owl`, `xsd`, `dct`, `dcat`, `foaf`, `geo`, `skos`, `vcard`, `schema`) → mai toccati
+
+Questo garantisce che proprietà inventate come `clv:hasStreetName`, `ti:hasDayOfWeek`, `l0:hasQuantity` non arrivino mai nell'output finale.
+
+### Criteri per la validazione
+
+Il pulsante **🔍 Valida** analizza il TTL in tre passaggi:
+
+1. Estrae tutti i termini `prefisso:Nome` usati
+2. Verifica contro la mappa statica `ONTO_CLASSES` (estratta dalle ontologie reali OntoPiA)
+3. Per i termini non trovati localmente, interroga `https://schema.gov.it/sparql` con `ASK { <URI> ?p ?o }`
+
+Report: ✓ verificati · ◦ standard W3C/DCAT · ⚠ non trovati localmente · ✗ non esistono su schema.gov.it
+
+---
 
 ## Cosa contiene il TTL generato
 
@@ -40,33 +105,25 @@ Il file TTL **non** contiene i metadati DCAT del dataset (già presenti sul port
 
 - I **prefissi** delle ontologie usate
 - Il **titolare** (`dct:rightsHolder`) con URI IPA ufficiale
-- Le **entità LOD** per ogni riga del CSV, tipizzate con le ontologie di dati-semantic-assets
+- Le **entità LOD** per ogni riga del CSV
 
 ```turtle
 @prefix poi: <https://w3id.org/italia/onto/POI/> .
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
-...
 
 <https://w3id.org/italia/data/public-organization/c_a662>
     a foaf:Agent ;
     foaf:name "Comune di Bari"@it ;
     dct:identifier "c_a662" .
 
-<https://...> a poi:PointOfInterest ;
-    rdfs:label "DAE Stazione Centrale"@it ;
-    geo:lat "41.118"^^xsd:decimal ;
-    geo:long "16.871"^^xsd:decimal .
+<https://w3id.org/italia/data/c_a662/fermata/57>
+    a poi:PointOfInterest ;
+    rdfs:label "PORTA TENAGLIA"@it ;
+    geo:lat "45.477"^^xsd:decimal ;
+    geo:long "9.181"^^xsd:decimal .
 ```
 
-## Chunking automatico
-
-```
-Header TTL (generato in JS): @prefix + titolare
-Chunk 1: righe   1-25  → entità RDF
-Chunk 2: righe  26-50  → entità RDF
-...
-Merge finale + deduplicazione prefissi → file .ttl completo
-```
+---
 
 ## Deploy su GitHub Pages
 
@@ -74,30 +131,27 @@ Merge finale + deduplicazione prefissi → file .ttl completo
 2. Vai su **Settings → Pages → Source: Deploy from branch → main / root**
 3. L'app è disponibile su `https://<tuo-username>.github.io/CSV-to-RDF`
 
+---
+
 ## Configurazione provider AI
 
 ### 🟠 Mistral
-API key su [console.mistral.ai](https://console.mistral.ai).
-Modelli: `mistral-large-latest` (consigliato), `mistral-medium-latest`, `mistral-small-latest`.
+API key su [console.mistral.ai](https://console.mistral.ai). Modelli: `mistral-large-latest` (consigliato).
 Consigliato per dataset grandi — nessun rate limit problematico.
 
 ### ⚡ Groq
 API key su [console.groq.com](https://console.groq.com) (piano gratuito).
-Modelli: `llama-3.3-70b-versatile`, `llama-3.1-8b-instant`, `mixtral-8x7b-32768`.
-Molto veloce ma con rate limit token/minuto sul piano free.
+Modelli: `llama-3.3-70b-versatile`, `mixtral-8x7b-32768`.
+Delay automatico di 6s tra chunk per rispettare il rate limit TPM.
 
 ### ✨ Google Gemini
-API key gratuita su [Google AI Studio](https://aistudio.google.com/app/apikey). Nessuna carta di credito.
-Modelli: `gemini-2.0-flash` (consigliato), `gemini-2.0-flash-lite`, `gemini-1.5-flash`.
-Piano free: **1500 richieste/giorno · 1M token/minuto**.
+API key gratuita su [Google AI Studio](https://aistudio.google.com/app/apikey).
+Modelli: `gemini-2.0-flash` (consigliato). Piano free: **1500 richieste/giorno**.
 
 ### 🦙 Ollama Cloud
-Ollama Cloud non supporta chiamate dirette dal browser (CORS). Richiede un **proxy server** intermedio.
-
-Il proxy riceve la richiesta dal browser e la inoltra a `ollama.com` server-side:
+Richiede un proxy server HTTPS (Ollama Cloud blocca le chiamate dirette dal browser per CORS).
 
 ```javascript
-// Endpoint da aggiungere al tuo server Node.js/Express
 app.post("/api/ollama-proxy", async (req, res) => {
   const { model, messages, options, ollama_api_key } = req.body;
   const r = await fetch("https://ollama.com/api/chat", {
@@ -109,7 +163,9 @@ app.post("/api/ollama-proxy", async (req, res) => {
 });
 ```
 
-API key Ollama: [ollama.com/settings/keys](https://ollama.com/settings/keys)
+API key: [ollama.com/settings/keys](https://ollama.com/settings/keys)
+
+---
 
 ## Ontologie supportate
 
@@ -138,15 +194,16 @@ Tutte da **[github.com/italia/dati-semantic-assets](https://github.com/italia/da
 | `cultural-on` | Patrimonio culturale |
 | `gtfs`        | Trasporto pubblico |
 | `route`       | Percorsi |
-| `lang`        | Lingue |
-| `iot`         | Internet of Things |
-| `transp`      | Trasparenza PA |
 | `skos`        | Classificazioni e tassonomie |
 | `qb`          | RDF Data Cube (dati statistici) |
 
+---
+
 ## Standard di riferimento
 
-- **DCAT-AP_IT 2.1** · **Dublin Core** (`dct:`) · **W3C WGS84** (`geo:`) · **FOAF** · **schema.gov.it**
+**DCAT-AP_IT 2.1** · **Dublin Core** (`dct:`) · **W3C WGS84** (`geo:`) · **FOAF** · **schema.gov.it**
+
+---
 
 ## Licenza
 

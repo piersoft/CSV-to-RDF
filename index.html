@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.26</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.27</span>
 </footer>
 
 <script>
@@ -874,12 +874,38 @@ function detectSeparator(firstLine) {
 }
 
 function parseCSV(text) {
-  const lines = text.trim().split('\n').filter(l => l.trim());
-  if (!lines.length) return null;
+  if (!text || !text.trim()) return null;
 
-  const sep = detectSeparator(lines[0]);
+  // Step 1: rileva separatore dalla prima riga logica
+  const firstNewline = text.indexOf('\n');
+  const firstLine = firstNewline >= 0 ? text.substring(0, firstNewline) : text;
+  const sep = detectSeparator(firstLine);
 
-  // Parser che gestisce valori quotati con il separatore rilevato
+  // Step 2: split in "righe logiche" rispettando newline dentro campi quotati
+  function splitIntoLogicalLines(raw) {
+    const logical = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < raw.length; i++) {
+      const ch = raw[i];
+      if (ch === '"') {
+        // Gestisce doppi apici escaped ""
+        if (inQuotes && raw[i+1] === '"') { current += '"'; i++; }
+        else inQuotes = !inQuotes;
+        current += ch;
+      } else if ((ch === '\n' || (ch === '\r' && raw[i+1] === '\n')) && !inQuotes) {
+        if (ch === '\r') i++; // salta \r di \r\n
+        if (current.trim()) logical.push(current);
+        current = '';
+      } else {
+        current += ch;
+      }
+    }
+    if (current.trim()) logical.push(current);
+    return logical;
+  }
+
+  // Step 3: split singola riga logica nei campi
   function splitLine(line, sep) {
     const result = [];
     let current = '';
@@ -887,22 +913,26 @@ function parseCSV(text) {
     for (let i = 0; i < line.length; i++) {
       const ch = line[i];
       if (ch === '"') {
-        inQuotes = !inQuotes;
+        if (inQuotes && line[i+1] === '"') { current += '"'; i++; }
+        else inQuotes = !inQuotes;
       } else if (ch === sep && !inQuotes) {
-        result.push(current.trim());
+        result.push(current.trim().replace(/^"|"$/g,'').replace(/""/g,'"'));
         current = '';
       } else {
         current += ch;
       }
     }
-    result.push(current.trim());
+    result.push(current.trim().replace(/^"|"$/g,'').replace(/""/g,'"'));
     return result;
   }
 
-  const headers = splitLine(lines[0], sep).map(h => h.replace(/^"|"$/g,'').trim());
-  const rows = lines.slice(1).map(line => {
-    const vals = splitLine(line, sep).map(v => v.replace(/^"|"$/g,'').trim());
-    return headers.reduce((o,h,i) => { o[h] = vals[i]||''; return o; }, {});
+  const logicalLines = splitIntoLogicalLines(text.trim());
+  if (!logicalLines.length) return null;
+
+  const headers = splitLine(logicalLines[0], sep);
+  const rows = logicalLines.slice(1).filter(l => l.trim()).map(line => {
+    const vals = splitLine(line, sep);
+    return headers.reduce((o,h,i) => { o[h] = (vals[i] !== undefined ? vals[i] : ''); return o; }, {});
   });
 
   return { headers, rows, sep };

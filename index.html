@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.33</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.34</span>
 </footer>
 
 <script>
@@ -2043,7 +2043,8 @@ async function startConversion() {
       showStatus(`⏳ Chunk ${i+1}/${chunks.length} — righe ${i*CHUNK_SIZE+1}-${i*CHUNK_SIZE+chunks[i].length}...`, 'info');
       // Delay tra chunk per Groq (rate limit TPM)
       if (i > 0 && currentProvider === 'groq') await new Promise(r => setTimeout(r, 6000));
-      const prompt = buildPromptChunk(cols, chunks[i], ontos, i, chunks.length, vocabSection, ontoSection, skipCols, ipa);
+      // LLM vede sempre tutto il CSV (skipCols vuoto) per produrre TTL completo
+      const prompt = buildPromptChunk(cols, chunks[i], ontos, i, chunks.length, vocabSection, ontoSection, new Set(), ipa);
       let deterTriples = buildDeterministicTriples(cols, chunks[i], entityBase, deterMappings, typeSegment, ontos);
       let llmTriples = prompt ? fixURIs(sanitizeTTL(cleanTTL(await callAI(prompt))), ipa) : '';
       // Merge: inietta le triple deterministiche dentro le risorse LLM

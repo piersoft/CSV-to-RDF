@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.34</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.35</span>
 </footer>
 
 <script>
@@ -1764,6 +1764,43 @@ function fixWebSites(ttl) {
   );
 }
 
+function removeDuplicatePredicates(ttl) {
+  // Per ogni risorsa, rimuove triple duplicate con stesso predicato
+  // eccetto rdfs:label e dct:description che possono avere multi-valori legittimi
+  const SINGLE_VALUE = ['dct:date','dct:identifier','dct:type','dct:publisher',
+    'dct:spatial','dct:temporal','geo:lat','geo:long','adms:status'];
+  const lines = ttl.split('\n');
+  const result = [];
+  let inResource = false;
+  let seenPreds = new Set();
+  
+  for (const line of lines) {
+    const t = line.trim();
+    if (t.match(/^<[^>]+>\s*$/)) {
+      // Nuovo soggetto: reset predicati visti
+      seenPreds = new Set();
+      inResource = true;
+      result.push(line);
+    } else if (t === '' || t === '.') {
+      if (t === '.') seenPreds = new Set();
+      result.push(line);
+    } else {
+      // Estrai predicato
+      const predMatch = t.match(/^([a-zA-Z][\w-]*:[a-zA-Z][\w-]*)\s+/);
+      if (predMatch && SINGLE_VALUE.includes(predMatch[1])) {
+        if (!seenPreds.has(predMatch[1])) {
+          seenPreds.add(predMatch[1]);
+          result.push(line);
+        }
+        // else: salta duplicato
+      } else {
+        result.push(line);
+      }
+    }
+  }
+  return result.join('\n');
+}
+
 function removeEmptyTriples(ttl) {
   // Rimuove triple con valori vuoti: prop ""^^tipo o prop ""@lang
   return ttl.split('\n').filter(line => {
@@ -2052,7 +2089,7 @@ async function startConversion() {
       // Strategia: LLM ha priorità assoluta quando produce output.
       // Il deterministico è solo fallback quando non c'è LLM (no API key).
       if (llmTriples && llmTriples.trim().length > 20) {
-        chunk = removeEmptyTriples(sanitizeTTL(llmTriples, ontos));
+        chunk = removeDuplicatePredicates(removeEmptyTriples(sanitizeTTL(llmTriples, ontos)));
       } else {
         chunk = removeEmptyTriples(sanitizeTTL(deterTriples, ontos));
       }

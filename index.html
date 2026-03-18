@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.19</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.20</span>
 </footer>
 
 <script>
@@ -849,7 +849,9 @@ function loadCSVFile(input) {
       };
       readerLatin.readAsText(file, 'ISO-8859-1');
     } else {
-      document.getElementById('csv-input').value = text;
+      const ta = document.getElementById('csv-input');
+      ta.value = text;
+      console.log('[loadCSVFile] testo caricato, lunghezza:', text.length, 'primi 100:', text.substring(0,100));
       parseAndPreviewCSV();
     }
   };
@@ -1758,7 +1760,7 @@ async function callAnthropic(prompt) {
 
   const systemPrompt = `Sei un convertitore CSV→RDF/TTL per la PA italiana. Rispondi SOLO con triple Turtle valide.
 REGOLE ASSOLUTE:
-1. ZERO markdown, ZERO backtick, ZERO commenti in prosa, ZERO blocchi \\`\\`\\`turtle
+1. ZERO markdown, ZERO backtick, ZERO commenti in prosa, ZERO blocchi triple-backtick turtle
 2. I @prefix sono già stati emessi — NON aggiungerli
 3. Se il CSV contiene colonne finanziarie (importo, cumulato, movimento, entrata, spesa, BDAP, gestionale) usa OBBLIGATORIAMENTE:
    - Classe: qb:Observation

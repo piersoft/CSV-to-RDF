@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.36</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.37</span>
 </footer>
 
 <script>
@@ -1759,12 +1759,16 @@ function fixCoordinates(ttl) {
 }
 
 function fixContactPoints(ttl) {
-  // Sostituisce cov:hasContactPoint con dct:publisher (proprietà non esistente in COV)
-  return ttl.replace(/cov:hasContactPoint\s+\[([^\]]*)\]/g, (match, inner) => {
+  // Sostituisce cov:hasContactPoint con dct:contributor (blank node o URI)
+  // blank node con label: [ a ...; rdfs:label "X" ] → dct:publisher "X"@it
+  ttl = ttl.replace(/cov:hasContactPoint\s+\[([^\]]+)\]/g, (match, inner) => {
     const labelMatch = inner.match(/rdfs:label\s+"([^"]+)"/);
     if (labelMatch) return `dct:publisher "${labelMatch[1]}"@it`;
-    return 'dct:publisher ""@it';
+    return '';
   });
+  // URI reference: cov:hasContactPoint <URI> → dct:contributor <URI>
+  ttl = ttl.replace(/cov:hasContactPoint\s+(<[^>]+>)/g, 'dct:contributor $1');
+  return ttl;
 }
 
 function fixWebSites(ttl) {

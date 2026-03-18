@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.29</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.30</span>
 </footer>
 
 <script>
@@ -528,6 +528,7 @@ const ONTO_RULES = [
   { keys: ['servizio','service','prestazione','sportello'],                ontos: ['CPSV-AP'] },
   { keys: ['hotel','albergo','accommodation','ricettivo','posti.letto','posti_letto','camere','stelle'],  ontos: ['ACCO'] },
   { keys: ['patrimonio','culturale','museo','monumento','arte','biblioteca','archivio','nome museo','ldcn'], ontos: ['Cultural-ON'] },
+  { keys: ['titolo','spettacolo','evento','manifestazione','concerto','teatro','rassegna','patrocinio','organizzazione_associazione'], ontos: ['Cultural-ON','TI'] },
   { keys: ['tecnologia','area_tecnologica','settore','disciplina','campo'],  ontos: ['ADMS','L0'] },
   { keys: ['bus','metro','tram','fermata','linea','corsa'],                ontos: ['GTFS'] },
   { keys: ['importo','importo cumulato','valore','obs_value','misura','spesa','entrata','uscita','bilancio','finanziario','bdap','popolazione','istat','codice gestionale','tipologia del movimento','anno/mese'], ontos: ['QB'] },
@@ -1405,6 +1406,22 @@ const COLUMN_RULES = [
   { names: /^(gestore|responsabile|referente|ente|struttura|organizzazione)$/i,
     value: null,
     prop: 'dct:publisher', type: '@it' },
+  // Eventi / spettacoli
+  { names: /^(titolo|title|nome_evento|nome evento|denominazione_evento)$/i,
+    value: null,
+    prop: 'rdfs:label', type: '@it' },
+  { names: /^(data|date|data_evento|data_spettacolo)$/i,
+    value: null,
+    prop: 'dct:date', type: 'xsd:string' },
+  { names: /^(organizzazione_associazione|organizzatore|organizzazione|associazione|ente_organizzatore)$/i,
+    value: null,
+    prop: 'dct:publisher', type: '@it' },
+  { names: /^(luogo|venue|sede_evento|location_evento)$/i,
+    value: null,
+    prop: 'dct:spatial', type: '@it' },
+  { names: /^(patrocinio_coorganizzazione_pagamento|patrocinio|tipo_evento|modalita)$/i,
+    value: null,
+    prop: 'dct:type', type: '@it' },
   // Statistiche / dati finanziari
   { names: /^(importo|importo.?cumulato|importo cumulato|valore|amount|value|obs.?value|misura|measure|spesa|entrata|uscita)$/i,
     value: /^-?\d+(\.\d+)?$/,

@@ -1370,6 +1370,7 @@ REGOLE:
 - REGOLA CRITICA: usa SOLO proprietà che esistono nelle ontologie dichiarate nei @prefix. NON inventare proprietà con nomi come clv:hasStreetName, clv:hasPostalCode, clv:hasName, clv:hasFeature, sm:hasValue o simili — queste NON esistono.
 - Per i nomi usa rdfs:label o l0:name, NON clv:hasName (clv:hasName NON ESISTE)
 - Per i valori di contatto usa sm:hasTelephone, sm:hasEmail, sm:hasWebSite, NON sm:hasValue
+- Per sm:hasWebSite usa SEMPRE l'URL originale come URI: sm:hasWebSite <http://www.esempio.it> — NON costruire URI w3id inventati con l'URL incorporato
 - Per giorni della settimana e orari usa dct:description "valore"@it, NON ti:hasDayOfWeek
 - Se non conosci la proprietà esatta, usa dct:description "valore"@it
 - rdfs:label con il nome principale in italiano
@@ -1463,6 +1464,21 @@ function fixURIs(ttl, ipa) {
   });
 }
 
+function fixCoordinates(ttl) {
+  // Corregge geo:lat e geo:long senza tipo xsd:decimal
+  return ttl
+    .replace(/geo:lat\s+"(-?\d+\.?\d*)"\s*([;.])/g, 'geo:lat "$1"^^xsd:decimal $2')
+    .replace(/geo:long\s+"(-?\d+\.?\d*)"\s*([;.])/g, 'geo:long "$1"^^xsd:decimal $2');
+}
+
+function fixWebSites(ttl) {
+  // Corregge sm:hasWebSite con URI w3id inventati → usa il valore come URL diretto
+  return ttl.replace(
+    /sm:hasWebSite\s+<https?:\/\/w3id\.org\/[^>]*__(http[^>]*)>/g,
+    (match, url) => 'sm:hasWebSite <' + url.replace(/__/g, '/').replace(/_([a-z])/g, '.$1') + '>'
+  );
+}
+
 function removeEmptyTriples(ttl) {
   // Rimuove triple con valori vuoti: prop ""^^tipo o prop ""@lang
   return ttl.split('\n').filter(line => {
@@ -1475,6 +1491,8 @@ function removeEmptyTriples(ttl) {
 
 function sanitizeTTL(ttl) {
   ttl = removeEmptyTriples(ttl);
+  ttl = fixCoordinates(ttl);
+  ttl = fixWebSites(ttl);
   const lines = ttl.split('\n');
   const result = [];
   for (const line of lines) {

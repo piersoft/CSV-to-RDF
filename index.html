@@ -466,7 +466,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.14</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.17</span>
 </footer>
 
 <script>
@@ -1507,6 +1507,7 @@ REGOLE:
   NON usare domini inventati — usa SEMPRE w3id.org/italia/data/
   NON usare nomi di persone come {id} — usa sempre l'ID numerico o codice della riga
 - Mappa ogni colonna alla proprietà ontologica corretta
+- Se il dataset contiene colonne finanziarie (importo, cumulato, movimento, entrata, spesa, BDAP) usa SEMPRE qb:Observation come classe principale, sdmx-measure:obsValue per gli importi numerici, sdmx-dimension:timePeriod per il periodo, sdmx-dimension:refArea per il territorio
 - Per coordinate usa geo:lat e geo:long. Per campi booleani (si/no, true/false, 1/0) usa poi:hasAccessCondition con valore letterale. Per marca/modello usa rdfs:label o dct:description. Per numero serie usa dct:identifier. Per scadenza/manutenzione usa dct:valid. Se il valore è vuoto o mancante NON generare la tripla (omettila completamente). Per telefono sm:hasTelephone. Per email sm:hasEmail. Per indirizzo clv:hasAddress. Per data dct:date o ti:startTime/ti:endTime
 - REGOLA CRITICA: usa SOLO proprietà che esistono nelle ontologie dichiarate nei @prefix. NON inventare proprietà con nomi come clv:hasStreetName, clv:hasPostalCode, clv:hasName, clv:hasFeature, sm:hasValue o simili — queste NON esistono.
 - Per i nomi usa rdfs:label o l0:name, NON clv:hasName (clv:hasName NON ESISTE)
@@ -1749,6 +1750,21 @@ async function callAnthropic(prompt) {
   const key   = document.getElementById('anthropic-key').value.trim();
   const model = document.getElementById('anthropic-model').value || 'claude-sonnet-4-5';
   if (!key) throw new Error('Inserisci la tua API key Anthropic.');
+
+  const systemPrompt = `Sei un convertitore CSV→RDF/TTL per la PA italiana. Rispondi SOLO con triple Turtle valide.
+REGOLE ASSOLUTE:
+1. ZERO markdown, ZERO backtick, ZERO commenti in prosa, ZERO blocchi \\`\\`\\`turtle
+2. I @prefix sono già stati emessi — NON aggiungerli
+3. Se il CSV contiene colonne finanziarie (importo, cumulato, movimento, entrata, spesa, BDAP, gestionale) usa OBBLIGATORIAMENTE:
+   - Classe: qb:Observation
+   - Importi numerici: sdmx-measure:obsValue "valore"^^xsd:decimal
+   - Periodo: sdmx-dimension:timePeriod "valore"^^xsd:string
+   - Territorio: sdmx-dimension:refArea <URI>
+   - Tipo risorsa nell'URI: observation/
+4. NON ripetere la stessa entità organizzativa per ogni riga — usa URI distinti per ogni osservazione
+5. Usa SOLO classi e proprietà delle ontologie dichiarate — mai prefissi non autorizzati
+6. Se il valore è vuoto ometti la tripla completamente`;
+
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -1760,6 +1776,7 @@ async function callAnthropic(prompt) {
     body: JSON.stringify({
       model,
       max_tokens: 8000,
+      system: systemPrompt,
       messages: [{ role: 'user', content: prompt }]
     })
   });
@@ -1777,7 +1794,12 @@ async function callAI(prompt) {
 }
 
 function cleanTTL(text) {
-  return text.replace(/^```(turtle|ttl|rdf)?\n?/i,'').replace(/\n?```$/i,'').trim();
+  // Rimuove tutti i blocchi markdown ovunque appaiano nel testo
+  return text
+    .replace(/```(turtle|ttl|rdf|sparql)?\s*\n?/gi, '')
+    .replace(/```\s*$/gim, '')
+    .replace(/^\s*```.*$/gim, '')
+    .trim();
 }
 
 async function callMistral(prompt) {

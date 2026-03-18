@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.24</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.25</span>
 </footer>
 
 <script>
@@ -1441,9 +1441,7 @@ function mergeDeterIntoLLM(llmTTL, deterTTL, entityBase, typeSegment) {
   function parseBlocks(ttl) {
     const blocks = new Map();
     // Splitta per risorse: ogni risorsa inizia con <URI>
-    const resourceRe = /(<[^>]+>)\s*([^<]*?)(?=
-<|
-*$)/gs;
+    const resourceRe = /(<[^>]+>)[\s\S]*?(?=\n<|\n*$)/gs;
     let m;
     while ((m = resourceRe.exec(ttl)) !== null) {
       const uri = m[1];

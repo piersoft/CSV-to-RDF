@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.35</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.36</span>
 </footer>
 
 <script>
@@ -1297,11 +1297,13 @@ const ONTO_MAIN_CLASS = {
   'ADMS':        'adms:SemanticAsset',
   'POI':         'poi:PointOfInterest',
   'CLV':         'clv:Feature',
+  'TI':          'l0:EventOrSituation',
+  'QB':          'qb:Observation',
   'L0':          'l0:Object',
 };
 
 function getMainClass(ontos) {
-  const priority = ['ACCO','PARK','GTFS','CULTURAL-ON','CPSV-AP','QB','CPV','COV','POI','CLV','ADMS','L0'];
+  const priority = ['ACCO','PARK','GTFS','CULTURAL-ON','CPSV-AP','QB','CPV','COV','POI','CLV','TI','ADMS','L0'];
   for (const onto of priority) {
     if (ontos.map(o => o.toUpperCase()).includes(onto)) {
       return ONTO_MAIN_CLASS[onto] || 'l0:Object';
@@ -1313,7 +1315,7 @@ function getMainClass(ontos) {
 // Determina il tipo-risorsa URI in base alle ontologie selezionate
 function getEntityTypeSegment(ontos) {
   // Priorità: ontologie specializzate prima di quelle generiche
-  const priority = ['ACCO','PARK','GTFS','Cultural-ON','CPSV-AP','QB','CPV','COV','POI','CLV','ADMS','L0'];
+  const priority = ['ACCO','PARK','GTFS','Cultural-ON','CPSV-AP','QB','CPV','COV','POI','CLV','TI','ADMS','L0'];
   for (const onto of priority) {
     if (ontos.map(o => o.toUpperCase()).includes(onto.toUpperCase())) {
       return ONTO_URI_TYPE[onto] || 'resource';
@@ -1756,6 +1758,15 @@ function fixCoordinates(ttl) {
     .replace(/geo:long\s+"(-?\d+\.?\d*)"\s*([;.])/g, 'geo:long "$1"^^xsd:decimal $2');
 }
 
+function fixContactPoints(ttl) {
+  // Sostituisce cov:hasContactPoint con dct:publisher (proprietà non esistente in COV)
+  return ttl.replace(/cov:hasContactPoint\s+\[([^\]]*)\]/g, (match, inner) => {
+    const labelMatch = inner.match(/rdfs:label\s+"([^"]+)"/);
+    if (labelMatch) return `dct:publisher "${labelMatch[1]}"@it`;
+    return 'dct:publisher ""@it';
+  });
+}
+
 function fixWebSites(ttl) {
   // Corregge sm:hasWebSite con URI w3id inventati → usa il valore come URL diretto
   return ttl.replace(
@@ -1814,6 +1825,7 @@ function removeEmptyTriples(ttl) {
 function sanitizeTTL(ttl, ontos=[]) {
   ttl = removeEmptyTriples(ttl);
   ttl = fixMeasurePrefixes(ttl);
+  ttl = fixContactPoints(ttl);
   ttl = fixCoordinates(ttl);
   ttl = fixWebSites(ttl);
 

@@ -1448,8 +1448,7 @@ function mergeDeterIntoLLM(llmTTL, deterTTL, entityBase, typeSegment) {
       const body = m[2].trim();
       if (!blocks.has(uri)) blocks.set(uri, []);
       // Estrai le triple (linee con ; o . finale)
-      body.split(/
-/).forEach(line => {
+        body.split(/\n/).forEach(line => {
         const t = line.trim().replace(/[;.]$/, '').trim();
         if (t) blocks.get(uri).push(t);
       });

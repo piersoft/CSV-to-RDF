@@ -459,7 +459,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.9</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.11</span>
 </footer>
 
 <script>
@@ -525,6 +525,7 @@ const ONTO_RULES = [
   { keys: ['patrimonio','culturale','museo','monumento','arte'],           ontos: ['Cultural-ON'] },
   { keys: ['tecnologia','area_tecnologica','settore','disciplina','campo'],  ontos: ['ADMS','L0'] },
   { keys: ['bus','metro','tram','fermata','linea','corsa'],                ontos: ['GTFS'] },
+  { keys: ['importo','valore','importo_cumulato','obs_value','misura','spesa','entrata','uscita','bilancio','finanziario','bdap','popolazione','istat'], ontos: ['QB'] },
   { keys: ['percorso','route','itinerario','tracciato'],                   ontos: ['Route'] },
   { keys: ['lingua','language','lang'],                                    ontos: ['Language'] },
   { keys: ['sensore','iot','device','dispositivo','misurazione'],          ontos: ['IoT'] },
@@ -753,8 +754,8 @@ function validateCSV(parsed) {
   });
 
   // 4. Coordinate geografiche mal formate
-  const latCols = headers.filter(h => /lat/i.test(h));
-  const lonCols = headers.filter(h => /lon|lng/i.test(h));
+  const latCols = headers.filter(h => /^(lat|latitude|latitudine|lat_y|y_lat|coord_lat|lat_wgs84)$/i.test(h.trim()));
+  const lonCols = headers.filter(h => /^(lon|lng|long|longitude|longitudine|lon_x|x_lon|long_x|lng_x|coord_lon|lon_wgs84|long_wgs84)$/i.test(h.trim()));
   [...latCols, ...lonCols].forEach(col => {
     const bad = rows.filter(r => r[col] && r[col].trim() && isNaN(parseFloat(r[col].replace(',','.'))));
     if (bad.length > 0) {
@@ -1211,7 +1212,7 @@ const ONTO_MAIN_CLASS = {
 };
 
 function getMainClass(ontos) {
-  const priority = ['ACCO','PARK','GTFS','CULTURAL-ON','CPSV-AP','CPV','COV','POI','CLV','ADMS','L0'];
+  const priority = ['ACCO','PARK','GTFS','CULTURAL-ON','CPSV-AP','CPV','COV','POI','CLV','QB','ADMS','L0'];
   for (const onto of priority) {
     if (ontos.map(o => o.toUpperCase()).includes(onto)) {
       return ONTO_MAIN_CLASS[onto] || 'l0:Object';
@@ -1223,7 +1224,7 @@ function getMainClass(ontos) {
 // Determina il tipo-risorsa URI in base alle ontologie selezionate
 function getEntityTypeSegment(ontos) {
   // Priorità: ontologie specializzate prima di quelle generiche
-  const priority = ['ACCO','PARK','GTFS','Cultural-ON','CPSV-AP','CPV','COV','POI','CLV','ADMS','L0'];
+  const priority = ['ACCO','PARK','GTFS','Cultural-ON','CPSV-AP','CPV','COV','POI','CLV','QB','ADMS','L0'];
   for (const onto of priority) {
     if (ontos.map(o => o.toUpperCase()).includes(onto.toUpperCase())) {
       return ONTO_URI_TYPE[onto] || 'resource';
@@ -1314,6 +1315,34 @@ const COLUMN_RULES = [
     value: null,
     prop: 'dct:valid', type: 'xsd:string' },
   { names: /^(gestore|responsabile|referente|ente|struttura|organizzazione)$/i,
+    value: null,
+    prop: 'dct:publisher', type: '@it' },
+  // Statistiche / dati finanziari
+  { names: /^(importo|importo.?cumulato|valore|amount|value|obs.?value|misura|measure)$/i,
+    value: /^-?\d+(\.\d+)?$/,
+    prop: 'sdmx-measure:obsValue', type: 'xsd:decimal' },
+  { names: /^(importo|importo.?cumulato|valore|amount|value|obs.?value|misura|measure)$/i,
+    value: null,
+    prop: 'sdmx-measure:obsValue', type: 'xsd:string' },
+  { names: /^(popolazione|pop|abitanti|population|pop.?istat|popolazione.?istat)$/i,
+    value: /^\d+(\.\d+)?$/,
+    prop: 'sdmx-measure:obsValue', type: 'xsd:decimal' },
+  { names: /^(anno|year|periodo|period|anno.?mese|anno_mese|data.?riferimento|ref.?period)$/i,
+    value: null,
+    prop: 'sdmx-dimension:timePeriod', type: 'xsd:string' },
+  { names: /^(codice.?istat|istat|cod.?istat|codice.?comune|cod.?comune)$/i,
+    value: null,
+    prop: 'sdmx-dimension:refArea', type: 'xsd:string' },
+  { names: /^(tipologia.?movimento|tipo.?movimento|movimento|entrata.?uscita|flusso)$/i,
+    value: null,
+    prop: 'dct:type', type: '@it' },
+  { names: /^(codice.?gestionale|cod.?gestionale|codice.?cg|cod.?cg|codice.?titolo)$/i,
+    value: null,
+    prop: 'dct:identifier', type: 'xsd:string' },
+  { names: /^(descrizione.?cg|descrizione.?gestionale|descrizione.?titolo|desc.?cg)$/i,
+    value: null,
+    prop: 'dct:description', type: '@it' },
+  { names: /^(ente|descrizione.?ente|denominazione.?ente|desc.?ente)$/i,
     value: null,
     prop: 'dct:publisher', type: '@it' },
 ];

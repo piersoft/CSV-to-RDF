@@ -466,7 +466,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.12</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.13</span>
 </footer>
 
 <script>
@@ -532,7 +532,7 @@ const ONTO_RULES = [
   { keys: ['patrimonio','culturale','museo','monumento','arte'],           ontos: ['Cultural-ON'] },
   { keys: ['tecnologia','area_tecnologica','settore','disciplina','campo'],  ontos: ['ADMS','L0'] },
   { keys: ['bus','metro','tram','fermata','linea','corsa'],                ontos: ['GTFS'] },
-  { keys: ['importo','valore','importo_cumulato','obs_value','misura','spesa','entrata','uscita','bilancio','finanziario','bdap','popolazione','istat'], ontos: ['QB'] },
+  { keys: ['importo','importo cumulato','valore','obs_value','misura','spesa','entrata','uscita','bilancio','finanziario','bdap','popolazione','istat','codice gestionale','tipologia del movimento','anno/mese'], ontos: ['QB'] },
   { keys: ['percorso','route','itinerario','tracciato'],                   ontos: ['Route'] },
   { keys: ['lingua','language','lang'],                                    ontos: ['Language'] },
   { keys: ['sensore','iot','device','dispositivo','misurazione'],          ontos: ['IoT'] },
@@ -632,7 +632,7 @@ function autoDetectOnto() {
 
   // Applica le regole
   ONTO_RULES.forEach(rule => {
-    if (rule.keys.some(k => cols.some(c => c.includes(k))))
+    if (rule.keys.some(k => cols.some(c => c.toLowerCase().includes(k.toLowerCase()))))
       rule.ontos.forEach(o => suggested.add(o));
   });
 
@@ -1352,28 +1352,28 @@ const COLUMN_RULES = [
     value: null,
     prop: 'dct:publisher', type: '@it' },
   // Statistiche / dati finanziari
-  { names: /^(importo|importo.?cumulato|valore|amount|value|obs.?value|misura|measure)$/i,
+  { names: /^(importo|importo.?cumulato|importo cumulato|valore|amount|value|obs.?value|misura|measure)$/i,
     value: /^-?\d+(\.\d+)?$/,
     prop: 'sdmx-measure:obsValue', type: 'xsd:decimal' },
-  { names: /^(importo|importo.?cumulato|valore|amount|value|obs.?value|misura|measure)$/i,
+  { names: /^(importo|importo.?cumulato|importo cumulato|valore|amount|value|obs.?value|misura|measure)$/i,
     value: null,
     prop: 'sdmx-measure:obsValue', type: 'xsd:string' },
-  { names: /^(popolazione|pop|abitanti|population|pop.?istat|popolazione.?istat)$/i,
+  { names: /^(popolazione|pop|abitanti|population|pop.?istat|popolazione.?istat|popolazione istat)$/i,
     value: /^\d+(\.\d+)?$/,
     prop: 'sdmx-measure:obsValue', type: 'xsd:decimal' },
-  { names: /^(anno|year|periodo|period|anno.?mese|anno_mese|data.?riferimento|ref.?period)$/i,
+  { names: /^(anno|year|periodo|period|anno.?mese|anno_mese|anno\/mese|anno\/mese calendario|data.?riferimento|ref.?period)$/i,
     value: null,
     prop: 'sdmx-dimension:timePeriod', type: 'xsd:string' },
   { names: /^(codice.?istat|istat|cod.?istat|codice.?comune|cod.?comune)$/i,
     value: null,
     prop: 'sdmx-dimension:refArea', type: 'xsd:string' },
-  { names: /^(tipologia.?movimento|tipo.?movimento|movimento|entrata.?uscita|flusso)$/i,
+  { names: /^(tipologia.?movimento|tipo.?movimento|tipologia del movimento|movimento|entrata.?uscita|flusso)$/i,
     value: null,
     prop: 'dct:type', type: '@it' },
-  { names: /^(codice.?gestionale|cod.?gestionale|codice.?cg|cod.?cg|codice.?titolo)$/i,
+  { names: /^(codice.?gestionale|cod.?gestionale|codice.?cg|cod.?cg|codice.?titolo|codice gestionale enti locali)$/i,
     value: null,
     prop: 'dct:identifier', type: 'xsd:string' },
-  { names: /^(descrizione.?cg|descrizione.?gestionale|descrizione.?titolo|desc.?cg)$/i,
+  { names: /^(descrizione.?cg|descrizione.?gestionale|descrizione.?titolo|desc.?cg|descrizione cg|descrizione titolo cg)$/i,
     value: null,
     prop: 'dct:description', type: '@it' },
   { names: /^(ente|descrizione.?ente|denominazione.?ente|desc.?ente)$/i,

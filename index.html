@@ -189,6 +189,7 @@
             <button class="provider-tab"        onclick="switchProvider('groq')">⚡ Groq</button>
             <button class="provider-tab"        onclick="switchProvider('gemini')">✨ Gemini</button>
             <button class="provider-tab"        onclick="switchProvider('ollama')">🦙 Ollama Cloud</button>
+            <button class="provider-tab"        onclick="switchProvider('anthropic')">🔴 Anthropic</button>
           </div>
 
           <div class="provider-panel active" id="panel-mistral">
@@ -289,6 +290,29 @@
               API key: <a href="https://ollama.com/settings/keys" target="_blank">ollama.com/settings/keys</a>
             </div>
           </div>
+
+          <!-- ANTHROPIC -->
+          <div class="provider-panel" id="panel-anthropic">
+            <div class="row g-2">
+              <div class="col-12">
+                <label class="lbl">API Key</label>
+                <div class="apikey-wrap">
+                  <input type="password" class="inp" id="anthropic-key" oninput="onApiKeyChange()" onpaste="setTimeout(onApiKeyChange,100)" onchange="onApiKeyChange()" placeholder="Incolla la tua API key Anthropic..."/>
+                  <button class="apikey-toggle" onclick="toggleKey('anthropic-key')">👁</button>
+                </div>
+              </div>
+              <div class="col-12">
+                <label class="lbl">Modello</label>
+                <select class="inp" id="anthropic-model">
+                  <option value="claude-sonnet-4-5">claude-sonnet-4-5 (consigliato)</option>
+                  <option value="claude-haiku-4-5-20251001">claude-haiku-4-5-20251001</option>
+                  <option value="claude-opus-4-6">claude-opus-4-6</option>
+                </select>
+              </div>
+            </div>
+            <div class="info-note mt-2">🔴 <a href="https://console.anthropic.com/" target="_blank">console.anthropic.com</a> — <strong>claude-haiku</strong> consigliato per AI-detect, <strong>claude-sonnet</strong> per la generazione TTL.</div>
+          </div>
+
 
           <div class="mt-3">
             <label class="lbl">Max righe CSV per chiamata (chunk)</label>
@@ -451,7 +475,7 @@ let currentProvider = 'mistral';
 function switchProvider(p) {
   currentProvider = p;
   document.querySelectorAll('.provider-tab').forEach((t,i) => {
-    t.classList.toggle('active', ['mistral','groq','gemini','ollama'][i] === p);
+    t.classList.toggle('active', ['mistral','groq','gemini','ollama','anthropic'][i] === p);
   });
   document.querySelectorAll('.provider-panel').forEach(el => el.classList.remove('active'));
   document.getElementById(`panel-${p}`).classList.add('active');
@@ -535,9 +559,10 @@ Non aggiungere spiegazioni, solo il JSON.`;
   try {
     // Per l'AI-detect usa sempre il modello più leggero disponibile per provider
   const AI_DETECT_MODELS = {
-    'mistral': 'open-mistral-7b',
-    'groq':    'llama-3.1-8b-instant',
-    'ollama':  'gpt-oss:20b',
+    'mistral':   'open-mistral-7b',
+    'groq':      'llama-3.1-8b-instant',
+    'ollama':    'gpt-oss:20b',
+    'anthropic': 'claude-haiku-4-5-20251001',
   };
   let raw;
   const lightModel = AI_DETECT_MODELS[currentProvider];
@@ -848,6 +873,7 @@ function parseAndPreviewCSV() {
     document.getElementById('mistral-key')?.value.trim() ||
     document.getElementById('groq-key')?.value.trim() ||
     document.getElementById('gemini-key')?.value.trim() ||
+    document.getElementById('anthropic-key')?.value.trim() ||
     document.getElementById('ollama-key')?.value.trim()
   );
   if (hasKey) {
@@ -1575,11 +1601,35 @@ async function callOllama(prompt) {
   return data.message?.content || '';
 }
 
+async function callAnthropic(prompt) {
+  const key   = document.getElementById('anthropic-key').value.trim();
+  const model = document.getElementById('anthropic-model').value || 'claude-sonnet-4-5';
+  if (!key) throw new Error('Inserisci la tua API key Anthropic.');
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: 8000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || `Anthropic error ${res.status}`); }
+  const data = await res.json();
+  return data.content?.[0]?.text || '';
+}
+
 async function callAI(prompt) {
   if      (currentProvider === 'mistral') return await callMistral(prompt);
   else if (currentProvider === 'groq')    return await callGroq(prompt);
   else if (currentProvider === 'gemini')  return await callGemini(prompt);
   else if (currentProvider === 'ollama')   return await callOllama(prompt);
+  else if (currentProvider === 'anthropic') return await callAnthropic(prompt);
 }
 
 function cleanTTL(text) {

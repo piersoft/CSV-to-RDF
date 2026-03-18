@@ -459,7 +459,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.4</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.6</span>
 </footer>
 
 <script>
@@ -517,7 +517,7 @@ const ONTO_RULES = [
   { keys: ['ruolo','qualifica','mansione','incarico'],                     ontos: ['RO'] },
   { keys: ['brevetto','patent','pi','proprietà_intellettuale','tipo_pi','n_dom','deposito'], ontos: ['ADMS'] },
   { keys: ['data','date','ora','time','inizio','fine','apertura'],         ontos: ['TI'] },
-  { keys: ['punto','poi','luogo','location','sede','struttura'],           ontos: ['POI'] },
+  { keys: ['punto','poi','luogo','location','sede','struttura','dae','aed','defibrillatore','accessibile_h24','presenza_aed'], ontos: ['POI'] },
   { keys: ['accesso','orario','prenotazione','ingresso'],                  ontos: ['AC'] },
   { keys: ['parcheggio','parking','posto','stallo'],                       ontos: ['PARK'] },
   { keys: ['servizio','service','prestazione','sportello'],                ontos: ['CPSV-AP'] },
@@ -644,6 +644,8 @@ function autoDetectOnto() {
       const tipVals = parsed.rows.slice(0,5).map(r => String(r[tipCol]||'').toLowerCase()).join(' ');
       if (/bed.?breakfast|b&b|hotel|ostello|agriturismo|affittacamere|casa.vacanza|resort|albergo/.test(tipVals))
         suggested.add('ACCO');
+      if (/dae|defibrillator|aed|defibrillatore/.test(tipVals))
+        suggested.add('POI');
     }
   }
 
@@ -1280,6 +1282,34 @@ const COLUMN_RULES = [
   { names: /^(stato|status|vigente|attivo|active|state)$/i,
     value: null,
     prop: 'adms:status', type: '@it' },
+  // DAE / Defibrillatori — booleani si/no → schema:Boolean
+  { names: /^(accessibile.?h.?24|h24|aperto.?h24|disponibile.?h24)$/i,
+    value: null,
+    prop: 'poi:hasAccessCondition', type: '@it' },
+  { names: /^(presenza.?aed|aed|defibrillatore|dae|device)$/i,
+    value: null,
+    prop: 'poi:isAccessibleFor', type: '@it' },
+  { names: /^(marca|brand|produttore|manufacturer|fabbricante)$/i,
+    value: null,
+    prop: 'dct:description', type: '@it' },
+  { names: /^(modello|model|versione|version)$/i,
+    value: null,
+    prop: 'rdfs:label', type: '@it' },
+  { names: /^(numero.?serie|serial|matricola|serial.?number)$/i,
+    value: null,
+    prop: 'dct:identifier', type: 'xsd:string' },
+  { names: /^(ubicazione|location|posizione|luogo|sede|sito.?installazione|installato.?presso)$/i,
+    value: null,
+    prop: 'dct:description', type: '@it' },
+  { names: /^(municipalita|municipalità|quartiere|district|zona|circoscrizione)$/i,
+    value: null,
+    prop: 'clv:hasAddress', type: null },
+  { names: /^(scadenza|data.?scadenza|expiry|expire|manutenzione|data.?manutenzione)$/i,
+    value: null,
+    prop: 'dct:valid', type: 'xsd:string' },
+  { names: /^(gestore|responsabile|referente|ente|struttura|organizzazione)$/i,
+    value: null,
+    prop: 'dct:publisher', type: '@it' },
 ];
 
 // Analizza le colonne e restituisce quelle mappabili deterministicamente
@@ -1396,7 +1426,7 @@ REGOLE:
   NON usare domini inventati — usa SEMPRE w3id.org/italia/data/
   NON usare nomi di persone come {id} — usa sempre l'ID numerico o codice della riga
 - Mappa ogni colonna alla proprietà ontologica corretta
-- Per coordinate usa geo:lat e geo:long. Se il valore è vuoto o mancante NON generare la tripla (omettila completamente). Per telefono sm:hasTelephone. Per email sm:hasEmail. Per indirizzo clv:hasAddress. Per data dct:date o ti:startTime/ti:endTime
+- Per coordinate usa geo:lat e geo:long. Per campi booleani (si/no, true/false, 1/0) usa poi:hasAccessCondition con valore letterale. Per marca/modello usa rdfs:label o dct:description. Per numero serie usa dct:identifier. Per scadenza/manutenzione usa dct:valid. Se il valore è vuoto o mancante NON generare la tripla (omettila completamente). Per telefono sm:hasTelephone. Per email sm:hasEmail. Per indirizzo clv:hasAddress. Per data dct:date o ti:startTime/ti:endTime
 - REGOLA CRITICA: usa SOLO proprietà che esistono nelle ontologie dichiarate nei @prefix. NON inventare proprietà con nomi come clv:hasStreetName, clv:hasPostalCode, clv:hasName, clv:hasFeature, sm:hasValue o simili — queste NON esistono.
 - Per i nomi usa rdfs:label o l0:name, NON clv:hasName (clv:hasName NON ESISTE)
 - Per i valori di contatto usa sm:hasTelephone, sm:hasEmail, sm:hasWebSite, NON sm:hasValue

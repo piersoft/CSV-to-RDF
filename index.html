@@ -159,10 +159,8 @@
         <div class="card-body-pa">
           <label class="lbl">Contenuto CSV (con intestazioni)</label>
           <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;align-items:center">
-            <label class="btn-sec" style="cursor:pointer;font-size:0.8rem;padding:0.35rem 0.8rem">
-              📂 Carica file CSV
-              <input type="file" accept=".csv,.tsv,.txt" id="file-input" style="display:none" onchange="loadCSVFile(this)">
-            </label>
+            <button class="btn-sec" style="font-size:0.8rem;padding:0.35rem 0.8rem" onclick="document.getElementById('file-input').click()">📂 Carica file CSV</button>
+            <input type="file" accept=".csv,.tsv,.txt" id="file-input" style="display:none">
             <span id="file-name" style="font-size:0.75rem;color:var(--dg-muted);font-family:var(--mono)"></span>
           </div>
           <textarea class="inp csv-area" id="csv-input"
@@ -466,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.18</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.19</span>
 </footer>
 
 <script>
@@ -824,8 +822,15 @@ function validateCSV(parsed) {
   panel.style.display = 'block';
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+  const fi = document.getElementById('file-input');
+  if (fi) fi.addEventListener('change', function() { loadCSVFile(this); });
+});
+
 function loadCSVFile(input) {
   const file = input.files[0];
+  // Reset value so same file can be reloaded
+  input.value = '';
   if (!file) return;
   document.getElementById('file-name').textContent = file.name;
 

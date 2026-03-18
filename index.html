@@ -459,7 +459,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.7</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.8</span>
 </footer>
 
 <script>
@@ -1276,10 +1276,10 @@ const COLUMN_RULES = [
     prop: 'clv:hasAddress', type: '@it' },
   { names: /^(comune|citta|city|municipio)$/i,
     value: null,
-    prop: 'dct:spatial', type: '@it' },
+    prop: 'schema:addressLocality', type: '@it' },
   { names: /^(provincia|regione|district|county)$/i,
     value: null,
-    prop: 'dct:spatial', type: '@it' },
+    prop: 'schema:addressRegion', type: '@it' },
   // Tipo / categoria
   { names: /^(tipo|type|tipologia|categoria|category|classe|class|settore|area.tematica)$/i,
     value: null,
@@ -1291,7 +1291,7 @@ const COLUMN_RULES = [
   // DAE / Defibrillatori — booleani si/no → schema:Boolean
   { names: /^(accessibile.?h.?24|h24|aperto.?h24|disponibile.?h24)$/i,
     value: null,
-    prop: 'poi:hasAccessCondition', type: '@it' },
+    prop: 'dct:description', type: '@it' },
   { names: /^(presenza.?aed|aed|defibrillatore|dae|device)$/i,
     value: null,
     prop: 'poi:isAccessibleFor', type: '@it' },

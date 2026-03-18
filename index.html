@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.22</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.24</span>
 </footer>
 
 <script>
@@ -527,7 +527,7 @@ const ONTO_RULES = [
   { keys: ['parcheggio','parking','posto','stallo'],                       ontos: ['PARK'] },
   { keys: ['servizio','service','prestazione','sportello'],                ontos: ['CPSV-AP'] },
   { keys: ['hotel','albergo','accommodation','ricettivo','posti.letto','posti_letto','camere','stelle'],  ontos: ['ACCO'] },
-  { keys: ['patrimonio','culturale','museo','monumento','arte'],           ontos: ['Cultural-ON'] },
+  { keys: ['patrimonio','culturale','museo','monumento','arte','biblioteca','archivio','nome museo','ldcn'], ontos: ['Cultural-ON'] },
   { keys: ['tecnologia','area_tecnologica','settore','disciplina','campo'],  ontos: ['ADMS','L0'] },
   { keys: ['bus','metro','tram','fermata','linea','corsa'],                ontos: ['GTFS'] },
   { keys: ['importo','importo cumulato','valore','obs_value','misura','spesa','entrata','uscita','bilancio','finanziario','bdap','popolazione','istat','codice gestionale','tipologia del movimento','anno/mese'], ontos: ['QB'] },
@@ -649,6 +649,9 @@ function autoDetectOnto() {
   if (colsLower.some(c => /bdap|codice.?gestionale|tipologia.?del.?movimento|codice.?titolo/.test(c)))
     suggested.add('QB');
   if (colsLower.some(c => /importo.?cumulato|obs.?value/.test(c)))
+    suggested.add('QB');
+  // QB per dati statistici di sicurezza pubblica
+  if (colsLower.some(c => /^(incidenti|feriti|morti|decessi)$/.test(c)))
     suggested.add('QB');
 
   // Controlla anche se esiste una colonna TIPOLOGIA con valori ricettivi
@@ -976,6 +979,7 @@ function buildTTLHeader(paname, ipa) {
 @prefix cov:   <https://w3id.org/italia/onto/COV/> .
 @prefix cpv:   <https://w3id.org/italia/onto/CPV/> .
 @prefix l0:    <https://w3id.org/italia/onto/l0/> .
+@prefix cultural-on: <https://w3id.org/italia/onto/Cultural-ON/> .
 @prefix poi:   <https://w3id.org/italia/onto/POI/> .
 @prefix ro:    <https://w3id.org/italia/onto/RO/> .
 @prefix ti:    <https://w3id.org/italia/onto/TI/> .
@@ -994,6 +998,7 @@ function buildTTLHeader(paname, ipa) {
 @prefix qb:    <http://purl.org/linked-data/cube#> .
 @prefix sdmx-dimension: <http://purl.org/linked-data/sdmx/2009/dimension#> .
 @prefix sdmx-measure:   <http://purl.org/linked-data/sdmx/2009/measure#> .
+@prefix sdmx-attribute: <http://purl.org/linked-data/sdmx/2009/attribute#> .
 
 # Titolare del dato
 <${ipaURI}>
@@ -1261,7 +1266,7 @@ const ONTO_MAIN_CLASS = {
 };
 
 function getMainClass(ontos) {
-  const priority = ['ACCO','PARK','GTFS','CULTURAL-ON','CPSV-AP','CPV','COV','POI','CLV','QB','ADMS','L0'];
+  const priority = ['ACCO','PARK','GTFS','CULTURAL-ON','CPSV-AP','QB','CPV','COV','POI','CLV','ADMS','L0'];
   for (const onto of priority) {
     if (ontos.map(o => o.toUpperCase()).includes(onto)) {
       return ONTO_MAIN_CLASS[onto] || 'l0:Object';
@@ -1273,7 +1278,7 @@ function getMainClass(ontos) {
 // Determina il tipo-risorsa URI in base alle ontologie selezionate
 function getEntityTypeSegment(ontos) {
   // Priorità: ontologie specializzate prima di quelle generiche
-  const priority = ['ACCO','PARK','GTFS','Cultural-ON','CPSV-AP','CPV','COV','POI','CLV','QB','ADMS','L0'];
+  const priority = ['ACCO','PARK','GTFS','Cultural-ON','CPSV-AP','QB','CPV','COV','POI','CLV','ADMS','L0'];
   for (const onto of priority) {
     if (ontos.map(o => o.toUpperCase()).includes(onto.toUpperCase())) {
       return ONTO_URI_TYPE[onto] || 'resource';
@@ -1367,18 +1372,32 @@ const COLUMN_RULES = [
     value: null,
     prop: 'dct:publisher', type: '@it' },
   // Statistiche / dati finanziari
-  { names: /^(importo|importo.?cumulato|importo cumulato|valore|amount|value|obs.?value|misura|measure)$/i,
+  { names: /^(importo|importo.?cumulato|importo cumulato|valore|amount|value|obs.?value|misura|measure|spesa|entrata|uscita)$/i,
     value: /^-?\d+(\.\d+)?$/,
     prop: 'sdmx-measure:obsValue', type: 'xsd:decimal' },
-  { names: /^(importo|importo.?cumulato|importo cumulato|valore|amount|value|obs.?value|misura|measure)$/i,
+  { names: /^(importo|importo.?cumulato|importo cumulato|valore|amount|value|obs.?value|misura|measure|spesa|entrata|uscita)$/i,
     value: null,
     prop: 'sdmx-measure:obsValue', type: 'xsd:string' },
+  // Dati statistici numerici (incidenti, feriti, morti, conteggi...)
+  { names: /^(incidenti|incidentimortali|incidentisoliFeriti|feriti|morti|decessi|count|conteggio|numero|quantita|totale|total)$/i,
+    value: /^\d+$/,
+    prop: 'sdmx-measure:obsValue', type: 'xsd:decimal' },
+  { names: /^(naturaincidente|natura.?incidente|tipologia|categoria.?incidente)$/i,
+    value: null,
+    prop: 'dct:type', type: '@it' },
   { names: /^(popolazione|pop|abitanti|population|pop.?istat|popolazione.?istat|popolazione istat)$/i,
     value: /^\d+(\.\d+)?$/,
     prop: 'sdmx-measure:obsValue', type: 'xsd:decimal' },
   { names: /^(anno|year|periodo|period|anno.?mese|anno_mese|anno\/mese|anno\/mese calendario|data.?riferimento|ref.?period)$/i,
     value: null,
     prop: 'sdmx-dimension:timePeriod', type: 'xsd:string' },
+  // Anno e mese separati per dataset statistici
+  { names: /^(anno|year)$/i,
+    value: /^\d{4}$/,
+    prop: 'sdmx-dimension:timePeriod', type: 'xsd:string' },
+  { names: /^(mese|month)$/i,
+    value: /^\d{1,2}$/,
+    prop: 'dct:temporal', type: 'xsd:string' },
   { names: /^(codice.?istat|istat|cod.?istat|codice.?comune|cod.?comune)$/i,
     value: null,
     prop: 'sdmx-dimension:refArea', type: 'xsd:string' },
@@ -1575,6 +1594,7 @@ REGOLE:
   NON usare nomi di persone come {id} — usa sempre l'ID numerico o codice della riga
 - Mappa ogni colonna alla proprietà ontologica corretta
 - Se il dataset contiene colonne finanziarie (importo, cumulato, movimento, entrata, spesa, BDAP) usa SEMPRE qb:Observation come classe principale, sdmx-measure:obsValue per gli importi numerici, sdmx-dimension:timePeriod per il periodo, sdmx-dimension:refArea per il territorio
+- Se il dataset QB contiene colonne numeriche di conteggio (incidenti, feriti, morti, decessi, numero_dipendenti, count, totale) usa SEMPRE sdmx-measure:obsValue per OGNI colonna numerica - NON usare URI personalizzati come <.../measure/nomeColonna>
 - Per coordinate usa geo:lat e geo:long. Per campi booleani (si/no, true/false, 1/0) usa poi:hasAccessCondition con valore letterale. Per marca/modello usa rdfs:label o dct:description. Per numero serie usa dct:identifier. Per scadenza/manutenzione usa dct:valid. Se il valore è vuoto o mancante NON generare la tripla (omettila completamente). Per telefono sm:hasTelephone. Per email sm:hasEmail. Per indirizzo clv:hasAddress. Per data dct:date o ti:startTime/ti:endTime
 - REGOLA CRITICA: usa SOLO proprietà che esistono nelle ontologie dichiarate nei @prefix. NON inventare proprietà con nomi come clv:hasStreetName, clv:hasPostalCode, clv:hasName, clv:hasFeature, sm:hasValue o simili — queste NON esistono.
 - Per i nomi usa rdfs:label o l0:name, NON clv:hasName (clv:hasName NON ESISTE)
@@ -1673,6 +1693,14 @@ function fixURIs(ttl, ipa) {
   });
 }
 
+function fixMeasurePrefixes(ttl) {
+  // Corregge measure:obsValue → sdmx-measure:obsValue (prefisso abbreviato dal LLM)
+  return ttl
+    .replace(/\bmeasure:obsValue\b/g, 'sdmx-measure:obsValue')
+    .replace(/\bdimension:timePeriod\b/g, 'sdmx-dimension:timePeriod')
+    .replace(/\bdimension:refArea\b/g, 'sdmx-dimension:refArea');
+}
+
 function fixCoordinates(ttl) {
   // Corregge geo:lat e geo:long senza tipo xsd:decimal
   return ttl
@@ -1700,6 +1728,7 @@ function removeEmptyTriples(ttl) {
 
 function sanitizeTTL(ttl, ontos=[]) {
   ttl = removeEmptyTriples(ttl);
+  ttl = fixMeasurePrefixes(ttl);
   ttl = fixCoordinates(ttl);
   ttl = fixWebSites(ttl);
 
@@ -1861,11 +1890,10 @@ async function callAI(prompt) {
 }
 
 function cleanTTL(text) {
-  // Rimuove tutti i blocchi markdown ovunque appaiano nel testo
   return text
-    .replace(/```(turtle|ttl|rdf|sparql)?\s*\n?/gi, '')
-    .replace(/```\s*$/gim, '')
-    .replace(/^\s*```.*$/gim, '')
+    .replace(/^```\w*\s*\n?/gim, '')
+    .replace(/\n?```\s*$/gim, '')
+    .replace(/```/g, '')
     .trim();
 }
 

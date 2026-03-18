@@ -466,7 +466,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.13</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.14</span>
 </footer>
 
 <script>
@@ -641,8 +641,16 @@ function autoDetectOnto() {
     suggested.add('CPV');
   if (cols.some(c => /professione|occupazione|lavoro|impiego|mestiere/.test(c)))
     suggested.add('SKOS');
-  if (cols.some(c => /anno|year|periodo|trimestre|semestre|mese/.test(c)) &&
-      cols.some(c => /maschi|femmine|totale|valore|count|numero|quantita/.test(c)))
+  // QB: dati statistici/finanziari - check case-insensitive
+  const colsLower = cols.map(c => c.toLowerCase());
+  if (
+    colsLower.some(c => /anno|year|periodo|trimestre|semestre|mese|calendario/.test(c)) &&
+    colsLower.some(c => /importo|valore|cumulato|misura|totale|count|numero|quantita|amount|obs.?value/.test(c))
+  ) suggested.add('QB');
+  // QB anche da soli se colonne BDAP caratteristiche
+  if (colsLower.some(c => /bdap|codice.?gestionale|tipologia.?del.?movimento|codice.?titolo/.test(c)))
+    suggested.add('QB');
+  if (colsLower.some(c => /importo.?cumulato|obs.?value/.test(c)))
     suggested.add('QB');
 
   // Controlla anche se esiste una colonna TIPOLOGIA con valori ricettivi

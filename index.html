@@ -466,7 +466,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.17</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.18</span>
 </footer>
 
 <script>
@@ -840,12 +840,12 @@ function loadCSVFile(input) {
       const readerLatin = new FileReader();
       readerLatin.onload = function(e2) {
         document.getElementById('csv-input').value = e2.target.result;
-        document.getElementById('csv-input').dispatchEvent(new Event('input'));
+        parseAndPreviewCSV();
       };
       readerLatin.readAsText(file, 'ISO-8859-1');
     } else {
       document.getElementById('csv-input').value = text;
-      document.getElementById('csv-input').dispatchEvent(new Event('input'));
+      parseAndPreviewCSV();
     }
   };
   readerUtf8.readAsText(file, 'UTF-8');

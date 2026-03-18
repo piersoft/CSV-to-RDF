@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.37</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.38</span>
 </footer>
 
 <script>
@@ -1745,6 +1745,10 @@ function fixURIs(ttl, ipa) {
 
 function fixMeasurePrefixes(ttl) {
   // Corregge measure:obsValue → sdmx-measure:obsValue (prefisso abbreviato dal LLM)
+  // Corregge anche URI inventati per valori numerici: <.../morti> 52 → sdmx-measure:obsValue 52
+  // Solo in blocchi qb:Observation
+  ttl = ttl.replace(/<https?:\/\/[^>]+\/(morti|feriti|incidenti|count|valore|importo|totale|numero)>\s+(\d[\d.]*)/gi,
+    'sdmx-measure:obsValue "$2"^^xsd:decimal');
   return ttl
     .replace(/\bmeasure:obsValue\b/g, 'sdmx-measure:obsValue')
     .replace(/\bdimension:timePeriod\b/g, 'sdmx-dimension:timePeriod')

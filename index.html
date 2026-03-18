@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.32</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.33</span>
 </footer>
 
 <script>
@@ -2048,15 +2048,12 @@ async function startConversion() {
       let llmTriples = prompt ? fixURIs(sanitizeTTL(cleanTTL(await callAI(prompt))), ipa) : '';
       // Merge: inietta le triple deterministiche dentro le risorse LLM
       let chunk;
-      if (llmTriples && deterTriples) {
-        const merged = mergeDeterIntoLLM(llmTriples, deterTriples, entityBase, typeSegment);
-        const llmClean = removeEmptyTriples(sanitizeTTL(llmTriples, ontos));
-        const mergedLines = (merged || '').split('\n').filter(l => l.trim()).length;
-        const llmLines = (llmClean || '').split('\n').filter(l => l.trim()).length;
-        // Usa merged solo se ha almeno il 70% delle righe dell'LLM, altrimenti LLM è più ricco
-        chunk = (mergedLines >= llmLines * 0.7 && mergedLines > 5) ? merged : llmClean;
+      // Strategia: LLM ha priorità assoluta quando produce output.
+      // Il deterministico è solo fallback quando non c'è LLM (no API key).
+      if (llmTriples && llmTriples.trim().length > 20) {
+        chunk = removeEmptyTriples(sanitizeTTL(llmTriples, ontos));
       } else {
-        chunk = removeEmptyTriples(sanitizeTTL(llmTriples || deterTriples, ontos));
+        chunk = removeEmptyTriples(sanitizeTTL(deterTriples, ontos));
       }
       chunk = chunk.replace(/@prefix\s+\S+:\s*<[^>]+>\s*\.\n?/g, '').trim();
       parts.push(chunk);

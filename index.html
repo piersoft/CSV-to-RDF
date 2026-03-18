@@ -459,7 +459,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.8</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.9</span>
 </footer>
 
 <script>
@@ -1291,7 +1291,7 @@ const COLUMN_RULES = [
   // DAE / Defibrillatori — booleani si/no → schema:Boolean
   { names: /^(accessibile.?h.?24|h24|aperto.?h24|disponibile.?h24)$/i,
     value: null,
-    prop: 'dct:description', type: '@it' },
+    prop: 'dct:description', type: 'boolean' },
   { names: /^(presenza.?aed|aed|defibrillatore|dae|device)$/i,
     value: null,
     prop: 'poi:isAccessibleFor', type: '@it' },
@@ -1363,6 +1363,10 @@ function buildDeterministicTriples(cols, rows, entityBase, deterMappings, typeSe
         triples.push(`    ${m.prop} "${val}"^^xsd:date`);
       } else if (m.type === 'xsd:anyURI') {
         triples.push(`    ${m.prop} <${val}>`);
+      } else if (m.type === 'boolean') {
+        // Per booleani si/no include il nome colonna per chiarezza
+        const label = col.replace(/_/g, ' ').toLowerCase();
+        triples.push(`    ${m.prop} "${label}: ${val.replace(/"/g, "'")}"@it`);
       } else if (m.type === '@it') {
         triples.push(`    ${m.prop} "${val.replace(/"/g, "'")}"@it`);
       } else {

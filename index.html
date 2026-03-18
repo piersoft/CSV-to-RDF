@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.27</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.28</span>
 </footer>
 
 <script>
@@ -755,7 +755,7 @@ function validateCSV(parsed) {
   const missingByCol = {};
   rows.forEach(row => {
     headers.forEach(h => {
-      if (!row[h] || row[h].trim() === '') {
+      if (!row[h] || String(row[h]).trim() === '') {
         missingByCol[h] = (missingByCol[h] || 0) + 1;
       }
     });
@@ -932,7 +932,11 @@ function parseCSV(text) {
   const headers = splitLine(logicalLines[0], sep);
   const rows = logicalLines.slice(1).filter(l => l.trim()).map(line => {
     const vals = splitLine(line, sep);
-    return headers.reduce((o,h,i) => { o[h] = (vals[i] !== undefined ? vals[i] : ''); return o; }, {});
+    return headers.reduce((o,h,i) => {
+      const v = vals[i];
+      o[h] = (v !== undefined && v !== null) ? String(v) : '';
+      return o;
+    }, {});
   });
 
   return { headers, rows, sep };
@@ -949,7 +953,7 @@ function parseAndPreviewCSV() {
   const rows = parsed.rows.slice(0,5);
   document.getElementById('csv-preview').innerHTML = `<table>
     <thead><tr>${parsed.headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
-    <tbody>${rows.map(r=>`<tr>${parsed.headers.map(h=>`<td title="${r[h]}">${r[h]}</td>`).join('')}</tr>`).join('')}</tbody>
+    <tbody>${rows.map(r=>`<tr>${parsed.headers.map(h=>`<td title="${r[h]||''}">${r[h]||''}</td>`).join('')}</tr>`).join('')}</tbody>
   </table>`;
   document.getElementById('csv-preview').style.display = 'block';
   document.getElementById('btn-ai-onto').disabled = false;
@@ -1538,7 +1542,7 @@ function buildDeterministicTriples(cols, rows, entityBase, deterMappings, typeSe
     for (const col of cols) {
       const m = deterMappings[col];
       if (!m) continue;
-      const val = String(row[col] || '').trim();
+      const val = (row[col] !== undefined && row[col] !== null) ? String(row[col]).trim() : '';
       if (!val || val === 'null' || val === 'N/A') continue;
 
       if (m.type === 'xsd:decimal') {

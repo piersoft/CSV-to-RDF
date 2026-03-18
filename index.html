@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.21</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.22</span>
 </footer>
 
 <script>
@@ -1416,43 +1416,64 @@ function detectDeterministicMappings(cols, rows) {
 }
 
 // Genera TTL deterministico per le colonne riconoscibili
-// Inietta le triple deterministiche (proprietà note) dentro le risorse generate dal LLM
+// Merge deterministico+LLM per URI: parse blocchi, unisci proprietà
 function mergeDeterIntoLLM(llmTTL, deterTTL, entityBase, typeSegment) {
-  // Estrae le triple deterministiche per ogni URI
-  const deterByUri = {};
-  const deterLines = deterTTL.split('\n');
-  let curUri = null;
-  for (const line of deterLines) {
-    const uriMatch = line.match(/^<([^>]+)>/);
-    if (uriMatch) { curUri = uriMatch[1]; deterByUri[curUri] = deterByUri[curUri] || []; }
-    else if (curUri && line.trim() && !line.trim().startsWith('a ')) {
-      // Aggiungi solo proprietà non-classe (non "a Tipo")
-      const triple = line.trim().replace(/[;.]$/, '').trim();
-      if (triple) deterByUri[curUri].push('    ' + triple);
+  // Parser blocchi TTL: restituisce Map<uri, Set<predicati>>
+  function parseBlocks(ttl) {
+    const blocks = new Map();
+    // Splitta per risorse: ogni risorsa inizia con <URI>
+    const resourceRe = /(<[^>]+>)\s*([^<]*?)(?=
+<|
+*$)/gs;
+    let m;
+    while ((m = resourceRe.exec(ttl)) !== null) {
+      const uri = m[1];
+      const body = m[2].trim();
+      if (!blocks.has(uri)) blocks.set(uri, []);
+      // Estrai le triple (linee con ; o . finale)
+      body.split(/
+/).forEach(line => {
+        const t = line.trim().replace(/[;.]$/, '').trim();
+        if (t) blocks.get(uri).push(t);
+      });
+    }
+    return blocks;
+  }
+
+  const llmBlocks = parseBlocks(llmTTL);
+  const deterBlocks = parseBlocks(deterTTL);
+
+  // Per ogni URI nel deterministico, aggiunge/sovrascrive nel LLM
+  for (const [uri, deterProps] of deterBlocks) {
+    if (!llmBlocks.has(uri)) {
+      llmBlocks.set(uri, deterProps);
+    } else {
+      const existing = llmBlocks.get(uri);
+      // Estrai predicati già presenti
+      const existingPreds = new Set(existing.map(t => t.split(/\s+/)[0]));
+      for (const prop of deterProps) {
+        const pred = prop.split(/\s+/)[0];
+        if (pred === 'a') continue; // non sovrascrivere la classe
+        // Rimuovi eventuali doppioni dello stesso predicato dal LLM
+        const filtered = existing.filter(t => t.split(/\s+/)[0] !== pred);
+        filtered.push(prop);
+        existing.length = 0;
+        existing.push(...filtered);
+      }
     }
   }
 
-  // Inietta dentro ogni risorsa LLM
-  const result = [];
-  const llmLines = llmTTL.split('\n');
-  let inResource = false;
-  let resourceUri = null;
-  for (let i = 0; i < llmLines.length; i++) {
-    const line = llmLines[i];
-    const uriMatch = line.match(/^<([^>]+)>/);
-    if (uriMatch) { resourceUri = uriMatch[1]; inResource = true; }
-    // Prima del punto finale della risorsa, inietta le triple deterministiche
-    if (inResource && line.trim().endsWith('.') && !llmLines[i+1]?.trim().startsWith('<')) {
-      result.push(line.replace(/\s*\.$/, ''));
-      const extras = deterByUri[resourceUri] || [];
-      for (const t of extras) result.push(t + ' ;');
-      result.push('    .');
-      inResource = false;
-    } else {
-      result.push(line);
-    }
+  // Ricostruisci il TTL
+  const lines = [];
+  for (const [uri, props] of llmBlocks) {
+    if (!props.length) continue;
+    lines.push(uri);
+    props.forEach((p, i) => {
+      lines.push('    ' + p + (i < props.length - 1 ? ' ;' : ' .'));
+    });
+    lines.push('');
   }
-  return removeEmptyTriples(result.join('\n'));
+  return removeEmptyTriples(lines.join('\n'));
 }
 
 function buildDeterministicTriples(cols, rows, entityBase, deterMappings, typeSegment='resource', ontos=[]) {

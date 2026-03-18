@@ -1373,6 +1373,7 @@ ${csvChunk}
 
 REGOLE:
 - Per ogni riga genera una risorsa RDF. La classe principale da usare è: ${mainClass || 'quella più appropriata tra le ontologie selezionate'}
+- REGOLA ASSOLUTA: usa SOLO classi e proprietà delle ontologie elencate in "Ontologie da usare". NON usare mai prefissi di ontologie non in lista (es. se acco: non è in lista, non usare MAI acco:AccommodationFacility)
 - Gli URI delle entità DEVONO seguire esattamente questo schema: <https://w3id.org/italia/data/${ipa}/{tipo-risorsa}/{id}>
   dove {ipa} è il codice IPA del titolare, {id} è il valore della colonna ID/codice della riga (NON il nome di una persona)
   {tipo-risorsa} va scelto ESATTAMENTE da questa lista in base alla classe principale usata:
@@ -1515,10 +1516,39 @@ function removeEmptyTriples(ttl) {
   }).join('\n');
 }
 
-function sanitizeTTL(ttl) {
+function sanitizeTTL(ttl, ontos=[]) {
   ttl = removeEmptyTriples(ttl);
   ttl = fixCoordinates(ttl);
   ttl = fixWebSites(ttl);
+
+  // Blocca prefissi di ontologie avanzate non selezionate
+  const ADVANCED_ONTO_PREFIXES = {
+    'acco':        'ACCO',
+    'park':        'PARK',
+    'gtfs':        'GTFS',
+    'cultural-on': 'Cultural-ON',
+    'cpsv':        'CPSV-AP',
+    'ac':          'AC',
+    'route':       'Route',
+    'iot':         'IoT',
+    'transp':      'Transparency',
+  };
+  const activeOntos = ontos.map(o => o.toUpperCase());
+  const lines = ttl.split('\n');
+  const filtered = lines.map(line => {
+    const t = line.trim();
+    for (const [pfx, onto] of Object.entries(ADVANCED_ONTO_PREFIXES)) {
+      if (t.includes(pfx + ':') && !activeOntos.includes(onto.toUpperCase())) {
+        // Sostituisci classe avanzata con l0:Object, proprietà con dct:description
+        const isClass = t.match(new RegExp('a\\s+' + pfx + ':'));
+        return line
+          .replace(new RegExp(pfx + ':[A-Z][a-zA-Z]+', 'g'), 'l0:Object')
+          .replace(new RegExp(pfx + ':[a-z][a-zA-Z]+', 'g'), 'dct:description');
+      }
+    }
+    return line;
+  });
+  ttl = filtered.join('\n');
   const lines = ttl.split('\n');
   const result = [];
   for (const line of lines) {
@@ -1738,7 +1768,7 @@ async function startConversion() {
       let deterTriples = buildDeterministicTriples(cols, chunks[i], entityBase, deterMappings, typeSegment, ontos);
       let llmTriples = prompt ? fixURIs(sanitizeTTL(cleanTTL(await callAI(prompt))), ipa) : '';
       // Mergia: usa LLM per classi/tipo, deterministico per proprietà note
-      let chunk = removeEmptyTriples(llmTriples || deterTriples);
+      let chunk = removeEmptyTriples(sanitizeTTL(llmTriples, ontos) || deterTriples);
       chunk = chunk.replace(/@prefix\s+\S+:\s*<[^>]+>\s*\.\n?/g, '').trim();
       parts.push(chunk);
     }

@@ -459,7 +459,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.6</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.7</span>
 </footer>
 
 <script>
@@ -1211,7 +1211,7 @@ const ONTO_MAIN_CLASS = {
 };
 
 function getMainClass(ontos) {
-  const priority = ['ACCO','PARK','GTFS','CULTURAL-ON','CPSV-AP','ADMS','CPV','COV','POI','CLV','L0'];
+  const priority = ['ACCO','PARK','GTFS','CULTURAL-ON','CPSV-AP','CPV','COV','POI','CLV','ADMS','L0'];
   for (const onto of priority) {
     if (ontos.map(o => o.toUpperCase()).includes(onto)) {
       return ONTO_MAIN_CLASS[onto] || 'l0:Object';
@@ -1223,7 +1223,7 @@ function getMainClass(ontos) {
 // Determina il tipo-risorsa URI in base alle ontologie selezionate
 function getEntityTypeSegment(ontos) {
   // Priorità: ontologie specializzate prima di quelle generiche
-  const priority = ['ACCO','PARK','GTFS','Cultural-ON','CPSV-AP','ADMS','CPV','COV','POI','CLV','L0'];
+  const priority = ['ACCO','PARK','GTFS','Cultural-ON','CPSV-AP','CPV','COV','POI','CLV','ADMS','L0'];
   for (const onto of priority) {
     if (ontos.map(o => o.toUpperCase()).includes(onto.toUpperCase())) {
       return ONTO_URI_TYPE[onto] || 'resource';
@@ -1271,9 +1271,15 @@ const COLUMN_RULES = [
     value: /^\d{4}(-\d{2}-\d{2})?$/,
     prop: 'dct:date', type: 'xsd:date' },
   // Indirizzo
-  { names: /^(indirizzo|address|via|strada|civico|cap|zip|citta|city|comune|municipio|provincia|regione)$/i,
+  { names: /^(indirizzo|address|via|strada|civico|cap|zip)$/i,
     value: null,
-    prop: 'clv:hasAddress', type: null },
+    prop: 'clv:hasAddress', type: '@it' },
+  { names: /^(comune|citta|city|municipio)$/i,
+    value: null,
+    prop: 'dct:spatial', type: '@it' },
+  { names: /^(provincia|regione|district|county)$/i,
+    value: null,
+    prop: 'dct:spatial', type: '@it' },
   // Tipo / categoria
   { names: /^(tipo|type|tipologia|categoria|category|classe|class|settore|area.tematica)$/i,
     value: null,

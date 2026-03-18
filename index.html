@@ -158,6 +158,13 @@
         <div class="card-head blue">📄 STEP 1 — Incolla il CSV</div>
         <div class="card-body-pa">
           <label class="lbl">Contenuto CSV (con intestazioni)</label>
+          <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;align-items:center">
+            <label class="btn-sec" style="cursor:pointer;font-size:0.8rem;padding:0.35rem 0.8rem">
+              📂 Carica file CSV
+              <input type="file" accept=".csv,.tsv,.txt" id="file-input" style="display:none" onchange="loadCSVFile(this)">
+            </label>
+            <span id="file-name" style="font-size:0.75rem;color:var(--dg-muted);font-family:var(--mono)"></span>
+          </div>
           <textarea class="inp csv-area" id="csv-input"
             placeholder="Incolla qui il contenuto del tuo file CSV...&#10;&#10;id,nome,indirizzo,latitudine,longitudine&#10;1,Teatro Comunale,Piazza Garibaldi,40.604,17.231"></textarea>
           <div class="d-flex gap-2 mt-2 flex-wrap">
@@ -459,7 +466,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.11</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.12</span>
 </footer>
 
 <script>
@@ -807,6 +814,33 @@ function validateCSV(parsed) {
       </div>`).join('');
   }
   panel.style.display = 'block';
+}
+
+function loadCSVFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  document.getElementById('file-name').textContent = file.name;
+
+  // Prova UTF-8 prima, se fallisce usa latin1
+  const readerUtf8 = new FileReader();
+  readerUtf8.onload = function(e) {
+    let text = e.target.result;
+    // Detecta caratteri latin1 mal decodificati (es. Ã , Ã¨)
+    const hasEncIssue = /Ã[\x80-\xBF]|\xef\xbf\xbd/.test(text);
+    if (hasEncIssue) {
+      // Rileggi come latin1
+      const readerLatin = new FileReader();
+      readerLatin.onload = function(e2) {
+        document.getElementById('csv-input').value = e2.target.result;
+        document.getElementById('csv-input').dispatchEvent(new Event('input'));
+      };
+      readerLatin.readAsText(file, 'ISO-8859-1');
+    } else {
+      document.getElementById('csv-input').value = text;
+      document.getElementById('csv-input').dispatchEvent(new Event('input'));
+    }
+  };
+  readerUtf8.readAsText(file, 'UTF-8');
 }
 
 function detectSeparator(firstLine) {

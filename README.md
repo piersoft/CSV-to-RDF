@@ -124,8 +124,6 @@ In presenza di warning o errori, considera di rigenerare con un modello più pot
 
 Il file TTL generato va aggiunto come nuova **distribuzione** al dataset già esistente sul portale open data della tua PA. Non sostituisce i metadati DCAT — li integra con i dati in formato Linked Open Data.
 
-Su dati.gov.it: vai sul dataset → Modifica → Aggiungi distribuzione → carica il file `.ttl` con formato `text/turtle`.
-
 ---
 
 ## Architettura ibrida: deterministico + LLM

@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.31</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.32</span>
 </footer>
 
 <script>
@@ -2050,8 +2050,11 @@ async function startConversion() {
       let chunk;
       if (llmTriples && deterTriples) {
         const merged = mergeDeterIntoLLM(llmTriples, deterTriples, entityBase, typeSegment);
-        // Se il merge produce output vuoto usa direttamente llmTriples (più affidabile)
-        chunk = merged && merged.trim().length > 20 ? merged : removeEmptyTriples(sanitizeTTL(llmTriples, ontos));
+        const llmClean = removeEmptyTriples(sanitizeTTL(llmTriples, ontos));
+        const mergedLines = (merged || '').split('\n').filter(l => l.trim()).length;
+        const llmLines = (llmClean || '').split('\n').filter(l => l.trim()).length;
+        // Usa merged solo se ha almeno il 70% delle righe dell'LLM, altrimenti LLM è più ricco
+        chunk = (mergedLines >= llmLines * 0.7 && mergedLines > 5) ? merged : llmClean;
       } else {
         chunk = removeEmptyTriples(sanitizeTTL(llmTriples || deterTriples, ontos));
       }

@@ -1710,7 +1710,7 @@ async function startConversion() {
     const parts = [];
 
     // Header generato in JS
-    parts.push(buildTTLHeader(paname, ipa));
+    parts.push(buildTTLHeader(paname, ipa, ontos));
 
     // Fetch in parallelo: vocabolari controllati + classi ontologie
     const [vocabSection, ontoSection] = await Promise.all([

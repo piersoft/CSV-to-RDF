@@ -459,7 +459,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.3</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.4</span>
 </footer>
 
 <script>
@@ -1552,9 +1552,9 @@ function sanitizeTTL(ttl, ontos=[]) {
     return line;
   });
   ttl = filtered.join('\n');
-  const lines = ttl.split('\n');
+  const lines2 = ttl.split('\n');
   const result = [];
-  for (const line of lines) {
+  for (const line of lines2) {
     const t = line.trim();
     // Controlla classi (dopo "a " o ", ")
     const classM = t.match(/(?:^a|,)\s+([a-zA-Z][a-zA-Z0-9_-]+):([A-Z][a-zA-Z0-9_-]+)/);

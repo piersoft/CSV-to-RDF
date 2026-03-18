@@ -475,11 +475,16 @@ let currentProvider = 'mistral';
 
 function switchProvider(p) {
   currentProvider = p;
-  document.querySelectorAll('.provider-tab').forEach((t,i) => {
-    t.classList.toggle('active', ['mistral','groq','gemini','ollama','anthropic'][i] === p);
+  // Aggiorna tab
+  document.querySelectorAll('.provider-tab').forEach(t => {
+    const match = t.getAttribute('onclick')?.match(/switchProvider\('(\w+)'\)/);
+    if (match) t.classList.toggle('active', match[1] === p);
   });
-  document.querySelectorAll('.provider-panel').forEach(el => el.classList.remove('active'));
-  document.getElementById(`panel-${p}`).classList.add('active');
+  // Aggiorna panel
+  ['mistral','groq','gemini','ollama','anthropic'].forEach(id => {
+    const el = document.getElementById('panel-' + id);
+    if (el) el.classList.toggle('active', id === p);
+  });
 }
 
 function toggleKey(id) {

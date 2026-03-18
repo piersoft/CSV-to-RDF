@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.30</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.31</span>
 </footer>
 
 <script>
@@ -2049,7 +2049,9 @@ async function startConversion() {
       // Merge: inietta le triple deterministiche dentro le risorse LLM
       let chunk;
       if (llmTriples && deterTriples) {
-        chunk = mergeDeterIntoLLM(llmTriples, deterTriples, entityBase, typeSegment);
+        const merged = mergeDeterIntoLLM(llmTriples, deterTriples, entityBase, typeSegment);
+        // Se il merge produce output vuoto usa direttamente llmTriples (più affidabile)
+        chunk = merged && merged.trim().length > 20 ? merged : removeEmptyTriples(sanitizeTTL(llmTriples, ontos));
       } else {
         chunk = removeEmptyTriples(sanitizeTTL(llmTriples || deterTriples, ontos));
       }

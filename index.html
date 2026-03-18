@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.20</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.21</span>
 </footer>
 
 <script>
@@ -1416,6 +1416,45 @@ function detectDeterministicMappings(cols, rows) {
 }
 
 // Genera TTL deterministico per le colonne riconoscibili
+// Inietta le triple deterministiche (proprietà note) dentro le risorse generate dal LLM
+function mergeDeterIntoLLM(llmTTL, deterTTL, entityBase, typeSegment) {
+  // Estrae le triple deterministiche per ogni URI
+  const deterByUri = {};
+  const deterLines = deterTTL.split('\n');
+  let curUri = null;
+  for (const line of deterLines) {
+    const uriMatch = line.match(/^<([^>]+)>/);
+    if (uriMatch) { curUri = uriMatch[1]; deterByUri[curUri] = deterByUri[curUri] || []; }
+    else if (curUri && line.trim() && !line.trim().startsWith('a ')) {
+      // Aggiungi solo proprietà non-classe (non "a Tipo")
+      const triple = line.trim().replace(/[;.]$/, '').trim();
+      if (triple) deterByUri[curUri].push('    ' + triple);
+    }
+  }
+
+  // Inietta dentro ogni risorsa LLM
+  const result = [];
+  const llmLines = llmTTL.split('\n');
+  let inResource = false;
+  let resourceUri = null;
+  for (let i = 0; i < llmLines.length; i++) {
+    const line = llmLines[i];
+    const uriMatch = line.match(/^<([^>]+)>/);
+    if (uriMatch) { resourceUri = uriMatch[1]; inResource = true; }
+    // Prima del punto finale della risorsa, inietta le triple deterministiche
+    if (inResource && line.trim().endsWith('.') && !llmLines[i+1]?.trim().startsWith('<')) {
+      result.push(line.replace(/\s*\.$/, ''));
+      const extras = deterByUri[resourceUri] || [];
+      for (const t of extras) result.push(t + ' ;');
+      result.push('    .');
+      inResource = false;
+    } else {
+      result.push(line);
+    }
+  }
+  return removeEmptyTriples(result.join('\n'));
+}
+
 function buildDeterministicTriples(cols, rows, entityBase, deterMappings, typeSegment='resource', ontos=[]) {
   const lines = [];
   for (let i = 0; i < rows.length; i++) {
@@ -1910,8 +1949,13 @@ async function startConversion() {
       const prompt = buildPromptChunk(cols, chunks[i], ontos, i, chunks.length, vocabSection, ontoSection, skipCols, ipa);
       let deterTriples = buildDeterministicTriples(cols, chunks[i], entityBase, deterMappings, typeSegment, ontos);
       let llmTriples = prompt ? fixURIs(sanitizeTTL(cleanTTL(await callAI(prompt))), ipa) : '';
-      // Mergia: usa LLM per classi/tipo, deterministico per proprietà note
-      let chunk = removeEmptyTriples(sanitizeTTL(llmTriples, ontos) || deterTriples);
+      // Merge: inietta le triple deterministiche dentro le risorse LLM
+      let chunk;
+      if (llmTriples && deterTriples) {
+        chunk = mergeDeterIntoLLM(llmTriples, deterTriples, entityBase, typeSegment);
+      } else {
+        chunk = removeEmptyTriples(sanitizeTTL(llmTriples || deterTriples, ontos));
+      }
       chunk = chunk.replace(/@prefix\s+\S+:\s*<[^>]+>\s*\.\n?/g, '').trim();
       parts.push(chunk);
     }

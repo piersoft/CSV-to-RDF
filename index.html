@@ -2711,12 +2711,7 @@ async function validateTTL() {
 
   showValidationReport({ errors, warnings, infos });
 
-  // SPARQL asincrono in background (controlla classi su schema.gov.it)
-  const allTerms = [];
-  for (const m of ttl.matchAll(/\ba\s+([a-zA-Z_][\w-]*:[A-Z][a-zA-Z]*)/g)) {
-    const prefix = m[1].split(':')[0];
-    if (prefixMap[prefix]?.includes('w3id.org/italia')) allTerms.push(m[1]);
-  }
+  // Verifica classi esterna rimossa
   // validateSPARQL rimossa — funzione non definita (verifica classi disabilitata)
 }
 
@@ -2753,7 +2748,6 @@ function showValidationReport({ errors, warnings, infos, terms, prefixMap }) {
   }
 
   // Sezione SPARQL (popolata in background)
-  html += `<div id="validation-sparql" style="color:#888">🔍 Verifica classi su schema.gov.it in corso...</div>`;
   html += '</div>';
 
   div.innerHTML = html;

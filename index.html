@@ -2976,14 +2976,28 @@ function showPanel(headers){
   panel.style.display="block";
 }
 document.addEventListener("DOMContentLoaded",function(){
+  // Corpus matcher: file input upload
   var fi=document.querySelector("input[type=\"file\"]");
-  if(!fi)return;
-  fi.addEventListener("change",function(){
-    var f=fi.files[0];if(!f)return;
-    var rd=new FileReader();
-    rd.onload=function(e){var txt=e.target.result,line=txt.split("\n")[0],sep=line.indexOf(";")>=0?";":",";;var hdrs=line.split(sep).map(function(h){return h.replace(/^\uFEFF/,"").replace(/^["\x27]|["\x27]$/g,"").trim();});showPanel(hdrs);};
-    rd.readAsText(f);
-  });
+  if(fi){
+    fi.addEventListener("change",function(){
+      var f=fi.files[0];if(!f)return;
+      var rd=new FileReader();
+      rd.onload=function(e){var txt=e.target.result,line=txt.split("\n")[0],sep=line.indexOf(";")>=0?";":",";;var hdrs=line.split(sep).map(function(h){return h.replace(/^\uFEFF/,"").replace(/^["\x27]|["\x27]$/g,"").trim();});showPanel(hdrs);};
+      rd.readAsText(f);
+    });
+  }
+  // Corpus matcher: pulsante Anteprima (parse del textarea csv-input)
+  var btnPreview = Array.from(document.querySelectorAll("button")).find(function(b){return b.textContent.includes("Anteprima");});
+  if(btnPreview){
+    btnPreview.addEventListener("click",function(){
+      var textarea=document.getElementById("csv-input");
+      if(!textarea||!textarea.value.trim())return;
+      var line=textarea.value.split("\n")[0];
+      var sep=line.indexOf(";")>=0?";":",";;
+      var hdrs=line.split(sep).map(function(h){return h.replace(/^\uFEFF/,"").replace(/^["\x27]|["\x27]$/g,"").trim();});
+      showPanel(hdrs);
+    });
+  }
 });
 window.corpusMatch=function(h){return matchCorpus(h);};
 })();

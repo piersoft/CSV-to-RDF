@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.43</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.44</span>
 </footer>
 
 <script>
@@ -1823,22 +1823,44 @@ function fixContactPoints(ttl) {
 }
 
 function fixEventClass(ttl, ontos) {
-  // Se l'ontologia include TI o Cultural-ON per eventi, sostituisce l0:Object con l0:EventOrSituation
   if (!ontos) return ttl;
-  const hasEventOnto = ontos.some(o => ['TI','Cultural-ON','CULTURAL-ON'].includes(o.toUpperCase()));
-  if (!hasEventOnto) return ttl;
-  // Se il TTL contiene colonne tipiche di eventi (titolo,data,organizzazione) ma usa l0:Object
-  // e NON ha già l0:EventOrSituation, sostituisce
-  if (ttl.includes('l0:EventOrSituation')) return ttl; // già corretto
-  // Sostituisce solo se ci sono segnali di eventi: dct:date + rdfs:label + dct:publisher/description
-  const hasDateAndLabel = ttl.includes('dct:date') && ttl.includes('rdfs:label');
-  if (hasDateAndLabel && ttl.includes('l0:Object')) {
-    ttl = ttl.replace(/a l0:Object/g, 'a l0:EventOrSituation');
+  const ontosUp = ontos.map(o => o.toUpperCase());
+
+  // Fix Cultural-ON: URI cultural-institute/ → cultural-on:CulturalInstituteOrSite
+  if (ontosUp.includes('CULTURAL-ON') && ttl.includes('cultural-institute/')) {
+    if (!ttl.includes('cultural-on:CulturalInstituteOrSite')) {
+      ttl = ttl.replace(/a l0:Object ;/g, 'a cultural-on:CulturalInstituteOrSite ;');
+      ttl = ttl.replace(/a l0:Object$/gm, 'a cultural-on:CulturalInstituteOrSite');
+    }
+    return ttl;
+  }
+
+  // Fix TI/eventi: dct:date + rdfs:label → l0:EventOrSituation
+  if ((ontosUp.includes('TI') || ontosUp.includes('CULTURAL-ON')) &&
+      !ttl.includes('l0:EventOrSituation') &&
+      ttl.includes('dct:date') && ttl.includes('rdfs:label') &&
+      ttl.includes('event/')) {
+    ttl = ttl.replace(/a l0:Object ;/g, 'a l0:EventOrSituation ;');
   }
   return ttl;
 }
 
 function fixWebSites(ttl) {
+  // Corregge sm:hasWebSite con URI w3id inventati: estrae l'URL originale incorporato
+  // Pattern: sm:hasWebSite <https://w3id.org/italia/data/.../http:__www.example.com>
+  // → sm:hasWebSite <http://www.example.com>
+  ttl = ttl.replace(
+    /sm:hasWebSite\s+<https?:\/\/w3id\.org\/italia\/data\/[^>]*?\/(https?:__[^>]+)>/g,
+    (match, encoded) => {
+      const url = encoded.replace(/^(https?)__/, '$1://').replace(/__/g, '/');
+      return 'sm:hasWebSite <' + url + '>';
+    }
+  );
+  // Pattern con URL diretto già corretto: lascia invariato
+  return ttl;
+}
+
+function fixWebSitesOld(ttl) {
   // Corregge sm:hasWebSite con URI w3id inventati → usa il valore come URL diretto
   return ttl.replace(
     /sm:hasWebSite\s+<https?:\/\/w3id\.org\/[^>]*__(http[^>]*)>/g,

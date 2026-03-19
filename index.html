@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.58</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.59</span>
 </footer>
 
 <script>
@@ -573,6 +573,30 @@ Non aggiungere spiegazioni, solo il JSON.`;
   const btn = document.getElementById('btn-ai-onto');
   btn.disabled = true;
   btn.textContent = '⏳ Analisi...';
+
+  // EARLY EXIT AI-DETECT: se il deterministico ha già rilevato un catalogo ADMS
+  // non chiamare l'AI — il CSV è un registro di file, non dati ontologici
+  {
+    const csvText = document.getElementById('csv-input')?.value || '';
+    const parsed2 = parseCSV(csvText);
+    if (parsed2) {
+      const cols2 = parsed2.headers || [];
+      const catalogMatch = ['nome_dataset','nome_risorsa','numero_righe','formato'].filter(k => cols2.includes(k)).length >= 2;
+      const sampleV2 = (parsed2.rows?.slice(0,2) || []).flatMap(r => Object.values(r)).map(v=>String(v).toLowerCase()).join(' ');
+      const catalogVal = /\b(csv|json|ttl|xlsx|xml)\b/.test(sampleV2) && /\b\d{4,}\b/.test(sampleV2) && cols2.some(c => /formato|identifier|nome_dataset|nome_risorsa/i.test(c));
+      if (catalogMatch || catalogVal) {
+        // Forza SOLO ADMS e termina senza chiamare l'AI
+        document.querySelectorAll('#onto-selector .pill, #onto-selector-adv .pill').forEach(p => {
+          p.classList.toggle('active', p.dataset.onto === 'ADMS');
+        });
+        const msgEl = document.getElementById('auto-onto-msg');
+        if (msgEl) { msgEl.textContent = '🤖 CSV catalogo: ADMS (AI-detect saltato)'; msgEl.style.display='block'; }
+        btn.disabled = false;
+        btn.textContent = '🤖 AI-detect';
+        return;
+      }
+    }
+  }
 
   try {
     // Per l'AI-detect usa sempre il modello più leggero disponibile per provider

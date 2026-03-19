@@ -2880,6 +2880,56 @@ function copyTTL() {
 }
 </script>
 
+
+// ── validateSPARQL — verifica classi su schema.gov.it ─────────────────────
+function validateSPARQL(terms, prefixMap) {
+  // Trova o crea il div di status nel report
+  var sparqlDiv = document.getElementById('validation-sparql');
+  if (!sparqlDiv) {
+    var report = document.getElementById('validation-report');
+    if (!report) return;
+    sparqlDiv = document.createElement('div');
+    sparqlDiv.id = 'validation-sparql';
+    sparqlDiv.style.cssText = 'margin-top:.6em;padding:.35em .5em;border-top:1px solid #e0e8f0;font-size:.84em;color:#888';
+    report.appendChild(sparqlDiv);
+  }
+  sparqlDiv.innerHTML = '🔍 Verifica classi su schema.gov.it...';
+
+  // Risolvi i termini in URI completi usando prefixMap
+  var uris = [];
+  terms.forEach(function(t) {
+    var parts = t.split(':');
+    var ns = prefixMap[parts[0]] || '';
+    if (ns) uris.push('<' + ns + parts[1] + '>');
+  });
+  if (!uris.length) { sparqlDiv.innerHTML = ''; return; }
+
+  // Query SPARQL: verifica esistenza delle classi
+  var values = uris.join(' ');
+  var query = 'SELECT ?c WHERE { VALUES ?c {' + values + '} { ?c a owl:Class } UNION { ?c a rdfs:Class } UNION { ?c a owl:ObjectProperty } UNION { ?c a owl:DatatypeProperty } } LIMIT 100';
+  var url = 'https://schema.gov.it/sparql?query=' + encodeURIComponent(query) + '&format=application%2Fsparql-results%2Bjson';
+
+  fetch(url, { headers: { 'Accept': 'application/sparql-results+json' }, signal: AbortSignal.timeout(8000) })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var found = new Set((data.results.bindings || []).map(function(b) { return b.c.value; }));
+      var total = uris.length;
+      var missing = uris.filter(function(u) { return !found.has(u.slice(1,-1)); });
+      if (missing.length === 0) {
+        sparqlDiv.innerHTML = '✅ Tutte le ' + total + ' classi verificate su schema.gov.it';
+        sparqlDiv.style.color = '#0a0';
+      } else {
+        var names = missing.map(function(u) { return u.split('/').pop().replace('>',''); }).join(', ');
+        sparqlDiv.innerHTML = '⚠ ' + missing.length + '/' + total + ' class' + (missing.length>1?'i':'e') + ' non in schema.gov.it: ' + names;
+        sparqlDiv.style.color = '#c80';
+      }
+    })
+    .catch(function() {
+      sparqlDiv.innerHTML = '⚠ schema.gov.it non raggiungibile';
+      sparqlDiv.style.color = '#c80';
+    });
+}
+
 <!-- ===== CORPUS MATCHER v7 ===== -->
 <style>
 #corpus-panel{display:none;margin:1em 0;padding:1em;border:2px solid #4a90d9;border-radius:8px;background:#f0f7ff;font-family:sans-serif}

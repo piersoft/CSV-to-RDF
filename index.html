@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.59</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.60</span>
 </footer>
 
 <script>
@@ -2108,9 +2108,17 @@ function removeEmptyTriples(ttl) {
 function sanitizeTTL(ttl, ontos=[]) {
   ttl = removeEmptyTriples(ttl);
   ttl = fixMeasurePrefixes(ttl);
+  // Fix dct:date → dct:issued (dct:date non è la proprietà DCAT per data di pubblicazione)
+  ttl = ttl.replace(/\bdct:date\b(?=\s+"[^"]*"\^\^xsd:date)/g, 'dct:issued');
   ttl = fixContactPoints(ttl);
   ttl = fixEventClass(ttl, ontos);
   ttl = fixCoordinates(ttl);
+  // Fix dct:extent senza datatype → aggiungi ^^xsd:integer
+  ttl = ttl.replace(/dct:extent\s+"(\d+)"(?!\^\^)\s*([;.])/g,
+    (m, n, sep) => `dct:extent "${n}"^^xsd:integer ${sep}`);
+  // Fix dct:extent come literal non quotato → quota con datatype
+  ttl = ttl.replace(/dct:extent\s+(\d+)\s*([;.])/g,
+    (m, n, sep) => `dct:extent "${n}"^^xsd:integer ${sep}`);
   ttl = fixNumericLabels(ttl);
   ttl = fixWebSites(ttl);
 
@@ -2277,12 +2285,32 @@ async function callAI(prompt) {
 }
 
 function cleanTTL(text) {
-  return text
+  // Rimuove backtick e markdown
+  text = text
     .replace(/^```\w*\s*\n?/gim, '')
     .replace(/\n?```\s*$/gim, '')
-    .replace(/```/g, '')
-    .trim();
+    .replace(/```/g, '');
+  // Rimuove righe di testo in prosa prima delle triple Turtle
+  // Una riga TTL valida inizia con @prefix, <, #, spazio/tab, o è vuota
+  const lines = text.split('\n');
+  const ttlLines = [];
+  let foundFirstTriple = false;
+  for (const line of lines) {
+    const t = line.trim();
+    if (!foundFirstTriple) {
+      // Cerca la prima riga TTL valida
+      if (t.startsWith('@prefix') || t.startsWith('<') || t.startsWith('#') || t === '') {
+        foundFirstTriple = true;
+        ttlLines.push(line);
+      }
+      // Salta righe di prosa (testo normale non TTL)
+    } else {
+      ttlLines.push(line);
+    }
+  }
+  return ttlLines.join('\n').trim();
 }
+
 
 async function callMistral(prompt) {
   const key   = document.getElementById('mistral-key').value.trim();
@@ -2537,6 +2565,15 @@ async function validateTTL() {
   // ── 7. dct:description "voice" ────────────────────────────────────────
   if (/dct:description\s+"voice"/.test(ttl))
     errors.push('dct:description "voice" inventato dal LLM — da rimuovere');
+
+  // ── 7b. dct:publisher come literal (dovrebbe essere URI) ───────────────
+  const pubLiterals = (ttl.match(/dct:publisher\s+"[^"]+"/g) || []).length;
+  if (pubLiterals > 0)
+    warnings.push(`dct:publisher con valore literal (${pubLiterals}×) — dovrebbe essere URI <...>`);
+
+  // ── 7c. dct:date usato al posto di dct:issued ────────────────────────
+  if (/\bdct:date\b/.test(ttl) && /xsd:date/.test(ttl))
+    warnings.push('dct:date con xsd:date — probabilmente intendi dct:issued');
 
   // ── 8. rdfs:label NUMERICO → dovrebbe essere dct:extent ───────────────
   const numLabels = (ttl.match(/rdfs:label\s+"[\d]+"(\^\^xsd:\w+)?/g) || []).length;

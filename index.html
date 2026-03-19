@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.47</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.49</span>
 </footer>
 
 <script>
@@ -518,11 +518,12 @@ const ONTO_RULES = [
   { keys: ['telefono','phone','tel','email','mail','sito','web','url'],    ontos: ['SM'] },
   { keys: ['nome','name','denominazione','titolo'],                        ontos: ['L0'] },
   { keys: ['organizzazione','ente','comune','provincia','regione'],        ontos: ['COV'] },
-  { keys: ['persona','cognome','responsabile','referente','inventore','inventori','autore','ricercatore'], ontos: ['CPV'] },
+  { keys: ['persona','cognome','responsabile','referente','inventore','inventori','autore','ricercatore','lista','candidato','sezione_elettorale'], ontos: ['CPV'] },
   { keys: ['ruolo','qualifica','mansione','incarico'],                     ontos: ['RO'] },
   { keys: ['brevetto','patent','pi','proprietà_intellettuale','tipo_pi','n_dom','deposito'], ontos: ['ADMS'] },
   { keys: ['data','date','ora','time','inizio','fine','apertura'],         ontos: ['TI'] },
   { keys: ['punto','poi','luogo','location','sede','struttura','dae','aed','defibrillatore','accessibile_h24','presenza_aed'], ontos: ['POI'] },
+  { keys: ['lista','partito','candidato','sezione','voti','preferenze','ballottaggio','circoscrizione','sindaco'], ontos: ['COV','CPV'] },
   { keys: ['accesso','orario','prenotazione','ingresso'],                  ontos: ['AC'] },
   { keys: ['parcheggio','parking','posto','stallo'],                       ontos: ['PARK'] },
   { keys: ['servizio','service','prestazione','sportello'],                ontos: ['CPSV-AP'] },
@@ -662,6 +663,9 @@ function autoDetectOnto() {
   // Regole aggiuntive per dati statistici/demografici
   if (cols.some(c => /maschi|femmine|gender|sesso|uomini|donne/.test(c)))
     suggested.add('CPV');
+  // CPV: colonne MAIUSCOLE tipiche dati anagrafici/elettorali PA
+  if (cols.some(c => /^(COGNOME|NOME|LISTA|CANDIDATO|DATA_NASCITA|LUOGO_NASCITA)$/.test(c)))
+    suggested.add('CPV');
   if (cols.some(c => /professione|occupazione|lavoro|impiego|mestiere/.test(c)))
     suggested.add('SKOS');
   // QB: dati statistici/finanziari - check case-insensitive
@@ -673,10 +677,21 @@ function autoDetectOnto() {
   // QB anche da soli se colonne BDAP caratteristiche
   if (colsLower.some(c => /bdap|codice.?gestionale|tipologia.?del.?movimento|codice.?titolo/.test(c)))
     suggested.add('QB');
+  // QB: serie storica mensile PA (ANNO + mesi MAIUSCOLI)
+  const hasMesi = ['gennaio','febbraio','marzo','aprile','maggio','giugno',
+    'luglio','agosto','settembre','ottobre','novembre','dicembre']
+    .filter(m => colsLower.includes(m)).length >= 3;
+  if (hasMesi && colsLower.some(c => /^anno$/.test(c))) suggested.add('QB');
   if (colsLower.some(c => /importo.?cumulato|obs.?value/.test(c)))
     suggested.add('QB');
   // QB per dati statistici di sicurezza pubblica
   if (colsLower.some(c => /^(incidenti|feriti|morti|decessi)$/.test(c)))
+    suggested.add('QB');
+  // QB: dataset PA con colonne statistiche che hanno spazi (es. "Forma giuridica", "Numero imprese")
+  if (colsLower.some(c => /forma.giuridica|numero.imprese|numero.addetti|importo|residui|competenza|retribuzione|divario.econom/i.test(c)))
+    suggested.add('QB');
+  // QB: dataset sanitari PA con codici ASL
+  if (colsLower.some(c => /cod_nazionale_asl|cod_distretto|classe_eta_istat|assistiti_esenti|residenti/i.test(c)))
     suggested.add('QB');
 
   // Controlla anche se esiste una colonna TIPOLOGIA con valori ricettivi
@@ -1432,6 +1447,47 @@ const COLUMN_RULES = [
   { names: /^(gestore|responsabile|referente|ente|struttura|organizzazione)$/i,
     value: null,
     prop: 'dct:publisher', type: '@it' },
+  // Anno e periodo
+  { names: /^(ANNO|Anno)$/,
+    value: null,
+    prop: 'sdmx-dimension:timePeriod', type: '@it' },
+  // Totale annuo
+  { names: /^(TOTALE.ANNUO|Totale_annuo|totale_annuale)$/i,
+    value: null,
+    prop: 'sdmx-measure:obsValue', type: 'decimal' },
+  // Inquadramento/categoria personale
+  { names: /^(Inquadramento|Tipologia.di.personale|Tipo.presenza|Tipo.permesso|Tipo.misura)$/i,
+    value: null,
+    prop: 'dct:type', type: '@it' },
+  // Soggetto richiedente / Ufficio (dataset incarichi PA)
+  { names: /^(Soggetto.richiedente|Ufficio.di.appartenenza|Tipologia.d.incarico)$/i,
+    value: null,
+    prop: 'dct:description', type: '@it' },
+  { names: /^(Compenso)$/i,
+    value: null,
+    prop: 'dct:format', type: '@it' },
+  // Colonne mese → dct:description (pivot mensile PA italiana)
+  { names: /^(GENNAIO|FEBBRAIO|MARZO|APRILE|MAGGIO|GIUGNO|LUGLIO|AGOSTO|SETTEMBRE|OTTOBRE|NOVEMBRE|DICEMBRE)$/i,
+    value: null,
+    prop: 'sdmx-dimension:timePeriod', type: '@it' },
+  // Colonne genere/sesso
+  { names: /^(GENERE|SESSO|sesso)$/i,
+    value: null,
+    prop: 'sdmx-attribute:sex', type: '@it' },
+  { names: /^(Uomini|Maschi|MASCHI)$/i,
+    value: null,
+    prop: 'sdmx-measure:obsValue', type: 'decimal' },
+  { names: /^(Donne|Femmine|FEMMINE)$/i,
+    value: null,
+    prop: 'sdmx-measure:obsValue', type: 'decimal' },
+  // Colonne pivot anno+genere tipo F_2012, M_2013 → skip (dati pivot non mappabili 1:1)
+  { names: /^[MF]_\d{4}$/,
+    value: null,
+    prop: '_SKIP_', type: 'skip' },
+  // Colonne numeriche con prefisso num+trattino (liste elettorali: "1-LISTA")
+  { names: /^\d+[-–].+/,
+    value: null,
+    prop: '_SKIP_', type: 'skip' },
   // URI esterni da endpoint SPARQL (es. MiC beniculturali)
   { names: /^(subject|uri|resource|about)$/i,
     value: null,
@@ -1439,6 +1495,10 @@ const COLUMN_RULES = [
   // Events / spettacoli
 
   // Luoghi cultura MiC / beniculturali
+  { names: /^(densit[àa]|density|densita_abitativa|densita)$/i,
+    value: null, prop: 'dct:description', type: '@it' },
+  { names: /^(et[àa]_media|eta_media|age_average)$/i,
+    value: null, prop: 'dct:description', type: '@it' },
   { names: /^(prenotazioni|booking|ingresso)$/i,
     value: null,
     prop: 'dct:accessRights', type: '@it' },
@@ -1512,14 +1572,30 @@ const COLUMN_RULES = [
 ];
 
 // Analizza le colonne e restituisce quelle mappabili deterministicamente
+function normalizeColName(col) {
+  // Normalizza nomi colonna problematici: apostrofi, parentesi, simboli speciali
+  return col
+    .replace(/'/g, '')           // Eta' → Eta
+    .replace(/\(/g, '_')         // (ab/Kmq) → _ab/Kmq
+    .replace(/\)/g, '')          // chiude parentesi
+    .replace(/\//g, '_')         // ab/Kmq → ab_Kmq
+    .replace(/%/g, 'pct')        // valori % → pct
+    .replace(/\./g, '_')         // punti → underscore
+    .replace(/\s+/g, ' ')        // normalizza spazi multipli
+    .trim();
+}
+
 function detectDeterministicMappings(cols, rows) {
   const mappings = {}; // col → {prop, type}
   const sampleRow = rows[0] || {};
 
   for (const col of cols) {
+    // Salta colonne con prefisso numerico: "1-FRATELLI D'ITALIA", "9-+EUROPA"
+    if (/^\d+[-–]/.test(col)) continue;
+    const normalizedCol = normalizeColName(col);
     const val = String(sampleRow[col] || '').trim();
     for (const rule of COLUMN_RULES) {
-      const nameMatch = rule.names.test(col);
+      const nameMatch = rule.names.test(col) || rule.names.test(normalizedCol);
       const valueMatch = !rule.value || rule.value.test(val);
       if (nameMatch && valueMatch) {
         mappings[col] = { prop: rule.prop, type: rule.type };
@@ -1590,6 +1666,13 @@ function mergeDeterIntoLLM(llmTTL, deterTTL, entityBase, typeSegment) {
 
 function buildDeterministicTriples(cols, rows, entityBase, deterMappings, typeSegment='resource', ontos=[]) {
   const lines = [];
+  // Colonne da saltare completamente (tipo _SKIP_ o pivot non mappabili)
+  const skipColSet = new Set(
+    Object.entries(deterMappings)
+      .filter(([,m]) => m && m.prop === '_SKIP_')
+      .map(([col]) => col)
+  );
+
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
     // URI entità: usa id/codice se disponibile, altrimenti indice
@@ -1602,8 +1685,11 @@ function buildDeterministicTriples(cols, rows, entityBase, deterMappings, typeSe
     const mainClass = getMainClass(ontos || []);
     triples.push(`    a ${mainClass}`);
     for (const col of cols) {
+      // Salta colonne con prefisso numerico: "1-LISTA", "9-+EUROPA"
+      if (/^\d+[-–]/.test(col)) continue;
       const m = deterMappings[col];
       if (!m) continue;
+      if (m.prop === '_SKIP_') continue; // colonna pivot non mappabile
       const val = (row[col] !== undefined && row[col] !== null) ? String(row[col]).trim() : '';
       if (!val || val === 'null' || val === 'N/A') continue;
 
@@ -1702,6 +1788,8 @@ REGOLE:
 - Per ogni risorsa includi SEMPRE dct:publisher con il nome dell'organizzatore — non ometterlo mai
 - Usa dct:type per il tipo di relazione (Coorganizzazione/Patrocinio/Pagamento), dct:publisher per l'organizzatore, MAI usare dct:description per entrambi
 - Output COMPATTO: niente righe vuote, niente commenti, niente @prefix, niente markdown
+- Colonne il cui nome inizia con un numero seguito da trattino (es. "1-LISTA", "9-+EUROPA") sono intestazioni di risultati elettorali: usa sdmx-measure:obsValue con rdfs:label del nome colonna
+- Colonne con pattern F_ANNO / M_ANNO (es. F_2012, M_2016) indicano femmine/maschi per anno: usa sdmx-measure:obsValue con sdmx-dimension:timePeriod per l'anno e sdmx-attribute:sex per il sesso (es. "1-LISTA", "9-+EUROPA") sono intestazioni di risultati elettorali: usa sdmx-measure:obsValue con rdfs:label del nome colonna
 - NON usare mai il prefisso ":" (prefisso vuoto) — usa sempre URI completi tra <> o prefissi dichiarati
 - USA SOLO le classi elencate qui sotto per ogni ontologia — NON inventare classi:
 - REGOLA CLASSE PRINCIPALE: usa la classe più specifica disponibile tra le ontologie selezionate.
@@ -1876,6 +1964,8 @@ function fixWebSitesOld(ttl) {
 function removeDuplicatePredicates(ttl) {
   // Per ogni risorsa, rimuove triple duplicate con stesso predicato
   // eccetto rdfs:label e dct:description che possono avere multi-valori legittimi
+  // Rimuovi eventuali triple _SKIP_ residue
+  ttl = ttl.replace(/[^\n]*_SKIP_[^\n]*\n?/g, '');
   // Rimuovi dct:description "voice" inventato dal LLM per sm:Telephone
   ttl = ttl.replace(/dct:description\s+"voice"\s*[;.]/g, '');
   // Rimuovi dct:description con solo CAP (5 cifre isolate) — artefatto da colonna Codice_postale

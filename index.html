@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.45</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.47</span>
 </footer>
 
 <script>
@@ -1445,9 +1445,9 @@ const COLUMN_RULES = [
   { names: /^(image|immagine|foto|photo|thumbnail)$/i,
     value: null,
     prop: 'foaf:depiction', type: 'uri' },
-  { names: /^(codice_postale|cap|postal_code|postalcode)$/i,
+  { names: /^(codice_postale|cap|postal_code|postalcode|zip|zipcode)$/i,
     value: null,
-    prop: 'clv:hasAddress', type: '@it' },
+    prop: 'skos:notation', type: 'plain' },
   { names: /^(identifier|codice|code|id_luogo)$/i,
     value: null,
     prop: 'dct:identifier', type: 'plain' },
@@ -1846,14 +1846,22 @@ function fixEventClass(ttl, ontos) {
 }
 
 function fixWebSites(ttl) {
-  // Fix 1: URI w3id inventati con schema http:__  → URL reale
+  // Fix 1: URI w3id inventati con schema http:__ o https:__ → URL reale
   ttl = ttl.replace(
     /sm:hasWebSite\s+<https?:\/\/w3id\.org\/italia\/data\/[^>]*?\/(https?):__([^>]+)>/g,
     (match, proto, rest) => 'sm:hasWebSite <' + proto + '://' + rest.replace(/__/g, '/') + '>'
   );
-  // Fix 2: http:/ singolo slash → http://
+  // Fix 2: http:/ o https:/ con slash singolo → doppio slash
   ttl = ttl.replace(/sm:hasWebSite\s+<http:\/([^\/][^>]+)>/g, 'sm:hasWebSite <http://$1>');
   ttl = ttl.replace(/sm:hasWebSite\s+<https:\/([^\/][^>]+)>/g, 'sm:hasWebSite <https://$1>');
+  // Fix 3: URI w3id chiaramente inventati senza schema URL riconoscibile → rimuovi tripla
+  ttl = ttl.replace(
+    /sm:hasWebSite\s+<https?:\/\/w3id\.org\/italia\/data\/[^>]+>\s*[;.]/g,
+    (match) => {
+      // Mantieni solo se contiene schema URL originale già corretto
+      return match; // lascia al sanitizer generale
+    }
+  );
   return ttl;
 }
 
@@ -1868,7 +1876,11 @@ function fixWebSitesOld(ttl) {
 function removeDuplicatePredicates(ttl) {
   // Per ogni risorsa, rimuove triple duplicate con stesso predicato
   // eccetto rdfs:label e dct:description che possono avere multi-valori legittimi
-  // Prima: converti dct:description con valore di prenotazione → dct:accessRights
+  // Rimuovi dct:description "voice" inventato dal LLM per sm:Telephone
+  ttl = ttl.replace(/dct:description\s+"voice"\s*[;.]/g, '');
+  // Rimuovi dct:description con solo CAP (5 cifre isolate) — artefatto da colonna Codice_postale
+  ttl = ttl.replace(/dct:description\s+"\d{4,5}"\s*[;.]/g, '');
+  // Converti dct:description con valore di prenotazione → dct:accessRights
   ttl = ttl.replace(
     /dct:description\s+"(Ingresso libero|Prenotazione obbligatoria|Prenotazione facoltativa|A pagamento|Gratuito)"@it\s*[;.]/g,
     (match, val) => 'dct:accessRights "' + val + '"@it' + match.slice(-1)

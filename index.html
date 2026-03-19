@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.38</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.40</span>
 </footer>
 
 <script>
@@ -1638,6 +1638,7 @@ REGOLE:
     cpv:Person                   → person
     adms:SemanticAsset           → asset
     poi:PointOfInterest          → point-of-interest
+    l0:EventOrSituation          → event
     l0:Object                    → object
     l0:Agent                     → agent
   NON usare domini inventati — usa SEMPRE w3id.org/italia/data/
@@ -1654,6 +1655,9 @@ REGOLE:
 - Se non conosci la proprietà esatta, usa dct:description "valore"@it
 - rdfs:label con il nome principale in italiano
 - Usa SOLO questi prefissi: owl, clv, cov, cpv, l0, poi, ro, ti, sm, dcat, dct, foaf, geo, xsd, rdfs, vcard, skos, schema, adms, qb, sdmx-dimension, sdmx-measure
+- Per eventi/spettacoli/manifestazioni usa SEMPRE l0:EventOrSituation come classe, mai l0:Object
+- Per ogni risorsa includi SEMPRE dct:publisher con il nome dell'organizzatore — non ometterlo mai
+- Usa dct:type per il tipo di relazione (Coorganizzazione/Patrocinio/Pagamento), dct:publisher per l'organizzatore, MAI usare dct:description per entrambi
 - Output COMPATTO: niente righe vuote, niente commenti, niente @prefix, niente markdown
 - NON usare mai il prefisso ":" (prefisso vuoto) — usa sempre URI completi tra <> o prefissi dichiarati
 - USA SOLO le classi elencate qui sotto per ogni ontologia — NON inventare classi:
@@ -1775,6 +1779,22 @@ function fixContactPoints(ttl) {
   return ttl;
 }
 
+function fixEventClass(ttl, ontos) {
+  // Se l'ontologia include TI o Cultural-ON per eventi, sostituisce l0:Object con l0:EventOrSituation
+  if (!ontos) return ttl;
+  const hasEventOnto = ontos.some(o => ['TI','Cultural-ON','CULTURAL-ON'].includes(o.toUpperCase()));
+  if (!hasEventOnto) return ttl;
+  // Se il TTL contiene colonne tipiche di eventi (titolo,data,organizzazione) ma usa l0:Object
+  // e NON ha già l0:EventOrSituation, sostituisce
+  if (ttl.includes('l0:EventOrSituation')) return ttl; // già corretto
+  // Sostituisce solo se ci sono segnali di eventi: dct:date + rdfs:label + dct:publisher/description
+  const hasDateAndLabel = ttl.includes('dct:date') && ttl.includes('rdfs:label');
+  if (hasDateAndLabel && ttl.includes('l0:Object')) {
+    ttl = ttl.replace(/a l0:Object/g, 'a l0:EventOrSituation');
+  }
+  return ttl;
+}
+
 function fixWebSites(ttl) {
   // Corregge sm:hasWebSite con URI w3id inventati → usa il valore come URL diretto
   return ttl.replace(
@@ -1834,6 +1854,7 @@ function sanitizeTTL(ttl, ontos=[]) {
   ttl = removeEmptyTriples(ttl);
   ttl = fixMeasurePrefixes(ttl);
   ttl = fixContactPoints(ttl);
+  ttl = fixEventClass(ttl, ontos);
   ttl = fixCoordinates(ttl);
   ttl = fixWebSites(ttl);
 
@@ -1964,7 +1985,10 @@ REGOLE ASSOLUTE:
    - Tipo risorsa nell'URI: observation/
 4. NON ripetere la stessa entità organizzativa per ogni riga — usa URI distinti per ogni osservazione
 5. Usa SOLO classi e proprietà delle ontologie dichiarate — mai prefissi non autorizzati
-6. Se il valore è vuoto ometti la tripla completamente`;
+6. Se il valore è vuoto ometti la tripla completamente
+7. Per eventi/spettacoli usa SEMPRE l0:EventOrSituation come classe, mai l0:Object
+8. Includi dct:publisher per OGNI risorsa generata — non omettere mai questa proprietà
+9. Usa dct:type per il tipo di relazione (Coorganizzazione/Patrocinio/Pagamento), dct:publisher per l'organizzatore`;
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',

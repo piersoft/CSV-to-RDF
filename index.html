@@ -2718,7 +2718,6 @@ async function validateTTL() {
     if (prefixMap[prefix]?.includes('w3id.org/italia')) allTerms.push(m[1]);
   }
   if (allTerms.length > 0) validateSPARQL([...new Set(allTerms)], prefixMap);
-  // validateSPARQL rimossa — funzione non definita (verifica classi disabilitata)
 }
 
 
@@ -2988,58 +2987,6 @@ window.corpusMatch=function(h){return matchCorpus(h);};
 })();
 </script>
 
-// ── validateSPARQL — verifica classi su schema.gov.it ─────────────────────────
-function validateSPARQL(terms, prefixMap) {
-  var sparqlDiv = document.getElementById('validation-sparql');
-  if (!sparqlDiv) {
-    // Crea il div e lo appende al report
-    var report = document.getElementById('validation-report');
-    if (!report) return;
-    sparqlDiv = document.createElement('div');
-    sparqlDiv.id = 'validation-sparql';
-    sparqlDiv.style.cssText = 'margin-top:.5em;padding:.4em;border-top:1px solid #eee;font-size:.85em;color:#888';
-    report.appendChild(sparqlDiv);
-  }
-  sparqlDiv.textContent = '🔍 Verifica classi su schema.gov.it in corso...';
-
-  // Costruisce la query SPARQL: verifica che le classi esistano
-  var uris = terms.map(function(t) {
-    var parts = t.split(':');
-    var ns = prefixMap[parts[0]] || '';
-    return ns ? '<' + ns + parts[1] + '>' : null;
-  }).filter(Boolean);
-
-  if (!uris.length) {
-    sparqlDiv.textContent = '';
-    return;
-  }
-
-  var values = uris.join(' ');
-  var query = 'SELECT ?c WHERE { VALUES ?c {' + values + '} ?c a ?type . } LIMIT 50';
-  var endpoint = 'https://schema.gov.it/sparql';
-  var url = endpoint + '?query=' + encodeURIComponent(query) + '&format=application%2Fsparql-results%2Bjson';
-
-  fetch(url, { headers: { 'Accept': 'application/sparql-results+json' } })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      var found = new Set((data.results.bindings || []).map(function(b) { return b.c.value; }));
-      var missing = uris.filter(function(u) {
-        return !found.has(u.slice(1, -1));
-      });
-      if (missing.length === 0) {
-        sparqlDiv.innerHTML = '✅ Tutte le classi riconosciute da schema.gov.it (' + uris.length + '/' + uris.length + ')';
-        sparqlDiv.style.color = '#0a0';
-      } else {
-        var missingStr = missing.map(function(u){ return u.replace('<','').replace('>','').split('/').pop(); }).join(', ');
-        sparqlDiv.innerHTML = '⚠ ' + missing.length + ' class' + (missing.length>1?'i':'e') + ' non trovat' + (missing.length>1?'e':'a') + ' su schema.gov.it: ' + missingStr;
-        sparqlDiv.style.color = '#c80';
-      }
-    })
-    .catch(function() {
-      sparqlDiv.innerHTML = '⚠ schema.gov.it non raggiungibile — verifica offline';
-      sparqlDiv.style.color = '#c80';
-    });
-}
 
 <!-- ===== FINE CORPUS MATCHER v7 ===== -->
 

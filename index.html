@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.41</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.42</span>
 </footer>
 
 <script>
@@ -529,6 +529,7 @@ const ONTO_RULES = [
   { keys: ['hotel','albergo','accommodation','ricettivo','posti.letto','posti_letto','camere','stelle'],  ontos: ['ACCO'] },
   { keys: ['patrimonio','culturale','museo','monumento','arte','biblioteca','archivio','nome museo','ldcn'], ontos: ['Cultural-ON'] },
   { keys: ['subject','identifier','prenotazioni','immagine','image','luogo cultura','istituto culturale','denominazione','luogo_cultura'], ontos: ['Cultural-ON','CLV','SM'] },
+  { keys: ['culturalinstituteorsite','beniculturali','mibact','mibac','luoghicultura'], ontos: ['Cultural-ON'] },
   { keys: ['titolo','spettacolo','evento','manifestazione','concerto','teatro','rassegna','patrocinio','organizzazione_associazione'], ontos: ['Cultural-ON','TI'] },
   { keys: ['tecnologia','area_tecnologica','settore','disciplina','campo'],  ontos: ['ADMS','L0'] },
   { keys: ['bus','metro','tram','fermata','linea','corsa'],                ontos: ['GTFS'] },
@@ -625,6 +626,20 @@ function autoDetectOnto() {
 
   // Parte da zero — nessun default
   const suggested = new Set();
+
+  // Controlla anche i VALORI delle prime righe (es. URI beniculturali in colonna subject)
+  const sampleVals = (parsed.rows.slice(0, 3) || [])
+    .flatMap(r => Object.values(r))
+    .filter(v => v)
+    .map(v => String(v).toLowerCase())
+    .join(' ');
+  if (sampleVals.includes('culturalinstituteorsite') || sampleVals.includes('beniculturali') ||
+      sampleVals.includes('mibact') || sampleVals.includes('mibac') ||
+      sampleVals.includes('luoghicultura') || sampleVals.includes('luoghi/resource')) {
+    suggested.add('Cultural-ON');
+    suggested.add('CLV');
+    suggested.add('SM');
+  }
 
   // L0 solo se ci sono colonne con nomi/label
   if (cols.some(c => /nome|name|denominazione|titolo|label|descrizione/.test(c)))
@@ -2102,6 +2117,27 @@ async function startConversion() {
   if (!parsed) return showStatus('⚠ CSV non valido.', 'error');
 
   const maxRows = parseInt(document.getElementById('max-rows').value);
+
+  // Deduplicazione righe per colonna 'subject' (CSV da endpoint SPARQL con soggetti duplicati)
+  if (parsed.headers.includes('subject')) {
+    const deduped = [];
+    const seen = new Map();
+    for (const row of parsed.rows) {
+      const subj = row['subject'] || '';
+      if (!subj || !seen.has(subj)) {
+        seen.set(subj, deduped.length);
+        deduped.push({...row});
+      } else {
+        const existing = deduped[seen.get(subj)];
+        for (const [k, v] of Object.entries(row)) {
+          if (v && !existing[k]) existing[k] = v;
+        }
+      }
+    }
+    parsed.rows = deduped;
+    showStatus('🔗 ' + deduped.length + ' soggetti unici (deduplicazione subject)', 'info');
+  }
+
   const allRows = parsed.rows.slice(0, maxRows);
   const cols    = parsed.headers;
   const ontos   = getOntos();

@@ -2904,7 +2904,8 @@ function validateSPARQL(terms, prefixMap) {
   // Query SPARQL: verifica esistenza delle classi
   var values = uris.join(' ');
   var query = 'SELECT ?c WHERE { VALUES ?c {' + values + '} { ?c a owl:Class } UNION { ?c a rdfs:Class } UNION { ?c a owl:ObjectProperty } UNION { ?c a owl:DatatypeProperty } } LIMIT 100';
-  var url = 'https://schema.gov.it/sparql?query=' + encodeURIComponent(query) + '&format=application%2Fsparql-results%2Bjson';
+  // Proxy Cloudflare: risolve CORS da GitHub Pages
+  var url = 'https://ckan-mcp-server.datigovit.workers.dev/sparql-proxy?query=' + encodeURIComponent(query);
 
   fetch(url, { headers: { 'Accept': 'application/sparql-results+json' }, signal: AbortSignal.timeout(8000) })
     .then(function(r) { return r.json(); })

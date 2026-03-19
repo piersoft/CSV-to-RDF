@@ -72,6 +72,28 @@ Le ontologie disponibili sono:
 
 ---
 
+
+---
+
+### Corpus di riferimento v7
+
+Il rilevamento deterministico si basa su un **corpus di 126 dataset reali** della PA italiana, raccolti e validati manualmente con una precision del **98%**.
+
+Il corpus copre le principali ontologie del patrimonio semantico nazionale:
+
+| Ontologia | Dataset | Descrizione |
+|-----------|---------|-------------|
+| **TI** — Time Indexed | 12 | Eventi, calendari, manifestazioni culturali |
+| **Cultural-ON** | 18 | Musei, biblioteche, beni culturali |
+| **GTFS** | 16 | Trasporto pubblico locale |
+| **ADMS** | 13 | Metadati e cataloghi open data |
+| **QB** — DataCube | 87 | Dati statistici e serie storiche |
+| **POI** — Points of Interest | 46 | Luoghi geolocalizzati |
+
+Quando carichi un CSV, il corpus viene interrogato in tempo reale via **Jaccard similarity** sugli header: i dataset più simili vengono mostrati nel pannello blu con badge di confidenza e link diretto a [dati.gov.it](https://www.dati.gov.it).
+
+Le fixture del corpus sono disponibili in [`fixtures_v7.json`](./fixtures_v7.json) e vengono caricate nel browser — nessuna chiamata a server esterni.
+
 ### STEP 4 — Inserisci il Titolare del dato
 
 Compila i due campi obbligatori:
@@ -203,6 +225,23 @@ https://w3id.org/italia/data/{ipa}/{tipo-risorsa}/{id}
 **DCAT-AP_IT 2.1** · **Dublin Core** (`dct:`) · **W3C WGS84** (`geo:`) · **FOAF** · **schema.gov.it**
 
 ---
+
+
+---
+
+### Validazione ontologica via SPARQL
+
+Dopo la generazione del TTL, il validatore verifica automaticamente che le classi usate (es. `l0:EventOrSituation`, `poi:PointOfInterest`) esistano nell'ontologia ufficiale italiana su [schema.gov.it](https://schema.gov.it).
+
+La verifica avviene interrogando l'endpoint SPARQL `https://schema.gov.it/sparql` tramite un **proxy Cloudflare** che risolve le restrizioni CORS dei browser:
+
+```
+Browser → Cloudflare Worker (/sparql-proxy) → schema.gov.it/sparql
+```
+
+Il proxy è basato sul **CKAN MCP Server** sviluppato da [ondata](https://github.com/ondata/ckan-mcp-server), un server MCP open source per interrogare portali open data CKAN e endpoint SPARQL pubblici. Il worker è deployato su Cloudflare Workers: `https://ckan-mcp-server.datigovit.workers.dev`.
+
+Se tutte le classi sono riconosciute, il pannello mostra: **✅ Tutte le N classi verificate su schema.gov.it**.
 
 ## Licenza
 

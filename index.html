@@ -1490,7 +1490,7 @@ const COLUMN_RULES = [
     prop: 'dct:description', type: '@it' },
   { names: /^(modello|model|versione|version)$/i,
     value: null,
-    prop: 'rdfs:lab | corpus v7 (126 fixture)el', type: '@it' },
+    prop: 'rdfs:label', type: '@it' },
   { names: /^(numero.?serie|serial|matricola|serial.?number)$/i,
     value: null,
     prop: 'dct:identifier', type: 'xsd:string' },
@@ -2870,118 +2870,57 @@ function copyTTL() {
 }
 </script>
 
-<!-- ===== CORPUS MATCHER v7 — ontologia suggerita dal corpus ===== -->
+<!-- ===== CORPUS MATCHER v7 ===== -->
 <style>
-#corpus-panel{display:none;margin:1em 0;padding:1em;border:2px solid #4a90d9;
-  border-radius:8px;background:#f0f7ff;font-family:sans-serif}
+#corpus-panel{display:none;margin:1em 0;padding:1em;border:2px solid #4a90d9;border-radius:8px;background:#f0f7ff;font-family:sans-serif}
 #corpus-panel h3{margin:0 0 .5em;color:#2c5f8a;font-size:1em}
-.corpus-badge{display:inline-block;padding:.2em .55em;border-radius:4px;
-  color:#fff;font-size:.8em;font-weight:700;margin:.15em}
-.corpus-ex{margin:.3em 0;padding:.4em;background:#fff;border-radius:4px;
-  border-left:3px solid #4a90d9;font-size:.83em}
+.corpus-badge{display:inline-block;padding:.2em .55em;border-radius:4px;color:#fff;font-size:.8em;font-weight:700;margin:.15em}
+.corpus-ex{margin:.3em 0;padding:.4em;background:#fff;border-radius:4px;border-left:3px solid #4a90d9;font-size:.83em}
 .corpus-ex strong{display:block}
 .corpus-ex code{color:#555;font-size:.78em}
 </style>
 <div id="corpus-panel">
-  <h3>Ontologie suggerite dal corpus PA</h3>
+  <h3>Ontologie suggerite dal corpus PA (v7)</h3>
   <div id="corpus-temi"></div>
   <details style="margin-top:.6em">
-    <summary style="cursor:pointer;color:#2c5f8a;font-size:.88em">
-      Dataset simili nel corpus (<span id="corpus-count">0</span>)
-    </summary>
+    <summary style="cursor:pointer;color:#2c5f8a;font-size:.88em">Dataset simili nel corpus (<span id="corpus-count">0</span>)</summary>
     <div id="corpus-examples" style="margin-top:.4em"></div>
   </details>
 </div>
 <script>
 (function(){
-var COLORI={'TI':'#c0392b','Cultural-ON':'#6c3483','GTFS':'#1e8449',
-  'QB':'#1a5276','POI':'#0e6655','ADMS':'#784212','CLV':'#626567',
-  'ACCO':'#922b21','CPV':'#515a5a','CPSV':'#1b4f72'};
-
-function norm(s){return String(s).toLowerCase().replace(/[^a-z0-9]/g,' ').trim();}
-
-function jaccard(a,b){
-  var sa=new Set(a.map(norm).filter(function(x){return x;}));
-  var sb=new Set(b.map(norm).filter(function(x){return x;}));
-  if(!sa.size||!sb.size)return 0;
-  var n=0; sa.forEach(function(x){if(sb.has(x))n++;});
-  return n/(sa.size+sb.size-n);
-}
-function overlap(q,f){
-  var qn=q.map(norm).filter(function(x){return x.length>2;});
-  var fs=f.map(norm).join(' ');
-  var hits=qn.filter(function(w){return fs.indexOf(w)>=0;}).length;
-  return qn.length?hits/qn.length:0;
-}
-
-var fixtures=[], ready=false;
-fetch('https://raw.githubusercontent.com/piersoft/CSV-to-RDF/main/fixtures_v7.json')
-  .then(function(r){return r.json();})
-  .then(function(d){fixtures=d.corpus||d; ready=true; console.log('[Corpus] '+fixtures.length+' fixture caricate');})
-  .catch(function(e){console.warn('[Corpus] fixtures non caricate:',e.message);});
-
+var COLORI={"TI":"#c0392b","Cultural-ON":"#6c3483","GTFS":"#1e8449","QB":"#1a5276","POI":"#0e6655","ADMS":"#784212","CLV":"#626567","ACCO":"#922b21","CPV":"#515a5a","CPSV":"#1b4f72"};
+function norm(s){return String(s).toLowerCase().replace(/[^a-z0-9]/g," ").trim();}
+function jaccard(a,b){var sa=new Set(a.map(norm).filter(function(x){return x;})),sb=new Set(b.map(norm).filter(function(x){return x;}));if(!sa.size||!sb.size)return 0;var n=0;sa.forEach(function(x){if(sb.has(x))n++;});return n/(sa.size+sb.size-n);}
+function overlap(q,f){var qn=q.map(norm).filter(function(x){return x.length>2;}),fs=f.map(norm).join(" ");return qn.length?qn.filter(function(w){return fs.indexOf(w)>=0;}).length/qn.length:0;}
+var fixtures=[],ready=false;
+fetch("https://raw.githubusercontent.com/piersoft/CSV-to-RDF/main/fixtures_v7.json").then(function(r){return r.json();}).then(function(d){fixtures=d.corpus||d;ready=true;console.log("[Corpus] "+fixtures.length+" fixture caricate");}).catch(function(e){console.warn("[Corpus] errore:",e.message);});
 function matchCorpus(headers,topN){
   topN=topN||5;
   if(!ready)return{temi:[],confidence:{},examples:[]};
-  var scored=fixtures.map(function(f){
-    var fh=f.headers||[];
-    var s=0.6*jaccard(headers,fh)+0.4*overlap(headers,fh);
-    return Object.assign({},f,{_s:s});
-  }).filter(function(f){return f._s>=0.07;}).sort(function(a,b){return b._s-a._s;}).slice(0,topN);
-
-  var ts={};
-  scored.forEach(function(f){
-    (f.confirmed_temi||f.tema_onto||[]).forEach(function(t){ts[t]=(ts[t]||0)+f._s;});
-  });
+  var scored=fixtures.map(function(f){var fh=f.headers||[];var s=0.6*jaccard(headers,fh)+0.4*overlap(headers,fh);return Object.assign({},f,{_s:s});}).filter(function(f){return f._s>=0.07;}).sort(function(a,b){return b._s-a._s;}).slice(0,topN);
+  var ts={};scored.forEach(function(f){(f.confirmed_temi||f.tema_onto||[]).forEach(function(t){ts[t]=(ts[t]||0)+f._s;});});
   var tot=scored.reduce(function(s,f){return s+f._s;},0)||1;
-  var conf={};
-  Object.keys(ts).forEach(function(t){conf[t]=Math.round(100*ts[t]/tot);});
+  var conf={};Object.keys(ts).forEach(function(t){conf[t]=Math.round(100*ts[t]/tot);});
   var temi=Object.keys(conf).filter(function(t){return conf[t]>=25;}).sort(function(a,b){return conf[b]-conf[a];});
-
-  var examples=scored.map(function(f){return{
-    title:f.title,org:f.ente||f.org,
-    temi:f.confirmed_temi||f.tema_onto||[],
-    score:Math.round(100*f._s),
-    headers:(f.headers||[]).slice(0,6),
-    id:f.id
-  };});
+  var examples=scored.map(function(f){return{title:f.title,org:f.ente||f.org,temi:f.confirmed_temi||f.tema_onto||[],score:Math.round(100*f._s),headers:(f.headers||[]).slice(0,6),id:f.id};});
   return{temi:temi,confidence:conf,examples:examples};
 }
-
 function showPanel(headers){
-  var r=matchCorpus(headers);
-  var panel=document.getElementById('corpus-panel');
-  if(!panel||!r.temi.length){if(panel)panel.style.display='none';return;}
-  document.getElementById('corpus-temi').innerHTML=r.temi.map(function(t){
-    var c=r.confidence[t]||0, col=COLORI[t]||'#555';
-    return '<span class="corpus-badge" style="background:'+col+'">'+t+' <span style="opacity:.75">'+c+'%</span></span>';
-  }).join('');
-  document.getElementById('corpus-count').textContent=r.examples.length;
-  document.getElementById('corpus-examples').innerHTML=r.examples.map(function(ex){
-    var tstr=(ex.temi||[]).join(' - ');
-    var link=ex.id?'<a href="https://www.dati.gov.it/view-dataset/dataset?id='+ex.id+'" target="_blank" style="color:#2c5f8a">link</a>':'';
-    return '<div class="corpus-ex"><strong>'+ex.title+' '+link+'</strong>'
-      +'<span style="color:#555">'+ex.org+'</span> &nbsp;'
-      +'<span style="color:#888;font-size:.8em">'+tstr+'</span><br>'
-      +'<code>'+ex.headers.join(' | ')+'</code>'
-      +'<span style="float:right;color:#999;font-size:.75em">sim:'+ex.score+'%</span></div>';
-  }).join('');
-  panel.style.display='block';
+  var r=matchCorpus(headers),panel=document.getElementById("corpus-panel");
+  if(!panel||!r.temi.length){if(panel)panel.style.display="none";return;}
+  document.getElementById("corpus-temi").innerHTML=r.temi.map(function(t){var c=r.confidence[t]||0,col=COLORI[t]||"#555";return"<span class=\"corpus-badge\" style=\"background:"+col+"\">"+t+" <span style=\"opacity:.75\">"+c+"%</span></span>";}).join("");
+  document.getElementById("corpus-count").textContent=r.examples.length;
+  document.getElementById("corpus-examples").innerHTML=r.examples.map(function(ex){var tstr=(ex.temi||[]).join(" - "),link=ex.id?"<a href=\"https://www.dati.gov.it/view-dataset/dataset?id="+ex.id+"\" target=\"_blank\" style=\"color:#2c5f8a\">link</a>":"";return"<div class=\"corpus-ex\"><strong>"+ex.title+" "+link+"</strong><span style=\"color:#555\">"+ex.org+"</span> &nbsp;<span style=\"color:#888;font-size:.8em\">"+tstr+"</span><br><code>"+ex.headers.join(" | ")+"</code><span style=\"float:right;color:#999;font-size:.75em\">sim:"+ex.score+"%</span></div>";}).join("");
+  panel.style.display="block";
 }
-
-document.addEventListener('DOMContentLoaded',function(){
-  var fi=document.querySelector('input[type="file"]');
+document.addEventListener("DOMContentLoaded",function(){
+  var fi=document.querySelector("input[type=\"file\"]");
   if(!fi)return;
-  fi.addEventListener('change',function(){
-    var f=fi.files[0]; if(!f)return;
+  fi.addEventListener("change",function(){
+    var f=fi.files[0];if(!f)return;
     var rd=new FileReader();
-    rd.onload=function(e){
-      var txt=e.target.result;
-      var line=txt.split('\n')[0];
-      var sep=line.indexOf(';')>=0?';':',';
-      var hdrs=line.split(sep).map(function(h){return h.replace(/^\uFEFF/,'').replace(/^["\'\']|["\'\']$/g,'').trim();});
-      showPanel(hdrs);
-    };
+    rd.onload=function(e){var txt=e.target.result,line=txt.split("\n")[0],sep=line.indexOf(";")>=0?";":",";;var hdrs=line.split(sep).map(function(h){return h.replace(/^\uFEFF/,"").replace(/^["\x27]|["\x27]$/g,"").trim();});showPanel(hdrs);};
     rd.readAsText(f);
   });
 });
@@ -2989,5 +2928,6 @@ window.corpusMatch=function(h){return matchCorpus(h);};
 })();
 </script>
 <!-- ===== FINE CORPUS MATCHER v7 ===== -->
+
 </body>
 </html>

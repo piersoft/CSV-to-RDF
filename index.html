@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.40</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.41</span>
 </footer>
 
 <script>
@@ -528,6 +528,7 @@ const ONTO_RULES = [
   { keys: ['servizio','service','prestazione','sportello'],                ontos: ['CPSV-AP'] },
   { keys: ['hotel','albergo','accommodation','ricettivo','posti.letto','posti_letto','camere','stelle'],  ontos: ['ACCO'] },
   { keys: ['patrimonio','culturale','museo','monumento','arte','biblioteca','archivio','nome museo','ldcn'], ontos: ['Cultural-ON'] },
+  { keys: ['subject','identifier','prenotazioni','immagine','image','luogo cultura','istituto culturale','denominazione','luogo_cultura'], ontos: ['Cultural-ON','CLV','SM'] },
   { keys: ['titolo','spettacolo','evento','manifestazione','concerto','teatro','rassegna','patrocinio','organizzazione_associazione'], ontos: ['Cultural-ON','TI'] },
   { keys: ['tecnologia','area_tecnologica','settore','disciplina','campo'],  ontos: ['ADMS','L0'] },
   { keys: ['bus','metro','tram','fermata','linea','corsa'],                ontos: ['GTFS'] },
@@ -1408,7 +1409,26 @@ const COLUMN_RULES = [
   { names: /^(gestore|responsabile|referente|ente|struttura|organizzazione)$/i,
     value: null,
     prop: 'dct:publisher', type: '@it' },
-  // Eventi / spettacoli
+  // URI esterni da endpoint SPARQL (es. MiC beniculturali)
+  { names: /^(subject|uri|resource|about)$/i,
+    value: null,
+    prop: 'owl:sameAs', type: 'uri' },
+  // Events / spettacoli
+
+  // Luoghi cultura MiC / beniculturali
+  { names: /^(prenotazioni|booking|ingresso)$/i,
+    value: null,
+    prop: 'dct:accessRights', type: '@it' },
+  { names: /^(image|immagine|foto|photo|thumbnail)$/i,
+    value: null,
+    prop: 'foaf:depiction', type: 'uri' },
+  { names: /^(codice_postale|cap|postal_code|postalcode)$/i,
+    value: null,
+    prop: 'clv:hasAddress', type: '@it' },
+  { names: /^(identifier|codice|code|id_luogo)$/i,
+    value: null,
+    prop: 'dct:identifier', type: 'plain' },
+  // Titolo/nome eventi e luoghi
   { names: /^(titolo|title|nome_evento|nome evento|denominazione_evento)$/i,
     value: null,
     prop: 'rdfs:label', type: '@it' },

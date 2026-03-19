@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.52</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.53</span>
 </footer>
 
 <script>
@@ -1977,6 +1977,21 @@ function fixEventClass(ttl, ontos) {
   return ttl;
 }
 
+function fixNumericLabels(ttl) {
+  // rdfs:label con valore numerico puro su nodi dcat:Distribution → dct:extent
+  // Es: rdfs:label "1316435"^^xsd:integer → dct:extent "1316435"^^xsd:integer
+  ttl = ttl.replace(
+    /rdfs:label\s+"(\d+)"(?:\^\^xsd:integer)?\s*([;.])/g,
+    'dct:extent "$1"^^xsd:integer $2'
+  );
+  // rdfs:label con solo numero senza datatype
+  ttl = ttl.replace(
+    /rdfs:label\s+"(\d+)"@?\w*\s*([;.])/g,
+    (match, num, sep) => isNaN(num) ? match : `dct:extent "${num}"^^xsd:integer ${sep}`
+  );
+  return ttl;
+}
+
 function fixWebSites(ttl) {
   // Fix 1: URI w3id inventati con schema http:__ o https:__ → URL reale
   ttl = ttl.replace(
@@ -2069,6 +2084,7 @@ function sanitizeTTL(ttl, ontos=[]) {
   ttl = fixContactPoints(ttl);
   ttl = fixEventClass(ttl, ontos);
   ttl = fixCoordinates(ttl);
+  ttl = fixNumericLabels(ttl);
   ttl = fixWebSites(ttl);
 
   // Blocca prefissi di ontologie avanzate non selezionate

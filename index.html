@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.50</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.52</span>
 </footer>
 
 <script>
@@ -522,7 +522,7 @@ const ONTO_RULES = [
   { keys: ['ruolo','qualifica','mansione','incarico'],                     ontos: ['RO'] },
   { keys: ['nome_dataset','nome_risorsa','dataset_name','resource_name','numero_righe','numero_record','formato','identifier'], ontos: ['ADMS'] },
   { keys: ['brevetto','patent','pi','proprietà_intellettuale','tipo_pi','n_dom','deposito'], ontos: ['ADMS'] },
-  { keys: ['data','date','ora','time','inizio','fine','apertura'],         ontos: ['TI'] },
+  { keys: ['data_evento','data_inizio','data_fine','startDate','endDate','ora','inizio','fine','apertura','scadenza'], ontos: ['TI'] },
   { keys: ['punto','poi','luogo','location','sede','struttura','dae','aed','defibrillatore','accessibile_h24','presenza_aed'], ontos: ['POI'] },
   { keys: ['lista','partito','candidato','sezione','voti','preferenze','ballottaggio','circoscrizione','sindaco'], ontos: ['COV','CPV'] },
   { keys: ['accesso','orario','prenotazione','ingresso'],                  ontos: ['AC'] },
@@ -637,18 +637,52 @@ function autoDetectOnto() {
   // Parte da zero — nessun default
   const suggested = new Set();
 
-  // Controlla anche i VALORI delle prime righe (es. URI beniculturali in colonna subject)
+  // Campiona i VALORI delle prime 3 righe per usarli nei trigger insieme alle intestazioni
   const sampleVals = (parsed.rows.slice(0, 3) || [])
     .flatMap(r => Object.values(r))
     .filter(v => v)
     .map(v => String(v).toLowerCase())
     .join(' ');
+
+  // EARLY EXIT: CSV di catalogo/registro dati → solo ADMS
+  // Usa SIA intestazioni CHE valori: il CSV catalogo ha valori come "csv","json","ttl" in colonna formato
+  const catalogHeaderMatch = ['nome_dataset','nome_risorsa','numero_righe','formato'].filter(k => cols.includes(k)).length >= 2;
+  const catalogValueMatch  = /\b(csv|json|ttl|xlsx|xml)\b/.test(sampleVals) &&
+                             /\b\d{5,}\b/.test(sampleVals) &&  // numero righe alto
+                             cols.some(c => /formato|identifier|nome_dataset|nome_risorsa/i.test(c));
+  if (catalogHeaderMatch || catalogValueMatch) {
+    suggested.add('ADMS');
+    document.querySelectorAll('#onto-selector .pill, #onto-selector-adv .pill').forEach(p => {
+      p.classList.toggle('active', p.dataset.onto === 'ADMS');
+    });
+    const msg = document.getElementById('auto-onto-msg');
+    if (msg) { msg.textContent = '🤖 CSV catalogo rilevato: solo ADMS'; msg.style.display='block'; }
+    return;
+  }
+
+  // Trigger Cultural-ON: controlla URI nei valori (es. dati.beniculturali.it)
   if (sampleVals.includes('culturalinstituteorsite') || sampleVals.includes('beniculturali') ||
       sampleVals.includes('mibact') || sampleVals.includes('mibac') ||
       sampleVals.includes('luoghicultura') || sampleVals.includes('luoghi/resource')) {
     suggested.add('Cultural-ON');
     suggested.add('CLV');
     suggested.add('SM');
+  }
+
+  // Trigger ADMS da valori: se nei valori ci sono estensioni file tipiche di catalogo
+  if (!suggested.has('ADMS') &&
+      cols.some(c => /formato|format|mime/i.test(c)) &&
+      /\b(csv|json|ttl|rdf|xml|xlsx)\b/.test(sampleVals)) {
+    suggested.add('ADMS');
+  }
+
+  // TI: scatta se (a) colonna 'data'+'colonne evento' OPPURE (b) valori con date ISO nelle righe
+  const hasTIcol = cols.some(c => /^(data|date)$/i.test(c));
+  const hasEventCol = cols.some(c => /titolo|nome_evento|evento|spettacolo|organizzatore|inizio|fine/i.test(c));
+  const hasISOdates = /\b\d{4}-\d{2}-\d{2}\b/.test(sampleVals) &&
+                     !cols.some(c => /formato|nome_dataset|nome_risorsa|numero_righe/i.test(c));
+  if ((hasTIcol && hasEventCol) || (hasISOdates && hasEventCol)) {
+    suggested.add('TI');
   }
 
   // L0 solo se ci sono colonne con nomi/label
@@ -673,7 +707,7 @@ function autoDetectOnto() {
   const colsLower = cols.map(c => c.toLowerCase());
   if (
     colsLower.some(c => /anno|year|periodo|trimestre|semestre|mese|calendario/.test(c)) &&
-    colsLower.some(c => /importo|valore|cumulato|misura|totale|count|numero(?!_righe|_record|_gara|_lotto)|quantita|amount|obs.?value/.test(c))
+    colsLower.some(c => /importo|valore|cumulato|misura|totale|count|numero(?!_righe|_record|_gara|_lotto)|quantita|amount|obs.?value|entrate?|uscite?|saldo|competenza|residui|stanziamento|retribuzione/.test(c))
   ) suggested.add('QB');
   // QB anche da soli se colonne BDAP caratteristiche
   if (colsLower.some(c => /bdap|codice.?gestionale|tipologia.?del.?movimento|codice.?titolo/.test(c)))

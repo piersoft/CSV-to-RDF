@@ -2877,8 +2877,6 @@ function copyTTL() {
   if (!ttl) return showStatus('Nessun contenuto da copiare.', 'error');
   navigator.clipboard.writeText(ttl).then(() => showStatus('✓ Copiato negli appunti!', 'success'));
 }
-</script>
-
 
 // ── validateSPARQL — verifica classi su schema.gov.it ─────────────────────
 function validateSPARQL(terms, prefixMap) {
@@ -2930,6 +2928,8 @@ function validateSPARQL(terms, prefixMap) {
 }
 window.validateSPARQL = validateSPARQL;
 
+
+</script>
 <!-- ===== CORPUS MATCHER v7 ===== -->
 <style>
 #corpus-panel{display:none;margin:1em 0;padding:1em;border:2px solid #4a90d9;border-radius:8px;background:#f0f7ff;font-family:sans-serif}

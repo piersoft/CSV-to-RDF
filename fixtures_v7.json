@@ -1,8 +1,19 @@
 {
   "generated": "2026-03-19",
-  "script_version": "validate_v7",
-  "total": 126,
-  "false_positives_excluded": 2,
+  "script_version": "build_corpus_v8",
+  "total": 165,
+  "false_positives_excluded": 0,
+  "sources": {
+    "v7": {
+      "total": 126,
+      "precision": 0.98
+    },
+    "v8_new": {
+      "total": 39,
+      "source": "opendata.maggioli.cloud",
+      "verified": true
+    }
+  },
   "corpus": [
     {
       "seq": 1,
@@ -4368,20 +4379,20 @@
       ],
       "sample_rows": [
         {
-          "﻿Biblioteca Gambalunga": "presenze",
           "2020": "60169",
           "2021": "59207",
           "2022": "131077",
           "2023": "155753",
-          "2024": "196405"
+          "2024": "196405",
+          "﻿Biblioteca Gambalunga": "presenze"
         },
         {
-          "﻿Biblioteca Gambalunga": "prestiti",
           "2020": "36927",
           "2021": "48437",
           "2022": "69989",
           "2023": "81934",
-          "2024": "91093"
+          "2024": "91093",
+          "﻿Biblioteca Gambalunga": "prestiti"
         }
       ],
       "n_cols": 6,
@@ -8389,13 +8400,6 @@
       ],
       "sample_rows": [
         {
-          "cReg": "01",
-          "REGIONE": "Piemonte",
-          "cProv": "001",
-          "PROVINCIA": "Torino",
-          "CODICE": "AA00401",
-          "NOME STRADA": "A 04 -  Torino-Trieste",
-          "ESTESA": "26.1",
           "2004": "82",
           "2005": "65",
           "2006": "44",
@@ -8411,16 +8415,16 @@
           "2016": "39",
           "2017": "57",
           "2018": "57",
-          "incid/km 2018": "2.18"
-        },
-        {
           "cReg": "01",
           "REGIONE": "Piemonte",
           "cProv": "001",
           "PROVINCIA": "Torino",
-          "CODICE": "AA00405",
-          "NOME STRADA": "A 04 / A 05 -  Diramazione Ivrea-Santhià",
-          "ESTESA": "14.3",
+          "CODICE": "AA00401",
+          "NOME STRADA": "A 04 -  Torino-Trieste",
+          "ESTESA": "26.1",
+          "incid/km 2018": "2.18"
+        },
+        {
           "2004": "10",
           "2005": "9",
           "2006": "9",
@@ -8436,16 +8440,16 @@
           "2016": "8",
           "2017": "2",
           "2018": "9",
-          "incid/km 2018": "0.63"
-        },
-        {
           "cReg": "01",
           "REGIONE": "Piemonte",
           "cProv": "001",
           "PROVINCIA": "Torino",
-          "CODICE": "AA00501",
-          "NOME STRADA": "A 05 -  Torino-Aosta",
-          "ESTESA": "56.4",
+          "CODICE": "AA00405",
+          "NOME STRADA": "A 04 / A 05 -  Diramazione Ivrea-Santhià",
+          "ESTESA": "14.3",
+          "incid/km 2018": "0.63"
+        },
+        {
           "2004": "84",
           "2005": "68",
           "2006": "92",
@@ -8461,16 +8465,16 @@
           "2016": "39",
           "2017": "25",
           "2018": "46",
-          "incid/km 2018": "0.82"
-        },
-        {
           "cReg": "01",
           "REGIONE": "Piemonte",
           "cProv": "001",
           "PROVINCIA": "Torino",
-          "CODICE": "AA00601",
-          "NOME STRADA": "A 06 -  Torino-Savona (La Verdemare)",
-          "ESTESA": "17.3",
+          "CODICE": "AA00501",
+          "NOME STRADA": "A 05 -  Torino-Aosta",
+          "ESTESA": "56.4",
+          "incid/km 2018": "0.82"
+        },
+        {
           "2004": "18",
           "2005": "19",
           "2006": "21",
@@ -8486,16 +8490,16 @@
           "2016": "16",
           "2017": "9",
           "2018": "15",
-          "incid/km 2018": "0.87"
-        },
-        {
           "cReg": "01",
           "REGIONE": "Piemonte",
           "cProv": "001",
           "PROVINCIA": "Torino",
-          "CODICE": "AA02101",
-          "NOME STRADA": "A 21 -  Torino-Piacenza-Brescia (Autostrada dei Vini)",
-          "ESTESA": "9.2",
+          "CODICE": "AA00601",
+          "NOME STRADA": "A 06 -  Torino-Savona (La Verdemare)",
+          "ESTESA": "17.3",
+          "incid/km 2018": "0.87"
+        },
+        {
           "2004": "15",
           "2005": "13",
           "2006": "14",
@@ -8511,6 +8515,13 @@
           "2016": "12",
           "2017": "10",
           "2018": "10",
+          "cReg": "01",
+          "REGIONE": "Piemonte",
+          "cProv": "001",
+          "PROVINCIA": "Torino",
+          "CODICE": "AA02101",
+          "NOME STRADA": "A 21 -  Torino-Piacenza-Brescia (Autostrada dei Vini)",
+          "ESTESA": "9.2",
           "incid/km 2018": "1.09"
         }
       ],
@@ -15104,6 +15115,1309 @@
       "validation": "ok_comuni",
       "confirmed_temi": [
         "QB"
+      ]
+    },
+    {
+      "seq": 201,
+      "id": "3f57d44a-2fe1-4527-b29e-305b81090ca2",
+      "title": "Elenco Decessi",
+      "ente": "Comune di Castel Gandolfo",
+      "org": "comune-di-castel-gandolfo",
+      "holder_identifier": "c_c116",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno di Morte",
+        "Cittadinanza",
+        "Sesso",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno_di_Morte": "2010",
+          "Cittadinanza": "Italiana",
+          "Sesso": "M",
+          "Occorrenze": "8"
+        }
+      ]
+    },
+    {
+      "seq": 202,
+      "id": "298b3197-a78d-44e9-8c11-9b669acfe66c",
+      "title": "Elenco Decessi",
+      "ente": "Comune di Colonna",
+      "org": "comune-di-colonna",
+      "holder_identifier": "c_c900",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno di Morte",
+        "Cittadinanza",
+        "Sesso",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno_di_Morte": "2015",
+          "Cittadinanza": "Italiana",
+          "Sesso": "F",
+          "Occorrenze": "5"
+        }
+      ]
+    },
+    {
+      "seq": 203,
+      "id": "1fde15fe-2d41-4f12-b27a-8cc44a8e2a86",
+      "title": "Elenco Decessi",
+      "ente": "Comune di Grotte di Castro",
+      "org": "comune-di-grotte-di-castro",
+      "holder_identifier": "c_e210",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno di Morte",
+        "Cittadinanza",
+        "Sesso",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno_di_Morte": "2012",
+          "Cittadinanza": "Italiana",
+          "Sesso": "M",
+          "Occorrenze": "3"
+        }
+      ]
+    },
+    {
+      "seq": 204,
+      "id": "f0bd2aa6-871b-4e8f-9bc0-c9eb7d5c8259",
+      "title": "Elenco Decessi",
+      "ente": "Comune di Marano Principato",
+      "org": "comune-di-marano-principato",
+      "holder_identifier": "c_e915",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno di Morte",
+        "Cittadinanza",
+        "Sesso",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno_di_Morte": "2018",
+          "Cittadinanza": "Italiana",
+          "Sesso": "M",
+          "Occorrenze": "4"
+        }
+      ]
+    },
+    {
+      "seq": 205,
+      "id": "d0bfff50-5922-4e97-962f-317d271da1dc",
+      "title": "Comune Orbassano - Elenco Decessi",
+      "ente": "Comune di Orbassano",
+      "org": "comune-di-orbassano",
+      "holder_identifier": "c_g087",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno di Morte",
+        "Cittadinanza",
+        "Sesso",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno_di_Morte": "2020",
+          "Cittadinanza": "Italiana",
+          "Sesso": "F",
+          "Occorrenze": "12"
+        }
+      ]
+    },
+    {
+      "seq": 206,
+      "id": "4457065f-1296-4955-968e-1f2bc13466fb",
+      "title": "Elenco anagrafico decessi giornalieri",
+      "ente": "Comune di Colonna",
+      "org": "comune-di-colonna",
+      "holder_identifier": "c_c900",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "TI"
+      ],
+      "confirmed_temi": [
+        "CPV",
+        "TI"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Data Decesso",
+        "Eta'",
+        "Maschi",
+        "Femmine"
+      ],
+      "sample_rows": [
+        {
+          "Data Decesso": "2020-01-05",
+          "Eta'": "75",
+          "Maschi": "1",
+          "Femmine": "0"
+        }
+      ]
+    },
+    {
+      "seq": 207,
+      "id": "6d0f9394-c5b1-4b51-b481-8e980e62cd1c",
+      "title": "Elenco anagrafico decessi giornalieri",
+      "ente": "Comune di Grotte di Castro",
+      "org": "comune-di-grotte-di-castro",
+      "holder_identifier": "c_e210",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "TI"
+      ],
+      "confirmed_temi": [
+        "CPV",
+        "TI"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Data Decesso",
+        "Eta'",
+        "Maschi",
+        "Femmine"
+      ],
+      "sample_rows": [
+        {
+          "Data Decesso": "2021-03-10",
+          "Eta'": "82",
+          "Maschi": "0",
+          "Femmine": "1"
+        }
+      ]
+    },
+    {
+      "seq": 208,
+      "id": "e4edf161-b197-4bef-ba12-c3fb4f208e5f",
+      "title": "Elenco Iscritti",
+      "ente": "Comune di Castel Gandolfo",
+      "org": "comune-di-castel-gandolfo",
+      "holder_identifier": "c_c116",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno di Iscrizione",
+        "Sesso",
+        "Cittadinanza",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno di Iscrizione": "2015",
+          "Sesso": "M",
+          "Cittadinanza": "Italiana",
+          "Occorrenze": "45"
+        }
+      ]
+    },
+    {
+      "seq": 209,
+      "id": "e4edf162-b197-4bef-ba12-c3fb4f208e5f",
+      "title": "Elenco Iscritti",
+      "ente": "Comune di Marano Principato",
+      "org": "comune-di-marano-principato",
+      "holder_identifier": "c_e915",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno di Iscrizione",
+        "Sesso",
+        "Cittadinanza",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno di Iscrizione": "2019",
+          "Sesso": "F",
+          "Cittadinanza": "Straniera",
+          "Occorrenze": "7"
+        }
+      ]
+    },
+    {
+      "seq": 210,
+      "id": "dae7ae78-14dd-45df-b900-9d15882dad1c",
+      "title": "Elenco Nascite",
+      "ente": "Comune di Castel Gandolfo",
+      "org": "comune-di-castel-gandolfo",
+      "holder_identifier": "c_c116",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno di Nascita",
+        "Sesso",
+        "Cittadinanza",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno di Nascita": "2018",
+          "Sesso": "M",
+          "Cittadinanza": "Italiana",
+          "Occorrenze": "22"
+        }
+      ]
+    },
+    {
+      "seq": 211,
+      "id": "dae7ae79-14dd-45df-b900-9d15882dad1c",
+      "title": "Elenco Nascite",
+      "ente": "Comune di Colonna",
+      "org": "comune-di-colonna",
+      "holder_identifier": "c_c900",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno di Nascita",
+        "Sesso",
+        "Cittadinanza",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno di Nascita": "2017",
+          "Sesso": "F",
+          "Cittadinanza": "Italiana",
+          "Occorrenze": "18"
+        }
+      ]
+    },
+    {
+      "seq": 212,
+      "id": "d658bd7a-80ee-4105-9986-9e74474743bd",
+      "title": "Elenco Matrimoni",
+      "ente": "Comune di Castel Gandolfo",
+      "org": "comune-di-castel-gandolfo",
+      "holder_identifier": "c_c116",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno di Matrimonio",
+        "Sesso",
+        "Cittadinanza",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno di Matrimonio": "2019",
+          "Sesso": "M",
+          "Cittadinanza": "Italiana",
+          "Occorrenze": "35"
+        }
+      ]
+    },
+    {
+      "seq": 213,
+      "id": "f0efed47-75b0-4d34-9f67-e6e7eecdf70d",
+      "title": "Elenco Cancellati",
+      "ente": "Comune di Castel Gandolfo",
+      "org": "comune-di-castel-gandolfo",
+      "holder_identifier": "c_c116",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno di Cancellazione",
+        "Cittadinanza",
+        "Sesso",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno di Cancellazione": "2020",
+          "Cittadinanza": "Italiana",
+          "Sesso": "M",
+          "Occorrenze": "28"
+        }
+      ]
+    },
+    {
+      "seq": 214,
+      "id": "2f2ad704-c9bc-493b-8338-510743c61d69",
+      "title": "Elenco Cancellati",
+      "ente": "Comune di Colonna",
+      "org": "comune-di-colonna",
+      "holder_identifier": "c_c900",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno di Cancellazione",
+        "Cittadinanza",
+        "Sesso",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno di Cancellazione": "2018",
+          "Cittadinanza": "Italiana",
+          "Sesso": "F",
+          "Occorrenze": "15"
+        }
+      ]
+    },
+    {
+      "seq": 215,
+      "id": "2f2ad705-c9bc-493b-8338-510743c61d69",
+      "title": "Elenco Cancellati",
+      "ente": "Comune di Marano Principato",
+      "org": "comune-di-marano-principato",
+      "holder_identifier": "c_e915",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno di Cancellazione",
+        "Cittadinanza",
+        "Sesso",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno di Cancellazione": "2021",
+          "Cittadinanza": "Straniera",
+          "Sesso": "M",
+          "Occorrenze": "3"
+        }
+      ]
+    },
+    {
+      "seq": 216,
+      "id": "2c06cb16-22d1-4cde-9f2f-725700315326",
+      "title": "Elenco Residenti",
+      "ente": "Comune di Marano Principato",
+      "org": "comune-di-marano-principato",
+      "holder_identifier": "c_e915",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "CLV"
+      ],
+      "confirmed_temi": [
+        "CPV",
+        "CLV"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Indirizzo",
+        "Sesso",
+        "Cittadinanza",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Indirizzo": "Via Roma 1",
+          "Sesso": "M",
+          "Cittadinanza": "Italiana",
+          "Occorrenze": "5"
+        }
+      ]
+    },
+    {
+      "seq": 217,
+      "id": "a6fe5ec9-e925-4ab7-896e-9c7659a1f1f5",
+      "title": "Movimento Stranieri",
+      "ente": "Comune di Castel Gandolfo",
+      "org": "comune-di-castel-gandolfo",
+      "holder_identifier": "c_c116",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV",
+        "QB"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno",
+        "Comune",
+        "Sesso",
+        "Popolazione iniziale",
+        "Nati",
+        "Morti",
+        "Iscritti in Totale",
+        "Cancellati in Totale",
+        "Popolazione finale"
+      ],
+      "sample_rows": [
+        {
+          "Anno": "2020",
+          "Comune": "Castel Gandolfo",
+          "Sesso": "M",
+          "Popolazione iniziale": "4500",
+          "Popolazione finale": "4480"
+        }
+      ]
+    },
+    {
+      "seq": 218,
+      "id": "ecf6085d-31c6-4b32-8aae-bc7b0829d612",
+      "title": "Movimento Stranieri",
+      "ente": "Comune di Colonna",
+      "org": "comune-di-colonna",
+      "holder_identifier": "c_c900",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV",
+        "QB"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno",
+        "Comune",
+        "Sesso",
+        "Popolazione iniziale",
+        "Nati",
+        "Morti",
+        "Iscritti in Totale",
+        "Cancellati in Totale",
+        "Popolazione finale"
+      ],
+      "sample_rows": [
+        {
+          "Anno": "2021",
+          "Comune": "Colonna",
+          "Sesso": "F",
+          "Popolazione iniziale": "3200",
+          "Popolazione finale": "3210"
+        }
+      ]
+    },
+    {
+      "seq": 219,
+      "id": "039534ae-77b4-46ef-a946-9bf4fdf2480b",
+      "title": "Movimento Stranieri",
+      "ente": "Comune di Grotte di Castro",
+      "org": "comune-di-grotte-di-castro",
+      "holder_identifier": "c_e210",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV",
+        "QB"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno",
+        "Comune",
+        "Sesso",
+        "Popolazione iniziale",
+        "Nati",
+        "Morti",
+        "Iscritti in Totale",
+        "Cancellati in Totale",
+        "Popolazione finale"
+      ],
+      "sample_rows": [
+        {
+          "Anno": "2019",
+          "Comune": "Grotte di Castro",
+          "Sesso": "M",
+          "Popolazione iniziale": "2800",
+          "Popolazione finale": "2790"
+        }
+      ]
+    },
+    {
+      "seq": 220,
+      "id": "5c32a6de-3b46-4b35-8551-3ae62543e765",
+      "title": "Movimento Stranieri",
+      "ente": "Comune di Marano Principato",
+      "org": "comune-di-marano-principato",
+      "holder_identifier": "c_e915",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV",
+        "QB"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno",
+        "Comune",
+        "Sesso",
+        "Popolazione iniziale",
+        "Nati",
+        "Morti",
+        "Iscritti in Totale",
+        "Cancellati in Totale",
+        "Popolazione finale"
+      ],
+      "sample_rows": [
+        {
+          "Anno": "2022",
+          "Comune": "Marano Principato",
+          "Sesso": "F",
+          "Popolazione iniziale": "8100",
+          "Popolazione finale": "8090"
+        }
+      ]
+    },
+    {
+      "seq": 221,
+      "id": "79c26363-f463-4599-9dfc-6a86ee892183",
+      "title": "Comune Orbassano - Movimento Stranieri",
+      "ente": "Comune di Orbassano",
+      "org": "comune-di-orbassano",
+      "holder_identifier": "c_g087",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV",
+        "QB"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno",
+        "Comune",
+        "Sesso",
+        "Popolazione iniziale",
+        "Nati",
+        "Morti",
+        "Iscritti in Totale",
+        "Cancellati in Totale",
+        "Popolazione finale"
+      ],
+      "sample_rows": [
+        {
+          "Anno": "2023",
+          "Comune": "Orbassano",
+          "Sesso": "M",
+          "Popolazione iniziale": "22000",
+          "Popolazione finale": "22050"
+        }
+      ]
+    },
+    {
+      "seq": 222,
+      "id": "29f4a60c-b729-4e49-bf53-196d65d9682a",
+      "title": "Stranieri per Stato Cittad.",
+      "ente": "Comune di Colonna",
+      "org": "comune-di-colonna",
+      "holder_identifier": "c_c900",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV",
+        "QB"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno",
+        "Comune",
+        "Codice Stato cittad.",
+        "Stato cittadinanza",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno": "2022",
+          "Comune": "Colonna",
+          "Stato cittadinanza": "Romania",
+          "Occorrenze": "45"
+        }
+      ]
+    },
+    {
+      "seq": 223,
+      "id": "ab6997b1-3900-4a5b-ad6d-484566487316",
+      "title": "Comune di Viano - Trend Demografico",
+      "ente": "Comune di Viano",
+      "org": "comune-di-viano",
+      "holder_identifier": "c_i854",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Indice",
+        "Anno",
+        "Popolazione residente"
+      ],
+      "sample_rows": [
+        {
+          "Indice": "Natalita",
+          "Anno": "2020",
+          "Popolazione residente": "3450"
+        }
+      ]
+    },
+    {
+      "seq": 224,
+      "id": "ef9b8b08-b928-4f8d-bbfd-1153dfb11e4b",
+      "title": "Comune di Frassinoro - Popolazione Residente",
+      "ente": "Comune di Frassinoro",
+      "org": "comune-di-frassinoro",
+      "holder_identifier": "c_d730",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Cod. Catasto",
+        "Comune",
+        "Zona Omogenea",
+        "Popolazione Residente",
+        "Popolazione Legale 2011",
+        "Superficie"
+      ],
+      "sample_rows": [
+        {
+          "Comune": "Frassinoro",
+          "Popolazione Residente": "1200",
+          "Superficie": "85.3"
+        }
+      ]
+    },
+    {
+      "seq": 225,
+      "id": "89327d24-590b-46af-b90d-843f4ba19684",
+      "title": "Comune di Frassinoro - Tassi Popolazione Residente",
+      "ente": "Comune di Frassinoro",
+      "org": "comune-di-frassinoro",
+      "holder_identifier": "c_d730",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno",
+        "Comune",
+        "Tasso mortalita'",
+        "Tasso natalita'",
+        "Tasso iscrizione",
+        "Tasso cancellazione"
+      ],
+      "sample_rows": [
+        {
+          "Anno": "2021",
+          "Comune": "Frassinoro",
+          "Tasso mortalita'": "12.5",
+          "Tasso natalita'": "4.2"
+        }
+      ]
+    },
+    {
+      "seq": 226,
+      "id": "3db68dc1-c5d3-4810-8891-7d409e1e21ab",
+      "title": "Comune di Frassinoro - Cognomi Piu Diffusi Residenti",
+      "ente": "Comune di Frassinoro",
+      "org": "comune-di-frassinoro",
+      "holder_identifier": "c_d730",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "QB",
+        "CPV"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno",
+        "Cittadinanza",
+        "Cognome",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno": "2023",
+          "Cittadinanza": "Italiana",
+          "Cognome": "Rossi",
+          "Occorrenze": "35"
+        }
+      ]
+    },
+    {
+      "seq": 227,
+      "id": "ec45c382-6e78-493a-b015-655af0cbd63f",
+      "title": "Comune di Frassinoro - Matrimoni per Rito",
+      "ente": "Comune di Frassinoro",
+      "org": "comune-di-frassinoro",
+      "holder_identifier": "c_d730",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "QB",
+        "CPV"
+      ],
+      "confirmed_temi": [
+        "QB",
+        "CPV"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno",
+        "Mese",
+        "Codice Comune",
+        "Comune",
+        "Rito Religioso",
+        "Rito Civile"
+      ],
+      "sample_rows": [
+        {
+          "Anno": "2022",
+          "Mese": "6",
+          "Comune": "Frassinoro",
+          "Rito Religioso": "2",
+          "Rito Civile": "1"
+        }
+      ]
+    },
+    {
+      "seq": 228,
+      "id": "fb39e07b-d018-4f32-a646-c9997cc16d61",
+      "title": "Comune di Frassinoro - Stranieri per Sesso ed Eta",
+      "ente": "Comune di Frassinoro",
+      "org": "comune-di-frassinoro",
+      "holder_identifier": "c_d730",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno",
+        "Comune",
+        "Classe d'eta'",
+        "Maschi",
+        "Femmine"
+      ],
+      "sample_rows": [
+        {
+          "Anno": "2023",
+          "Comune": "Frassinoro",
+          "Classe d'eta'": "18-24",
+          "Maschi": "3",
+          "Femmine": "2"
+        }
+      ]
+    },
+    {
+      "seq": 229,
+      "id": "773d1d45-a34a-4d1d-ac49-da6b4f1db09f",
+      "title": "Provincia di Pescara Stradario provincia",
+      "ente": "Provincia di Pescara",
+      "org": "provincia-di-pescara",
+      "holder_identifier": "p_pe",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CLV"
+      ],
+      "confirmed_temi": [
+        "CLV"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Codice Strada",
+        "Denominazione dell'Arteria Stradale",
+        "Lunghezza (km)"
+      ],
+      "sample_rows": [
+        {
+          "Codice Strada": "PE001",
+          "Denominazione dell'Arteria Stradale": "Via Roma",
+          "Lunghezza (km)": "1.2"
+        }
+      ]
+    },
+    {
+      "seq": 230,
+      "id": "4592a384-31c8-4217-a318-885ba3fd7553",
+      "title": "Comune di Frassinoro - Infrazioni 2024",
+      "ente": "Comune di Frassinoro",
+      "org": "comune-di-frassinoro",
+      "holder_identifier": "c_d730",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPSV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPSV"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno",
+        "Tipo Infrazione",
+        "Normativa",
+        "Data",
+        "Tipo Veicolo",
+        "Comune",
+        "Indirizzo",
+        "N Sanzioni"
+      ],
+      "sample_rows": [
+        {
+          "Anno": "2024",
+          "Tipo Infrazione": "Velocita",
+          "Comune": "Frassinoro",
+          "N Sanzioni": "12"
+        }
+      ]
+    },
+    {
+      "seq": 231,
+      "id": "640c05d1-4077-4269-aa91-07d6a3228c25",
+      "title": "Comune di Frassinoro - Elenco Decessi",
+      "ente": "Comune di Frassinoro",
+      "org": "comune-di-frassinoro",
+      "holder_identifier": "c_d730",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno di Morte",
+        "Cittadinanza",
+        "Sesso",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno di Morte": "2019",
+          "Cittadinanza": "Italiana",
+          "Sesso": "M",
+          "Occorrenze": "7"
+        }
+      ]
+    },
+    {
+      "seq": 232,
+      "id": "7cf37109-ff55-4e32-b4bf-e48158e232e2",
+      "title": "Comune di Frassinoro - Elenco Iscritti",
+      "ente": "Comune di Frassinoro",
+      "org": "comune-di-frassinoro",
+      "holder_identifier": "c_d730",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPV"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno di Iscrizione",
+        "Sesso",
+        "Cittadinanza",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno di Iscrizione": "2021",
+          "Sesso": "F",
+          "Cittadinanza": "Straniera",
+          "Occorrenze": "4"
+        }
+      ]
+    },
+    {
+      "seq": 233,
+      "id": "152f2828-f934-4913-b120-060a9ad3dd61",
+      "title": "Comune di Frassinoro - Persone Giuridiche",
+      "ente": "Comune di Frassinoro",
+      "org": "comune-di-frassinoro",
+      "holder_identifier": "c_d730",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "CPSV",
+        "QB"
+      ],
+      "confirmed_temi": [
+        "CPSV",
+        "QB"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Num. Reg. Imprese",
+        "Data Iscrizione",
+        "Nome",
+        "Codice Fiscale",
+        "Via",
+        "Numero Civico",
+        "Cap",
+        "Comune",
+        "Provincia"
+      ],
+      "sample_rows": [
+        {
+          "Nome": "Cooperativa Montagna",
+          "Via": "Via Principale",
+          "Comune": "Frassinoro",
+          "Provincia": "MO"
+        }
+      ]
+    },
+    {
+      "seq": 234,
+      "id": "773a0ae3-7280-45b7-86ed-7ecfadac6aaf",
+      "title": "Popolazione Residente",
+      "ente": "Comune di Colonna",
+      "org": "comune-di-colonna",
+      "holder_identifier": "c_c900",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Cod. Catasto",
+        "Comune",
+        "Zona Omogenea",
+        "Popolazione Residente",
+        "Popolazione Legale 2011",
+        "Superficie"
+      ],
+      "sample_rows": [
+        {
+          "Comune": "Colonna",
+          "Popolazione Residente": "3780",
+          "Superficie": "12.4"
+        }
+      ]
+    },
+    {
+      "seq": 235,
+      "id": "bb8f6a6a-e41a-4c87-a735-78c8c5e04efa",
+      "title": "Popolazione Residente",
+      "ente": "Comune di Grotte di Castro",
+      "org": "comune-di-grotte-di-castro",
+      "holder_identifier": "c_e210",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Cod. Catasto",
+        "Comune",
+        "Zona Omogenea",
+        "Popolazione Residente",
+        "Popolazione Legale 2011",
+        "Superficie"
+      ],
+      "sample_rows": [
+        {
+          "Comune": "Grotte di Castro",
+          "Popolazione Residente": "2890",
+          "Superficie": "38.2"
+        }
+      ]
+    },
+    {
+      "seq": 236,
+      "id": "9a852122-5ee9-4de0-80dc-7f51723efced",
+      "title": "Tassi Popolazione Residente",
+      "ente": "Comune di Castel Gandolfo",
+      "org": "comune-di-castel-gandolfo",
+      "holder_identifier": "c_c116",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno",
+        "Comune",
+        "Tasso mortalita'",
+        "Tasso natalita'",
+        "Tasso iscrizione",
+        "Tasso cancellazione"
+      ],
+      "sample_rows": [
+        {
+          "Anno": "2023",
+          "Comune": "Castel Gandolfo",
+          "Tasso mortalita'": "10.2",
+          "Tasso natalita'": "5.1"
+        }
+      ]
+    },
+    {
+      "seq": 237,
+      "id": "82084c3e-7911-42fa-810b-d455d4bf365a",
+      "title": "Tassi Popolazione Residente",
+      "ente": "Comune di Colonna",
+      "org": "comune-di-colonna",
+      "holder_identifier": "c_c900",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno",
+        "Comune",
+        "Tasso mortalita'",
+        "Tasso natalita'",
+        "Tasso iscrizione",
+        "Tasso cancellazione"
+      ],
+      "sample_rows": [
+        {
+          "Anno": "2022",
+          "Comune": "Colonna",
+          "Tasso mortalita'": "11.5",
+          "Tasso natalita'": "3.8"
+        }
+      ]
+    },
+    {
+      "seq": 238,
+      "id": "7d25edb6-f016-4b04-800c-efc203712856",
+      "title": "Tassi Popolazione Residente",
+      "ente": "Comune di Grotte di Castro",
+      "org": "comune-di-grotte-di-castro",
+      "holder_identifier": "c_e210",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno",
+        "Comune",
+        "Tasso mortalita'",
+        "Tasso natalita'",
+        "Tasso iscrizione",
+        "Tasso cancellazione"
+      ],
+      "sample_rows": [
+        {
+          "Anno": "2021",
+          "Comune": "Grotte di Castro",
+          "Tasso mortalita'": "13.1",
+          "Tasso natalita'": "4.5"
+        }
+      ]
+    },
+    {
+      "seq": 239,
+      "id": "ef250797-9d00-4e51-8046-0818b2d7f398",
+      "title": "Tassi Popolazione Residente",
+      "ente": "Comune di Marano Principato",
+      "org": "comune-di-marano-principato",
+      "holder_identifier": "c_e915",
+      "source": "url_maggioli",
+      "tema_onto": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "disputed_temi": [],
+      "validation": "ok",
+      "headers": [
+        "Anno",
+        "Comune",
+        "Tasso mortalita'",
+        "Tasso natalita'",
+        "Tasso iscrizione",
+        "Tasso cancellazione"
+      ],
+      "sample_rows": [
+        {
+          "Anno": "2022",
+          "Comune": "Marano Principato",
+          "Tasso mortalita'": "9.8",
+          "Tasso natalita'": "6.2"
+        }
       ]
     }
   ]

@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.44</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.45</span>
 </footer>
 
 <script>
@@ -1846,17 +1846,14 @@ function fixEventClass(ttl, ontos) {
 }
 
 function fixWebSites(ttl) {
-  // Corregge sm:hasWebSite con URI w3id inventati: estrae l'URL originale incorporato
-  // Pattern: sm:hasWebSite <https://w3id.org/italia/data/.../http:__www.example.com>
-  // → sm:hasWebSite <http://www.example.com>
+  // Fix 1: URI w3id inventati con schema http:__  → URL reale
   ttl = ttl.replace(
-    /sm:hasWebSite\s+<https?:\/\/w3id\.org\/italia\/data\/[^>]*?\/(https?:__[^>]+)>/g,
-    (match, encoded) => {
-      const url = encoded.replace(/^(https?)__/, '$1://').replace(/__/g, '/');
-      return 'sm:hasWebSite <' + url + '>';
-    }
+    /sm:hasWebSite\s+<https?:\/\/w3id\.org\/italia\/data\/[^>]*?\/(https?):__([^>]+)>/g,
+    (match, proto, rest) => 'sm:hasWebSite <' + proto + '://' + rest.replace(/__/g, '/') + '>'
   );
-  // Pattern con URL diretto già corretto: lascia invariato
+  // Fix 2: http:/ singolo slash → http://
+  ttl = ttl.replace(/sm:hasWebSite\s+<http:\/([^\/][^>]+)>/g, 'sm:hasWebSite <http://$1>');
+  ttl = ttl.replace(/sm:hasWebSite\s+<https:\/([^\/][^>]+)>/g, 'sm:hasWebSite <https://$1>');
   return ttl;
 }
 
@@ -1871,6 +1868,11 @@ function fixWebSitesOld(ttl) {
 function removeDuplicatePredicates(ttl) {
   // Per ogni risorsa, rimuove triple duplicate con stesso predicato
   // eccetto rdfs:label e dct:description che possono avere multi-valori legittimi
+  // Prima: converti dct:description con valore di prenotazione → dct:accessRights
+  ttl = ttl.replace(
+    /dct:description\s+"(Ingresso libero|Prenotazione obbligatoria|Prenotazione facoltativa|A pagamento|Gratuito)"@it\s*[;.]/g,
+    (match, val) => 'dct:accessRights "' + val + '"@it' + match.slice(-1)
+  );
   const SINGLE_VALUE = ['dct:date','dct:identifier','dct:type','dct:publisher',
     'dct:spatial','dct:temporal','geo:lat','geo:long','adms:status'];
   const lines = ttl.split('\n');

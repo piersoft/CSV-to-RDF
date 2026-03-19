@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.42</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.43</span>
 </footer>
 
 <script>
@@ -561,6 +561,10 @@ ${sample}
 Rispondi SOLO con una lista JSON dei prefissi ontologici più appropriati tra questi valori esatti:
 CLV, COV, CPV, L0, POI, SM, RO, TI, ADMS, ACCO, PARK, GTFS, Cultural-ON, CPSV-AP, QB, SKOS
 
+REGOLE IMPORTANTI:
+- Se le colonne o i valori contengono "CulturalInstituteOrSite", "beniculturali", "mibact", "museo", "biblioteca", "monumento", "patrimonio" → includi SEMPRE "Cultural-ON"
+- Se il CSV ha colonna "subject" con URI di istituti culturali → includi "Cultural-ON"
+
 Esempio di risposta valida: ["ACCO", "CLV", "L0"]
 Non aggiungere spiegazioni, solo il JSON.`;
 
@@ -592,9 +596,13 @@ Non aggiungere spiegazioni, solo il JSON.`;
     if (!match) throw new Error('Risposta non valida');
     const ontos = JSON.parse(match[0]);
 
-    // Attiva le pillole suggerite
+    // Attiva le pillole suggerite — UNIONE con quelle già attive dal deterministico
+    const alreadyActive = new Set([...document.querySelectorAll('#onto-selector .pill.active, #onto-selector-adv .pill.active')]
+      .map(p => p.dataset.onto.toUpperCase()));
+    const aiOntos = new Set(ontos.map(o => o.toUpperCase()));
+    const merged = new Set([...alreadyActive, ...aiOntos]);
     document.querySelectorAll('#onto-selector .pill, #onto-selector-adv .pill').forEach(p => {
-      p.classList.toggle('active', ontos.map(o => o.toUpperCase()).includes(p.dataset.onto.toUpperCase()));
+      p.classList.toggle('active', merged.has(p.dataset.onto.toUpperCase()));
     });
 
     // Apri avanzate se necessario

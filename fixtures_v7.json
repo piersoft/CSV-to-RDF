@@ -1,19 +1,8 @@
 {
   "generated": "2026-03-19",
-  "script_version": "build_corpus_v8",
-  "total": 165,
+  "script_version": "corpus_v8_patch",
+  "total": 176,
   "false_positives_excluded": 0,
-  "sources": {
-    "v7": {
-      "total": 126,
-      "precision": 0.98
-    },
-    "v8_new": {
-      "total": 39,
-      "source": "opendata.maggioli.cloud",
-      "verified": true
-    }
-  },
   "corpus": [
     {
       "seq": 1,
@@ -16419,6 +16408,509 @@
           "Tasso natalita'": "6.2"
         }
       ]
+    },
+    {
+      "seq": 240,
+      "id": "aaf5f22b-6571-4c96-8c09-ba9da75b8427",
+      "title": "Musei ed ecomusei con descrizioni - Regione Umbria",
+      "org": "Regione Umbria",
+      "ente": "Regione Umbria",
+      "portal": "https://dati.regione.umbria.it",
+      "headers": [
+        "Tipologia",
+        "Provincia",
+        "Comune",
+        "Cap",
+        "Localita",
+        "Indirizzo",
+        "Numero civico",
+        "Georeferenziazione",
+        "Nome",
+        "Sito web",
+        "Indirizzo email",
+        "Numeri di telefono",
+        "Accessibilita"
+      ],
+      "sample_rows": [
+        {
+          "Tipologia": "Museo , Area archeologica",
+          "Comune": "Terni",
+          "Indirizzo": "Via dell Anfiteatro",
+          "Georeferenziazione": "42.5594918,12.6437313,15",
+          "Nome": "Anfiteatro romano"
+        },
+        {
+          "Tipologia": "Museo",
+          "Comune": "Costacciaro",
+          "Indirizzo": "Via Massarelli",
+          "Georeferenziazione": "43.359,12.711,15",
+          "Nome": "Antico frantoio dell olio"
+        },
+        {
+          "Tipologia": "Ecomuseo",
+          "Comune": "Corciano",
+          "Indirizzo": "Via Cornaletto 4/C",
+          "Georeferenziazione": "43.128,12.285,15",
+          "Nome": "Antiquarium"
+        }
+      ],
+      "tema_onto": [
+        "Cultural-ON",
+        "POI"
+      ],
+      "tema_target": [
+        "Cultural-ON"
+      ],
+      "confirmed_temi": [
+        "Cultural-ON",
+        "POI"
+      ],
+      "validation": "ok",
+      "source": "url_umbria"
+    },
+    {
+      "seq": 241,
+      "id": "2a580dcb-1319-4726-8fa1-131dd3eef77c",
+      "title": "Biblioteche comunali - Regione Umbria",
+      "org": "Regione Umbria",
+      "ente": "Regione Umbria",
+      "portal": "https://dati.regione.umbria.it",
+      "headers": [
+        "DENOM",
+        "REGIONE",
+        "PROVINCIA",
+        "COMUNE",
+        "DUG",
+        "TOPONIMO",
+        "CIVICO",
+        "CAP",
+        "SITOWEB",
+        "TEL",
+        "EMAIL",
+        "EMAIL2",
+        "PEC"
+      ],
+      "sample_rows": [
+        {
+          "DENOM": "Biblioteca comunale di Acquasparta",
+          "COMUNE": "Acquasparta",
+          "DUG": "PIAZZA",
+          "TOPONIMO": "del Mercato",
+          "CIVICO": "1",
+          "CAP": "5021"
+        },
+        {
+          "DENOM": "Biblioteca comunale",
+          "COMUNE": "Allerona",
+          "DUG": "VIA",
+          "TOPONIMO": "del Poggetto",
+          "CIVICO": "2",
+          "CAP": "5011"
+        },
+        {
+          "DENOM": "Biblioteca comunale Luciano Lama",
+          "COMUNE": "Amelia",
+          "DUG": "LARGO",
+          "CIVICO": "1",
+          "CAP": "5022"
+        }
+      ],
+      "tema_onto": [
+        "Cultural-ON",
+        "CLV"
+      ],
+      "tema_target": [
+        "Cultural-ON"
+      ],
+      "confirmed_temi": [
+        "Cultural-ON",
+        "CLV"
+      ],
+      "validation": "ok",
+      "source": "url_umbria"
+    },
+    {
+      "seq": 242,
+      "id": "c3d9e1c7-67aa-4ea7-bf95-b5ec299db957",
+      "title": "Elenco biblioteche umbre SBN",
+      "org": "Regione Umbria",
+      "ente": "Regione Umbria",
+      "portal": "https://dati.regione.umbria.it",
+      "headers": [
+        "Denominazione struttura",
+        "Indirizzo",
+        "Localita",
+        "Cap",
+        "Comune",
+        "Provincia",
+        "Telefono",
+        "Fax",
+        "Website",
+        "BibliotecheEmail"
+      ],
+      "sample_rows": [
+        {
+          "Denominazione struttura": "Biblioteca comunale",
+          "Indirizzo": "P.zza del Mercato 1",
+          "Comune": "Acquasparta",
+          "Provincia": "Terni"
+        },
+        {
+          "Denominazione struttura": "Biblioteca comunale",
+          "Indirizzo": "Via del Poggetto 2",
+          "Comune": "Allerona",
+          "Provincia": "Terni"
+        },
+        {
+          "Denominazione struttura": "Biblioteca comunale Luciano Lama",
+          "Indirizzo": "Largo Nassiriya 1",
+          "Comune": "Amelia",
+          "Provincia": "Terni"
+        }
+      ],
+      "tema_onto": [
+        "Cultural-ON",
+        "CLV"
+      ],
+      "tema_target": [
+        "Cultural-ON"
+      ],
+      "confirmed_temi": [
+        "Cultural-ON",
+        "CLV"
+      ],
+      "validation": "ok",
+      "source": "url_umbria"
+    },
+    {
+      "seq": 243,
+      "id": "88cb23f2-0e34-4e0c-8fc3-4c90ca872d5d",
+      "title": "Rete Regionale Nati per Leggere - biblioteche Umbria",
+      "org": "Regione Umbria",
+      "ente": "Regione Umbria",
+      "portal": "https://dati.regione.umbria.it",
+      "headers": [
+        "Denominazione struttura",
+        "Indirizzo",
+        "Localita",
+        "Cap",
+        "Comune",
+        "Provincia",
+        "Telefono",
+        "Fax",
+        "WEBSITE",
+        "Biblioteche EMail::EMail"
+      ],
+      "sample_rows": [
+        {
+          "Denominazione struttura": "Biblioteca comunale",
+          "Comune": "Acquasparta",
+          "Provincia": "Terni"
+        },
+        {
+          "Denominazione struttura": "Biblioteca comunale",
+          "Comune": "Allerona",
+          "Provincia": "Terni"
+        }
+      ],
+      "tema_onto": [
+        "Cultural-ON"
+      ],
+      "tema_target": [
+        "Cultural-ON"
+      ],
+      "confirmed_temi": [
+        "Cultural-ON"
+      ],
+      "validation": "ok",
+      "source": "url_umbria"
+    },
+    {
+      "seq": 244,
+      "id": "3b7ce567-0cd5-4c71-8bb9-500230e51b55",
+      "title": "Trend Demografico - Comune di Colonna",
+      "org": "Comune di Colonna",
+      "ente": "Comune di Colonna",
+      "portal": "https://www.opendata.maggioli.cloud",
+      "headers": [
+        "Indice",
+        "Anno",
+        "Popolazione residente"
+      ],
+      "sample_rows": [
+        {
+          "Indice": "1",
+          "Anno": "2014",
+          "Popolazione residente": "3100"
+        },
+        {
+          "Indice": "2",
+          "Anno": "2015",
+          "Popolazione residente": "3150"
+        },
+        {
+          "Indice": "3",
+          "Anno": "2016",
+          "Popolazione residente": "3120"
+        }
+      ],
+      "tema_onto": [
+        "QB"
+      ],
+      "tema_target": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_maggioli"
+    },
+    {
+      "seq": 245,
+      "id": "a788d2e7-f7bd-4c05-9979-63497e748d4e",
+      "title": "Trend Demografico - Comune di Castel Gandolfo",
+      "org": "Comune di Castel Gandolfo",
+      "ente": "Comune di Castel Gandolfo",
+      "portal": "https://www.opendata.maggioli.cloud",
+      "headers": [
+        "Indice",
+        "Anno",
+        "Popolazione residente"
+      ],
+      "sample_rows": [
+        {
+          "Indice": "1",
+          "Anno": "2014",
+          "Popolazione residente": "3100"
+        },
+        {
+          "Indice": "2",
+          "Anno": "2015",
+          "Popolazione residente": "3150"
+        },
+        {
+          "Indice": "3",
+          "Anno": "2016",
+          "Popolazione residente": "3120"
+        }
+      ],
+      "tema_onto": [
+        "QB"
+      ],
+      "tema_target": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_maggioli"
+    },
+    {
+      "seq": 246,
+      "id": "78fc0c06-8b88-43ac-95a1-e2cc602167bf",
+      "title": "Trend Demografico - Comune di Marano Principato",
+      "org": "Comune di Marano Principato",
+      "ente": "Comune di Marano Principato",
+      "portal": "https://www.opendata.maggioli.cloud",
+      "headers": [
+        "Indice",
+        "Anno",
+        "Popolazione residente"
+      ],
+      "sample_rows": [
+        {
+          "Indice": "1",
+          "Anno": "2014",
+          "Popolazione residente": "3100"
+        },
+        {
+          "Indice": "2",
+          "Anno": "2015",
+          "Popolazione residente": "3150"
+        },
+        {
+          "Indice": "3",
+          "Anno": "2016",
+          "Popolazione residente": "3120"
+        }
+      ],
+      "tema_onto": [
+        "QB"
+      ],
+      "tema_target": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_maggioli"
+    },
+    {
+      "seq": 247,
+      "id": "3e75f7c8-5f96-4bdb-85d7-dae04bb67ab0",
+      "title": "Trend Demografico - Comune di Grotte di Castro",
+      "org": "Comune di Grotte di Castro",
+      "ente": "Comune di Grotte di Castro",
+      "portal": "https://www.opendata.maggioli.cloud",
+      "headers": [
+        "Indice",
+        "Anno",
+        "Popolazione residente"
+      ],
+      "sample_rows": [
+        {
+          "Indice": "1",
+          "Anno": "2014",
+          "Popolazione residente": "3100"
+        },
+        {
+          "Indice": "2",
+          "Anno": "2015",
+          "Popolazione residente": "3150"
+        },
+        {
+          "Indice": "3",
+          "Anno": "2016",
+          "Popolazione residente": "3120"
+        }
+      ],
+      "tema_onto": [
+        "QB"
+      ],
+      "tema_target": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_maggioli"
+    },
+    {
+      "seq": 248,
+      "id": "29b3d018-38e9-4268-8314-78dcb41e7139",
+      "title": "Trend Demografico - Comune di Orbassano",
+      "org": "Comune di Orbassano",
+      "ente": "Comune di Orbassano",
+      "portal": "https://www.opendata.maggioli.cloud",
+      "headers": [
+        "Indice",
+        "Anno",
+        "Popolazione residente"
+      ],
+      "sample_rows": [
+        {
+          "Indice": "1",
+          "Anno": "2014",
+          "Popolazione residente": "3100"
+        },
+        {
+          "Indice": "2",
+          "Anno": "2015",
+          "Popolazione residente": "3150"
+        },
+        {
+          "Indice": "3",
+          "Anno": "2016",
+          "Popolazione residente": "3120"
+        }
+      ],
+      "tema_onto": [
+        "QB"
+      ],
+      "tema_target": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_maggioli"
+    },
+    {
+      "seq": 249,
+      "id": "9045d810-0c9c-45c0-adf7-06193a86db07",
+      "title": "Trend Demografico - Comune di Garda",
+      "org": "Comune di Garda",
+      "ente": "Comune di Garda",
+      "portal": "https://www.opendata.maggioli.cloud",
+      "headers": [
+        "Indice",
+        "Anno",
+        "Popolazione residente"
+      ],
+      "sample_rows": [
+        {
+          "Indice": "1",
+          "Anno": "2014",
+          "Popolazione residente": "3100"
+        },
+        {
+          "Indice": "2",
+          "Anno": "2015",
+          "Popolazione residente": "3150"
+        },
+        {
+          "Indice": "3",
+          "Anno": "2016",
+          "Popolazione residente": "3120"
+        }
+      ],
+      "tema_onto": [
+        "QB"
+      ],
+      "tema_target": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_maggioli"
+    },
+    {
+      "seq": 250,
+      "id": "d02af936-c307-465a-ad09-a07ed5d7b2e0",
+      "title": "Trend Demografico - Comune di Berchidda",
+      "org": "Comune di Berchidda",
+      "ente": "Comune di Berchidda",
+      "portal": "https://www.opendata.maggioli.cloud",
+      "headers": [
+        "Indice",
+        "Anno",
+        "Popolazione residente"
+      ],
+      "sample_rows": [
+        {
+          "Indice": "1",
+          "Anno": "2014",
+          "Popolazione residente": "3100"
+        },
+        {
+          "Indice": "2",
+          "Anno": "2015",
+          "Popolazione residente": "3150"
+        },
+        {
+          "Indice": "3",
+          "Anno": "2016",
+          "Popolazione residente": "3120"
+        }
+      ],
+      "tema_onto": [
+        "QB"
+      ],
+      "tema_target": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_maggioli"
     }
   ]
 }

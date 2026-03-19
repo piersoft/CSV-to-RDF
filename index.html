@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.55</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.56</span>
 </footer>
 
 <script>
@@ -2490,7 +2490,7 @@ async function validateTTL() {
 
   // ── 6. dct:publisher MANCANTE ─────────────────────────────────────────
   let missingPublisher = 0;
-  const SKIP_CLASSES = /Telephone|Address|Distribution|Agent|Organization$|ConceptScheme|Concept$/;
+  const SKIP_CLASSES = /Telephone|Address|Agent$|ConceptScheme|Concept$/;  // Distribution NON skippata — deve avere dct:publisher per DCAT-AP IT
   for (const m of ttl.matchAll(/<(https?:\/\/[^>]+)>\s+a\s+([^;.\n]+)/g)) {
     const cls = m[2].trim();
     if (SKIP_CLASSES.test(cls)) continue;

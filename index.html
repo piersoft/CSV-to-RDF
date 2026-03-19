@@ -2492,6 +2492,16 @@ async function validateTTL() {
   const ttl = document.getElementById('ttl-output').value;
   if (!ttl.trim()) { showStatus('⚠ Nessun TTL da validare.', 'error'); return; }
 
+  // Determina se il TTL e' un contesto DCAT (dcat:Distribution/Dataset)
+  // oppure un'ontologia PA (TI, Cultural-ON, POI, QB, etc.)
+  // dct:publisher e' previsto SOLO su dcat:Dataset, non su dcat:Distribution
+  // ne' su soggetti di ontologie PA come l0:EventOrSituation, poi:PointOfInterest
+  const isDCATContext = ttl.includes('dcat:Distribution') ||
+    (ttl.includes('dcat:Dataset') &&
+     !ttl.includes('l0:EventOrSituation') &&
+     !ttl.includes('poi:PointOfInterest') &&
+     !ttl.includes('ti:startTime'));
+
   const errors   = [];
   const warnings = [];
   const infos    = [];
@@ -2565,9 +2575,9 @@ async function validateTTL() {
   }
   // Segnala solo se il publisher manca su TUTTE le risorse (non parzialmente — può essere stile LLM)
   if (missingPublisher > 0 && missingPublisher === totalPrincipal)
-    warnings.push(`dct:publisher assente su tutte le ${missingPublisher} risorse principali`);
+    if (isDCATContext) warnings.push(`dct:publisher assente su tutte le ${missingPublisher} risorse principali`);
   else if (missingPublisher > 0 && missingPublisher > totalPrincipal * 0.5)
-    warnings.push(`dct:publisher mancante su ${missingPublisher}/${totalPrincipal} risorse — il LLM lo ha omesso sulle righe successive`);
+    if (isDCATContext) warnings.push(`dct:publisher mancante su ${missingPublisher}/${totalPrincipal} risorse — il LLM lo ha omesso sulle righe successive`);
 
   // ── 7. dct:description "voice" ────────────────────────────────────────
   if (/dct:description\s+"voice"/.test(ttl))
@@ -2576,7 +2586,7 @@ async function validateTTL() {
   // ── 7b. dct:publisher come literal (dovrebbe essere URI) ───────────────
   const pubLiterals = (ttl.match(/dct:publisher\s+"[^"]+"/g) || []).length;
   if (pubLiterals > 0)
-    warnings.push(`dct:publisher con valore literal (${pubLiterals}×) — dovrebbe essere URI <...>`);
+    if (isDCATContext) warnings.push(`dct:publisher con valore literal (${pubLiterals}×) — dovrebbe essere URI <...>`);
 
   // ── 7c. dct:date usato al posto di dct:issued ────────────────────────
   if (/\bdct:date\b/.test(ttl) && /xsd:date/.test(ttl))

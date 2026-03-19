@@ -90,7 +90,7 @@ Il corpus copre le principali ontologie del patrimonio semantico nazionale:
 | **QB** — DataCube | 87 | Dati statistici e serie storiche |
 | **POI** — Points of Interest | 46 | Luoghi geolocalizzati |
 
-Quando carichi un CSV, il corpus viene interrogato in tempo reale via **Jaccard similarity** sugli header: i dataset più simili vengono mostrati nel pannello blu con badge di confidenza e link diretto a [dati.gov.it](https://www.dati.gov.it).
+Quando incolli un CSV e clicchi **👁 Anteprima** (oppure carichi un file), il corpus viene interrogato in tempo reale via **Jaccard similarity** sugli header: i dataset più simili vengono mostrati nel pannello blu con badge di confidenza e link diretto a [dati.gov.it](https://www.dati.gov.it).
 
 Le fixture del corpus sono disponibili in [`fixtures_v7.json`](./fixtures_v7.json) e vengono caricate nel browser — nessuna chiamata a server esterni.
 

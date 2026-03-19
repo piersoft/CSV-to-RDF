@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.57</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.58</span>
 </footer>
 
 <script>
@@ -2492,13 +2492,13 @@ async function validateTTL() {
 
   // ── 6. dct:publisher MANCANTE (solo su risorse non-Distribution) e ERRATO su Distribution
   // dct:publisher NON è previsto su dcat:Distribution per DCAT-AP — va su dcat:Dataset/Agent
-  const wrongPublisherOnDistrib = (ttl.match(/a\s+dcat:Distribution[\s\S]*?dct:publisher/g) || []).length;
+  const wrongPublisherOnDistrib = ttl.split('\n').filter(l => /a\s+dcat:Distribution/.test(l) && /dct:publisher/.test(l)).length
   if (wrongPublisherOnDistrib > 0)
     warnings.push(`dct:publisher su dcat:Distribution non previsto da DCAT-AP (${wrongPublisherOnDistrib}×) — va su dcat:Dataset`);
 
   // ── 6b. dct:publisher MANCANTE (solo su risorse non-Distribution) ─────
   let missingPublisher = 0;
-  const SKIP_CLASSES = /Telephone|Address|Distribution|Agent$|ConceptScheme|Concept$/;
+  const SKIP_CLASSES = /Telephone|Address|Distribution|Agent$|ConceptScheme|Concept$|PublicOrganization|Organization$/;
   for (const m of ttl.matchAll(/<(https?:\/\/[^>]+)>\s+a\s+([^;.\n]+)/g)) {
     const cls = m[2].trim();
     if (SKIP_CLASSES.test(cls)) continue;
@@ -2565,12 +2565,16 @@ async function validateTTL() {
     warnings.push('l0:Object con dct:date presente — verifica se dovrebbe essere l0:EventOrSituation');
 
   // ── 13. PREDICATI DUPLICATI SINGLE-VALUE ──────────────────────────────
-  const SINGLE_VAL = ['dct:identifier','dct:type','dct:publisher','geo:lat','geo:long','dct:date','dcat:mediaType'];
-  for (const blk of ttl.split('\n\n')) {
+  const SINGLE_VAL = ['dct:identifier','dct:type','geo:lat','geo:long','dct:date','dcat:mediaType'];
+  // Split robusto: TTL espanso ha blocchi separati da riga vuota, TTL compatto ha 1 risorsa per riga
+  const _ttlBlocks = ttl.includes('\n\n')
+    ? ttl.split('\n\n')
+    : ttl.split('\n').filter(l => l.trim().startsWith('<'));
+  for (const blk of _ttlBlocks) {
     for (const pred of SINGLE_VAL) {
-      const re = new RegExp(`\\b${pred.replace(':','\\:')}\\b`, 'g');
-      const n = (blk.match(re) || []).length;
-      if (n > 1) warnings.push(`"${pred}" duplicato (${n}×) nello stesso blocco`);
+      const _re = new RegExp('\\b' + pred.replace(':','\\:') + '\\b', 'g');
+      const n = (blk.match(_re) || []).length;
+      if (n > 1) warnings.push('"' + pred + '" duplicato (' + n + '\u00d7) nello stesso blocco');
     }
   }
 

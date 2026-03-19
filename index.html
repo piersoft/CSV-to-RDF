@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.53</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.55</span>
 </footer>
 
 <script>
@@ -1830,6 +1830,8 @@ REGOLE:
 - Usa SOLO questi prefissi: owl, clv, cov, cpv, l0, poi, ro, ti, sm, dcat, dct, foaf, geo, xsd, rdfs, vcard, skos, schema, adms, qb, sdmx-dimension, sdmx-measure
 - Per eventi/spettacoli/manifestazioni usa SEMPRE l0:EventOrSituation come classe, mai l0:Object
 - Per ogni risorsa includi SEMPRE dct:publisher con il nome dell'organizzatore — non ometterlo mai
+- La colonna numero_righe/numero_record indica il conteggio delle righe, NON la dimensione in byte: usa dct:extent, MAI dcat:byteSize
+- dcat:byteSize si usa SOLO per la dimensione del file in byte — se non hai quel dato, ometti la proprietà con il nome dell'organizzatore — non ometterlo mai
 - Usa dct:type per il tipo di relazione (Coorganizzazione/Patrocinio/Pagamento), dct:publisher per l'organizzatore, MAI usare dct:description per entrambi
 - Output COMPATTO: niente righe vuote, niente commenti, niente @prefix, niente markdown
 - Colonne il cui nome inizia con un numero seguito da trattino (es. "1-LISTA", "9-+EUROPA") sono intestazioni di risultati elettorali: usa sdmx-measure:obsValue con rdfs:label del nome colonna
@@ -2217,7 +2219,8 @@ REGOLE ASSOLUTE:
 6. Se il valore è vuoto ometti la tripla completamente
 7. Per eventi/spettacoli usa SEMPRE l0:EventOrSituation come classe, mai l0:Object
 8. Includi dct:publisher per OGNI risorsa generata — non omettere mai questa proprietà
-9. Usa dct:type per il tipo di relazione (Coorganizzazione/Patrocinio/Pagamento), dct:publisher per l'organizzatore`;
+9. Usa dct:type per il tipo di relazione (Coorganizzazione/Patrocinio/Pagamento), dct:publisher per l'organizzatore
+10. numero_righe/numero_record indica righe CSV → usa dct:extent, MAI dcat:byteSize (riservato alla dimensione in byte)`;
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -2432,199 +2435,241 @@ function deduplicatePrefixes(ttl) {
 // ── VALIDAZIONE SU SCHEMA.GOV.IT ─────────────────────────────────────────────
 async function validateTTL() {
   const ttl = document.getElementById('ttl-output').value;
-  if (!ttl.trim()) return;
+  if (!ttl.trim()) { showStatus('⚠ Nessun TTL da validare.', 'error'); return; }
 
-  // Estrai tutti i prefissi dichiarati
+  const errors   = [];
+  const warnings = [];
+  const infos    = [];
+
+  // ── 1. STRUTTURA BASE ────────────────────────────────────────────────
   const prefixMap = {};
   const prefixLines = ttl.match(/@prefix\s+(\S+):\s+<([^>]+)>/g) || [];
   for (const line of prefixLines) {
     const m = line.match(/@prefix\s+(\S+):\s+<([^>]+)>/);
-    if (m) prefixMap[m[1]] = m[2];
+    if (m) prefixMap[m[1].replace(':','')] = m[2];
+  }
+  if (prefixLines.length === 0) errors.push('Nessun @prefix dichiarato');
+
+  // ── 2. BACKTICK / MARKDOWN ───────────────────────────────────────────
+  if (ttl.includes('```')) errors.push('Presenti backtick (```) — output non valido');
+
+  // ── 3. PREFISSI NON DICHIARATI ────────────────────────────────────────
+  const prefixesUsed = new Set();
+  for (const m of ttl.matchAll(/\b([a-zA-Z][a-zA-Z0-9_-]*):[A-Za-z]/g)) {
+    if (!['http','https','mailto','urn','ftp'].includes(m[1])) prefixesUsed.add(m[1]);
+  }
+  for (const p of prefixesUsed) {
+    if (!prefixMap[p]) errors.push(`Prefisso non dichiarato: "${p}:"`);
   }
 
-  // Estrai tutte le classi usate (pattern: prefisso:Classe dopo "a ")
-  const classesUsed = new Set();
-  const classMatches = ttl.matchAll(/a\s+([a-zA-Z_][\w-]*:[A-Z][a-zA-Z]*)/g);
-  for (const m of classMatches) classesUsed.add(m[1]);
-
-  // Estrai proprietà usate (pattern: prefisso:proprietà prima di spazio/valore)
-  const propsUsed = new Set();
-  const propMatches = ttl.matchAll(/^\s+([a-zA-Z_][\w-]*:[a-z][a-zA-Z]*)\s+/gm);
-  for (const m of propMatches) propsUsed.add(m[1]);
-
-  const allTerms = [...classesUsed, ...propsUsed].filter(t => {
-    const prefix = t.split(':')[0];
-    // Solo termini delle ontologie italiane w3id.org/italia
-    return prefixMap[prefix] && prefixMap[prefix].includes('w3id.org/italia');
-  });
-
-  if (allTerms.length === 0) {
-    showStatus('ℹ Nessun termine italiano da validare (prefissi w3id.org/italia).', 'info');
-    return;
+  // ── 4. URI MAL FORMATI ────────────────────────────────────────────────
+  for (const m of ttl.matchAll(/<([^>]+)>/g)) {
+    const uri = m[1];
+    if (uri.includes('http:/') && !uri.includes('http://'))
+      errors.push(`URI slash singolo: <${uri.slice(0,70)}>`);
+    if (uri.includes('http:__') || uri.includes('https:__'))
+      errors.push(`URI con __ non decodificato: <${uri.slice(0,70)}>`);
+    if (/\s/.test(uri))
+      errors.push(`URI con spazio interno: <${uri.slice(0,70)}>`);
   }
 
-  showStatus(`🔍 Valido ${allTerms.length} termini su schema.gov.it SPARQL...`, 'info');
-
-  // SPARQL endpoint di schema.gov.it
-  const sparqlEndpoint = 'https://ontopia.collab.recipes/sparql';
-  const results = {};
-
-  // Batch: verifica ogni termine con ASK query
-  await Promise.allSettled(allTerms.map(async term => {
-    const [prefix, local] = term.split(':');
-    const fullUri = prefixMap[prefix] + local;
-    const query = `ASK { <${fullUri}> ?p ?o }`;
-    const url = `${sparqlEndpoint}?query=${encodeURIComponent(query)}&format=json`;
-    try {
-      const res = await fetch(url, { headers: { 'Accept': 'application/sparql-results+json' } });
-      if (res.ok) {
-        const data = await res.json();
-        results[term] = data.boolean ? '✓' : '✗';
-      } else {
-        results[term] = '?';
-      }
-    } catch {
-      results[term] = '?';
+  // ── 5. TRIPLE SINTATTICAMENTE INCOMPLETE (punto/punto-e-virgola) ──────
+  const openBlocks = (ttl.match(/\ba\s+\w+:\w+\s*[^;.\n]/gm) || []).length;
+  // Semplice check: ogni soggetto deve avere un terminatore
+  const lines = ttl.split('\n');
+  let inBlock = false;
+  let blockLines = 0;
+  let lastSubject = '';
+  for (const line of lines) {
+    if (/^<https?/.test(line)) { inBlock = true; blockLines = 0; lastSubject = line.slice(0,60); }
+    if (inBlock) blockLines++;
+    if (inBlock && (line.trimEnd().endsWith('.') || line.trimEnd().endsWith(';'))) {
+      if (line.trimEnd().endsWith('.')) inBlock = false;
     }
-  }));
+  }
 
-  // Mostra report
-  showValidationReport(results, prefixMap);
+  // ── 6. dct:publisher MANCANTE ─────────────────────────────────────────
+  let missingPublisher = 0;
+  const SKIP_CLASSES = /Telephone|Address|Distribution|Agent|Organization$|ConceptScheme|Concept$/;
+  for (const m of ttl.matchAll(/<(https?:\/\/[^>]+)>\s+a\s+([^;.\n]+)/g)) {
+    const cls = m[2].trim();
+    if (SKIP_CLASSES.test(cls)) continue;
+    const blockStart = m.index;
+    const blockEnd = ttl.indexOf('\n\n', blockStart);
+    const blk = ttl.slice(blockStart, blockEnd > 0 ? blockEnd : blockStart+2000);
+    if (!blk.includes('dct:publisher')) missingPublisher++;
+  }
+  if (missingPublisher > 0)
+    warnings.push(`dct:publisher mancante su ${missingPublisher} risorse principali`);
+
+  // ── 7. dct:description "voice" ────────────────────────────────────────
+  if (/dct:description\s+"voice"/.test(ttl))
+    errors.push('dct:description "voice" inventato dal LLM — da rimuovere');
+
+  // ── 8. rdfs:label NUMERICO → dovrebbe essere dct:extent ───────────────
+  const numLabels = (ttl.match(/rdfs:label\s+"[\d]+"(\^\^xsd:\w+)?/g) || []).length;
+  if (numLabels > 0)
+    warnings.push(`rdfs:label con valore numerico puro (${numLabels}×) — usa dct:extent`);
+
+  // ── 9. dcat:byteSize con numero di righe ──────────────────────────────
+  // Se tutti i valori byteSize sono < 100M ma il dataset è un catalogo CSV
+  const byteSizes = [...ttl.matchAll(/dcat:byteSize\s+"(\d+)"/g)].map(m => parseInt(m[1]));
+  if (byteSizes.length > 0) {
+    const allSmall = byteSizes.every(n => n < 10000000);
+    const hasFormat = /dct:format\s+"(csv|json|ttl)"/.test(ttl);
+    if (hasFormat && allSmall && byteSizes.length > 3)
+      warnings.push(`dcat:byteSize sembra contenere numero di righe, non byte — usa dct:extent`);
+  }
+
+  // ── 10. sm:hasWebSite con URI w3id inventato ──────────────────────────
+  const fakeWeb = (ttl.match(/sm:hasWebSite\s+<https?:\/\/w3id\.org\/italia\/data\/[^>]+>/g) || [])
+    .filter(u => !/(distribution|asset|catalog)/.test(u));
+  if (fakeWeb.length > 0)
+    warnings.push(`sm:hasWebSite con URI w3id inventato (${fakeWeb.length}×) — dovrebbe essere URL reale`);
+
+  // ── 11. CLASSE INCOERENTE CON TIPO URI ────────────────────────────────
+  for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/event\/[^>]*)>\s+a\s+([^;.\n]+)/g)) {
+    const cls = m[2].trim();
+    if (!cls.includes('EventOrSituation'))
+      warnings.push(`URI /event/ ma classe "${cls.slice(0,50)}" — atteso l0:EventOrSituation`);
+  }
+  for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/cultural-institute\/[^>]*)>\s+a\s+([^;.\n]+)/g)) {
+    const cls = m[2].trim();
+    if (!cls.includes('CulturalInstituteOrSite'))
+      warnings.push(`URI /cultural-institute/ ma classe "${cls.slice(0,50)}" — atteso cultural-on:CulturalInstituteOrSite`);
+  }
+  for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/observation\/[^>]*)>\s+a\s+([^;.\n]+)/g)) {
+    const cls = m[2].trim();
+    if (!cls.includes('qb:Observation'))
+      warnings.push(`URI /observation/ ma classe "${cls.slice(0,50)}" — atteso qb:Observation`);
+  }
+  for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/point-of-interest\/[^>]*)>\s+a\s+([^;.\n]+)/g)) {
+    const cls = m[2].trim();
+    if (!cls.includes('poi:PointOfInterest'))
+      warnings.push(`URI /point-of-interest/ ma classe "${cls.slice(0,50)}" — atteso poi:PointOfInterest`);
+  }
+
+  // ── 12. l0:Object usato dove ci sono date → probabilmente evento ───────
+  const hasL0Object = /\ba l0:Object\b/.test(ttl);
+  const hasDate = /\bdct:date\b/.test(ttl);
+  const hasEventURI = /\/event\//.test(ttl);
+  if (hasL0Object && hasDate && !hasEventURI)
+    warnings.push('l0:Object con dct:date presente — verifica se dovrebbe essere l0:EventOrSituation');
+
+  // ── 13. PREDICATI DUPLICATI SINGLE-VALUE ──────────────────────────────
+  const SINGLE_VAL = ['dct:identifier','dct:type','dct:publisher','geo:lat','geo:long','dct:date','dcat:mediaType'];
+  for (const blk of ttl.split('\n\n')) {
+    for (const pred of SINGLE_VAL) {
+      const re = new RegExp(`\\b${pred.replace(':','\\:')}\\b`, 'g');
+      const n = (blk.match(re) || []).length;
+      if (n > 1) warnings.push(`"${pred}" duplicato (${n}×) nello stesso blocco`);
+    }
+  }
+
+  // ── 14. dct:description con solo CAP (4-5 cifre isolate) ──────────────
+  const capDesc = (ttl.match(/dct:description\s+"[\d]{4,5}"\s*[;.]/g) || []).length;
+  if (capDesc > 0)
+    warnings.push(`dct:description con solo CAP numerico (${capDesc}×) — usa skos:notation`);
+
+  // ── 15. COORDINATE FUORI ITALIA ───────────────────────────────────────
+  for (const m of ttl.matchAll(/geo:lat\s+"([^"]+)"/g)) {
+    const lat = parseFloat(m[1]);
+    if (!isNaN(lat) && (lat < 35 || lat > 48))
+      warnings.push(`geo:lat="${m[1]}" fuori dal range Italia (35-48)`);
+  }
+  for (const m of ttl.matchAll(/geo:long\s+"([^"]+)"/g)) {
+    const lon = parseFloat(m[1]);
+    if (!isNaN(lon) && (lon < 6 || lon > 19))
+      warnings.push(`geo:long="${m[1]}" fuori dal range Italia (6-19)`);
+  }
+
+  // ── 16. LITERAL SENZA LANGUAGE TAG su proprietà multilingua ──────────
+  const noLangProps = ['rdfs:label','dct:title','l0:name'];
+  for (const prop of noLangProps) {
+    const re = new RegExp(`\\b${prop.replace(':','\\:')}\\s+"[^"@]+"(?!@)(?!\\^\\^)`, 'g');
+    const hits = (ttl.match(re) || []).length;
+    if (hits > 0)
+      warnings.push(`${prop} senza @lang tag (${hits}×) — aggiungi @it`);
+  }
+
+  // ── 17. QB: sdmx-measure:obsValue senza xsd:decimal ──────────────────
+  const obsNoType = (ttl.match(/sdmx-measure:obsValue\s+"[^"]*"(?!\^\^xsd:decimal)/g) || []).length;
+  if (obsNoType > 0)
+    warnings.push(`sdmx-measure:obsValue senza ^^xsd:decimal (${obsNoType}×)`);
+
+  // ── 18. ONTOLOGIE INATTESE ────────────────────────────────────────────
+  const KNOWN = ['owl','clv','cov','cpv','l0','cultural-on','poi','ro','ti','sm',
+                 'dcat','dct','foaf','geo','xsd','rdfs','vcard','skos','schema',
+                 'adms','qb','sdmx-dimension','sdmx-measure','sdmx-attribute'];
+  for (const p of prefixesUsed) {
+    if (!KNOWN.includes(p.toLowerCase()))
+      warnings.push(`Prefisso inatteso: "${p}:" — ontologia non standard PA italiana`);
+  }
+
+  // ── 19. SUMMARY ──────────────────────────────────────────────────────
+  const subjectCount = (ttl.match(/^<https?/gm) || []).length;
+  const tripleCount  = (ttl.match(/^\s+\S+\s+[^\n]+[;.]/gm) || []).length;
+  const classesUsed  = [...new Set([...ttl.matchAll(/\ba\s+(\w[\w-]*:\w+)/g)].map(m=>m[1]))];
+  infos.push(`${subjectCount} soggetti, ~${tripleCount} triple`);
+  infos.push(`Classi: ${classesUsed.join(', ')}`);
+
+  // ── 20. SCORE ─────────────────────────────────────────────────────────
+  const totalIssues = errors.length * 3 + warnings.length;
+  const score = Math.max(0, 100 - totalIssues * 5);
+  const scoreColor = score >= 80 ? '#0a0' : score >= 50 ? '#f90' : '#c00';
+  infos.unshift(`<span style="color:${scoreColor};font-weight:700">Score: ${score}/100</span>`);
+
+  showValidationReport({ errors, warnings, infos });
+
+  // SPARQL asincrono in background (controlla classi su schema.gov.it)
+  const allTerms = [];
+  for (const m of ttl.matchAll(/\ba\s+([a-zA-Z_][\w-]*:[A-Z][a-zA-Z]*)/g)) {
+    const prefix = m[1].split(':')[0];
+    if (prefixMap[prefix]?.includes('w3id.org/italia')) allTerms.push(m[1]);
+  }
+  if (allTerms.length > 0) validateSPARQL([...new Set(allTerms)], prefixMap);
 }
 
-function showValidationReport(results, prefixMap) {
-  const ok    = Object.entries(results).filter(([,v]) => v === '✓');
-  const fail  = Object.entries(results).filter(([,v]) => v === '✗');
-  const unkn  = Object.entries(results).filter(([,v]) => v === '?');
 
-  let html = `<div style="font-family:monospace;font-size:13px;line-height:1.6">`;
-  html += `<b>📊 Validazione schema.gov.it — ${ok.length} ✓ / ${fail.length} ✗ / ${unkn.length} ?</b><br><br>`;
+function showValidationReport({ errors, warnings, infos, terms, prefixMap }) {
+  const div = document.getElementById('validation-report');
+  if (!div) return;
+  div.style.display = 'block';
 
-  if (fail.length > 0) {
-    html += `<b style="color:#c00">⚠ Non trovati (URI inesistenti):</b><br>`;
-    for (const [term] of fail) {
-      const [prefix] = term.split(':');
-      html += `  ✗ <b>${term}</b> → <a href="${prefixMap[prefix]}${term.split(':')[1]}" target="_blank">${prefixMap[prefix]}${term.split(':')[1]}</a><br>`;
-    }
+  const total = errors.length + warnings.length;
+  const statusColor = errors.length > 0 ? '#c00' : warnings.length > 0 ? '#f90' : '#0a0';
+  const statusIcon  = errors.length > 0 ? '❌' : warnings.length > 0 ? '⚠️' : '✅';
+  const statusText  = errors.length > 0 ? `${errors.length} errori, ${warnings.length} avvisi`
+                    : warnings.length > 0 ? `${warnings.length} avvisi`
+                    : 'TTL valido';
+
+  let html = `<div style="font-family:monospace;font-size:13px;padding:10px">`;
+  html += `<b style="color:${statusColor}">${statusIcon} ${statusText}</b>`;
+  if (infos.length) html += ` &nbsp;·&nbsp; <span style="color:#888">${infos.join(' · ')}</span>`;
+  html += '<br><br>';
+
+  if (errors.length > 0) {
+    html += `<b style="color:#c00">ERRORI (${errors.length})</b><br>`;
+    for (const e of errors) html += `&nbsp;&nbsp;❌ ${e}<br>`;
     html += '<br>';
   }
-  if (ok.length > 0) {
-    html += `<b style="color:green">✓ Verificati (${ok.length}):</b> ${ok.map(([t]) => t).join(', ')}<br>`;
+  if (warnings.length > 0) {
+    html += `<b style="color:#f90">AVVISI (${warnings.length})</b><br>`;
+    for (const w of warnings) html += `&nbsp;&nbsp;⚠ ${w}<br>`;
+    html += '<br>';
   }
-  if (unkn.length > 0) {
-    html += `<b style="color:#888">? Endpoint non raggiungibile (${unkn.length}):</b> ${unkn.map(([t]) => t).join(', ')}`;
+  if (errors.length === 0 && warnings.length === 0) {
+    html += `<span style="color:#0a0">✅ Nessun problema rilevato localmente.</span><br><br>`;
   }
+
+  // Sezione SPARQL (popolata in background)
+  html += `<div id="validation-sparql" style="color:#888">🔍 Verifica classi su schema.gov.it in corso...</div>`;
   html += '</div>';
 
-  // Mostra in un div sotto il TTL
-  let reportDiv = document.getElementById('validation-report');
-  if (!reportDiv) {
-    reportDiv = document.createElement('div');
-    reportDiv.id = 'validation-report';
-    reportDiv.style.cssText = 'margin-top:1rem;padding:1rem;border:1px solid #ccc;border-radius:6px;background:#f9f9f9;max-height:300px;overflow-y:auto';
-    document.getElementById('ttl-output').parentNode.appendChild(reportDiv);
-  }
-  reportDiv.innerHTML = html;
-  hideStatus();
+  div.innerHTML = html;
 }
 
 
-// ── VALIDAZIONE TTL ─────────────────────────────────────────────────────────
-async function validateTTL() {
-  const ttl = document.getElementById('ttl-output').value;
-  if (!ttl) return;
-
-  const report = document.getElementById('validation-report');
-  report.style.display = 'block';
-  report.innerHTML = '⏳ Validazione in corso...';
-
-  // 1. Estrai tutti i qname usati come tipo (a xxx:Yyy) e come proprietà
-  const typeMatches    = [...ttl.matchAll(/\ba\s+([a-zA-Z][a-zA-Z0-9_-]*:[A-Z][a-zA-Z0-9_-]*)/g)].map(m => m[1]);
-  const propMatches    = [...ttl.matchAll(/^\s+([a-zA-Z][a-zA-Z0-9_-]*:[a-z][a-zA-Z0-9_-]*)\s/gm)].map(m => m[1]);
-  const allTerms       = [...new Set([...typeMatches, ...propMatches])];
-
-  // 2. Costruisci mappa prefisso→URI dai @prefix del TTL
-  const prefixMap = {};
-  for (const m of ttl.matchAll(/@prefix\s+(\w+):\s+<([^>]+)>/g)) {
-    prefixMap[m[1]] = m[2];
-  }
-
-  // 3. Valida contro ONTO_CLASSES (locale) e tenta schema.gov.it SPARQL
-  const results = [];
-  const checked = new Set();
-
-  for (const term of allTerms) {
-    if (checked.has(term)) continue;
-    checked.add(term);
-
-    const [pfx, local] = term.split(':');
-    const ontoKey = pfx.toUpperCase();
-
-    // Controllo locale prima
-    const localData = ONTO_CLASSES[ontoKey];
-    if (localData) {
-      const allKnown = [...localData.classes, ...localData.props]
-        .map(s => s.split('(')[0].trim().split(':').pop());
-      const found = allKnown.some(k => k.toLowerCase() === local.toLowerCase());
-      results.push({ term, status: found ? 'ok' : 'warn', source: 'locale' });
-      continue;
-    }
-
-    // Per prefissi non in ONTO_CLASSES (geo, xsd, dct, foaf...) → ok di default
-    const knownExternal = ['geo', 'xsd', 'dct', 'foaf', 'rdfs', 'owl', 'skos', 'vcard', 'dcat', 'schema', 'adms', 'qb'];
-    if (knownExternal.includes(pfx.toLowerCase())) {
-      results.push({ term, status: 'ext', source: 'standard W3C/DCAT' });
-      continue;
-    }
-
-    results.push({ term, status: 'unknown', source: '?' });
-  }
-
-  // 4. Tenta anche SPARQL su schema.gov.it per i termini warn/unknown
-  const toCheck = results.filter(r => r.status === 'warn' || r.status === 'unknown');
-  if (toCheck.length > 0) {
-    const sparqlChecks = await Promise.allSettled(
-      toCheck.map(async r => {
-        const [pfx, local] = r.term.split(':');
-        const ns = prefixMap[pfx] || '';
-        if (!ns) return { term: r.term, exists: false };
-        const uri = ns + local;
-        const query = encodeURIComponent(`ASK { <${uri}> ?p ?o }`);
-        const url = `https://schema.gov.it/sparql?query=${query}&format=json`;
-        const res = await fetch(url, { headers: { Accept: 'application/json' } });
-        if (!res.ok) return { term: r.term, exists: false };
-        const data = await res.json();
-        return { term: r.term, exists: data.boolean === true };
-      })
-    );
-    for (const r of sparqlChecks) {
-      if (r.status !== 'fulfilled') continue;
-      const idx = results.findIndex(x => x.term === r.value.term);
-      if (idx >= 0) {
-        results[idx].status = r.value.exists ? 'ok' : 'error';
-        results[idx].source = 'schema.gov.it';
-      }
-    }
-  }
-
-  // 5. Render report
-  const ok      = results.filter(r => r.status === 'ok');
-  const warn    = results.filter(r => r.status === 'warn');
-  const errors  = results.filter(r => r.status === 'error');
-  const ext     = results.filter(r => r.status === 'ext');
-  const unknown = results.filter(r => r.status === 'unknown');
-
-  let html = `<strong>📊 Validazione ontologie (${results.length} termini)</strong><br><br>`;
-  if (ok.length)      html += `<span style="color:#4caf50">✓ Verificati (${ok.length}): ${ok.map(r=>r.term).join(', ')}</span><br>`;
-  if (ext.length)     html += `<span style="color:#888">◦ Standard W3C/DCAT (${ext.length}): ${ext.map(r=>r.term).join(', ')}</span><br>`;
-  if (warn.length)    html += `<span style="color:#ff9800">⚠ Non trovati localmente (${warn.length}): ${warn.map(r=>r.term).join(', ')}</span><br>`;
-  if (errors.length)  html += `<span style="color:#f44336">✗ Non esistono su schema.gov.it (${errors.length}): ${errors.map(r=>r.term).join(', ')}</span><br>`;
-  if (unknown.length) html += `<span style="color:#888">? Prefisso sconosciuto (${unknown.length}): ${unknown.map(r=>r.term).join(', ')}</span><br>`;
-
-  report.innerHTML = html;
-}
-
-// ── STATS ─────────────────────────────────────────────────────
 function updateStats(ttl) {
   const lines = ttl.split('\n');
   document.getElementById('stat-triples').textContent  =

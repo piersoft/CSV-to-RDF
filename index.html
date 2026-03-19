@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.56</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.57</span>
 </footer>
 
 <script>
@@ -1831,7 +1831,8 @@ REGOLE:
 - Per eventi/spettacoli/manifestazioni usa SEMPRE l0:EventOrSituation come classe, mai l0:Object
 - Per ogni risorsa includi SEMPRE dct:publisher con il nome dell'organizzatore — non ometterlo mai
 - La colonna numero_righe/numero_record indica il conteggio delle righe, NON la dimensione in byte: usa dct:extent, MAI dcat:byteSize
-- dcat:byteSize si usa SOLO per la dimensione del file in byte — se non hai quel dato, ometti la proprietà con il nome dell'organizzatore — non ometterlo mai
+- dcat:byteSize si usa SOLO per la dimensione del file in byte — se non hai quel dato, ometti la proprietà
+- dct:publisher NON va su dcat:Distribution (non previsto da DCAT-AP) — va sul Dataset o sull'Agent titolare con il nome dell'organizzatore — non ometterlo mai
 - Usa dct:type per il tipo di relazione (Coorganizzazione/Patrocinio/Pagamento), dct:publisher per l'organizzatore, MAI usare dct:description per entrambi
 - Output COMPATTO: niente righe vuote, niente commenti, niente @prefix, niente markdown
 - Colonne il cui nome inizia con un numero seguito da trattino (es. "1-LISTA", "9-+EUROPA") sono intestazioni di risultati elettorali: usa sdmx-measure:obsValue con rdfs:label del nome colonna
@@ -2220,7 +2221,8 @@ REGOLE ASSOLUTE:
 7. Per eventi/spettacoli usa SEMPRE l0:EventOrSituation come classe, mai l0:Object
 8. Includi dct:publisher per OGNI risorsa generata — non omettere mai questa proprietà
 9. Usa dct:type per il tipo di relazione (Coorganizzazione/Patrocinio/Pagamento), dct:publisher per l'organizzatore
-10. numero_righe/numero_record indica righe CSV → usa dct:extent, MAI dcat:byteSize (riservato alla dimensione in byte)`;
+10. numero_righe/numero_record indica righe CSV → usa dct:extent, MAI dcat:byteSize (riservato alla dimensione in byte)
+11. dct:publisher NON va su dcat:Distribution (non previsto da DCAT-AP) — va sul dcat:Dataset o foaf:Agent titolare`;
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -2488,9 +2490,15 @@ async function validateTTL() {
     }
   }
 
-  // ── 6. dct:publisher MANCANTE ─────────────────────────────────────────
+  // ── 6. dct:publisher MANCANTE (solo su risorse non-Distribution) e ERRATO su Distribution
+  // dct:publisher NON è previsto su dcat:Distribution per DCAT-AP — va su dcat:Dataset/Agent
+  const wrongPublisherOnDistrib = (ttl.match(/a\s+dcat:Distribution[\s\S]*?dct:publisher/g) || []).length;
+  if (wrongPublisherOnDistrib > 0)
+    warnings.push(`dct:publisher su dcat:Distribution non previsto da DCAT-AP (${wrongPublisherOnDistrib}×) — va su dcat:Dataset`);
+
+  // ── 6b. dct:publisher MANCANTE (solo su risorse non-Distribution) ─────
   let missingPublisher = 0;
-  const SKIP_CLASSES = /Telephone|Address|Agent$|ConceptScheme|Concept$/;  // Distribution NON skippata — deve avere dct:publisher per DCAT-AP IT
+  const SKIP_CLASSES = /Telephone|Address|Distribution|Agent$|ConceptScheme|Concept$/;
   for (const m of ttl.matchAll(/<(https?:\/\/[^>]+)>\s+a\s+([^;.\n]+)/g)) {
     const cls = m[2].trim();
     if (SKIP_CLASSES.test(cls)) continue;

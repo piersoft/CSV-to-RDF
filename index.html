@@ -464,7 +464,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.60</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.18.62</span>
 </footer>
 
 <script>
@@ -1961,6 +1961,86 @@ function fixMeasurePrefixes(ttl) {
     .replace(/\bdimension:refArea\b/g, 'sdmx-dimension:refArea');
 }
 
+function propagatePublisher(ttl) {
+  // Se molte risorse della stessa classe mancano di dct:publisher
+  // propaga il publisher trovato nel TTL (dal titolare o dalla prima risorsa)
+  
+  // Estrai il publisher dal nodo foaf:Agent o dalla prima risorsa con publisher
+  let publisherURI = null;
+  
+  // Cerca nell'header del titolare: <URI> a foaf:Agent
+  const agentMatch = ttl.match(/<(https?:\/\/[^>]+)>\s+a\s+foaf:Agent/);
+  if (agentMatch) publisherURI = agentMatch[1];
+  
+  // Oppure cerca il primo dct:publisher con URI
+  if (!publisherURI) {
+    const pubMatch = ttl.match(/dct:publisher\s+<(https?:\/\/[^>]+)>/);
+    if (pubMatch) publisherURI = pubMatch[1];
+  }
+  
+  if (!publisherURI) return ttl; // nessun publisher trovato, non modificare
+  
+  // Conta risorse senza publisher (solo per classi principali, non Distribution/Telephone/Address)
+  const SKIP = /Telephone|Address|Distribution|Agent$|ConceptScheme|Concept$|PublicOrganization|Organization$/;
+  const lines = ttl.split('
+');
+  const result = [];
+  let inResource = false;
+  let resourceLines = [];
+  let resourceHasPublisher = false;
+  let resourceClass = '';
+  
+  const flushResource = () => {
+    if (resourceLines.length > 0) {
+      if (!resourceHasPublisher && !SKIP.test(resourceClass) && resourceClass) {
+        // Inserisce dct:publisher prima del punto finale
+        const lastIdx = resourceLines.length - 1;
+        for (let i = lastIdx; i >= 0; i--) {
+          if (resourceLines[i].trimEnd().endsWith('.')) {
+            resourceLines[i] = resourceLines[i].trimEnd().slice(0, -1) + ' ;';
+            resourceLines.splice(i + 1, 0, `  dct:publisher <${publisherURI}> .`);
+            break;
+          } else if (resourceLines[i].trimEnd().endsWith(';')) {
+            resourceLines.splice(i + 1, 0, `  dct:publisher <${publisherURI}> .`);
+            // Rimuove il ; e mette il . alla riga precedente
+            // lascia il ; e aggiunge la riga (il ; va bene prima del .)
+            // In realtà in Turtle il . chiude il blocco, il ; separa predicati
+            // Quindi: ultimo ; → rimane, aggiungiamo il . dopo publisher
+            break;
+          }
+        }
+      }
+      result.push(...resourceLines);
+      resourceLines = [];
+      resourceHasPublisher = false;
+      resourceClass = '';
+    }
+  };
+  
+  for (const line of lines) {
+    const t = line.trim();
+    if (t.startsWith('<') && t.includes('> a ')) {
+      flushResource();
+      inResource = true;
+      const classMatch = t.match(/>\s+a\s+(\S+)/);
+      if (classMatch) resourceClass = classMatch[1].replace(/[;,.]$/, '');
+    }
+    if (inResource) {
+      if (/dct:publisher/.test(t)) resourceHasPublisher = true;
+      resourceLines.push(line);
+      if (t.endsWith('.') && !t.startsWith('@')) {
+        flushResource();
+        inResource = false;
+      }
+    } else {
+      result.push(line);
+    }
+  }
+  flushResource();
+  return result.join('
+');
+}
+
 function fixCoordinates(ttl) {
   // Corregge geo:lat e geo:long senza tipo xsd:decimal
   return ttl
@@ -2550,17 +2630,23 @@ async function validateTTL() {
 
   // ── 6b. dct:publisher MANCANTE (solo su risorse non-Distribution) ─────
   let missingPublisher = 0;
+  let totalPrincipal = 0;
   const SKIP_CLASSES = /Telephone|Address|Distribution|Agent$|ConceptScheme|Concept$|PublicOrganization|Organization$/;
-  for (const m of ttl.matchAll(/<(https?:\/\/[^>]+)>\s+a\s+([^;.\n]+)/g)) {
-    const cls = m[2].trim();
+  // Split robusto per TTL compatto e espanso
+  const _pubBlocks = ttl.includes('\n\n') ? ttl.split('\n\n') : ttl.split('\n').filter(l => l.trim().startsWith('<'));
+  for (const blk of _pubBlocks) {
+    const clsM = blk.match(/a\s+([\w:]+)/);
+    if (!clsM) continue;
+    const cls = clsM[1].trim();
     if (SKIP_CLASSES.test(cls)) continue;
-    const blockStart = m.index;
-    const blockEnd = ttl.indexOf('\n\n', blockStart);
-    const blk = ttl.slice(blockStart, blockEnd > 0 ? blockEnd : blockStart+2000);
+    totalPrincipal++;
     if (!blk.includes('dct:publisher')) missingPublisher++;
   }
-  if (missingPublisher > 0)
-    warnings.push(`dct:publisher mancante su ${missingPublisher} risorse principali`);
+  // Segnala solo se il publisher manca su TUTTE le risorse (non parzialmente — può essere stile LLM)
+  if (missingPublisher > 0 && missingPublisher === totalPrincipal)
+    warnings.push(`dct:publisher assente su tutte le ${missingPublisher} risorse principali`);
+  else if (missingPublisher > 0 && missingPublisher > totalPrincipal * 0.5)
+    warnings.push(`dct:publisher mancante su ${missingPublisher}/${totalPrincipal} risorse — il LLM lo ha omesso sulle righe successive`);
 
   // ── 7. dct:description "voice" ────────────────────────────────────────
   if (/dct:description\s+"voice"/.test(ttl))

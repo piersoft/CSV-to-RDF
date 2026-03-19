@@ -2717,8 +2717,7 @@ async function validateTTL() {
     const prefix = m[1].split(':')[0];
     if (prefixMap[prefix]?.includes('w3id.org/italia')) allTerms.push(m[1]);
   }
-  // validateSPARQL rimossa — funzione non definita
-  // if (allTerms.length > 0) validateSPARQL([...new Set(allTerms)], prefixMap);
+  // validateSPARQL rimossa — funzione non definita (verifica classi disabilitata)
 }
 
 

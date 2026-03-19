@@ -1167,7 +1167,7 @@ const ONTO_CLASSES = {
     props:   ['ro:hasRole', 'ro:isRoleOf', 'ro:withRole']
   },
   'TI': {
-    classes: ['ti:TimeInterval (Intervallo temporale)', 'ti:Instant (Istante)'],
+    classes: ['ti:TimeInterval (Intervallo temporale)', 'ti:TimeInstant (Istante)'],
     props:   ['ti:startTime', 'ti:endTime', 'ti:hasTimeInterval', 'ti:hasInstant']
   },
   'SM': {
@@ -1874,7 +1874,7 @@ REGOLE:
   CPV selezionata       → cpv:Person per persone fisiche (NON per brevetti o documenti)
   ADMS selezionata      → adms:SemanticAsset per brevetti, licenze, asset digitali, documenti
   RO selezionata        → ro:Role per ruoli e incarichi (usato insieme a cpv:Person o cov:Organization)
-  TI selezionata        → ti:TimeInterval per intervalli temporali, ti:Instant per istanti
+  TI selezionata        → ti:TimeInterval per intervalli temporali, ti:TimeInstant per istanti
   QB selezionata        → qb:Observation per osservazioni statistiche, qb:DataSet per il dataset
   POI selezionata       → poi:PointOfInterest SOLO se nessuna classe più specifica è disponibile
   L0 selezionata        → l0:Agent per persone/organizzazioni generiche, l0:Object per oggetti fisici generici
@@ -1883,7 +1883,7 @@ REGOLE:
   CPV: cpv:Person, cpv:Adult, cpv:Minor, cpv:Senior (CPV=Persone, NON per brevetti/documenti)
   POI: poi:PointOfInterest (classe generica per luoghi fisici)
   RO: ro:Role (per ruoli/incarichi)
-  TI: ti:TimeInterval, ti:Instant (per intervalli e istanti temporali)
+  TI: ti:TimeInterval, ti:TimeInstant (per intervalli e istanti temporali)
   SM: sm:Email, sm:Telephone, sm:WebSite, sm:SocialNetworkAccount
   L0: l0:Agent, l0:Object, l0:EventOrSituation, l0:Collection, l0:Location, l0:Characteristic
   ADMS: adms:SemanticAsset (per brevetti, licenze, asset digitali — NON cpv:Patent che non esiste)
@@ -2893,9 +2893,15 @@ function validateSPARQL(terms, prefixMap) {
   sparqlDiv.innerHTML = '🔍 Verifica classi su schema.gov.it...';
 
   // Risolvi i termini in URI completi usando prefixMap
+  // Mappa alias noti — alcune ontologie PA usano nomi abbreviati
+  var ALIAS_MAP = {
+    'ti:TimeInstant': 'ti:TimeInstant',
+    'ti:TimeInterval': 'ti:TimeInterval'
+  };
   var uris = [];
   terms.forEach(function(t) {
-    var parts = t.split(':');
+    var resolved = ALIAS_MAP[t] || t;
+    var parts = resolved.split(':');
     var ns = prefixMap[parts[0]] || '';
     if (ns) uris.push('<' + ns + parts[1] + '>');
   });

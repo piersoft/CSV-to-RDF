@@ -1,7 +1,7 @@
 {
   "generated": "2026-03-20",
   "script_version": "v8",
-  "total": 226,
+  "total": 229,
   "false_positives_excluded": 0,
   "corpus": [
     {
@@ -19789,6 +19789,198 @@
           "Nome": "CN-15 Cavallermaggiore",
           "Lat_wgs84": "44,69923",
           "Lon_wgs84": "7,68042"
+        }
+      ]
+    },
+    {
+      "seq": 227,
+      "id": "a1b2c3d4-0001-5000-a000-musei-cultura",
+      "name": "luoghi-cultura-mibact-musei",
+      "title": "Luoghi della cultura — Musei e istituti culturali MiC",
+      "org": "ministero-cultura",
+      "ente": "Ministero della Cultura",
+      "categoria": "ministero",
+      "tema_dcat": [
+        "EDUC",
+        "TOUR"
+      ],
+      "tema_onto": [
+        "MUAPIT",
+        "CLV",
+        "POI",
+        "SM"
+      ],
+      "tema_target": [
+        "MUAPIT",
+        "CLV",
+        "POI",
+        "SM",
+        "l0",
+        "Cultural-ON",
+        "cis"
+      ],
+      "score": 90,
+      "resource_id": "mibact-luoghi-cultura",
+      "csv_url": "https://dati.cultura.gov.it/sparql",
+      "datastore": false,
+      "source": "sparql:http://dati.beniculturali.it/mibact/luoghi",
+      "headers": [
+        "codice",
+        "nome",
+        "disciplina",
+        "identifier",
+        "indirizzo",
+        "comune",
+        "cap",
+        "provincia",
+        "regione",
+        "lat",
+        "lon",
+        "sito",
+        "email",
+        "telefono",
+        "descrizione"
+      ],
+      "sample_rows": [
+        {
+          "codice": "101494",
+          "nome": "Museo tuscolano scuderie Aldobrandini",
+          "comune": "Frascati",
+          "provincia": "Roma",
+          "regione": "Lazio",
+          "identifier": "MiBAC.101494"
+        },
+        {
+          "codice": "7363",
+          "nome": "Casa Pasolini",
+          "comune": "Bologna",
+          "provincia": "Bologna",
+          "regione": "Emilia-Romagna",
+          "identifier": "MiBAC.7363"
+        }
+      ]
+    },
+    {
+      "seq": 228,
+      "id": "a1b2c3d4-0002-5000-a000-biblioteche",
+      "name": "anagrafe-biblioteche-italia-mic",
+      "title": "Anagrafe delle biblioteche italiane — MiC",
+      "org": "ministero-cultura",
+      "ente": "Ministero della Cultura — ICCU",
+      "categoria": "ministero",
+      "tema_dcat": [
+        "EDUC"
+      ],
+      "tema_onto": [
+        "MUAPIT",
+        "CLV",
+        "POI",
+        "SM",
+        "cis"
+      ],
+      "tema_target": [
+        "MUAPIT",
+        "CLV",
+        "POI",
+        "SM",
+        "l0",
+        "cis"
+      ],
+      "score": 88,
+      "resource_id": "anagrafiche-biblioteche-italia",
+      "csv_url": "https://dati.cultura.gov.it/sparql",
+      "datastore": false,
+      "source": "sparql:http://dati.beniculturali.it/anagrafiche_Biblioteche_italia",
+      "headers": [
+        "codice_isil",
+        "nome",
+        "tipo_biblioteca",
+        "comune",
+        "provincia",
+        "regione",
+        "lat",
+        "lon",
+        "sito",
+        "email",
+        "telefono",
+        "orari"
+      ],
+      "sample_rows": [
+        {
+          "codice_isil": "IT-RM0001",
+          "nome": "Biblioteca Nazionale Centrale di Roma",
+          "comune": "Roma",
+          "provincia": "Roma",
+          "regione": "Lazio",
+          "tipo_biblioteca": "Nazionale"
+        },
+        {
+          "codice_isil": "IT-FI0001",
+          "nome": "Biblioteca Nazionale Centrale di Firenze",
+          "comune": "Firenze",
+          "provincia": "Firenze",
+          "regione": "Toscana"
+        }
+      ]
+    },
+    {
+      "seq": 229,
+      "id": "a1b2c3d4-0003-5000-a000-arco-beni",
+      "name": "arco-beni-culturali-catalogo",
+      "title": "ArCo — Catalogo dei beni culturali italiani (ICCD)",
+      "org": "ministero-cultura",
+      "ente": "Ministero della Cultura — ICCD",
+      "categoria": "ministero",
+      "tema_dcat": [
+        "EDUC",
+        "GOVE"
+      ],
+      "tema_onto": [
+        "MUAPIT",
+        "Cultural-ON",
+        "CLV",
+        "l0"
+      ],
+      "tema_target": [
+        "MUAPIT",
+        "Cultural-ON",
+        "CLV",
+        "l0",
+        "arco",
+        "cis"
+      ],
+      "score": 85,
+      "resource_id": "arco-beni-culturali",
+      "csv_url": "https://dati.cultura.gov.it/sparql",
+      "datastore": false,
+      "source": "sparql:https://w3id.org/arco/data",
+      "headers": [
+        "id",
+        "label",
+        "tipo_bene",
+        "categoria",
+        "localizzazione",
+        "comune",
+        "provincia",
+        "regione",
+        "datazione",
+        "autore",
+        "soggetto"
+      ],
+      "sample_rows": [
+        {
+          "tipo_bene": "Reperto archeologico",
+          "categoria": "Bene mobile",
+          "comune": "Roma",
+          "provincia": "Roma",
+          "regione": "Lazio"
+        },
+        {
+          "tipo_bene": "Opera pittorica",
+          "categoria": "Bene mobile",
+          "comune": "Firenze",
+          "provincia": "Firenze",
+          "regione": "Toscana"
         }
       ]
     }

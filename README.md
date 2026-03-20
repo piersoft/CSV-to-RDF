@@ -1,23 +1,29 @@
 | Ontologia | Fixture | Score | Descrizione |
 |-----------|--------:|------:|-------------|
-| **QB** — RDF Data Cube | 177 | 🟢 91% | Dati statistici e serie storiche |
-| **POI** — Points of Interest | 72 | 🟢 86% | Luoghi geolocalizzati con lat/lon |
-| **CPV** — Core Person Vocab | 63 | 🟢 86% | Popolazione, anagrafe, residenti |
-| **CLV** — Controlled Vocabulary | 53 | 🟢 78% | Stradari, civici, indirizzi |
-| **CPSV** — Core Public Service | 46 | 🟢 80% | Appalti, gare, determine, atti PA |
-| **ACCO** — Accommodation | 23 | 🔵 74% | Strutture ricettive e turismo |
-| **TI** — Time Interval | 28 | 🔵 71% | Eventi con data inizio/fine |
-| **Cultural-ON** | 18 | 🔵 72% | Musei, biblioteche, beni culturali |
-| **ADMS** | 15 | 🟡 68% | Metadati e cataloghi open data |
+| **QB** | 179 | 🟢 99% | Dati statistici e serie storiche |
+| **POI** | 73 | 🟢 94% | Luoghi geolocalizzati con lat/lon |
+| **CPV** | 65 | 🟢 92% | Popolazione, anagrafe, residenti |
+| **CLV** | 57 | 🟢 90% | Stradari, civici, indirizzi |
+| **CPSV** | 47 | 🟢 86% | Appalti, gare, determine, atti PA |
+| **TI** | 29 | 🔵 77% | Eventi con data inizio/fine |
+| **ACCO** | 23 | 🔵 72% | Strutture ricettive e turismo |
+| **Cultural-ON** | 18 | 🟡 68% | Musei, biblioteche, beni culturali |
+| **ADMS** | 15 | 🟡 65% | Metadati e cataloghi open data |
+| **RO-AP_IT** | 13 | 🟡 63% | Ruoli e incarichi istituzionali |
+| **COV-AP_IT** | 12 | 🟡 62% | Personale e organizzazioni PA |
+| **GTFS** | 10 | 🟡 59% | Trasporto pubblico locale |
+| **CPVAPIT** | 9 | 🟡 58% | Persone fisiche nominative |
+| **IoT-AP_IT** | 8 | 🟡 57% | Sensori IoT e misurazioni |
+| **MUAPIT** | 7 | 🟡 55% | Luoghi e beni culturali MiC/ArCo |
+| **SMAPIT** | 6 | 🔴 54% | Strutture scolastiche |
+| **SM** | 4 | 🔴 51% | — |
 | **DCATAPIT** | 3 | 🟢 100% | Standard obbligatorio dati.gov.it |
-| **RO-AP_IT** | 14 | 🟡 68% | Ruoli e incarichi istituzionali |
-| **COV-AP_IT** | 12 | 🟡 64% | Personale e organizzazioni PA |
-| **CPVAPIT** | 9 | 🟡 60% | Persone fisiche nominative |
-| **PublicOrganization** | 4 | 🟡 55% | Enti pubblici (IPA, ASL, ecc.) |
-| **GTFS** | 10 | 🟡 62% | Trasporto pubblico locale |
-| **IoT-AP_IT** | 8 | 🟡 55% | Sensori IoT e misurazioni |
-| **MUAPIT** | 7 | 🟡 58% | Luoghi e beni culturali MiC/ArCo |
-| **SMAPIT** | 6 | 🟡 50% | Strutture scolastiche |
+| **PublicOrganization** | 3 | 🔴 50% | Enti pubblici (IPA, ASL, ecc.) |
+| **arco** | 2 | 🔴 48% | — |
+| **foaf** | 2 | 🔴 48% | — |
+| **skos** | 2 | 🔴 48% | — |
+| **cis** | 1 | 🔴 47% | — |
+| **l0** | 1 | 🔴 47% | — |
 # CSV → RDF/TTL — Linked Open Data per la PA italiana
 
 Strumento open source per trasformare dataset CSV della Pubblica Amministrazione italiana in file **Turtle (TTL) RDF**, arricchiti con le ontologie ufficiali di [github.com/italia/dati-semantic-assets](https://github.com/italia/dati-semantic-assets).
@@ -100,18 +106,32 @@ Il rilevamento deterministico si basa su un **corpus di 269 dataset reali** dell
 
 Il corpus copre le principali ontologie del patrimonio semantico nazionale:
 
-| Ontologia | Dataset primari | Score stimato | Descrizione |
-|-----------|----------------|---------------|-------------|
-| **QB** — RDF Data Cube | 135 | 🟢 88% | Dati statistici e serie storiche |
-| **POI** — Points of Interest | 78 | 🟢 84% | Luoghi geolocalizzati con lat/lon |
-| **ADMS** | 44 | 🟢 81% | Metadati e cataloghi open data |
-| **Cultural-ON** | 37 | 🔵 76% | Musei, biblioteche, beni culturali |
-| **ACCO** | 27 | 🔵 74% | Strutture ricettive e turismo |
-| **GTFS** | 24 | 🔵 72% | Trasporto pubblico locale |
-| **CPSV** | 21 | 🟡 70% | Appalti, gare, determine, atti PA |
-| **CLV** | 16 | 🟡 65% | Stradari, civici, indirizzi |
-| **TI** — Time Interval | 13 | 🟡 63% | Eventi con data inizio/fine |
-| **CPV** | 11 | 🟠 60% | Anagrafe, residenti, cittadinanza |
+| Ontologia | Fixture | Score | Descrizione |
+|-----------|--------:|------:|-------------|
+| **QB** | 179 | 🟢 99% | Dati statistici e serie storiche |
+| **POI** | 73 | 🟢 94% | Luoghi geolocalizzati con lat/lon |
+| **CPV** | 65 | 🟢 92% | Popolazione, anagrafe, residenti |
+| **CLV** | 57 | 🟢 90% | Stradari, civici, indirizzi |
+| **CPSV** | 47 | 🟢 86% | Appalti, gare, determine, atti PA |
+| **TI** | 29 | 🔵 77% | Eventi con data inizio/fine |
+| **ACCO** | 23 | 🔵 72% | Strutture ricettive e turismo |
+| **Cultural-ON** | 18 | 🟡 68% | Musei, biblioteche, beni culturali |
+| **ADMS** | 15 | 🟡 65% | Metadati e cataloghi open data |
+| **RO-AP_IT** | 13 | 🟡 63% | Ruoli e incarichi istituzionali |
+| **COV-AP_IT** | 12 | 🟡 62% | Personale e organizzazioni PA |
+| **GTFS** | 10 | 🟡 59% | Trasporto pubblico locale |
+| **CPVAPIT** | 9 | 🟡 58% | Persone fisiche nominative |
+| **IoT-AP_IT** | 8 | 🟡 57% | Sensori IoT e misurazioni |
+| **MUAPIT** | 7 | 🟡 55% | Luoghi e beni culturali MiC/ArCo |
+| **SMAPIT** | 6 | 🔴 54% | Strutture scolastiche |
+| **SM** | 4 | 🔴 51% | — |
+| **DCATAPIT** | 3 | 🟢 100% | Standard obbligatorio dati.gov.it |
+| **PublicOrganization** | 3 | 🔴 50% | Enti pubblici (IPA, ASL, ecc.) |
+| **arco** | 2 | 🔴 48% | — |
+| **foaf** | 2 | 🔴 48% | — |
+| **skos** | 2 | 🔴 48% | — |
+| **cis** | 1 | 🔴 47% | — |
+| **l0** | 1 | 🔴 47% | — |
 
 Quando incolli un CSV e clicchi **👁 Anteprima** (oppure carichi un file), il corpus viene interrogato in tempo reale via **Jaccard similarity** sugli header: i dataset più simili vengono mostrati nel pannello blu con badge di confidenza e link diretto a [dati.gov.it](https://www.dati.gov.it).
 

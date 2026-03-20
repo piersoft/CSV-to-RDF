@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CSV â RDF/TTL â Linked Open Data PA</title>
+  <title>CSV Ã¢ÂÂ RDF/TTL Ã¢ÂÂ Linked Open Data PA</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-italia@2.8.0/dist/css/bootstrap-italia.min.css"/>
   <script src="https://cdn.jsdelivr.net/npm/n3@1.17.2/browser/n3.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet"/>
@@ -114,7 +114,7 @@
     footer { background: #17324d; color: rgba(255,255,255,0.65); text-align: center; padding: 1rem; font-size: 0.73rem; font-family: var(--mono); margin-top: 3rem; }
     footer a { color: #80c0ff; text-decoration: none; }
   
-  /* WCAG 2.1 AA â focus visible */
+  /* WCAG 2.1 AA Ã¢ÂÂ focus visible */
   :focus-visible {
     outline: 3px solid #f97316;
     outline-offset: 2px;
@@ -148,7 +148,7 @@
 <div class="site-header py-3">
   <div class="container d-flex justify-content-between align-items-center">
     <div>
-      <div class="brand-title">CSV <span style="color:#80c0ff">â</span> RDF/TTL</div>
+      <div class="brand-title">CSV <span style="color:#80c0ff">Ã¢ÂÂ</span> RDF/TTL</div>
       <div class="brand-sub">Trasforma i dati aperti della PA in Linked Open Data</div>
     </div>
     <div class="header-badge d-none d-md-block">github.com/italia/dati-semantic-assets</div>
@@ -165,19 +165,19 @@
     </div>
     <h1>Da CSV a Linked Open Data in pochi click</h1>
     <p>
-      La PA ha giÃ  pubblicato il suo dataset su dati.gov.it o sul portale opendata locale.
+      La PA ha giÃÂ  pubblicato il suo dataset su dati.gov.it o sul portale opendata locale.
       Questo strumento genera la <strong>distribuzione TTL</strong> da aggiungere al catalogo,
       arricchendo i dati con le ontologie ufficiali di
       <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a>.
     </p>
     <p style="margin-top:10px;font-size:0.88rem;color:#94a3b8;">
-      ð¡ <strong style="color:#e2e8f0;">Prima di iniziare</strong> â consulta il
+      Ã°ÂÂÂ¡ <strong style="color:#e2e8f0;">Prima di iniziare</strong> Ã¢ÂÂ consulta il
       <a href="https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html"
          target="_blank" rel="noopener noreferrer"
          style="color:#00d4ff;text-decoration:none;border-bottom:1px dotted #00d4ff;">
         Catalogo Dataset Ottimali per PA
       </a>
-      per verificare se il tuo CSV ha le colonne chiave necessarie per una mappatura RDF di qualitÃ .
+      per verificare se il tuo CSV ha le colonne chiave necessarie per una mappatura RDF di qualitÃÂ .
     </p>
   </div>
 </div>
@@ -186,25 +186,25 @@
 <div class="container mt-4">
   <div class="row g-4">
 
-    <!-- ââ COLONNA SX ââ -->
+    <!-- Ã¢ÂÂÃ¢ÂÂ COLONNA SX Ã¢ÂÂÃ¢ÂÂ -->
     <div class="col-lg-6">
 
       <!-- CSV -->
       <div class="card-pa">
-        <div class="card-head blue">ð STEP 1 â Incolla il CSV</div>
+        <div class="card-head blue">Ã°ÂÂÂ STEP 1 Ã¢ÂÂ Incolla il CSV</div>
         <div class="card-body-pa">
           <label class="lbl">Contenuto CSV (con intestazioni)</label>
           <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;align-items:center">
-            <button class="btn-sec" style="font-size:0.8rem;padding:0.35rem 0.8rem" onclick="document.getElementById('file-input').click()">ð Carica file CSV</button>
+            <button class="btn-sec" style="font-size:0.8rem;padding:0.35rem 0.8rem" onclick="document.getElementById('file-input').click()">Ã°ÂÂÂ Carica file CSV</button>
             <input type="file" accept=".csv,.tsv,.txt" id="file-input" style="display:none">
             <span id="file-name" style="font-size:0.75rem;color:var(--dg-muted);font-family:var(--mono)"></span>
           </div>
           <textarea class="inp csv-area" id="csv-input" aria-label="Incolla qui il contenuto del file CSV"
             placeholder="Incolla qui il contenuto del tuo file CSV...&#10;&#10;id,nome,indirizzo,latitudine,longitudine&#10;1,Teatro Comunale,Piazza Garibaldi,40.604,17.231"></textarea>
           <div class="d-flex gap-2 mt-2 flex-wrap">
-            <button class="btn-sec" onclick="parseAndPreviewCSV()">ð Anteprima</button>
-            <button class="btn-sec" onclick="loadExample()">ð Esempio</button>
-            <button class="btn-sec" onclick="clearAll()">â Svuota</button>
+            <button class="btn-sec" onclick="parseAndPreviewCSV()">Ã°ÂÂÂ Anteprima</button>
+            <button class="btn-sec" onclick="loadExample()">Ã°ÂÂÂ Esempio</button>
+            <button class="btn-sec" onclick="clearAll()">Ã¢ÂÂ Svuota</button>
           </div>
           <div class="csv-preview-wrap" id="csv-preview"></div>
           <div id="columns-detected" style="display:none;margin-top:0.6rem;">
@@ -214,7 +214,7 @@
           <!-- PANNELLO VALIDAZIONE -->
           <div id="csv-validation" style="display:none;margin-top:0.9rem;">
             <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--dg-muted);margin-bottom:0.4rem;">
-              ð Analisi qualitÃ  CSV
+              Ã°ÂÂÂ Analisi qualitÃÂ  CSV
             </div>
             <style>
 #corpus-panel{display:none;margin:1em 0;padding:1em;border:2px solid #4a90d9;border-radius:8px;background:#f0f7ff;font-family:sans-serif}
@@ -239,14 +239,14 @@
 
       <!-- PROVIDER AI (STEP 2) -->
       <div class="card-pa">
-        <div class="card-head dark">â STEP 2 â Provider AI</div>
+        <div class="card-head dark">Ã¢ÂÂ STEP 2 Ã¢ÂÂ Provider AI</div>
         <div class="card-body-pa">
           <div class="provider-tabs">
-            <button class="provider-tab active" data-provider="mistral"   onclick="switchProvider('mistral')">ð  Mistral</button>
-            <button class="provider-tab"        data-provider="groq"      onclick="switchProvider('groq')">â¡ Groq</button>
-            <button class="provider-tab"        data-provider="gemini"    onclick="switchProvider('gemini')">â¨ Gemini</button>
-            <button class="provider-tab"        data-provider="ollama"    onclick="switchProvider('ollama')">ð¦ Ollama Cloud</button>
-            <button class="provider-tab"        data-provider="anthropic" onclick="switchProvider('anthropic')">ð´ Anthropic</button>
+            <button class="provider-tab active" data-provider="mistral"   onclick="switchProvider('mistral')">Ã°ÂÂÂ  Mistral</button>
+            <button class="provider-tab"        data-provider="groq"      onclick="switchProvider('groq')">Ã¢ÂÂ¡ Groq</button>
+            <button class="provider-tab"        data-provider="gemini"    onclick="switchProvider('gemini')">Ã¢ÂÂ¨ Gemini</button>
+            <button class="provider-tab"        data-provider="ollama"    onclick="switchProvider('ollama')">Ã°ÂÂ¦Â Ollama Cloud</button>
+            <button class="provider-tab"        data-provider="anthropic" onclick="switchProvider('anthropic')">Ã°ÂÂÂ´ Anthropic</button>
           </div>
 
           <div class="provider-panel active" id="panel-mistral">
@@ -255,7 +255,7 @@
                 <label class="lbl">API Key</label>
                 <div class="apikey-wrap">
                   <input type="password" class="inp" id="mistral-key" oninput="onApiKeyChange()" onpaste="setTimeout(onApiKeyChange,100)" onchange="onApiKeyChange()" placeholder="Incolla la tua API key Mistral..."/>
-                  <button class="apikey-toggle" onclick="toggleKey('mistral-key')">ð</button>
+                  <button class="apikey-toggle" onclick="toggleKey('mistral-key')">Ã°ÂÂÂ</button>
                 </div>
               </div>
               <div class="col-12">
@@ -268,7 +268,7 @@
                 </select>
               </div>
             </div>
-            <div class="info-note mt-2">ð <a href="https://console.mistral.ai" target="_blank" rel="noopener noreferrer">console.mistral.ai</a> â <strong>mistral-large-latest</strong> consigliato per la generazione TTL Â· <strong>open-mistral-7b</strong> consigliato per il rilevamento ontologie (AI-detect).</div>
+            <div class="info-note mt-2">Ã°ÂÂÂ <a href="https://console.mistral.ai" target="_blank" rel="noopener noreferrer">console.mistral.ai</a> Ã¢ÂÂ <strong>mistral-large-latest</strong> consigliato per la generazione TTL ÃÂ· <strong>open-mistral-7b</strong> consigliato per il rilevamento ontologie (AI-detect).</div>
           </div>
 
           <div class="provider-panel" id="panel-groq">
@@ -277,7 +277,7 @@
                 <label class="lbl">API Key</label>
                 <div class="apikey-wrap">
                   <input type="password" class="inp" id="groq-key" oninput="onApiKeyChange()" onpaste="setTimeout(onApiKeyChange,100)" onchange="onApiKeyChange()" placeholder="Incolla la tua API key Groq..."/>
-                  <button class="apikey-toggle" onclick="toggleKey('groq-key')">ð</button>
+                  <button class="apikey-toggle" onclick="toggleKey('groq-key')">Ã°ÂÂÂ</button>
                 </div>
               </div>
               <div class="col-12">
@@ -289,7 +289,7 @@
                 </select>
               </div>
             </div>
-            <div class="info-note mt-2">â¡ <a href="https://console.groq.com" target="_blank" rel="noopener noreferrer">console.groq.com</a> â veloce, rate limit sul piano free.</div>
+            <div class="info-note mt-2">Ã¢ÂÂ¡ <a href="https://console.groq.com" target="_blank" rel="noopener noreferrer">console.groq.com</a> Ã¢ÂÂ veloce, rate limit sul piano free.</div>
           </div>
 
           <div class="provider-panel" id="panel-gemini">
@@ -298,7 +298,7 @@
                 <label class="lbl">API Key</label>
                 <div class="apikey-wrap">
                   <input type="password" class="inp" id="gemini-key" oninput="onApiKeyChange()" onpaste="setTimeout(onApiKeyChange,100)" onchange="onApiKeyChange()" placeholder="Incolla la tua API key Google AI Studio..."/>
-                  <button class="apikey-toggle" onclick="toggleKey('gemini-key')">ð</button>
+                  <button class="apikey-toggle" onclick="toggleKey('gemini-key')">Ã°ÂÂÂ</button>
                 </div>
               </div>
               <div class="col-12">
@@ -311,7 +311,7 @@
                 </select>
               </div>
             </div>
-            <div class="info-note mt-2">â¨ <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a> â piano free: 1500 req/giorno, 1M token/min.</div>
+            <div class="info-note mt-2">Ã¢ÂÂ¨ <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a> Ã¢ÂÂ piano free: 1500 req/giorno, 1M token/min.</div>
           </div>
 
 
@@ -328,22 +328,22 @@
                 <label class="lbl">API Key Ollama Cloud</label>
                 <div class="apikey-wrap">
                   <input type="password" class="inp" id="ollama-key" placeholder="da ollama.com/settings/keys"/>
-                  <button class="apikey-toggle" onclick="toggleKey('ollama-key')">ð</button>
+                  <button class="apikey-toggle" onclick="toggleKey('ollama-key')">Ã°ÂÂÂ</button>
                 </div>
               </div>
               <div class="col-12">
                 <label class="lbl">Modello</label>
                 <div class="d-flex gap-2">
                   <input type="text" class="inp" id="ollama-model" value="gpt-oss:120b" placeholder="es. gpt-oss:120b"/>
-                  <button class="btn-sec" onclick="loadOllamaModels()" style="white-space:nowrap;flex-shrink:0">âº Carica lista</button>
+                  <button class="btn-sec" onclick="loadOllamaModels()" style="white-space:nowrap;flex-shrink:0">Ã¢ÂÂº Carica lista</button>
                 </div>
                 <select class="inp mt-1" id="ollama-model-select" style="display:none" onchange="document.getElementById('ollama-model').value=this.value">
-                  <option value="">â seleziona modello â</option>
+                  <option value="">Ã¢ÂÂ seleziona modello Ã¢ÂÂ</option>
                 </select>
               </div>
             </div>
             <div class="info-note mt-2">
-              ð¦ Ollama Cloud blocca le chiamate dirette dal browser (CORS). Il proxy sul tuo server fa da intermediario verso <code>ollama.com</code>.<br/>
+              Ã°ÂÂ¦Â Ollama Cloud blocca le chiamate dirette dal browser (CORS). Il proxy sul tuo server fa da intermediario verso <code>ollama.com</code>.<br/>
               API key: <a href="https://ollama.com/settings/keys" target="_blank" rel="noopener noreferrer">ollama.com/settings/keys</a>
             </div>
           </div>
@@ -355,7 +355,7 @@
                 <label class="lbl">API Key</label>
                 <div class="apikey-wrap">
                   <input type="password" class="inp" id="anthropic-key" oninput="onApiKeyChange()" onpaste="setTimeout(onApiKeyChange,100)" onchange="onApiKeyChange()" placeholder="Incolla la tua API key Anthropic..."/>
-                  <button class="apikey-toggle" onclick="toggleKey('anthropic-key')">ð</button>
+                  <button class="apikey-toggle" onclick="toggleKey('anthropic-key')">Ã°ÂÂÂ</button>
                 </div>
               </div>
               <div class="col-12">
@@ -367,7 +367,7 @@
                 </select>
               </div>
             </div>
-            <div class="info-note mt-2">ð´ <a href="https://console.anthropic.com/" target="_blank" rel="noopener noreferrer">console.anthropic.com</a> â <strong>claude-haiku</strong> consigliato per AI-detect, <strong>claude-sonnet</strong> per la generazione TTL.</div>
+            <div class="info-note mt-2">Ã°ÂÂÂ´ <a href="https://console.anthropic.com/" target="_blank" rel="noopener noreferrer">console.anthropic.com</a> Ã¢ÂÂ <strong>claude-haiku</strong> consigliato per AI-detect, <strong>claude-sonnet</strong> per la generazione TTL.</div>
           </div>
 
 
@@ -385,40 +385,40 @@
 
       <!-- ONTOLOGIE -->
       <div class="card-pa">
-        <div class="card-head dark">ð STEP 3 â Ontologie (rilevate automaticamente)</div>
+        <div class="card-head dark">Ã°ÂÂÂ STEP 3 Ã¢ÂÂ Ontologie (rilevate automaticamente)</div>
         <div class="card-body-pa">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <label class="lbl" style="margin:0">Seleziona le ontologie (clicca per attivare)</label>
-            <button class="btn-auto-onto" id="btn-ai-onto" onclick="autoDetectOntoAI()" disabled>ð¤ Rileva ontologie</button>
+            <button class="btn-auto-onto" id="btn-ai-onto" onclick="autoDetectOntoAI()" disabled>Ã°ÂÂ¤Â Rileva ontologie</button>
           </div>
           <div id="auto-onto-msg" style="display:none;font-size:0.72rem;color:#1a6b35;margin-bottom:0.4rem;font-family:var(--mono)"></div>
           <div class="pills" id="onto-selector">
-            <span class="pill active" data-onto="CLV">CLV â Indirizzi</span>
-            <span class="pill active" data-onto="COV">COV â Organizzazioni</span>
-            <span class="pill" data-onto="CPV">CPV â Persone</span>
-            <span class="pill active" data-onto="L0">L0 â Top-level</span>
-            <span class="pill active" data-onto="POI">POI â Punti interesse</span>
-            <span class="pill active" data-onto="SM">SM â Social/Contatti</span>
-            <span class="pill" data-onto="RO">RO â Ruoli</span>
-            <span class="pill active" data-onto="TI">TI â Tempo</span>
-            <span class="pill" data-onto="ADMS">ADMS â Asset</span>
+            <span class="pill active" data-onto="CLV">CLV Ã¢ÂÂ Indirizzi</span>
+            <span class="pill active" data-onto="COV">COV Ã¢ÂÂ Organizzazioni</span>
+            <span class="pill" data-onto="CPV">CPV Ã¢ÂÂ Persone</span>
+            <span class="pill active" data-onto="L0">L0 Ã¢ÂÂ Top-level</span>
+            <span class="pill active" data-onto="POI">POI Ã¢ÂÂ Punti interesse</span>
+            <span class="pill active" data-onto="SM">SM Ã¢ÂÂ Social/Contatti</span>
+            <span class="pill" data-onto="RO">RO Ã¢ÂÂ Ruoli</span>
+            <span class="pill active" data-onto="TI">TI Ã¢ÂÂ Tempo</span>
+            <span class="pill" data-onto="ADMS">ADMS Ã¢ÂÂ Asset</span>
           </div>
           <div style="margin-top:0.5rem">
-            <button class="btn-expand" onclick="toggleAdv()" id="btn-adv">â¶ Mostra ontologie avanzate</button>
+            <button class="btn-expand" onclick="toggleAdv()" id="btn-adv">Ã¢ÂÂ¶ Mostra ontologie avanzate</button>
             <div id="onto-advanced" style="display:none;margin-top:0.5rem">
               <div class="pills" id="onto-selector-adv">
-                <span class="pill" data-onto="ACCO">ACCO â Accommodation</span>
-                <span class="pill" data-onto="AC">AC â Condizioni accesso</span>
-                <span class="pill" data-onto="PARK">PARK â Parcheggi</span>
-                <span class="pill" data-onto="CPSV-AP">CPSV-AP â Servizi pubblici</span>
-                <span class="pill" data-onto="Cultural-ON">Cultural-ON â Patrimonio</span>
-                <span class="pill" data-onto="GTFS">GTFS â Trasporto pubblico</span>
-                <span class="pill" data-onto="Route">Route â Percorsi</span>
-                <span class="pill" data-onto="Language">Language â Lingue</span>
-                <span class="pill" data-onto="IoT">IoT â Internet of Things</span>
-                <span class="pill" data-onto="Transparency">Transparency â Trasparenza</span>
-                <span class="pill" data-onto="SKOS">SKOS â Classificazioni</span>
-                <span class="pill" data-onto="QB">QB â Data Cube (statistiche)</span>
+                <span class="pill" data-onto="ACCO">ACCO Ã¢ÂÂ Accommodation</span>
+                <span class="pill" data-onto="AC">AC Ã¢ÂÂ Condizioni accesso</span>
+                <span class="pill" data-onto="PARK">PARK Ã¢ÂÂ Parcheggi</span>
+                <span class="pill" data-onto="CPSV-AP">CPSV-AP Ã¢ÂÂ Servizi pubblici</span>
+                <span class="pill" data-onto="Cultural-ON">Cultural-ON Ã¢ÂÂ Patrimonio</span>
+                <span class="pill" data-onto="GTFS">GTFS Ã¢ÂÂ Trasporto pubblico</span>
+                <span class="pill" data-onto="Route">Route Ã¢ÂÂ Percorsi</span>
+                <span class="pill" data-onto="Language">Language Ã¢ÂÂ Lingue</span>
+                <span class="pill" data-onto="IoT">IoT Ã¢ÂÂ Internet of Things</span>
+                <span class="pill" data-onto="Transparency">Transparency Ã¢ÂÂ Trasparenza</span>
+                <span class="pill" data-onto="SKOS">SKOS Ã¢ÂÂ Classificazioni</span>
+                <span class="pill" data-onto="QB">QB Ã¢ÂÂ Data Cube (statistiche)</span>
               </div>
             </div>
           </div>
@@ -427,7 +427,7 @@
 
       <!-- TITOLARE (STEP 4) -->
       <div class="card-pa">
-        <div class="card-head orange">ð STEP 4 â Titolare del dato</div>
+        <div class="card-head orange">Ã°ÂÂÂ STEP 4 Ã¢ÂÂ Titolare del dato</div>
         <div class="card-body-pa">
           <div class="row g-2">
             <div class="col-md-7">
@@ -447,45 +447,45 @@
       </div>
 
       <div class="d-flex gap-2 flex-wrap mb-3">
-        <button class="btn-orange" id="btn-convert" onclick="startConversion()">â¡ Genera TTL</button>
-        <button class="btn-sec" onclick="clearAll()">âº Reset</button>
+        <button class="btn-orange" id="btn-convert" onclick="startConversion()">Ã¢ÂÂ¡ Genera TTL</button>
+        <button class="btn-sec" onclick="clearAll()">Ã¢ÂÂº Reset</button>
       </div>
       <div class="status-bar" id="status-bar"></div>
 
     </div><!-- fine SX -->
 
-    <!-- ââ COLONNA DX ââ -->
+    <!-- Ã¢ÂÂÃ¢ÂÂ COLONNA DX Ã¢ÂÂÃ¢ÂÂ -->
     <div class="col-lg-6">
       <div class="card-pa">
-        <div class="card-head dark">ð» Output RDF / Turtle (.ttl)</div>
+        <div class="card-head dark">Ã°ÂÂÂ» Output RDF / Turtle (.ttl)</div>
         <div class="card-body-pa">
           <textarea class="inp ttl-area" id="ttl-output" readonly
-            placeholder="# Il file Turtle apparirÃ  qui...&#10;#&#10;# Esempio:&#10;# @prefix poi: &lt;https://w3id.org/italia/onto/POI/&gt; .&#10;# @prefix geo: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#&gt; .&#10;# ...&#10;#&#10;# &lt;https://...&gt; a poi:PointOfInterest ;&#10;#     rdfs:label &quot;...&quot;@it ;&#10;#     geo:lat &quot;...&quot;^^xsd:decimal ."></textarea>
+            placeholder="# Il file Turtle apparirÃÂ  qui...&#10;#&#10;# Esempio:&#10;# @prefix poi: &lt;https://w3id.org/italia/onto/POI/&gt; .&#10;# @prefix geo: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#&gt; .&#10;# ...&#10;#&#10;# &lt;https://...&gt; a poi:PointOfInterest ;&#10;#     rdfs:label &quot;...&quot;@it ;&#10;#     geo:lat &quot;...&quot;^^xsd:decimal ."></textarea>
           <div class="d-flex gap-2 mt-2 flex-wrap">
-            <button class="btn-primary" id="btn-download-ttl" onclick="downloadTTL()" disabled>â¬ Scarica .ttl</button>
-            <button class="btn-primary" id="btn-download-rdf" onclick="downloadRDF()" disabled style="background:#1a6b35">â¬ Scarica .rdf</button>
-            <button class="btn-sec" onclick="copyTTL()">ð Copia TTL</button>
-            <button id="btn-validate" class="btn-sec" disabled onclick="validateTTL()" style="border-color:#f90;color:#f90">ð Valida</button>
+            <button class="btn-primary" id="btn-download-ttl" onclick="downloadTTL()" disabled>Ã¢Â¬Â Scarica .ttl</button>
+            <button class="btn-primary" id="btn-download-rdf" onclick="downloadRDF()" disabled style="background:#1a6b35">Ã¢Â¬Â Scarica .rdf</button>
+            <button class="btn-sec" onclick="copyTTL()">Ã°ÂÂÂ Copia TTL</button>
+            <button id="btn-validate" class="btn-sec" disabled onclick="validateTTL()" style="border-color:#f90;color:#f90">Ã°ÂÂÂ Valida</button>
           </div>
           <div id="validation-report" style="display:none; margin-top:12px; padding:12px; background:#1a1a2e; border-radius:8px; font-family:monospace; font-size:12px; max-height:200px; overflow-y:auto"></div>
           <div id="output-stats" style="display:none;margin-top:0.9rem;">
             <div class="row g-2 text-center">
               <div class="col-4">
                 <div class="stat-box" style="background:var(--dg-blue-light)">
-                  <div class="stat-val" style="color:var(--dg-blue)" id="stat-triples">â</div>
+                  <div class="stat-val" style="color:var(--dg-blue)" id="stat-triples">Ã¢ÂÂ</div>
                   <div class="stat-lbl">triple RDF</div>
                 </div>
               </div>
               <div class="col-4">
                 <div class="stat-box" style="background:#e6f4ec">
-                  <div class="stat-val" style="color:#1a6b35" id="stat-prefixes">â</div>
+                  <div class="stat-val" style="color:#1a6b35" id="stat-prefixes">Ã¢ÂÂ</div>
                   <div class="stat-lbl">prefissi</div>
                 </div>
               </div>
               <div class="col-4">
                 <div class="stat-box" style="background:#fff8e6">
-                  <div class="stat-val" style="color:#a06000" id="stat-entities">â</div>
-                  <div class="stat-lbl">entitÃ </div>
+                  <div class="stat-val" style="color:#a06000" id="stat-entities">Ã¢ÂÂ</div>
+                  <div class="stat-lbl">entitÃÂ </div>
                 </div>
               </div>
             </div>
@@ -495,15 +495,15 @@
 
       <!-- INFO -->
       <div class="card-pa mt-3">
-        <div class="card-head gray">â¹ Come funziona</div>
+        <div class="card-head gray">Ã¢ÂÂ¹ Come funziona</div>
         <div class="card-body-pa" style="font-size:0.82rem;line-height:1.7;color:var(--dg-muted)">
-          <p>La PA ha giÃ  pubblicato il dataset su <strong>dati.gov.it</strong> o sul portale opendata locale con tutti i metadati DCAT. Questo strumento genera la <strong>distribuzione TTL</strong> da aggiungere al catalogo.</p>
+          <p>La PA ha giÃÂ  pubblicato il dataset su <strong>dati.gov.it</strong> o sul portale opendata locale con tutti i metadati DCAT. Questo strumento genera la <strong>distribuzione TTL</strong> da aggiungere al catalogo.</p>
           <p>Il file TTL contiene:</p>
           <ul style="margin:0;padding-left:1.2rem">
             <li>Il <strong>titolare</strong> (<code>dct:rightsHolder</code>) con URI IPA ufficiale</li>
-            <li>Le <strong>entitÃ  LOD</strong> per ogni riga del CSV, tipizzate con le ontologie ufficiali di <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer" style="color:var(--dg-blue)">dati-semantic-assets</a></li>
+            <li>Le <strong>entitÃÂ  LOD</strong> per ogni riga del CSV, tipizzate con le ontologie ufficiali di <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer" style="color:var(--dg-blue)">dati-semantic-assets</a></li>
           </ul>
-          <p class="mt-2">Il file generato va aggiunto come <strong>nuova distribuzione</strong> al dataset giÃ  esistente.</p>
+          <p class="mt-2">Il file generato va aggiunto come <strong>nuova distribuzione</strong> al dataset giÃÂ  esistente.</p>
         </div>
       </div>
     </div><!-- fine DX -->
@@ -512,22 +512,22 @@
 </div>
 
 <footer>
-  Strumento open source per la PA italiana &nbsp;Â·&nbsp;
-  <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> Â·
-  <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> Â·
+  Strumento open source per la PA italiana &nbsp;ÃÂ·&nbsp;
+  <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> ÃÂ·
+  <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> ÃÂ·
   <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a>
-  &nbsp;Â·&nbsp;<span style="opacity:0.5">v2026.03.20.14</span>
+  &nbsp;ÃÂ·&nbsp;<span style="opacity:0.5">v2026.03.20.15</span>
 </footer>
 
 <script>
-// ââ ESEMPIO ââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ ESEMPIO Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const EXAMPLE_CSV = `id,denominazione,indirizzo,comune,provincia,latitudine,longitudine,telefono,email,accessibile_h24
 1,DAE Stazione Centrale,Piazza Aldo Moro 1,Bari,BA,41.1180,16.8717,0805772500,dae@comune.bari.it,si
 2,DAE Ospedale Policlinico,Piazza Giulio Cesare 11,Bari,BA,41.1140,16.8593,0805592111,dae.policlinico@ospedalebari.it,si
 3,DAE Piazza Ferrarese,Piazza Ferrarese,Bari,BA,41.1271,16.8694,,dae@comune.bari.it,no
 4,DAE Teatro Petruzzelli,Corso Cavour 12,Bari,BA,41.1253,16.8721,0805724111,,si`;
 
-// ââ PROVIDER âââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ PROVIDER Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 let currentProvider = 'mistral';
 
 function switchProvider(p) {
@@ -546,7 +546,7 @@ function toggleKey(id) {
   el.type = el.type === 'password' ? 'text' : 'password';
 }
 
-// ââ ONTOLOGIE ââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ ONTOLOGIE Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 document.querySelectorAll('#onto-selector .pill, #onto-selector-adv .pill').forEach(p =>
   p.addEventListener('click', () => p.classList.toggle('active'))
 );
@@ -561,7 +561,7 @@ function toggleAdv() {
   const btn   = document.getElementById('btn-adv');
   const open  = panel.style.display === 'none';
   panel.style.display = open ? 'block' : 'none';
-  btn.textContent = (open ? 'â¼ Nascondi' : 'â¶ Mostra') + ' ontologie avanzate';
+  btn.textContent = (open ? 'Ã¢ÂÂ¼ Nascondi' : 'Ã¢ÂÂ¶ Mostra') + ' ontologie avanzate';
 }
 
 const ONTO_RULES = [
@@ -573,7 +573,7 @@ const ONTO_RULES = [
   { keys: ['persona','cognome','responsabile','referente','inventore','inventori','autore','ricercatore','lista','candidato','sezione_elettorale'], ontos: ['CPV'] },
   { keys: ['ruolo','qualifica','mansione','incarico'],                     ontos: ['RO'] },
   { keys: ['nome_dataset','nome_risorsa','dataset_name','resource_name','numero_righe','numero_record','formato','identifier'], ontos: ['ADMS'] },
-  { keys: ['brevetto','patent','pi','proprietÃ _intellettuale','tipo_pi','n_dom','deposito'], ontos: ['ADMS'] },
+  { keys: ['brevetto','patent','pi','proprietÃÂ _intellettuale','tipo_pi','n_dom','deposito'], ontos: ['ADMS'] },
   { keys: ['data_evento','data_inizio','data_fine','startDate','endDate','ora','inizio','fine','apertura','scadenza'], ontos: ['TI'] },
   { keys: ['punto','poi','luogo','location','sede','struttura','dae','aed','defibrillatore','accessibile_h24','presenza_aed'], ontos: ['POI'] },
   { keys: ['lista','partito','candidato','sezione','voti','preferenze','ballottaggio','circoscrizione','sindaco'], ontos: ['COV','CPV'] },
@@ -612,22 +612,22 @@ Le ontologie ufficiali sono su https://github.com/italia/dati-semantic-assets
 Analizza queste intestazioni CSV e le prime righe di dati:
 ${sample}
 
-Rispondi SOLO con una lista JSON dei prefissi ontologici piÃ¹ appropriati tra questi valori esatti:
+Rispondi SOLO con una lista JSON dei prefissi ontologici piÃÂ¹ appropriati tra questi valori esatti:
 CLV, COV, CPV, L0, POI, SM, RO, TI, ADMS, ACCO, PARK, GTFS, Cultural-ON, CPSV-AP, QB, SKOS
 
 REGOLE IMPORTANTI:
-- Se le colonne o i valori contengono "CulturalInstituteOrSite", "beniculturali", "mibact", "museo", "biblioteca", "monumento", "patrimonio" â includi SEMPRE "Cultural-ON"
-- Se il CSV ha colonna "subject" con URI di istituti culturali â includi "Cultural-ON"
+- Se le colonne o i valori contengono "CulturalInstituteOrSite", "beniculturali", "mibact", "museo", "biblioteca", "monumento", "patrimonio" Ã¢ÂÂ includi SEMPRE "Cultural-ON"
+- Se il CSV ha colonna "subject" con URI di istituti culturali Ã¢ÂÂ includi "Cultural-ON"
 
 Esempio di risposta valida: ["ACCO", "CLV", "L0"]
 Non aggiungere spiegazioni, solo il JSON.`;
 
   const btn = document.getElementById('btn-ai-onto');
   btn.disabled = true;
-  btn.textContent = 'â³ Analisi...';
+  btn.textContent = 'Ã¢ÂÂ³ Analisi...';
 
-  // EARLY EXIT AI-DETECT: se il deterministico ha giÃ  rilevato un catalogo ADMS
-  // non chiamare l'AI â il CSV Ã¨ un registro di file, non dati ontologici
+  // EARLY EXIT AI-DETECT: se il deterministico ha giÃÂ  rilevato un catalogo ADMS
+  // non chiamare l'AI Ã¢ÂÂ il CSV ÃÂ¨ un registro di file, non dati ontologici
   {
     const csvText = document.getElementById('csv-input')?.value || '';
     const parsed2 = parseCSV(csvText);
@@ -642,16 +642,16 @@ Non aggiungere spiegazioni, solo il JSON.`;
           p.classList.toggle('active', p.dataset.onto === 'ADMS');
         });
         const msgEl = document.getElementById('auto-onto-msg');
-        if (msgEl) { msgEl.textContent = 'ð¤ CSV catalogo: ADMS (AI-detect saltato)'; msgEl.style.display='block'; }
+        if (msgEl) { msgEl.textContent = 'Ã°ÂÂ¤Â CSV catalogo: ADMS (AI-detect saltato)'; msgEl.style.display='block'; }
         btn.disabled = false;
-        btn.textContent = 'ð¤ AI-detect';
+        btn.textContent = 'Ã°ÂÂ¤Â AI-detect';
         return;
       }
     }
   }
 
   try {
-    // Per l'AI-detect usa sempre il modello piÃ¹ leggero disponibile per provider
+    // Per l'AI-detect usa sempre il modello piÃÂ¹ leggero disponibile per provider
   const AI_DETECT_MODELS = {
     'mistral':   'open-mistral-7b',
     'groq':      'llama-3.1-8b-instant',
@@ -674,7 +674,7 @@ Non aggiungere spiegazioni, solo il JSON.`;
     if (!match) throw new Error('Risposta non valida');
     const ontos = JSON.parse(match[0]);
 
-    // Attiva le pillole suggerite â UNIONE con quelle giÃ  attive dal deterministico
+    // Attiva le pillole suggerite Ã¢ÂÂ UNIONE con quelle giÃÂ  attive dal deterministico
     const alreadyActive = new Set([...document.querySelectorAll('#onto-selector .pill.active, #onto-selector-adv .pill.active')]
       .map(p => p.dataset.onto.toUpperCase()));
     const aiOntos = new Set(ontos.map(o => o.toUpperCase()));
@@ -687,19 +687,19 @@ Non aggiungere spiegazioni, solo il JSON.`;
     const advActive = [...document.querySelectorAll('#onto-selector-adv .pill.active')].length > 0;
     if (advActive) {
       document.getElementById('onto-advanced').style.display = 'block';
-      document.getElementById('btn-adv').textContent = 'â¼ Nascondi ontologie avanzate';
+      document.getElementById('btn-adv').textContent = 'Ã¢ÂÂ¼ Nascondi ontologie avanzate';
     }
 
     const msg = document.getElementById('auto-onto-msg');
-    msg.textContent = `ð¤ AI suggerisce: ${ontos.join(', ')}`;
+    msg.textContent = `Ã°ÂÂ¤Â AI suggerisce: ${ontos.join(', ')}`;
     msg.style.display = 'block';
-    window._aiDetectDone = true; // segnala che l'AI ha giÃ  completato
+    window._aiDetectDone = true; // segnala che l'AI ha giÃÂ  completato
 
   } catch(e) {
-    showStatus('â AI-detect fallito: ' + e.message, 'error');
+    showStatus('Ã¢ÂÂ AI-detect fallito: ' + e.message, 'error');
   } finally {
     btn.disabled = false;
-    btn.textContent = 'ð¤ AI-detect';
+    btn.textContent = 'Ã°ÂÂ¤Â AI-detect';
   }
 }
 
@@ -710,7 +710,7 @@ function autoDetectOnto() {
   if (!parsed) return;
   const cols = parsed.headers.map(h => h.toLowerCase());
 
-  // Parte da zero â nessun default
+  // Parte da zero Ã¢ÂÂ nessun default
   const suggested = new Set();
 
   // Campiona i VALORI delle prime 3 righe per usarli nei trigger insieme alle intestazioni
@@ -720,7 +720,7 @@ function autoDetectOnto() {
     .map(v => String(v).toLowerCase())
     .join(' ');
 
-  // EARLY EXIT: CSV di catalogo/registro dati â solo ADMS
+  // EARLY EXIT: CSV di catalogo/registro dati Ã¢ÂÂ solo ADMS
   // Usa SIA intestazioni CHE valori: il CSV catalogo ha valori come "csv","json","ttl" in colonna formato
   const catalogHeaderMatch = ['nome_dataset','nome_risorsa','numero_righe','formato'].filter(k => cols.includes(k)).length >= 2;
   const catalogValueMatch  = /\b(csv|json|ttl|xlsx|xml)\b/.test(sampleVals) &&
@@ -732,7 +732,7 @@ function autoDetectOnto() {
       p.classList.toggle('active', p.dataset.onto === 'ADMS');
     });
     const msg = document.getElementById('auto-onto-msg');
-    if (msg) { msg.textContent = 'ð¤ CSV catalogo rilevato: solo ADMS'; msg.style.display='block'; }
+    if (msg) { msg.textContent = 'Ã°ÂÂ¤Â CSV catalogo rilevato: solo ADMS'; msg.style.display='block'; }
     return;
   }
 
@@ -819,7 +819,7 @@ function autoDetectOnto() {
 
   // Controllo sui VALORI del campione (tutte le righe, non solo la prima)
   if (parsed.rows && parsed.rows.length > 0) {
-    // Prendi fino a 5 righe per avere un campione piÃ¹ rappresentativo
+    // Prendi fino a 5 righe per avere un campione piÃÂ¹ rappresentativo
     const sampleRows = parsed.rows.slice(0, 5);
     const sampleValues = sampleRows
       .flatMap(r => Object.values(r))
@@ -845,31 +845,31 @@ function autoDetectOnto() {
   // Se non ha trovato nulla, almeno L0
   if (suggested.size === 0) suggested.add('L0');
 
-  // Aggiorna pillole â resetta solo se l'AI non ha ancora risposto
+  // Aggiorna pillole Ã¢ÂÂ resetta solo se l'AI non ha ancora risposto
   if (!window._aiDetectDone) {
     document.querySelectorAll('#onto-selector .pill, #onto-selector-adv .pill').forEach(p => {
       p.classList.toggle('active', suggested.has(p.dataset.onto));
     });
   }
 
-  // Apri avanzate se qualcuna Ã¨ lÃ¬
+  // Apri avanzate se qualcuna ÃÂ¨ lÃÂ¬
   const advActive = [...document.querySelectorAll('#onto-selector-adv .pill.active')].length > 0;
   if (advActive) {
     document.getElementById('onto-advanced').style.display = 'block';
-    document.getElementById('btn-adv').textContent = 'â¼ Nascondi ontologie avanzate';
+    document.getElementById('btn-adv').textContent = 'Ã¢ÂÂ¼ Nascondi ontologie avanzate';
   }
 
   const msg = document.getElementById('auto-onto-msg');
   if (suggested.size > 0) {
-    msg.textContent = `â Suggerite: ${[...suggested].join(', ')}`;
+    msg.textContent = `Ã¢ÂÂ Suggerite: ${[...suggested].join(', ')}`;
     msg.style.display = 'block';
   } else {
     msg.style.display = 'none';
   }
 }
 
-// ââ CSV âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// ââ VALIDAZIONE CSV ââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ CSV Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// Ã¢ÂÂÃ¢ÂÂ VALIDAZIONE CSV Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function validateCSV(parsed) {
   const issues = [];
   const { headers, rows, sep } = parsed;
@@ -877,7 +877,7 @@ function validateCSV(parsed) {
   // 0. Info separatore rilevato
   const sepNames = { ',': 'virgola (,)', ';': 'punto e virgola (;)', '\t': 'tabulazione (\\t)', '|': 'pipe (|)' };
   if (sep && sep !== ',') {
-    issues.push({ level:'info', title:`Separatore rilevato: ${sepNames[sep]||sep}`, hint:'Il CSV Ã¨ stato analizzato correttamente con questo separatore.' });
+    issues.push({ level:'info', title:`Separatore rilevato: ${sepNames[sep]||sep}`, hint:'Il CSV ÃÂ¨ stato analizzato correttamente con questo separatore.' });
   }
 
   // 1. Colonne senza nome o con nomi generici
@@ -914,9 +914,9 @@ function validateCSV(parsed) {
   Object.entries(missingByCol).forEach(([col, count]) => {
     const pct = Math.round(count / rows.length * 100);
     if (pct >= 50) {
-      issues.push({ level:'warning', title:`"${col}": ${pct}% valori mancanti (${count}/${rows.length})`, hint:'Colonna quasi vuota â valuta se includerla o rimuoverla.' });
+      issues.push({ level:'warning', title:`"${col}": ${pct}% valori mancanti (${count}/${rows.length})`, hint:'Colonna quasi vuota Ã¢ÂÂ valuta se includerla o rimuoverla.' });
     } else if (pct > 0) {
-      issues.push({ level:'info', title:`"${col}": ${count} valori mancanti (${pct}%)`, hint:'Alcune celle sono vuote â il TTL avrÃ  triple incomplete per queste righe.' });
+      issues.push({ level:'info', title:`"${col}": ${count} valori mancanti (${pct}%)`, hint:'Alcune celle sono vuote Ã¢ÂÂ il TTL avrÃÂ  triple incomplete per queste righe.' });
     }
   });
 
@@ -945,7 +945,7 @@ function validateCSV(parsed) {
   });
 
   // 5. Encoding strano (caratteri non ASCII/UTF-8 tipici di ISO-8859)
-  const suspectPattern = /[\x80-\x9F]|Ã |ÃÂ¨|ÃÂ¹|ÃÂ²|Ã |ÃÂ¬/;
+  const suspectPattern = /[\x80-\x9F]|ÃÂ |ÃÂÃÂ¨|ÃÂÃÂ¹|ÃÂÃÂ²|ÃÂ |ÃÂÃÂ¬/;
   let encodingIssues = 0;
   rows.forEach(row => {
     headers.forEach(h => {
@@ -961,9 +961,9 @@ function validateCSV(parsed) {
   const items = document.getElementById('csv-validation-items');
 
   if (issues.length === 0) {
-    items.innerHTML = `<div class="val-item ok"><span class="val-icon">â</span><div class="val-text"><strong>CSV valido</strong><span>Nessun problema rilevato. Puoi procedere con la generazione TTL.</span></div></div>`;
+    items.innerHTML = `<div class="val-item ok"><span class="val-icon">Ã¢ÂÂ</span><div class="val-text"><strong>CSV valido</strong><span>Nessun problema rilevato. Puoi procedere con la generazione TTL.</span></div></div>`;
   } else {
-    const icons = { error:'â', warning:'â ï¸', info:'â¹ï¸' };
+    const icons = { error:'Ã¢ÂÂ', warning:'Ã¢ÂÂ Ã¯Â¸Â', info:'Ã¢ÂÂ¹Ã¯Â¸Â' };
     items.innerHTML = issues.map(i => `
       <div class="val-item ${i.level}">
         <span class="val-icon">${icons[i.level]}</span>
@@ -992,8 +992,8 @@ function loadCSVFile(input) {
   const readerUtf8 = new FileReader();
   readerUtf8.onload = function(e) {
     let text = e.target.result;
-    // Detecta caratteri latin1 mal decodificati (es. Ã , ÃÂ¨)
-    const hasEncIssue = /Ã[\x80-\xBF]|\xef\xbf\xbd/.test(text);
+    // Detecta caratteri latin1 mal decodificati (es. ÃÂ , ÃÂÃÂ¨)
+    const hasEncIssue = /ÃÂ[\x80-\xBF]|\xef\xbf\xbd/.test(text);
     if (hasEncIssue) {
       // Rileggi come latin1
       const readerLatin = new FileReader();
@@ -1111,7 +1111,7 @@ function parseAndPreviewCSV() {
   window._aiDetectDone = false; // reset flag AI-detect per nuovo CSV
   validateCSV(parsed);
   autoDetectOnto();
-  // Lancia AI-detect automaticamente se c'Ã¨ una API key configurata
+  // Lancia AI-detect automaticamente se c'ÃÂ¨ una API key configurata
   const hasKey = (
     document.getElementById('mistral-key')?.value.trim() ||
     document.getElementById('groq-key')?.value.trim() ||
@@ -1122,7 +1122,7 @@ function parseAndPreviewCSV() {
   if (hasKey) {
     setTimeout(() => autoDetectOntoAI(), 300); // piccolo delay per non sovrapporre i messaggi
   }
-  showStatus(`â ${parsed.headers.length} colonne Â· ${parsed.rows.length} righe`, 'success');
+  showStatus(`Ã¢ÂÂ ${parsed.headers.length} colonne ÃÂ· ${parsed.rows.length} righe`, 'success');
 }
 
 function loadExample() {
@@ -1146,7 +1146,7 @@ function clearAll() {
   hideStatus();
 }
 
-// ââ STATUS ââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ STATUS Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function showStatus(msg, type) {
   const bar = document.getElementById('status-bar');
   bar.innerHTML = type === 'info'
@@ -1156,7 +1156,7 @@ function showStatus(msg, type) {
 }
 function hideStatus() { document.getElementById('status-bar').className = 'status-bar'; }
 
-// ââ HEADER TTL (generato in JS, non dal LLM) ââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ HEADER TTL (generato in JS, non dal LLM) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function buildTTLHeader(paname, ipa) {
   const ipaURI = `https://w3id.org/italia/data/public-organization/${ipa}`;
   return `@prefix owl:   <http://www.w3.org/2002/07/owl#> .
@@ -1193,25 +1193,25 @@ function buildTTLHeader(paname, ipa) {
 `;
 }
 
-// ââ PROMPT CHUNK âââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ PROMPT CHUNK Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 
 
-// ââ CLASSI E PROPRIETÃ DELLE ONTOLOGIE (mappa statica verificata) ââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ CLASSI E PROPRIETÃÂ DELLE ONTOLOGIE (mappa statica verificata) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const ONTO_CLASSES = {
   'CLV': {
-    classes: ['clv:Address (Indirizzo)', 'clv:Feature (Caratteristica geografica)', 'clv:Geometry (Geometria)', 'clv:AdminUnit (UnitÃ  amministrativa)', 'clv:Road (Strada)', 'clv:StreetNumber (Numero civico)', 'clv:Identifier (Identificativo)', 'clv:GeographicalDistribution (Ripartizione geografica)'],
+    classes: ['clv:Address (Indirizzo)', 'clv:Feature (Caratteristica geografica)', 'clv:Geometry (Geometria)', 'clv:AdminUnit (UnitÃÂ  amministrativa)', 'clv:Road (Strada)', 'clv:StreetNumber (Numero civico)', 'clv:Identifier (Identificativo)', 'clv:GeographicalDistribution (Ripartizione geografica)'],
     props:   ['clv:hasAddress', 'clv:hasGeometry', 'clv:hasAdminUnit', 'clv:hasRoad', 'clv:hasStreetNumber', 'clv:hasSpatialCoverage', 'clv:lat', 'clv:long']
   },
   'COV': {
-    classes: ['cov:Organization (Organizzazione)', 'cov:PublicOrganization (Organizzazione pubblica)', 'cov:Company (Impresa)', 'cov:ActivityType (Tipo attivitÃ )', 'cov:ContactPoint (Punto di contatto)', 'cov:Email (Email)', 'cov:Telephone (Telefono)'],
+    classes: ['cov:Organization (Organizzazione)', 'cov:PublicOrganization (Organizzazione pubblica)', 'cov:Company (Impresa)', 'cov:ActivityType (Tipo attivitÃÂ )', 'cov:ContactPoint (Punto di contatto)', 'cov:Email (Email)', 'cov:Telephone (Telefono)'],
     props:   ['cov:hasContactPoint', 'cov:hasActivityType', 'cov:hasLegalStatus', 'cov:hasSubOrganization', 'cov:isPartOf']
   },
   'CPV': {
-    classes: ['cpv:Person (Persona â SOLO persone fisiche)', 'cpv:Adult (Adulto)', 'cpv:Minor (Minore)', 'cpv:Senior (Anziano)'],
+    classes: ['cpv:Person (Persona Ã¢ÂÂ SOLO persone fisiche)', 'cpv:Adult (Adulto)', 'cpv:Minor (Minore)', 'cpv:Senior (Anziano)'],
     props:   ['cpv:givenName', 'cpv:familyName', 'cpv:taxCode', 'cpv:dateOfBirth', 'cpv:hasResidenceAddress']
   },
   'POI': {
-    classes: ['poi:PointOfInterest (Punto di interesse â classe generica per luoghi fisici)'],
+    classes: ['poi:PointOfInterest (Punto di interesse Ã¢ÂÂ classe generica per luoghi fisici)'],
     props:   ['poi:hasPointOfInterest']
   },
   'RO': {
@@ -1227,11 +1227,11 @@ const ONTO_CLASSES = {
     props:   ['sm:hasEmail', 'sm:hasTelephone', 'sm:hasWebSite', 'sm:hasSocialNetworkAccount']
   },
   'L0': {
-    classes: ['l0:Agent (Agente â persona/organizzazione)', 'l0:Object (Oggetto fisico)', 'l0:EventOrSituation (Evento/Situazione)', 'l0:Collection (Collezione)', 'l0:Location (Luogo)', 'l0:Characteristic (Caratteristica)', 'l0:Description (Descrizione)'],
+    classes: ['l0:Agent (Agente Ã¢ÂÂ persona/organizzazione)', 'l0:Object (Oggetto fisico)', 'l0:EventOrSituation (Evento/Situazione)', 'l0:Collection (Collezione)', 'l0:Location (Luogo)', 'l0:Characteristic (Caratteristica)', 'l0:Description (Descrizione)'],
     props:   ['l0:name', 'l0:identifier', 'l0:hasDescription', 'l0:isPartOf', 'l0:hasLocation']
   },
   'ADMS': {
-    classes: ['adms:SemanticAsset (Asset semantico â brevetti, documenti, software)', 'adms:AssetRepository (Repository di asset)', 'adms:AssetDistribution (Distribuzione asset)'],
+    classes: ['adms:SemanticAsset (Asset semantico Ã¢ÂÂ brevetti, documenti, software)', 'adms:AssetRepository (Repository di asset)', 'adms:AssetDistribution (Distribuzione asset)'],
     props:   ['adms:status', 'adms:identifier', 'adms:schemaAgency', 'adms:representationTechnique']
   },
   'PARK': {
@@ -1243,7 +1243,7 @@ const ONTO_CLASSES = {
     props:   ['acco:hasRoom', 'acco:hasStar', 'acco:checkIn', 'acco:checkOut', 'acco:hasAmenity']
   },
   'CULTURAL-ON': {
-    classes: ['cultural-on:CulturalInstituteOrSite (Istituto/luogo culturale)', 'cultural-on:Museum (Museo)', 'cultural-on:Library (Biblioteca â NON clv:Biblioteca)', 'cultural-on:Archive (Archivio)', 'cultural-on:Site (Sito)', 'cultural-on:CollectionItem (Oggetto della collezione)'],
+    classes: ['cultural-on:CulturalInstituteOrSite (Istituto/luogo culturale)', 'cultural-on:Museum (Museo)', 'cultural-on:Library (Biblioteca Ã¢ÂÂ NON clv:Biblioteca)', 'cultural-on:Archive (Archivio)', 'cultural-on:Site (Sito)', 'cultural-on:CollectionItem (Oggetto della collezione)'],
     props:   ['cultural-on:hasCollection', 'cultural-on:hasOpeningHours', 'cultural-on:hasSubject']
   },
   'GTFS': {
@@ -1261,19 +1261,19 @@ async function fetchOntologyClasses(detectedOntos) {
     const key = onto.toUpperCase();
     const data = ONTO_CLASSES[key];
     if (!data) {
-      console.log('[Ontologie]', key, 'â nessuna mappa statica');
+      console.log('[Ontologie]', key, 'Ã¢ÂÂ nessuna mappa statica');
       continue;
     }
-    console.log('[Ontologie]', key, 'â', data.classes.length, 'classi,', data.props.length, 'proprietÃ ');
-    sections.push(`${key}:\n  Classi: ${data.classes.join(', ')}\n  ProprietÃ  principali: ${data.props.join(', ')}`);
+    console.log('[Ontologie]', key, 'Ã¢ÂÂ', data.classes.length, 'classi,', data.props.length, 'proprietÃÂ ');
+    sections.push(`${key}:\n  Classi: ${data.classes.join(', ')}\n  ProprietÃÂ  principali: ${data.props.join(', ')}`);
   }
 
   if (sections.length === 0) return '';
-  return `\nCLASSI E PROPRIETÃ VERIFICATE â usa SOLO queste, NON inventarne altre:\n${sections.join('\n')}`;
+  return `\nCLASSI E PROPRIETÃÂ VERIFICATE Ã¢ÂÂ usa SOLO queste, NON inventarne altre:\n${sections.join('\n')}`;
 }
 
-// ââ VOCABOLARI CONTROLLATI DA dati-semantic-assets âââââââââââââââââââââââââââ
-// Mappa: ontologia rilevata â URL TTL raw su GitHub
+// Ã¢ÂÂÃ¢ÂÂ VOCABOLARI CONTROLLATI DA dati-semantic-assets Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// Mappa: ontologia rilevata Ã¢ÂÂ URL TTL raw su GitHub
 const BASE  = 'https://raw.githubusercontent.com/italia/dati-semantic-assets/master/VocabolariControllati';
 const BASE2 = 'https://raw.githubusercontent.com/italia/daf-ontologie-vocabolari-controllati/master/VocabolariControllati';
 
@@ -1371,7 +1371,7 @@ async function fetchVocabularies(detectedOntos) {
   const urlsToFetch = new Set();
   for (const onto of detectedOntos) {
     const key = onto.toLowerCase().replace(/[^a-z0-9-]/g, '');
-    console.log('[Vocabolari] Chiave:', key, 'â match:', !!VOCAB_MAP[key]);
+    console.log('[Vocabolari] Chiave:', key, 'Ã¢ÂÂ match:', !!VOCAB_MAP[key]);
     if (VOCAB_MAP[key]) VOCAB_MAP[key].forEach(u => urlsToFetch.add(u));
   }
   console.log('[Vocabolari] URL da fetchare:', [...urlsToFetch]);
@@ -1380,7 +1380,7 @@ async function fetchVocabularies(detectedOntos) {
     return '';
   }
 
-  showStatus('â³ Recupero vocabolari controllati da dati-semantic-assets...', 'info');
+  showStatus('Ã¢ÂÂ³ Recupero vocabolari controllati da dati-semantic-assets...', 'info');
   const allConcepts = [];
   const results = await Promise.allSettled(
     [...urlsToFetch].map(url =>
@@ -1400,10 +1400,10 @@ async function fetchVocabularies(detectedOntos) {
       const url = [...urlsToFetch][i];
       const name = url.split('/').slice(-2).join('/');
       return r.status === 'fulfilled'
-        ? `â ${name} (${r.value.length} concetti)`
-        : `â ${name} (errore)`;
-    }).join(' Â· ');
-  showStatus(`ð Vocabolari: ${vocabSummary}`, 'info');
+        ? `Ã¢ÂÂ ${name} (${r.value.length} concetti)`
+        : `Ã¢ÂÂ ${name} (errore)`;
+    }).join(' ÃÂ· ');
+  showStatus(`Ã°ÂÂÂ Vocabolari: ${vocabSummary}`, 'info');
   await new Promise(r => setTimeout(r, 2000)); // mostra il messaggio 2 secondi
 
   // Log dettagliato in console
@@ -1414,13 +1414,13 @@ async function fetchVocabularies(detectedOntos) {
   const sample = allConcepts.slice(0, 200);
   const lines = sample.map(c => {
     const id = c.notation || c.uri.split('/').pop();
-    return `  ${id}: "${c.label}" â <${c.uri}>`;
+    return `  ${id}: "${c.label}" Ã¢ÂÂ <${c.uri}>`;
   });
-  return `\nVOCABOLARI CONTROLLATI VERIFICATI (usa SOLO questi URI):\n${lines.join('\n')}\nSe il valore non corrisponde a nessuno â usa rdfs:label "valore"@it`;
+  return `\nVOCABOLARI CONTROLLATI VERIFICATI (usa SOLO questi URI):\n${lines.join('\n')}\nSe il valore non corrisponde a nessuno Ã¢ÂÂ usa rdfs:label "valore"@it`;
 }
 
 
-// ââ MAPPA ONTOLOGIA â TIPO-RISORSA URI ââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ MAPPA ONTOLOGIA Ã¢ÂÂ TIPO-RISORSA URI Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const ONTO_URI_TYPE = {
   'ACCO':        'accommodation-facility',
   'PARK':        'parking-facility',
@@ -1435,7 +1435,7 @@ const ONTO_URI_TYPE = {
   'L0':          'resource',
 };
 
-// Mappa ontologia â classe RDF principale
+// Mappa ontologia Ã¢ÂÂ classe RDF principale
 const ONTO_MAIN_CLASS = {
   'ACCO':        'acco:AccommodationFacility',
   'PARK':        'park:ParkingFacility',
@@ -1464,7 +1464,7 @@ function getMainClass(ontos) {
 
 // Determina il tipo-risorsa URI in base alle ontologie selezionate
 function getEntityTypeSegment(ontos) {
-  // PrioritÃ : ontologie specializzate prima di quelle generiche
+  // PrioritÃÂ : ontologie specializzate prima di quelle generiche
   const priority = ['ACCO','PARK','GTFS','Cultural-ON','CPSV-AP','QB','CPV','COV','POI','CLV','TI','ADMS','L0'];
   for (const onto of priority) {
     if (ontos.map(o => o.toUpperCase()).includes(onto.toUpperCase())) {
@@ -1474,7 +1474,7 @@ function getEntityTypeSegment(ontos) {
   return 'resource';
 }
 
-// ââ MAPPER DETERMINISTICO COLONNA â PROPRIETÃ RDF ââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ MAPPER DETERMINISTICO COLONNA Ã¢ÂÂ PROPRIETÃÂ RDF Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const COLUMN_RULES = [
   // Coordinate geografiche
   { names: /^(lat|latitude|latitudine|lat_y|y_lat|coord_lat|lat_wgs84)$/i,
@@ -1530,7 +1530,7 @@ const COLUMN_RULES = [
   { names: /^(stato|status|vigente|attivo|active|state)$/i,
     value: null,
     prop: 'adms:status', type: '@it' },
-  // DAE / Defibrillatori â booleani si/no â schema:Boolean
+  // DAE / Defibrillatori Ã¢ÂÂ booleani si/no Ã¢ÂÂ schema:Boolean
   { names: /^(accessibile.?h.?24|h24|aperto.?h24|disponibile.?h24)$/i,
     value: null,
     prop: 'dct:description', type: 'boolean' },
@@ -1549,7 +1549,7 @@ const COLUMN_RULES = [
   { names: /^(ubicazione|location|posizione|luogo|sede|sito.?installazione|installato.?presso)$/i,
     value: null,
     prop: 'dct:description', type: '@it' },
-  { names: /^(municipalita|municipalitÃ |quartiere|district|zona|circoscrizione)$/i,
+  { names: /^(municipalita|municipalitÃÂ |quartiere|district|zona|circoscrizione)$/i,
     value: null,
     prop: 'clv:hasAddress', type: null },
   { names: /^(scadenza|data.?scadenza|expiry|expire|manutenzione|data.?manutenzione)$/i,
@@ -1577,7 +1577,7 @@ const COLUMN_RULES = [
   { names: /^(Compenso)$/i,
     value: null,
     prop: 'dct:format', type: '@it' },
-  // Colonne mese â dct:description (pivot mensile PA italiana)
+  // Colonne mese Ã¢ÂÂ dct:description (pivot mensile PA italiana)
   { names: /^(GENNAIO|FEBBRAIO|MARZO|APRILE|MAGGIO|GIUGNO|LUGLIO|AGOSTO|SETTEMBRE|OTTOBRE|NOVEMBRE|DICEMBRE)$/i,
     value: null,
     prop: 'sdmx-dimension:timePeriod', type: '@it' },
@@ -1591,12 +1591,12 @@ const COLUMN_RULES = [
   { names: /^(Donne|Femmine|FEMMINE)$/i,
     value: null,
     prop: 'sdmx-measure:obsValue', type: 'decimal' },
-  // Colonne pivot anno+genere tipo F_2012, M_2013 â skip (dati pivot non mappabili 1:1)
+  // Colonne pivot anno+genere tipo F_2012, M_2013 Ã¢ÂÂ skip (dati pivot non mappabili 1:1)
   { names: /^[MF]_\d{4}$/,
     value: null,
     prop: '_SKIP_', type: 'skip' },
   // Colonne numeriche con prefisso num+trattino (liste elettorali: "1-LISTA")
-  { names: /^\d+[-â].+/,
+  { names: /^\d+[-Ã¢ÂÂ].+/,
     value: null,
     prop: '_SKIP_', type: 'skip' },
   // URI esterni da endpoint SPARQL (es. MiC beniculturali)
@@ -1606,9 +1606,9 @@ const COLUMN_RULES = [
   // Events / spettacoli
 
   // Luoghi cultura MiC / beniculturali
-  { names: /^(densit[Ã a]|density|densita_abitativa|densita)$/i,
+  { names: /^(densit[ÃÂ a]|density|densita_abitativa|densita)$/i,
     value: null, prop: 'dct:description', type: '@it' },
-  { names: /^(et[Ã a]_media|eta_media|age_average)$/i,
+  { names: /^(et[ÃÂ a]_media|eta_media|age_average)$/i,
     value: null, prop: 'dct:description', type: '@it' },
   { names: /^(prenotazioni|booking|ingresso)$/i,
     value: null,
@@ -1695,23 +1695,23 @@ const COLUMN_RULES = [
 function normalizeColName(col) {
   // Normalizza nomi colonna problematici: apostrofi, parentesi, simboli speciali
   return col
-    .replace(/'/g, '')           // Eta' â Eta
-    .replace(/\(/g, '_')         // (ab/Kmq) â _ab/Kmq
+    .replace(/'/g, '')           // Eta' Ã¢ÂÂ Eta
+    .replace(/\(/g, '_')         // (ab/Kmq) Ã¢ÂÂ _ab/Kmq
     .replace(/\)/g, '')          // chiude parentesi
-    .replace(/\//g, '_')         // ab/Kmq â ab_Kmq
-    .replace(/%/g, 'pct')        // valori % â pct
-    .replace(/\./g, '_')         // punti â underscore
+    .replace(/\//g, '_')         // ab/Kmq Ã¢ÂÂ ab_Kmq
+    .replace(/%/g, 'pct')        // valori % Ã¢ÂÂ pct
+    .replace(/\./g, '_')         // punti Ã¢ÂÂ underscore
     .replace(/\s+/g, ' ')        // normalizza spazi multipli
     .trim();
 }
 
 function detectDeterministicMappings(cols, rows) {
-  const mappings = {}; // col â {prop, type}
+  const mappings = {}; // col Ã¢ÂÂ {prop, type}
   const sampleRow = rows[0] || {};
 
   for (const col of cols) {
     // Salta colonne con prefisso numerico: "1-FRATELLI D'ITALIA", "9-+EUROPA"
-    if (/^\d+[-â]/.test(col)) continue;
+    if (/^\d+[-Ã¢ÂÂ]/.test(col)) continue;
     const normalizedCol = normalizeColName(col);
     const val = String(sampleRow[col] || '').trim();
     for (const rule of COLUMN_RULES) {
@@ -1727,7 +1727,7 @@ function detectDeterministicMappings(cols, rows) {
 }
 
 // Genera TTL deterministico per le colonne riconoscibili
-// Merge deterministico+LLM per URI: parse blocchi, unisci proprietÃ 
+// Merge deterministico+LLM per URI: parse blocchi, unisci proprietÃÂ 
 function mergeDeterIntoLLM(llmTTL, deterTTL, entityBase, typeSegment) {
   // Parser blocchi TTL: restituisce Map<uri, Set<predicati>>
   function parseBlocks(ttl) {
@@ -1757,7 +1757,7 @@ function mergeDeterIntoLLM(llmTTL, deterTTL, entityBase, typeSegment) {
       llmBlocks.set(uri, deterProps);
     } else {
       const existing = llmBlocks.get(uri);
-      // Estrai predicati giÃ  presenti
+      // Estrai predicati giÃÂ  presenti
       const existingPreds = new Set(existing.map(t => t.split(/\s+/)[0]));
       for (const prop of deterProps) {
         const pred = prop.split(/\s+/)[0];
@@ -1795,7 +1795,7 @@ function buildDeterministicTriples(cols, rows, entityBase, deterMappings, typeSe
 
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
-    // URI entitÃ : usa id/codice se disponibile, altrimenti indice
+    // URI entitÃÂ : usa id/codice se disponibile, altrimenti indice
     const idCol = cols.find(c => /^(id|codice|cod|n_enea|numero|num|pk)$/i.test(c));
     const entityId = idCol ? String(row[idCol]).trim().replace(/[^a-zA-Z0-9_-]/g, '_') : String(i + 1);
     const uri = `<${entityBase}${typeSegment}/${entityId}>`;
@@ -1806,7 +1806,7 @@ function buildDeterministicTriples(cols, rows, entityBase, deterMappings, typeSe
     triples.push(`    a ${mainClass}`);
     for (const col of cols) {
       // Salta colonne con prefisso numerico: "1-LISTA", "9-+EUROPA"
-      if (/^\d+[-â]/.test(col)) continue;
+      if (/^\d+[-Ã¢ÂÂ]/.test(col)) continue;
       const m = deterMappings[col];
       if (!m) continue;
       if (m.prop === '_SKIP_') continue; // colonna pivot non mappabile
@@ -1839,7 +1839,7 @@ function buildDeterministicTriples(cols, rows, entityBase, deterMappings, typeSe
 }
 
 function getEntityType(ontos) {
-  // Determina il tipo URI dall'ontologia piÃ¹ specifica selezionata
+  // Determina il tipo URI dall'ontologia piÃÂ¹ specifica selezionata
   const o = ontos.map(x => x.toUpperCase());
   if (o.includes('ACCO'))        return 'accommodation';
   if (o.includes('PARK'))        return 'parking';
@@ -1854,82 +1854,82 @@ function getEntityType(ontos) {
 }
 
 function buildPromptChunk(cols, rows, ontos, chunkIndex, totalChunks, vocabSection='', ontoSection='', skipCols=new Set(), ipa='', mainClass='') {
-  // Escludi colonne giÃ  mappate deterministicamente
+  // Escludi colonne giÃÂ  mappate deterministicamente
   const ambigCols = cols.filter(c => !skipCols.has(c));
-  if (ambigCols.length === 0) return null; // tutto giÃ  mappato
+  if (ambigCols.length === 0) return null; // tutto giÃÂ  mappato
   const csvChunk = [ambigCols.join(','), ...rows.map(r => ambigCols.map(h=>r[h]).join(','))].join('\n');
   return `Sei un esperto RDF per la PA italiana. Trasforma le righe CSV in Turtle (TTL) compatto.
 
-URI BASE OBBLIGATORIA: tutte le entitÃ  DEVONO usare ESCLUSIVAMENTE questo pattern: <https://w3id.org/italia/data/${ipa}/{tipo}/{id}> â NON usare mai domini come dati.comune.*, http://dati.*, o qualsiasi altro dominio inventato.
+URI BASE OBBLIGATORIA: tutte le entitÃÂ  DEVONO usare ESCLUSIVAMENTE questo pattern: <https://w3id.org/italia/data/${ipa}/{tipo}/{id}> Ã¢ÂÂ NON usare mai domini come dati.comune.*, http://dati.*, o qualsiasi altro dominio inventato.
 
-I @prefix sono giÃ  stati emessi. NON aggiungerli.
+I @prefix sono giÃÂ  stati emessi. NON aggiungerli.
 Ontologie da usare: ${ontos.join(', ')}
-Chunk ${chunkIndex+1}/${totalChunks} â Colonne: ${cols.join(', ')}
-Base URI entitÃ : https://w3id.org/italia/data/${ipa || 'ipa'}/${getEntityTypeSegment(ontos)}/ (es. <https://w3id.org/italia/data/${ipa || 'ipa'}/${getEntityTypeSegment(ontos)}/ID_RIGA>)
+Chunk ${chunkIndex+1}/${totalChunks} Ã¢ÂÂ Colonne: ${cols.join(', ')}
+Base URI entitÃÂ : https://w3id.org/italia/data/${ipa || 'ipa'}/${getEntityTypeSegment(ontos)}/ (es. <https://w3id.org/italia/data/${ipa || 'ipa'}/${getEntityTypeSegment(ontos)}/ID_RIGA>)
 
 CSV:
 ${csvChunk}
 
 REGOLE:
-- Per ogni riga genera una risorsa RDF. La classe principale da usare Ã¨: ${mainClass || 'quella piÃ¹ appropriata tra le ontologie selezionate'}
-- REGOLA ASSOLUTA: usa SOLO classi e proprietÃ  delle ontologie elencate in "Ontologie da usare". NON usare mai prefissi di ontologie non in lista (es. se acco: non Ã¨ in lista, non usare MAI acco:AccommodationFacility)
-- Gli URI delle entitÃ  DEVONO seguire esattamente questo schema: <https://w3id.org/italia/data/${ipa}/{tipo-risorsa}/{id}>
-  dove {ipa} Ã¨ il codice IPA del titolare, {id} Ã¨ il valore della colonna ID/codice della riga (NON il nome di una persona)
+- Per ogni riga genera una risorsa RDF. La classe principale da usare ÃÂ¨: ${mainClass || 'quella piÃÂ¹ appropriata tra le ontologie selezionate'}
+- REGOLA ASSOLUTA: usa SOLO classi e proprietÃÂ  delle ontologie elencate in "Ontologie da usare". NON usare mai prefissi di ontologie non in lista (es. se acco: non ÃÂ¨ in lista, non usare MAI acco:AccommodationFacility)
+- Gli URI delle entitÃÂ  DEVONO seguire esattamente questo schema: <https://w3id.org/italia/data/${ipa}/{tipo-risorsa}/{id}>
+  dove {ipa} ÃÂ¨ il codice IPA del titolare, {id} ÃÂ¨ il valore della colonna ID/codice della riga (NON il nome di una persona)
   {tipo-risorsa} va scelto ESATTAMENTE da questa lista in base alla classe principale usata:
-    acco:AccommodationFacility   â accommodation-facility
-    park:ParkingFacility         â parking-facility
-    gtfs:Stop                    â stop
-    gtfs:Route                   â route
-    gtfs:Agency                  â agency
-    cultural-on:CulturalInstituteOrSite â cultural-institute
-    cov:PublicOrganization       â public-organization
-    cov:Company                  â organization
-    cpv:Person                   â person
-    adms:SemanticAsset           â asset
-    poi:PointOfInterest          â point-of-interest
-    l0:EventOrSituation          â event
-    l0:Object                    â object
-    l0:Agent                     â agent
-  NON usare domini inventati â usa SEMPRE w3id.org/italia/data/
-  NON usare nomi di persone come {id} â usa sempre l'ID numerico o codice della riga
-- Mappa ogni colonna alla proprietÃ  ontologica corretta
+    acco:AccommodationFacility   Ã¢ÂÂ accommodation-facility
+    park:ParkingFacility         Ã¢ÂÂ parking-facility
+    gtfs:Stop                    Ã¢ÂÂ stop
+    gtfs:Route                   Ã¢ÂÂ route
+    gtfs:Agency                  Ã¢ÂÂ agency
+    cultural-on:CulturalInstituteOrSite Ã¢ÂÂ cultural-institute
+    cov:PublicOrganization       Ã¢ÂÂ public-organization
+    cov:Company                  Ã¢ÂÂ organization
+    cpv:Person                   Ã¢ÂÂ person
+    adms:SemanticAsset           Ã¢ÂÂ asset
+    poi:PointOfInterest          Ã¢ÂÂ point-of-interest
+    l0:EventOrSituation          Ã¢ÂÂ event
+    l0:Object                    Ã¢ÂÂ object
+    l0:Agent                     Ã¢ÂÂ agent
+  NON usare domini inventati Ã¢ÂÂ usa SEMPRE w3id.org/italia/data/
+  NON usare nomi di persone come {id} Ã¢ÂÂ usa sempre l'ID numerico o codice della riga
+- Mappa ogni colonna alla proprietÃÂ  ontologica corretta
 - Se il dataset contiene colonne finanziarie (importo, cumulato, movimento, entrata, spesa, BDAP) usa SEMPRE qb:Observation come classe principale, sdmx-measure:obsValue per gli importi numerici, sdmx-dimension:timePeriod per il periodo, sdmx-dimension:refArea per il territorio
 - Se il dataset QB contiene colonne numeriche di conteggio (incidenti, feriti, morti, decessi, numero_dipendenti, count, totale) usa SEMPRE sdmx-measure:obsValue per OGNI colonna numerica - NON usare URI personalizzati come <.../measure/nomeColonna>
-- Per coordinate usa geo:lat e geo:long. Per campi booleani (si/no, true/false, 1/0) usa poi:hasAccessCondition con valore letterale. Per marca/modello usa rdfs:label o dct:description. Per numero serie usa dct:identifier. Per scadenza/manutenzione usa dct:valid. Se il valore Ã¨ vuoto o mancante NON generare la tripla (omettila completamente). Per telefono sm:hasTelephone. Per email sm:hasEmail. Per indirizzo clv:hasAddress. Per data dct:date o ti:startTime/ti:endTime
-- REGOLA CRITICA: usa SOLO proprietÃ  che esistono nelle ontologie dichiarate nei @prefix. NON inventare proprietÃ  con nomi come clv:hasStreetName, clv:hasPostalCode, clv:hasName, clv:hasFeature, sm:hasValue o simili â queste NON esistono.
+- Per coordinate usa geo:lat e geo:long. Per campi booleani (si/no, true/false, 1/0) usa poi:hasAccessCondition con valore letterale. Per marca/modello usa rdfs:label o dct:description. Per numero serie usa dct:identifier. Per scadenza/manutenzione usa dct:valid. Se il valore ÃÂ¨ vuoto o mancante NON generare la tripla (omettila completamente). Per telefono sm:hasTelephone. Per email sm:hasEmail. Per indirizzo clv:hasAddress. Per data dct:date o ti:startTime/ti:endTime
+- REGOLA CRITICA: usa SOLO proprietÃÂ  che esistono nelle ontologie dichiarate nei @prefix. NON inventare proprietÃÂ  con nomi come clv:hasStreetName, clv:hasPostalCode, clv:hasName, clv:hasFeature, sm:hasValue o simili Ã¢ÂÂ queste NON esistono.
 - Per i nomi usa rdfs:label o l0:name, NON clv:hasName (clv:hasName NON ESISTE)
 - Per i valori di contatto usa sm:hasTelephone, sm:hasEmail, sm:hasWebSite, NON sm:hasValue
-- Per sm:hasWebSite usa SEMPRE l'URL originale come URI: sm:hasWebSite <http://www.esempio.it> â NON costruire URI w3id inventati con l'URL incorporato
+- Per sm:hasWebSite usa SEMPRE l'URL originale come URI: sm:hasWebSite <http://www.esempio.it> Ã¢ÂÂ NON costruire URI w3id inventati con l'URL incorporato
 - Per giorni della settimana e orari usa dct:description "valore"@it, NON ti:hasDayOfWeek
-- Se non conosci la proprietÃ  esatta, usa dct:description "valore"@it
+- Se non conosci la proprietÃÂ  esatta, usa dct:description "valore"@it
 - rdfs:label con il nome principale in italiano
 - Usa SOLO questi prefissi: owl, clv, cov, cpv, l0, poi, ro, ti, sm, dcat, dct, foaf, geo, xsd, rdfs, vcard, skos, schema, adms, qb, sdmx-dimension, sdmx-measure
 - Per eventi/spettacoli/manifestazioni usa SEMPRE l0:EventOrSituation come classe, mai l0:Object
-- Per ogni risorsa includi SEMPRE dct:publisher con il nome dell'organizzatore â non ometterlo mai
+- Per ogni risorsa includi SEMPRE dct:publisher con il nome dell'organizzatore Ã¢ÂÂ non ometterlo mai
 - La colonna numero_righe/numero_record indica il conteggio delle righe, NON la dimensione in byte: usa dct:extent, MAI dcat:byteSize
-- dcat:byteSize si usa SOLO per la dimensione del file in byte â se non hai quel dato, ometti la proprietÃ 
-- dct:publisher NON va su dcat:Distribution (non previsto da DCAT-AP) â va sul Dataset o sull'Agent titolare con il nome dell'organizzatore â non ometterlo mai
+- dcat:byteSize si usa SOLO per la dimensione del file in byte Ã¢ÂÂ se non hai quel dato, ometti la proprietÃÂ 
+- dct:publisher NON va su dcat:Distribution (non previsto da DCAT-AP) Ã¢ÂÂ va sul Dataset o sull'Agent titolare con il nome dell'organizzatore Ã¢ÂÂ non ometterlo mai
 - Usa dct:type per il tipo di relazione (Coorganizzazione/Patrocinio/Pagamento), dct:publisher per l'organizzatore, MAI usare dct:description per entrambi
 - Output COMPATTO: niente righe vuote, niente commenti, niente @prefix, niente markdown
 - Colonne il cui nome inizia con un numero seguito da trattino (es. "1-LISTA", "9-+EUROPA") sono intestazioni di risultati elettorali: usa sdmx-measure:obsValue con rdfs:label del nome colonna
 - Colonne con pattern F_ANNO / M_ANNO (es. F_2012, M_2016) indicano femmine/maschi per anno: usa sdmx-measure:obsValue con sdmx-dimension:timePeriod per l'anno e sdmx-attribute:sex per il sesso (es. "1-LISTA", "9-+EUROPA") sono intestazioni di risultati elettorali: usa sdmx-measure:obsValue con rdfs:label del nome colonna
-- NON usare mai il prefisso ":" (prefisso vuoto) â usa sempre URI completi tra <> o prefissi dichiarati
-- USA SOLO le classi elencate qui sotto per ogni ontologia â NON inventare classi:
-- REGOLA CLASSE PRINCIPALE: usa la classe piÃ¹ specifica disponibile tra le ontologie selezionate.
-  La classe principale va scelta in questo ordine di prioritÃ  (dalla piÃ¹ specifica alla piÃ¹ generica):
-  ACCO selezionata      â acco:AccommodationFacility per strutture ricettive (hotel, B&B, ostelli...)
-  PARK selezionata      â park:ParkingFacility per parcheggi e aree di sosta
-  GTFS selezionata      â gtfs:Stop per fermate, gtfs:Route per linee, gtfs:Agency per aziende di trasporto
-  Cultural-ON selezionata â cultural-on:CulturalInstituteOrSite per musei, biblioteche, archivi, teatri
-  CPSV-AP selezionata   â cpsv:PublicService per servizi pubblici erogati dalla PA
-  COV selezionata       â cov:PublicOrganization per enti pubblici, cov:Company per imprese private
-  CPV selezionata       â cpv:Person per persone fisiche (NON per brevetti o documenti)
-  ADMS selezionata      â adms:SemanticAsset per brevetti, licenze, asset digitali, documenti
-  RO selezionata        â ro:Role per ruoli e incarichi (usato insieme a cpv:Person o cov:Organization)
-  TI selezionata        â ti:TimeInterval per intervalli temporali, ti:TimeInstant per istanti
-  QB selezionata        â qb:Observation per osservazioni statistiche, qb:DataSet per il dataset
-  POI selezionata       â poi:PointOfInterest SOLO se nessuna classe piÃ¹ specifica Ã¨ disponibile
-  L0 selezionata        â l0:Agent per persone/organizzazioni generiche, l0:Object per oggetti fisici generici
+- NON usare mai il prefisso ":" (prefisso vuoto) Ã¢ÂÂ usa sempre URI completi tra <> o prefissi dichiarati
+- USA SOLO le classi elencate qui sotto per ogni ontologia Ã¢ÂÂ NON inventare classi:
+- REGOLA CLASSE PRINCIPALE: usa la classe piÃÂ¹ specifica disponibile tra le ontologie selezionate.
+  La classe principale va scelta in questo ordine di prioritÃÂ  (dalla piÃÂ¹ specifica alla piÃÂ¹ generica):
+  ACCO selezionata      Ã¢ÂÂ acco:AccommodationFacility per strutture ricettive (hotel, B&B, ostelli...)
+  PARK selezionata      Ã¢ÂÂ park:ParkingFacility per parcheggi e aree di sosta
+  GTFS selezionata      Ã¢ÂÂ gtfs:Stop per fermate, gtfs:Route per linee, gtfs:Agency per aziende di trasporto
+  Cultural-ON selezionata Ã¢ÂÂ cultural-on:CulturalInstituteOrSite per musei, biblioteche, archivi, teatri
+  CPSV-AP selezionata   Ã¢ÂÂ cpsv:PublicService per servizi pubblici erogati dalla PA
+  COV selezionata       Ã¢ÂÂ cov:PublicOrganization per enti pubblici, cov:Company per imprese private
+  CPV selezionata       Ã¢ÂÂ cpv:Person per persone fisiche (NON per brevetti o documenti)
+  ADMS selezionata      Ã¢ÂÂ adms:SemanticAsset per brevetti, licenze, asset digitali, documenti
+  RO selezionata        Ã¢ÂÂ ro:Role per ruoli e incarichi (usato insieme a cpv:Person o cov:Organization)
+  TI selezionata        Ã¢ÂÂ ti:TimeInterval per intervalli temporali, ti:TimeInstant per istanti
+  QB selezionata        Ã¢ÂÂ qb:Observation per osservazioni statistiche, qb:DataSet per il dataset
+  POI selezionata       Ã¢ÂÂ poi:PointOfInterest SOLO se nessuna classe piÃÂ¹ specifica ÃÂ¨ disponibile
+  L0 selezionata        Ã¢ÂÂ l0:Agent per persone/organizzazioni generiche, l0:Object per oggetti fisici generici
   CLV: clv:Address, clv:Feature, clv:Geometry, clv:AdminUnit, clv:Road, clv:StreetNumber
   COV: cov:Organization, cov:PublicOrganization, cov:Company, cov:ActivityType, cov:ContactPoint
   CPV: cpv:Person, cpv:Adult, cpv:Minor, cpv:Senior (CPV=Persone, NON per brevetti/documenti)
@@ -1938,20 +1938,20 @@ REGOLE:
   TI: ti:TimeInterval, ti:TimeInstant (per intervalli e istanti temporali)
   SM: sm:Email, sm:Telephone, sm:WebSite, sm:SocialNetworkAccount
   L0: l0:Agent, l0:Object, l0:EventOrSituation, l0:Collection, l0:Location, l0:Characteristic
-  ADMS: adms:SemanticAsset (per brevetti, licenze, asset digitali â NON cpv:Patent che non esiste)
+  ADMS: adms:SemanticAsset (per brevetti, licenze, asset digitali Ã¢ÂÂ NON cpv:Patent che non esiste)
   COV per enti pubblici: cov:PublicOrganization (ENEA, ministeri, comuni)
 - Genera TUTTE le ${rows.length} righe senza fermarti
 
-VOCABOLARI CONTROLLATI â USA SOLO URI IN QUESTA LISTA, altrimenti usa rdfs:label con stringa letterale:
+VOCABOLARI CONTROLLATI Ã¢ÂÂ USA SOLO URI IN QUESTA LISTA, altrimenti usa rdfs:label con stringa letterale:
 - Ruoli (publications.europa.eu/resource/authority/role/): CHAIR, EDITOR, MEMBER, MAYOR, MINISTER, DIRECTOR, PUBLISHER, COMPILER, CONTRIB, TRANSL, SIGN, REPR, OBSERVER, AUTHORI, AUT, JUDGE, AMBASSADOR, REGISTRAR, TREASURER, MEDIATOR, COLLECTOR, OPERATOR
 - Lingue (publications.europa.eu/resource/authority/language/): ITA, ENG, FRA, DEU, SPA, POR
 - Frequenze (publications.europa.eu/resource/authority/frequency/): ANNUAL, BIANNUAL, QUARTERLY, MONTHLY, WEEKLY, DAILY, IRREG, NEVER, UPDATE_CONT
 - Temi DCAT (publications.europa.eu/resource/authority/data-theme/): AGRI, ECON, EDUC, ENER, ENVI, GOVE, HEAL, JUST, REGI, SCIE, SOCI, TECH, TRAN
-- REGOLA CRITICA: NON inventare codici URI nei vocabolari controllati. Se il valore non Ã¨ nella lista, usa rdfs:label "valore"@it`;
+- REGOLA CRITICA: NON inventare codici URI nei vocabolari controllati. Se il valore non ÃÂ¨ nella lista, usa rdfs:label "valore"@it`;
 }
 
-// ââ SANITIZE TTL (rimuove proprietÃ  inventate) âââââââââââââââââââââââââââââââ
-// Whitelist proprietÃ  approvate per prefisso â tutto ciÃ² che NON Ã¨ in lista â dct:description
+// Ã¢ÂÂÃ¢ÂÂ SANITIZE TTL (rimuove proprietÃÂ  inventate) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// Whitelist proprietÃÂ  approvate per prefisso Ã¢ÂÂ tutto ciÃÂ² che NON ÃÂ¨ in lista Ã¢ÂÂ dct:description
 const PROP_WHITELIST = {
   'clv':  ['hasAddress','hasGeometry','hasSpatialCoverage','hasStreetNumber','hasAdminUnit','hasRoad','hasIdentifier'],
   'cov':  ['hasContactPoint','hasActivityType','hasLegalStatus','hasSubOrganization','isPartOf'],
@@ -2002,8 +2002,8 @@ function fixURIs(ttl, ipa) {
 }
 
 function fixMeasurePrefixes(ttl) {
-  // Corregge measure:obsValue â sdmx-measure:obsValue (prefisso abbreviato dal LLM)
-  // Corregge anche URI inventati per valori numerici: <.../morti> 52 â sdmx-measure:obsValue 52
+  // Corregge measure:obsValue Ã¢ÂÂ sdmx-measure:obsValue (prefisso abbreviato dal LLM)
+  // Corregge anche URI inventati per valori numerici: <.../morti> 52 Ã¢ÂÂ sdmx-measure:obsValue 52
   // Solo in blocchi qb:Observation
   ttl = ttl.replace(/<https?:\/\/[^>]+\/(morti|feriti|incidenti|count|valore|importo|totale|numero)>\s+(\d[\d.]*)/gi,
     'sdmx-measure:obsValue "$2"^^xsd:decimal');
@@ -2023,13 +2023,13 @@ function fixCoordinates(ttl) {
 
 function fixContactPoints(ttl) {
   // Sostituisce cov:hasContactPoint con dct:contributor (blank node o URI)
-  // blank node con label: [ a ...; rdfs:label "X" ] â dct:publisher "X"@it
+  // blank node con label: [ a ...; rdfs:label "X" ] Ã¢ÂÂ dct:publisher "X"@it
   ttl = ttl.replace(/cov:hasContactPoint\s+\[([^\]]+)\]/g, (match, inner) => {
     const labelMatch = inner.match(/rdfs:label\s+"([^"]+)"/);
     if (labelMatch) return `dct:publisher "${labelMatch[1]}"@it`;
     return '';
   });
-  // URI reference: cov:hasContactPoint <URI> â dct:contributor <URI>
+  // URI reference: cov:hasContactPoint <URI> Ã¢ÂÂ dct:contributor <URI>
   ttl = ttl.replace(/cov:hasContactPoint\s+(<[^>]+>)/g, 'dct:contributor $1');
   return ttl;
 }
@@ -2038,7 +2038,7 @@ function fixEventClass(ttl, ontos) {
   if (!ontos) return ttl;
   const ontosUp = ontos.map(o => o.toUpperCase());
 
-  // Fix Cultural-ON: URI cultural-institute/ â cultural-on:CulturalInstituteOrSite
+  // Fix Cultural-ON: URI cultural-institute/ Ã¢ÂÂ cultural-on:CulturalInstituteOrSite
   if (ontosUp.includes('CULTURAL-ON') && ttl.includes('cultural-institute/')) {
     if (!ttl.includes('cultural-on:CulturalInstituteOrSite')) {
       ttl = ttl.replace(/a l0:Object ;/g, 'a cultural-on:CulturalInstituteOrSite ;');
@@ -2047,7 +2047,7 @@ function fixEventClass(ttl, ontos) {
     return ttl;
   }
 
-  // Fix TI/eventi: dct:date + rdfs:label â l0:EventOrSituation
+  // Fix TI/eventi: dct:date + rdfs:label Ã¢ÂÂ l0:EventOrSituation
   if ((ontosUp.includes('TI') || ontosUp.includes('CULTURAL-ON')) &&
       !ttl.includes('l0:EventOrSituation') &&
       ttl.includes('dct:date') && ttl.includes('rdfs:label') &&
@@ -2058,8 +2058,8 @@ function fixEventClass(ttl, ontos) {
 }
 
 function fixNumericLabels(ttl) {
-  // rdfs:label con valore numerico puro su nodi dcat:Distribution â dct:extent
-  // Es: rdfs:label "1316435"^^xsd:integer â dct:extent "1316435"^^xsd:integer
+  // rdfs:label con valore numerico puro su nodi dcat:Distribution Ã¢ÂÂ dct:extent
+  // Es: rdfs:label "1316435"^^xsd:integer Ã¢ÂÂ dct:extent "1316435"^^xsd:integer
   ttl = ttl.replace(
     /rdfs:label\s+"(\d+)"(?:\^\^xsd:integer)?\s*([;.])/g,
     'dct:extent "$1"^^xsd:integer $2'
@@ -2073,19 +2073,19 @@ function fixNumericLabels(ttl) {
 }
 
 function fixWebSites(ttl) {
-  // Fix 1: URI w3id inventati con schema http:__ o https:__ â URL reale
+  // Fix 1: URI w3id inventati con schema http:__ o https:__ Ã¢ÂÂ URL reale
   ttl = ttl.replace(
     /sm:hasWebSite\s+<https?:\/\/w3id\.org\/italia\/data\/[^>]*?\/(https?):__([^>]+)>/g,
     (match, proto, rest) => 'sm:hasWebSite <' + proto + '://' + rest.replace(/__/g, '/') + '>'
   );
-  // Fix 2: http:/ o https:/ con slash singolo â doppio slash
+  // Fix 2: http:/ o https:/ con slash singolo Ã¢ÂÂ doppio slash
   ttl = ttl.replace(/sm:hasWebSite\s+<http:\/([^\/][^>]+)>/g, 'sm:hasWebSite <http://$1>');
   ttl = ttl.replace(/sm:hasWebSite\s+<https:\/([^\/][^>]+)>/g, 'sm:hasWebSite <https://$1>');
-  // Fix 3: URI w3id chiaramente inventati senza schema URL riconoscibile â rimuovi tripla
+  // Fix 3: URI w3id chiaramente inventati senza schema URL riconoscibile Ã¢ÂÂ rimuovi tripla
   ttl = ttl.replace(
     /sm:hasWebSite\s+<https?:\/\/w3id\.org\/italia\/data\/[^>]+>\s*[;.]/g,
     (match) => {
-      // Mantieni solo se contiene schema URL originale giÃ  corretto
+      // Mantieni solo se contiene schema URL originale giÃÂ  corretto
       return match; // lascia al sanitizer generale
     }
   );
@@ -2093,7 +2093,7 @@ function fixWebSites(ttl) {
 }
 
 function fixWebSitesOld(ttl) {
-  // Corregge sm:hasWebSite con URI w3id inventati â usa il valore come URL diretto
+  // Corregge sm:hasWebSite con URI w3id inventati Ã¢ÂÂ usa il valore come URL diretto
   return ttl.replace(
     /sm:hasWebSite\s+<https?:\/\/w3id\.org\/[^>]*__(http[^>]*)>/g,
     (match, url) => 'sm:hasWebSite <' + url.replace(/__/g, '/').replace(/_([a-z])/g, '.$1') + '>'
@@ -2107,9 +2107,9 @@ function removeDuplicatePredicates(ttl) {
   ttl = ttl.replace(/[^\n]*_SKIP_[^\n]*\n?/g, '');
   // Rimuovi dct:description "voice" inventato dal LLM per sm:Telephone
   ttl = ttl.replace(/dct:description\s+"voice"\s*[;.]/g, '');
-  // Rimuovi dct:description con solo CAP (5 cifre isolate) â artefatto da colonna Codice_postale
+  // Rimuovi dct:description con solo CAP (5 cifre isolate) Ã¢ÂÂ artefatto da colonna Codice_postale
   ttl = ttl.replace(/dct:description\s+"\d{4,5}"\s*[;.]/g, '');
-  // Converti dct:description con valore di prenotazione â dct:accessRights
+  // Converti dct:description con valore di prenotazione Ã¢ÂÂ dct:accessRights
   ttl = ttl.replace(
     /dct:description\s+"(Ingresso libero|Prenotazione obbligatoria|Prenotazione facoltativa|A pagamento|Gratuito)"@it\s*[;.]/g,
     (match, val) => 'dct:accessRights "' + val + '"@it' + match.slice(-1)
@@ -2161,15 +2161,15 @@ function removeEmptyTriples(ttl) {
 function sanitizeTTL(ttl, ontos=[]) {
   ttl = removeEmptyTriples(ttl);
   ttl = fixMeasurePrefixes(ttl);
-  // Fix dct:date â dct:issued (dct:date non Ã¨ la proprietÃ  DCAT per data di pubblicazione)
+  // Fix dct:date Ã¢ÂÂ dct:issued (dct:date non ÃÂ¨ la proprietÃÂ  DCAT per data di pubblicazione)
   ttl = ttl.replace(/\bdct:date\b(?=\s+"[^"]*"\^\^xsd:date)/g, 'dct:issued');
   ttl = fixContactPoints(ttl);
   ttl = fixEventClass(ttl, ontos);
   ttl = fixCoordinates(ttl);
-  // Fix dct:extent senza datatype â aggiungi ^^xsd:integer
+  // Fix dct:extent senza datatype Ã¢ÂÂ aggiungi ^^xsd:integer
   ttl = ttl.replace(/dct:extent\s+"(\d+)"(?!\^\^)\s*([;.])/g,
     (m, n, sep) => `dct:extent "${n}"^^xsd:integer ${sep}`);
-  // Fix dct:extent come literal non quotato â quota con datatype
+  // Fix dct:extent come literal non quotato Ã¢ÂÂ quota con datatype
   ttl = ttl.replace(/dct:extent\s+(\d+)\s*([;.])/g,
     (m, n, sep) => `dct:extent "${n}"^^xsd:integer ${sep}`);
   ttl = fixNumericLabels(ttl);
@@ -2193,7 +2193,7 @@ function sanitizeTTL(ttl, ontos=[]) {
     const t = line.trim();
     for (const [pfx, onto] of Object.entries(ADVANCED_ONTO_PREFIXES)) {
       if (t.includes(pfx + ':') && !activeOntos.includes(onto.toUpperCase())) {
-        // Sostituisci classe avanzata con l0:Object, proprietÃ  con dct:description
+        // Sostituisci classe avanzata con l0:Object, proprietÃÂ  con dct:description
         const isClass = t.match(new RegExp('a\\s+' + pfx + ':'));
         return line
           .replace(new RegExp(pfx + ':[A-Z][a-zA-Z]+', 'g'), 'l0:Object')
@@ -2216,7 +2216,7 @@ function sanitizeTTL(ttl, ontos=[]) {
         continue;
       }
     }
-    // Controlla proprietÃ  (minuscola dopo prefisso)
+    // Controlla proprietÃÂ  (minuscola dopo prefisso)
     const propM = t.match(/^([a-zA-Z][a-zA-Z0-9_-]+):([a-z][a-zA-Z0-9_-]+)[\s;,.]/);
     if (propM) {
       const pfx = propM[1], local = propM[2];
@@ -2230,7 +2230,7 @@ function sanitizeTTL(ttl, ontos=[]) {
   return result.join('\n');
 }
 
-// ââ CHIAMATE AI âââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ CHIAMATE AI Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 
 // Trigger AI-detect automatico quando viene inserita una API key
 function onApiKeyChange() {
@@ -2248,7 +2248,7 @@ async function loadOllamaModels() {
   const key      = document.getElementById('ollama-key').value.trim();
   if (!proxyUrl || !key) return showStatus('Inserisci prima URL proxy e API key.', 'error');
   try {
-    showStatus('â³ Carico lista modelli...', 'info');
+    showStatus('Ã¢ÂÂ³ Carico lista modelli...', 'info');
     const modelsUrl = proxyUrl.replace('/ollama-proxy', '/ollama-models');
     const body = { ollama_api_key: key };
     const res = await fetch(modelsUrl, {
@@ -2260,12 +2260,12 @@ async function loadOllamaModels() {
     const data = await res.json();
     const models = data.models || [];
     const sel = document.getElementById('ollama-model-select');
-    sel.innerHTML = '<option value="">â seleziona modello â</option>' +
+    sel.innerHTML = '<option value="">Ã¢ÂÂ seleziona modello Ã¢ÂÂ</option>' +
       models.map(m => `<option value="${m.name}">${m.name}</option>`).join('');
     sel.style.display = 'block';
     hideStatus();
   } catch(e) {
-    showStatus('â Errore caricamento modelli: ' + e.message, 'error');
+    showStatus('Ã¢ÂÂ Errore caricamento modelli: ' + e.message, 'error');
   }
 }
 
@@ -2290,24 +2290,24 @@ async function callAnthropic(prompt) {
   const model = document.getElementById('anthropic-model').value || 'claude-sonnet-4-5';
   if (!key) throw new Error('Inserisci la tua API key Anthropic.');
 
-  const systemPrompt = `Sei un convertitore CSVâRDF/TTL per la PA italiana. Rispondi SOLO con triple Turtle valide.
+  const systemPrompt = `Sei un convertitore CSVÃ¢ÂÂRDF/TTL per la PA italiana. Rispondi SOLO con triple Turtle valide.
 REGOLE ASSOLUTE:
 1. ZERO markdown, ZERO backtick, ZERO commenti in prosa, ZERO blocchi triple-backtick turtle
-2. I @prefix sono giÃ  stati emessi â NON aggiungerli
+2. I @prefix sono giÃÂ  stati emessi Ã¢ÂÂ NON aggiungerli
 3. Se il CSV contiene colonne finanziarie (importo, cumulato, movimento, entrata, spesa, BDAP, gestionale) usa OBBLIGATORIAMENTE:
    - Classe: qb:Observation
    - Importi numerici: sdmx-measure:obsValue "valore"^^xsd:decimal
    - Periodo: sdmx-dimension:timePeriod "valore"^^xsd:string
    - Territorio: sdmx-dimension:refArea <URI>
    - Tipo risorsa nell'URI: observation/
-4. NON ripetere la stessa entitÃ  organizzativa per ogni riga â usa URI distinti per ogni osservazione
-5. Usa SOLO classi e proprietÃ  delle ontologie dichiarate â mai prefissi non autorizzati
-6. Se il valore Ã¨ vuoto ometti la tripla completamente
+4. NON ripetere la stessa entitÃÂ  organizzativa per ogni riga Ã¢ÂÂ usa URI distinti per ogni osservazione
+5. Usa SOLO classi e proprietÃÂ  delle ontologie dichiarate Ã¢ÂÂ mai prefissi non autorizzati
+6. Se il valore ÃÂ¨ vuoto ometti la tripla completamente
 7. Per eventi/spettacoli usa SEMPRE l0:EventOrSituation come classe, mai l0:Object
-8. Includi dct:publisher per OGNI risorsa generata â non omettere mai questa proprietÃ 
+8. Includi dct:publisher per OGNI risorsa generata Ã¢ÂÂ non omettere mai questa proprietÃÂ 
 9. Usa dct:type per il tipo di relazione (Coorganizzazione/Patrocinio/Pagamento), dct:publisher per l'organizzatore
-10. numero_righe/numero_record indica righe CSV â usa dct:extent, MAI dcat:byteSize (riservato alla dimensione in byte)
-11. dct:publisher NON va su dcat:Distribution (non previsto da DCAT-AP) â va sul dcat:Dataset o foaf:Agent titolare`;
+10. numero_righe/numero_record indica righe CSV Ã¢ÂÂ usa dct:extent, MAI dcat:byteSize (riservato alla dimensione in byte)
+11. dct:publisher NON va su dcat:Distribution (non previsto da DCAT-AP) Ã¢ÂÂ va sul dcat:Dataset o foaf:Agent titolare`;
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -2339,15 +2339,14 @@ async function callAI(prompt) {
 
 function cleanTTL(text) {
   // Rimuove backtick e markdown
+  // Rimuove backtick, markdown e aggiunge @it ai literal l0:name senza lang tag
   text = text
-    
-  // Fix: aggiunge @it ai literal l0:name senza lang tag
-  text = text.replace(/\bl0:name\s+"([^"@\n]+)"\s*([.;])/g, 'l0:name "$1"@it $2');
-  .replace(/^```\w*\s*\n?/gim, '')
+    .replace(/\bl0:name\s+"([^"@\n]+)"\s*([.;])/g, 'l0:name "$1"@it $2')
+    .replace(/^```\w*\s*\n?/gim, '')
     .replace(/\n?```\s*$/gim, '')
     .replace(/```/g, '');
   // Rimuove righe di testo in prosa prima delle triple Turtle
-  // Una riga TTL valida inizia con @prefix, <, #, spazio/tab, o Ã¨ vuota
+  // Una riga TTL valida inizia con @prefix, <, #, spazio/tab, o ÃÂ¨ vuota
   const lines = text.split('\n');
   const ttlLines = [];
   let foundFirstTriple = false;
@@ -2408,7 +2407,7 @@ async function callGemini(prompt) {
 }
 
 
-// ââ CONVERSIONE âââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ CONVERSIONE Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const CHUNK_SIZE = 25;
 
 async function startConversion() {
@@ -2416,12 +2415,12 @@ async function startConversion() {
   const paname  = document.getElementById('meta-paname').value.trim();
   const ipa     = document.getElementById('meta-ipa').value.trim();
 
-  if (!csvText) return showStatus('â  Incolla prima il CSV.', 'error');
-  if (!paname)  return showStatus('â  Inserisci il Nome PA.', 'error');
-  if (!ipa)     return showStatus('â  Inserisci il Codice IPA.', 'error');
+  if (!csvText) return showStatus('Ã¢ÂÂ  Incolla prima il CSV.', 'error');
+  if (!paname)  return showStatus('Ã¢ÂÂ  Inserisci il Nome PA.', 'error');
+  if (!ipa)     return showStatus('Ã¢ÂÂ  Inserisci il Codice IPA.', 'error');
 
   const parsed = parseCSV(csvText);
-  if (!parsed) return showStatus('â  CSV non valido.', 'error');
+  if (!parsed) return showStatus('Ã¢ÂÂ  CSV non valido.', 'error');
 
   const maxRows = parseInt(document.getElementById('max-rows').value);
 
@@ -2442,7 +2441,7 @@ async function startConversion() {
       }
     }
     parsed.rows = deduped;
-    showStatus('ð ' + deduped.length + ' soggetti unici (deduplicazione subject)', 'info');
+    showStatus('Ã°ÂÂÂ ' + deduped.length + ' soggetti unici (deduplicazione subject)', 'info');
   }
 
   const allRows = parsed.rows.slice(0, maxRows);
@@ -2478,13 +2477,13 @@ async function startConversion() {
     const typeSegment = getEntityTypeSegment(ontos);
 
     if (skipCols.size > 0) {
-      showStatus(`â¡ ${skipCols.size} colonne mappate deterministicamente: ${[...skipCols].join(', ')}`, 'info');
+      showStatus(`Ã¢ÂÂ¡ ${skipCols.size} colonne mappate deterministicamente: ${[...skipCols].join(', ')}`, 'info');
       await new Promise(r => setTimeout(r, 1500));
     }
 
     // Chunk dal LLM
     for (let i = 0; i < chunks.length; i++) {
-      showStatus(`â³ Chunk ${i+1}/${chunks.length} â righe ${i*CHUNK_SIZE+1}-${i*CHUNK_SIZE+chunks[i].length}...`, 'info');
+      showStatus(`Ã¢ÂÂ³ Chunk ${i+1}/${chunks.length} Ã¢ÂÂ righe ${i*CHUNK_SIZE+1}-${i*CHUNK_SIZE+chunks[i].length}...`, 'info');
       // Delay tra chunk per Groq (rate limit TPM)
       if (i > 0 && currentProvider === 'groq') await new Promise(r => setTimeout(r, 6000));
       // LLM vede sempre tutto il CSV (skipCols vuoto) per produrre TTL completo
@@ -2493,8 +2492,8 @@ async function startConversion() {
       let llmTriples = prompt ? fixURIs(sanitizeTTL(cleanTTL(await callAI(prompt))), ipa) : '';
       // Merge: inietta le triple deterministiche dentro le risorse LLM
       let chunk;
-      // Strategia: LLM ha prioritÃ  assoluta quando produce output.
-      // Il deterministico Ã¨ solo fallback quando non c'Ã¨ LLM (no API key).
+      // Strategia: LLM ha prioritÃÂ  assoluta quando produce output.
+      // Il deterministico ÃÂ¨ solo fallback quando non c'ÃÂ¨ LLM (no API key).
       if (llmTriples && llmTriples.trim().length > 20) {
         chunk = removeDuplicatePredicates(removeEmptyTriples(sanitizeTTL(llmTriples, ontos)));
       } else {
@@ -2519,16 +2518,16 @@ async function startConversion() {
     document.getElementById('btn-validate').disabled = false;
     document.getElementById('btn-validate').disabled = false;
     updateStats(ttl);
-    showStatus(`â Completato! ${allRows.length} righe trasformate in ${chunks.length} chunk.`, 'success');
+    showStatus(`Ã¢ÂÂ Completato! ${allRows.length} righe trasformate in ${chunks.length} chunk.`, 'success');
 
   } catch (err) {
-    showStatus(`â ${err.message}`, 'error');
+    showStatus(`Ã¢ÂÂ ${err.message}`, 'error');
   } finally {
     document.getElementById('btn-convert').disabled = false;
   }
 }
 
-// ââ DEDUPLICA PREFISSI âââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ DEDUPLICA PREFISSI Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 
 function deduplicatePrefixes(ttl) {
   const seen = new Set();
@@ -2542,10 +2541,10 @@ function deduplicatePrefixes(ttl) {
 }
 
 
-// ââ VALIDAZIONE SU SCHEMA.GOV.IT âââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ VALIDAZIONE SU SCHEMA.GOV.IT Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 async function validateTTL() {
   const ttl = document.getElementById('ttl-output').value;
-  if (!ttl.trim()) { showStatus('â  Nessun TTL da validare.', 'error'); return; }
+  if (!ttl.trim()) { showStatus('Ã¢ÂÂ  Nessun TTL da validare.', 'error'); return; }
 
   // Determina se il TTL e' un contesto DCAT (dcat:Distribution/Dataset)
   // oppure un'ontologia PA (TI, Cultural-ON, POI, QB, etc.)
@@ -2561,7 +2560,7 @@ async function validateTTL() {
   const warnings = [];
   const infos    = [];
 
-  // ââ 1. STRUTTURA BASE ââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ 1. STRUTTURA BASE Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const prefixMap = {};
   const prefixLines = ttl.match(/@prefix\s+(\S+):\s+<([^>]+)>/g) || [];
   for (const line of prefixLines) {
@@ -2570,10 +2569,10 @@ async function validateTTL() {
   }
   if (prefixLines.length === 0) errors.push('Nessun @prefix dichiarato');
 
-  // ââ 2. BACKTICK / MARKDOWN âââââââââââââââââââââââââââââââââââââââââââ
-  if (ttl.includes('```')) errors.push('Presenti backtick (```) â output non valido');
+  // Ã¢ÂÂÃ¢ÂÂ 2. BACKTICK / MARKDOWN Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  if (ttl.includes('```')) errors.push('Presenti backtick (```) Ã¢ÂÂ output non valido');
 
-  // ââ 3. PREFISSI NON DICHIARATI ââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ 3. PREFISSI NON DICHIARATI Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const prefixesUsed = new Set();
   for (const m of ttl.matchAll(/\b([a-zA-Z][a-zA-Z0-9_-]*):[A-Za-z]/g)) {
     if (!['http','https','mailto','urn','ftp'].includes(m[1])) prefixesUsed.add(m[1]);
@@ -2582,7 +2581,7 @@ async function validateTTL() {
     if (!prefixMap[p]) errors.push(`Prefisso non dichiarato: "${p}:"`);
   }
 
-  // ââ 4. URI MAL FORMATI ââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ 4. URI MAL FORMATI Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   for (const m of ttl.matchAll(/<([^>]+)>/g)) {
     const uri = m[1];
     if (uri.includes('http:/') && !uri.includes('http://'))
@@ -2593,7 +2592,7 @@ async function validateTTL() {
       errors.push(`URI con spazio interno: <${uri.slice(0,70)}>`);
   }
 
-  // ââ 5. TRIPLE SINTATTICAMENTE INCOMPLETE (punto/punto-e-virgola) ââââââ
+  // Ã¢ÂÂÃ¢ÂÂ 5. TRIPLE SINTATTICAMENTE INCOMPLETE (punto/punto-e-virgola) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const openBlocks = (ttl.match(/\ba\s+\w+:\w+\s*[^;.\n]/gm) || []).length;
   // Semplice check: ogni soggetto deve avere un terminatore
   const lines = ttl.split('\n');
@@ -2608,13 +2607,13 @@ async function validateTTL() {
     }
   }
 
-  // ââ 6. dct:publisher MANCANTE (solo su risorse non-Distribution) e ERRATO su Distribution
-  // dct:publisher NON Ã¨ previsto su dcat:Distribution per DCAT-AP â va su dcat:Dataset/Agent
+  // Ã¢ÂÂÃ¢ÂÂ 6. dct:publisher MANCANTE (solo su risorse non-Distribution) e ERRATO su Distribution
+  // dct:publisher NON ÃÂ¨ previsto su dcat:Distribution per DCAT-AP Ã¢ÂÂ va su dcat:Dataset/Agent
   const wrongPublisherOnDistrib = ttl.split('\n').filter(l => /a\s+dcat:Distribution/.test(l) && /dct:publisher/.test(l)).length
   if (wrongPublisherOnDistrib > 0)
-    warnings.push(`dct:publisher su dcat:Distribution non previsto da DCAT-AP (${wrongPublisherOnDistrib}Ã) â va su dcat:Dataset`);
+    warnings.push(`dct:publisher su dcat:Distribution non previsto da DCAT-AP (${wrongPublisherOnDistrib}ÃÂ) Ã¢ÂÂ va su dcat:Dataset`);
 
-  // ââ 6b. dct:publisher MANCANTE (solo su risorse non-Distribution) âââââ
+  // Ã¢ÂÂÃ¢ÂÂ 6b. dct:publisher MANCANTE (solo su risorse non-Distribution) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   let missingPublisher = 0;
   let totalPrincipal = 0;
   const SKIP_CLASSES = /Telephone|Address|Distribution|Agent$|ConceptScheme|Concept$|PublicOrganization|Organization$/;
@@ -2628,76 +2627,76 @@ async function validateTTL() {
     totalPrincipal++;
     if (!blk.includes('dct:publisher')) missingPublisher++;
   }
-  // Segnala solo se il publisher manca su TUTTE le risorse (non parzialmente â puÃ² essere stile LLM)
+  // Segnala solo se il publisher manca su TUTTE le risorse (non parzialmente Ã¢ÂÂ puÃÂ² essere stile LLM)
   if (missingPublisher > 0 && missingPublisher === totalPrincipal)
     if (isDCATContext) warnings.push(`dct:publisher assente su tutte le ${missingPublisher} risorse principali`);
   else if (missingPublisher > 0 && missingPublisher > totalPrincipal * 0.5)
-    if (isDCATContext) warnings.push(`dct:publisher mancante su ${missingPublisher}/${totalPrincipal} risorse â il LLM lo ha omesso sulle righe successive`);
+    if (isDCATContext) warnings.push(`dct:publisher mancante su ${missingPublisher}/${totalPrincipal} risorse Ã¢ÂÂ il LLM lo ha omesso sulle righe successive`);
 
-  // ââ 7. dct:description "voice" ââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ 7. dct:description "voice" Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   if (/dct:description\s+"voice"/.test(ttl))
-    errors.push('dct:description "voice" inventato dal LLM â da rimuovere');
+    errors.push('dct:description "voice" inventato dal LLM Ã¢ÂÂ da rimuovere');
 
-  // ââ 7b. dct:publisher come literal (dovrebbe essere URI) âââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ 7b. dct:publisher come literal (dovrebbe essere URI) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const pubLiterals = (ttl.match(/dct:publisher\s+"[^"]+"/g) || []).length;
   if (pubLiterals > 0)
-    if (isDCATContext) warnings.push(`dct:publisher con valore literal (${pubLiterals}Ã) â dovrebbe essere URI <...>`);
+    if (isDCATContext) warnings.push(`dct:publisher con valore literal (${pubLiterals}ÃÂ) Ã¢ÂÂ dovrebbe essere URI <...>`);
 
-  // ââ 7c. dct:date usato al posto di dct:issued ââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ 7c. dct:date usato al posto di dct:issued Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   if (/\bdct:date\b/.test(ttl) && /xsd:date/.test(ttl))
-    warnings.push('dct:date con xsd:date â probabilmente intendi dct:issued');
+    warnings.push('dct:date con xsd:date Ã¢ÂÂ probabilmente intendi dct:issued');
 
-  // ââ 8. rdfs:label NUMERICO â dovrebbe essere dct:extent âââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ 8. rdfs:label NUMERICO Ã¢ÂÂ dovrebbe essere dct:extent Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const numLabels = (ttl.match(/rdfs:label\s+"[\d]+"(\^\^xsd:\w+)?/g) || []).length;
   if (numLabels > 0)
-    warnings.push(`rdfs:label con valore numerico puro (${numLabels}Ã) â usa dct:extent`);
+    warnings.push(`rdfs:label con valore numerico puro (${numLabels}ÃÂ) Ã¢ÂÂ usa dct:extent`);
 
-  // ââ 9. dcat:byteSize con numero di righe ââââââââââââââââââââââââââââââ
-  // Se tutti i valori byteSize sono < 100M ma il dataset Ã¨ un catalogo CSV
+  // Ã¢ÂÂÃ¢ÂÂ 9. dcat:byteSize con numero di righe Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // Se tutti i valori byteSize sono < 100M ma il dataset ÃÂ¨ un catalogo CSV
   const byteSizes = [...ttl.matchAll(/dcat:byteSize\s+"(\d+)"/g)].map(m => parseInt(m[1]));
   if (byteSizes.length > 0) {
     const allSmall = byteSizes.every(n => n < 10000000);
     const hasFormat = /dct:format\s+"(csv|json|ttl)"/.test(ttl);
     if (hasFormat && allSmall && byteSizes.length > 3)
-      warnings.push(`dcat:byteSize sembra contenere numero di righe, non byte â usa dct:extent`);
+      warnings.push(`dcat:byteSize sembra contenere numero di righe, non byte Ã¢ÂÂ usa dct:extent`);
   }
 
-  // ââ 10. sm:hasWebSite con URI w3id inventato ââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ 10. sm:hasWebSite con URI w3id inventato Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const fakeWeb = (ttl.match(/sm:hasWebSite\s+<https?:\/\/w3id\.org\/italia\/data\/[^>]+>/g) || [])
     .filter(u => !/(distribution|asset|catalog)/.test(u));
   if (fakeWeb.length > 0)
-    warnings.push(`sm:hasWebSite con URI w3id inventato (${fakeWeb.length}Ã) â dovrebbe essere URL reale`);
+    warnings.push(`sm:hasWebSite con URI w3id inventato (${fakeWeb.length}ÃÂ) Ã¢ÂÂ dovrebbe essere URL reale`);
 
-  // ââ 11. CLASSE INCOERENTE CON TIPO URI ââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ 11. CLASSE INCOERENTE CON TIPO URI Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/event\/[^>]*)>\s+a\s+([^;.\n]+)/g)) {
     const cls = m[2].trim();
     if (!cls.includes('EventOrSituation'))
-      warnings.push(`URI /event/ ma classe "${cls.slice(0,50)}" â atteso l0:EventOrSituation`);
+      warnings.push(`URI /event/ ma classe "${cls.slice(0,50)}" Ã¢ÂÂ atteso l0:EventOrSituation`);
   }
   for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/cultural-institute\/[^>]*)>\s+a\s+([^;.\n]+)/g)) {
     const cls = m[2].trim();
     if (!cls.includes('CulturalInstituteOrSite'))
-      warnings.push(`URI /cultural-institute/ ma classe "${cls.slice(0,50)}" â atteso cultural-on:CulturalInstituteOrSite`);
+      warnings.push(`URI /cultural-institute/ ma classe "${cls.slice(0,50)}" Ã¢ÂÂ atteso cultural-on:CulturalInstituteOrSite`);
   }
   for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/observation\/[^>]*)>\s+a\s+([^;.\n]+)/g)) {
     const cls = m[2].trim();
     if (!cls.includes('qb:Observation'))
-      warnings.push(`URI /observation/ ma classe "${cls.slice(0,50)}" â atteso qb:Observation`);
+      warnings.push(`URI /observation/ ma classe "${cls.slice(0,50)}" Ã¢ÂÂ atteso qb:Observation`);
   }
   for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/point-of-interest\/[^>]*)>\s+a\s+([^;.\n]+)/g)) {
     const cls = m[2].trim();
     if (!cls.includes('poi:PointOfInterest'))
-      warnings.push(`URI /point-of-interest/ ma classe "${cls.slice(0,50)}" â atteso poi:PointOfInterest`);
+      warnings.push(`URI /point-of-interest/ ma classe "${cls.slice(0,50)}" Ã¢ÂÂ atteso poi:PointOfInterest`);
   }
 
-  // ââ 12. l0:Object usato dove ci sono date â probabilmente evento âââââââ
+  // Ã¢ÂÂÃ¢ÂÂ 12. l0:Object usato dove ci sono date Ã¢ÂÂ probabilmente evento Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const hasL0Object = /\ba l0:Object\b/.test(ttl);
   const hasDate = /\bdct:date\b/.test(ttl);
   const hasEventURI = /\/event\//.test(ttl);
   if (hasL0Object && hasDate && !hasEventURI)
-    warnings.push('l0:Object con dct:date presente â verifica se dovrebbe essere l0:EventOrSituation');
+    warnings.push('l0:Object con dct:date presente Ã¢ÂÂ verifica se dovrebbe essere l0:EventOrSituation');
 
-  // ââ 13. PREDICATI DUPLICATI SINGLE-VALUE ââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ 13. PREDICATI DUPLICATI SINGLE-VALUE Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const SINGLE_VAL = ['dct:identifier','dct:type','geo:lat','geo:long','dct:date','dcat:mediaType'];
   // Split robusto: TTL espanso ha blocchi separati da riga vuota, TTL compatto ha 1 risorsa per riga
   const _ttlBlocks = ttl.includes('\n\n')
@@ -2711,12 +2710,12 @@ async function validateTTL() {
     }
   }
 
-  // ââ 14. dct:description con solo CAP (4-5 cifre isolate) ââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ 14. dct:description con solo CAP (4-5 cifre isolate) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const capDesc = (ttl.match(/dct:description\s+"[\d]{4,5}"\s*[;.]/g) || []).length;
   if (capDesc > 0)
-    warnings.push(`dct:description con solo CAP numerico (${capDesc}Ã) â usa skos:notation`);
+    warnings.push(`dct:description con solo CAP numerico (${capDesc}ÃÂ) Ã¢ÂÂ usa skos:notation`);
 
-  // ââ 15. COORDINATE FUORI ITALIA âââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ 15. COORDINATE FUORI ITALIA Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   for (const m of ttl.matchAll(/geo:lat\s+"([^"]+)"/g)) {
     const lat = parseFloat(m[1]);
     if (!isNaN(lat) && (lat < 35 || lat > 48))
@@ -2728,37 +2727,37 @@ async function validateTTL() {
       warnings.push(`geo:long="${m[1]}" fuori dal range Italia (6-19)`);
   }
 
-  // ââ 16. LITERAL SENZA LANGUAGE TAG su proprietÃ  multilingua ââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ 16. LITERAL SENZA LANGUAGE TAG su proprietÃÂ  multilingua Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const noLangProps = ['rdfs:label','dct:title','l0:name'];
   for (const prop of noLangProps) {
     const re = new RegExp(`\\b${prop.replace(':','\\:')}\\s+"[^"@]+"(?!@)(?!\\^\\^)`, 'g');
     const hits = (ttl.match(re) || []).length;
     if (hits > 0)
-      warnings.push(`${prop} senza @lang tag (${hits}Ã) â aggiungi @it`);
+      warnings.push(`${prop} senza @lang tag (${hits}ÃÂ) Ã¢ÂÂ aggiungi @it`);
   }
 
-  // ââ 17. QB: sdmx-measure:obsValue senza xsd:decimal ââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ 17. QB: sdmx-measure:obsValue senza xsd:decimal Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const obsNoType = (ttl.match(/sdmx-measure:obsValue\s+"[^"]*"(?!\^\^xsd:decimal)/g) || []).length;
   if (obsNoType > 0)
-    warnings.push(`sdmx-measure:obsValue senza ^^xsd:decimal (${obsNoType}Ã)`);
+    warnings.push(`sdmx-measure:obsValue senza ^^xsd:decimal (${obsNoType}ÃÂ)`);
 
-  // ââ 18. ONTOLOGIE INATTESE ââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ 18. ONTOLOGIE INATTESE Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const KNOWN = ['owl','clv','cov','cpv','l0','cultural-on','poi','ro','ti','sm',
                  'dcat','dct','foaf','geo','xsd','rdfs','vcard','skos','schema',
                  'adms','qb','sdmx-dimension','sdmx-measure','sdmx-attribute'];
   for (const p of prefixesUsed) {
     if (!KNOWN.includes(p.toLowerCase()))
-      warnings.push(`Prefisso inatteso: "${p}:" â ontologia non standard PA italiana`);
+      warnings.push(`Prefisso inatteso: "${p}:" Ã¢ÂÂ ontologia non standard PA italiana`);
   }
 
-  // ââ 19. SUMMARY ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ 19. SUMMARY Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const subjectCount = (ttl.match(/^<https?/gm) || []).length;
   const tripleCount  = (ttl.match(/^\s+\S+\s+[^\n]+[;.]/gm) || []).length;
   const classesUsed  = [...new Set([...ttl.matchAll(/\ba\s+(\w[\w-]*:\w+)/g)].map(m=>m[1]))];
   infos.push(`${subjectCount} soggetti, ~${tripleCount} triple`);
   infos.push(`Classi: ${classesUsed.join(', ')}`);
 
-  // ââ 20. SCORE âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂ 20. SCORE Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const totalIssues = errors.length * 3 + warnings.length;
   const score = Math.max(0, 100 - totalIssues * 5);
   const scoreColor = score >= 80 ? '#0a0' : score >= 50 ? '#f90' : '#c00';
@@ -2783,28 +2782,28 @@ function showValidationReport({ errors, warnings, infos, terms, prefixMap }) {
 
   const total = errors.length + warnings.length;
   const statusColor = errors.length > 0 ? '#c00' : warnings.length > 0 ? '#f90' : '#0a0';
-  const statusIcon  = errors.length > 0 ? 'â' : warnings.length > 0 ? 'â ï¸' : 'â';
+  const statusIcon  = errors.length > 0 ? 'Ã¢ÂÂ' : warnings.length > 0 ? 'Ã¢ÂÂ Ã¯Â¸Â' : 'Ã¢ÂÂ';
   const statusText  = errors.length > 0 ? `${errors.length} errori, ${warnings.length} avvisi`
                     : warnings.length > 0 ? `${warnings.length} avvisi`
                     : 'TTL valido';
 
   let html = `<div style="font-family:monospace;font-size:13px;padding:10px">`;
   html += `<b style="color:${statusColor}">${statusIcon} ${statusText}</b>`;
-  if (infos.length) html += ` &nbsp;Â·&nbsp; <span style="color:#888">${infos.join(' Â· ')}</span>`;
+  if (infos.length) html += ` &nbsp;ÃÂ·&nbsp; <span style="color:#888">${infos.join(' ÃÂ· ')}</span>`;
   html += '<br><br>';
 
   if (errors.length > 0) {
     html += `<b style="color:#c00">ERRORI (${errors.length})</b><br>`;
-    for (const e of errors) html += `&nbsp;&nbsp;â ${e}<br>`;
+    for (const e of errors) html += `&nbsp;&nbsp;Ã¢ÂÂ ${e}<br>`;
     html += '<br>';
   }
   if (warnings.length > 0) {
     html += `<b style="color:#f90">AVVISI (${warnings.length})</b><br>`;
-    for (const w of warnings) html += `&nbsp;&nbsp;â  ${w}<br>`;
+    for (const w of warnings) html += `&nbsp;&nbsp;Ã¢ÂÂ  ${w}<br>`;
     html += '<br>';
   }
   if (errors.length === 0 && warnings.length === 0) {
-    html += `<span style="color:#0a0">â Nessun problema rilevato localmente.</span><br><br>`;
+    html += `<span style="color:#0a0">Ã¢ÂÂ Nessun problema rilevato localmente.</span><br><br>`;
   }
 
   // Sezione SPARQL (popolata in background)
@@ -2825,7 +2824,7 @@ function updateStats(ttl) {
   document.getElementById('output-stats').style.display = 'block';
 }
 
-// ââ DOWNLOAD / COPY âââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ DOWNLOAD / COPY Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function downloadTTL() {
   const ttl  = document.getElementById('ttl-output').value;
   if (!ttl) return;
@@ -2840,16 +2839,16 @@ async function downloadRDF() {
   const ttl = document.getElementById('ttl-output').value;
   if (!ttl) return;
   const ipa = document.getElementById('meta-ipa').value || 'dataset';
-  showStatus('â³ Conversione TTL â RDF/XML in corso...', 'info');
+  showStatus('Ã¢ÂÂ³ Conversione TTL Ã¢ÂÂ RDF/XML in corso...', 'info');
   try {
     const rdfxml = await ttlToRDFXML(ttl);
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([rdfxml], {type:'application/rdf+xml'}));
     a.download = ipa + '-lod.rdf';
     a.click();
-    showStatus('â File RDF/XML scaricato!', 'success');
+    showStatus('Ã¢ÂÂ File RDF/XML scaricato!', 'success');
   } catch(err) {
-    showStatus('â Errore conversione: ' + err.message, 'error');
+    showStatus('Ã¢ÂÂ Errore conversione: ' + err.message, 'error');
   }
 }
 
@@ -2864,7 +2863,7 @@ function ttlToRDFXML(ttl) {
         if (quad) {
           quads.push(quad);
         } else {
-          // Fine parsing â costruisco RDF/XML manualmente
+          // Fine parsing Ã¢ÂÂ costruisco RDF/XML manualmente
           // N3.js non supporta output RDF/XML nativo, uso serializzazione manuale
           const prefixDecls = Object.entries(prefixes||{})
             .map(([p,u]) => `xmlns:${p}="${u}"`)
@@ -2930,10 +2929,10 @@ function escXML(str) {
 function copyTTL() {
   const ttl = document.getElementById('ttl-output').value;
   if (!ttl) return showStatus('Nessun contenuto da copiare.', 'error');
-  navigator.clipboard.writeText(ttl).then(() => showStatus('â Copiato negli appunti!', 'success'));
+  navigator.clipboard.writeText(ttl).then(() => showStatus('Ã¢ÂÂ Copiato negli appunti!', 'success'));
 }
 
-// ââ validateSPARQL â verifica classi su schema.gov.it âââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ validateSPARQL Ã¢ÂÂ verifica classi su schema.gov.it Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function validateSPARQL(terms, prefixMap) {
   // Trova o crea il div di status nel report
   var sparqlDiv = document.getElementById('validation-sparql');
@@ -2945,10 +2944,10 @@ function validateSPARQL(terms, prefixMap) {
     sparqlDiv.style.cssText = 'margin-top:.6em;padding:.35em .5em;border-top:1px solid #e0e8f0;font-size:.84em;color:#888';
     report.appendChild(sparqlDiv);
   }
-  sparqlDiv.innerHTML = 'ð Verifica classi su schema.gov.it...';
+  sparqlDiv.innerHTML = 'Ã°ÂÂÂ Verifica classi su schema.gov.it...';
 
   // Risolvi i termini in URI completi usando prefixMap
-  // Mappa alias noti â alcune ontologie PA usano nomi abbreviati
+  // Mappa alias noti Ã¢ÂÂ alcune ontologie PA usano nomi abbreviati
   var ALIAS_MAP = {
     'ti:TimeInstant': 'ti:TimeInstant',
     'ti:TimeInterval': 'ti:TimeInterval'
@@ -2975,16 +2974,16 @@ function validateSPARQL(terms, prefixMap) {
       var total = uris.length;
       var missing = uris.filter(function(u) { return !found.has(u.slice(1,-1)); });
       if (missing.length === 0) {
-        sparqlDiv.innerHTML = 'â Tutte le ' + total + ' classi verificate su schema.gov.it';
+        sparqlDiv.innerHTML = 'Ã¢ÂÂ Tutte le ' + total + ' classi verificate su schema.gov.it';
         sparqlDiv.style.color = '#0a0';
       } else {
         var names = missing.map(function(u) { return u.split('/').pop().replace('>',''); }).join(', ');
-        sparqlDiv.innerHTML = 'â  ' + missing.length + '/' + total + ' class' + (missing.length>1?'i':'e') + ' non in schema.gov.it: ' + names;
+        sparqlDiv.innerHTML = 'Ã¢ÂÂ  ' + missing.length + '/' + total + ' class' + (missing.length>1?'i':'e') + ' non in schema.gov.it: ' + names;
         sparqlDiv.style.color = '#c80';
       }
     })
     .catch(function() {
-      sparqlDiv.innerHTML = 'â  schema.gov.it non raggiungibile';
+      sparqlDiv.innerHTML = 'Ã¢ÂÂ  schema.gov.it non raggiungibile';
       sparqlDiv.style.color = '#c80';
     });
 }
@@ -3001,7 +3000,7 @@ function norm(s){return String(s).toLowerCase().replace(/[^a-z0-9]/g," ").trim()
 function jaccard(a,b){var sa=new Set(a.map(norm).filter(function(x){return x;})),sb=new Set(b.map(norm).filter(function(x){return x;}));if(!sa.size||!sb.size)return 0;var n=0;sa.forEach(function(x){if(sb.has(x))n++;});return n/(sa.size+sb.size-n);}
 function overlap(q,f){var qn=q.map(norm).filter(function(x){return x.length>2;}),fs=f.map(norm).join(" ");return qn.length?qn.filter(function(w){return fs.indexOf(w)>=0;}).length/qn.length:0;}
 var fixtures=[],ready=false;
-fetch("https://raw.githubusercontent.com/piersoft/CSV-to-RDF/main/fixtures_v7.json").then(function(r){if(!r.ok)throw new Error("HTTP "+r.status+"— fixtures non disponibili");return r.json();}).then(function(d){fixtures=d.corpus||d;ready=true;console.log("[Corpus] "+fixtures.length+" fixture caricate");}).catch(function(e){console.error("[Corpus] Errore caricamento fixtures:",e.message);});
+fetch("https://raw.githubusercontent.com/piersoft/CSV-to-RDF/main/fixtures_v7.json").then(function(r){if(!r.ok)throw new Error("HTTP "+r.status+"â fixtures non disponibili");return r.json();}).then(function(d){fixtures=d.corpus||d;ready=true;console.log("[Corpus] "+fixtures.length+" fixture caricate");}).catch(function(e){console.error("[Corpus] Errore caricamento fixtures:",e.message);});
 function matchCorpus(headers,topN){
   topN=topN||5;
   if(!ready)return{temi:[],confidence:{},examples:[]};

@@ -1,25 +1,25 @@
 | Ontologia | Fixture | Score | Descrizione |
 |-----------|--------:|------:|-------------|
 | **QB** | 179 | 🟢 99% | Dati statistici e serie storiche |
-| **POI** | 73 | 🟢 94% | Luoghi geolocalizzati con lat/lon |
+| **POI** | 74 | 🟢 94% | Luoghi geolocalizzati con lat/lon |
 | **CPV** | 65 | 🟢 92% | Popolazione, anagrafe, residenti |
-| **CLV** | 57 | 🟢 90% | Stradari, civici, indirizzi |
+| **CLV** | 61 | 🟢 91% | Stradari, civici, indirizzi |
 | **CPSV** | 47 | 🟢 86% | Appalti, gare, determine, atti PA |
-| **TI** | 29 | 🔵 77% | Eventi con data inizio/fine |
+| **TI** | 29 | 🔵 76% | Eventi con data inizio/fine |
 | **ACCO** | 23 | 🔵 72% | Strutture ricettive e turismo |
-| **Cultural-ON** | 18 | 🟡 68% | Musei, biblioteche, beni culturali |
-| **ADMS** | 15 | 🟡 65% | Metadati e cataloghi open data |
-| **RO-AP_IT** | 13 | 🟡 63% | Ruoli e incarichi istituzionali |
-| **COV-AP_IT** | 12 | 🟡 62% | Personale e organizzazioni PA |
+| **Cultural-ON** | 21 | 🔵 70% | Musei, biblioteche, beni culturali |
+| **ADMS** | 16 | 🟡 66% | Metadati e cataloghi open data |
+| **RO-AP_IT** | 14 | 🟡 63% | Ruoli e incarichi istituzionali |
+| **COV-AP_IT** | 12 | 🟡 61% | Personale e organizzazioni PA |
 | **GTFS** | 10 | 🟡 59% | Trasporto pubblico locale |
+| **MUAPIT** | 10 | 🟡 59% | Luoghi e beni culturali MiC/ArCo |
 | **CPVAPIT** | 9 | 🟡 58% | Persone fisiche nominative |
-| **IoT-AP_IT** | 8 | 🟡 57% | Sensori IoT e misurazioni |
-| **MUAPIT** | 7 | 🟡 55% | Luoghi e beni culturali MiC/ArCo |
-| **SMAPIT** | 6 | 🔴 54% | Strutture scolastiche |
+| **SMAPIT** | 8 | 🟡 56% | Strutture scolastiche |
+| **IoT-AP_IT** | 8 | 🟡 56% | Sensori IoT e misurazioni |
+| **arco** | 5 | 🔴 52% | — |
 | **SM** | 4 | 🔴 51% | — |
 | **DCATAPIT** | 3 | 🟢 100% | Standard obbligatorio dati.gov.it |
 | **PublicOrganization** | 3 | 🔴 50% | Enti pubblici (IPA, ASL, ecc.) |
-| **arco** | 2 | 🔴 48% | — |
 | **foaf** | 2 | 🔴 48% | — |
 | **skos** | 2 | 🔴 48% | — |
 | **cis** | 1 | 🔴 47% | — |
@@ -100,7 +100,7 @@ Le ontologie disponibili sono:
 
 ---
 
-### Corpus di riferimento v10
+### Corpus di riferimento v11
 
 Il rilevamento deterministico si basa su un **corpus di 269 dataset reali** della PA italiana, raccolti e validati manualmente.
 
@@ -109,25 +109,25 @@ Il corpus copre le principali ontologie del patrimonio semantico nazionale:
 | Ontologia | Fixture | Score | Descrizione |
 |-----------|--------:|------:|-------------|
 | **QB** | 179 | 🟢 99% | Dati statistici e serie storiche |
-| **POI** | 73 | 🟢 94% | Luoghi geolocalizzati con lat/lon |
+| **POI** | 74 | 🟢 94% | Luoghi geolocalizzati con lat/lon |
 | **CPV** | 65 | 🟢 92% | Popolazione, anagrafe, residenti |
-| **CLV** | 57 | 🟢 90% | Stradari, civici, indirizzi |
+| **CLV** | 61 | 🟢 91% | Stradari, civici, indirizzi |
 | **CPSV** | 47 | 🟢 86% | Appalti, gare, determine, atti PA |
-| **TI** | 29 | 🔵 77% | Eventi con data inizio/fine |
+| **TI** | 29 | 🔵 76% | Eventi con data inizio/fine |
 | **ACCO** | 23 | 🔵 72% | Strutture ricettive e turismo |
-| **Cultural-ON** | 18 | 🟡 68% | Musei, biblioteche, beni culturali |
-| **ADMS** | 15 | 🟡 65% | Metadati e cataloghi open data |
-| **RO-AP_IT** | 13 | 🟡 63% | Ruoli e incarichi istituzionali |
-| **COV-AP_IT** | 12 | 🟡 62% | Personale e organizzazioni PA |
+| **Cultural-ON** | 21 | 🔵 70% | Musei, biblioteche, beni culturali |
+| **ADMS** | 16 | 🟡 66% | Metadati e cataloghi open data |
+| **RO-AP_IT** | 14 | 🟡 63% | Ruoli e incarichi istituzionali |
+| **COV-AP_IT** | 12 | 🟡 61% | Personale e organizzazioni PA |
 | **GTFS** | 10 | 🟡 59% | Trasporto pubblico locale |
+| **MUAPIT** | 10 | 🟡 59% | Luoghi e beni culturali MiC/ArCo |
 | **CPVAPIT** | 9 | 🟡 58% | Persone fisiche nominative |
-| **IoT-AP_IT** | 8 | 🟡 57% | Sensori IoT e misurazioni |
-| **MUAPIT** | 7 | 🟡 55% | Luoghi e beni culturali MiC/ArCo |
-| **SMAPIT** | 6 | 🔴 54% | Strutture scolastiche |
+| **SMAPIT** | 8 | 🟡 56% | Strutture scolastiche |
+| **IoT-AP_IT** | 8 | 🟡 56% | Sensori IoT e misurazioni |
+| **arco** | 5 | 🔴 52% | — |
 | **SM** | 4 | 🔴 51% | — |
 | **DCATAPIT** | 3 | 🟢 100% | Standard obbligatorio dati.gov.it |
 | **PublicOrganization** | 3 | 🔴 50% | Enti pubblici (IPA, ASL, ecc.) |
-| **arco** | 2 | 🔴 48% | — |
 | **foaf** | 2 | 🔴 48% | — |
 | **skos** | 2 | 🔴 48% | — |
 | **cis** | 1 | 🔴 47% | — |
@@ -205,7 +205,7 @@ Per ogni ontologia il catalogo indica:
 - Il **dataset modello** con headers chiave evidenziati in blu
 - L'**ente di riferimento** che lo pubblica già correttamente
 - Il **link diretto** a dati.gov.it o al portale sorgente
-- Lo **score di match** stimato sul corpus attuale (269 dataset)
+- Lo **score di match** stimato sul corpus attuale (274 dataset)
 - Una **nota pratica** per i responsabili open data
 
 ---

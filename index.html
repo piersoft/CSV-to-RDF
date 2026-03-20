@@ -4,6 +4,20 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
+  <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
+  <meta name="robots" content="index, follow"/>
+  <link rel="canonical" href="https://piersoft.github.io/CSV-to-RDF/"/>
+  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png"/>
+  <meta property="og:title" content="CSV → RDF/TTL — Linked Open Data PA"/>
+  <meta property="og:description" content="Trasforma i CSV della PA italiana in Turtle RDF arricchito con le ontologie ufficiali dati-semantic-assets. Strumento open source per Comuni e Regioni."/>
+  <meta property="og:url" content="https://piersoft.github.io/CSV-to-RDF/"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="https://piersoft.github.io/CSV-to-RDF/apple-touch-icon.png"/>
+  <meta name="twitter:card" content="summary"/>
+  <meta name="twitter:title" content="CSV → RDF/TTL — Linked Open Data PA"/>
+  <meta name="twitter:description" content="Trasforma i CSV della PA in Turtle RDF con le ontologie dati-semantic-assets."/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-italia@2.8.0/dist/css/bootstrap-italia.min.css"/>
   <script src="https://cdn.jsdelivr.net/npm/n3@1.17.2/browser/n3.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet"/>
@@ -356,7 +370,7 @@
 
 
           <div class="mt-3">
-            <label class="lbl">Max righe CSV per chiamata (chunk)</label>
+            <label class="lbl">Max righe CSV per chiamata (chunk) <span title="Ogni chiamata all'AI elabora N righe alla volta. Chunk piccoli (25) = più precisi ma più lenti e costosi. Chunk grandi = più veloci ma possono superare il limite di token del provider." style="cursor:help;border-bottom:1px dotted #888;font-size:11px;color:#888">(?)</span></label>
             <select class="inp" id="max-rows">
               <option value="25" selected>25 righe</option>
               <option value="100">100 righe</option>
@@ -500,7 +514,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.20.24</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.20.25</span>
 </footer>
 
 <script>
@@ -3011,6 +3025,7 @@ function matchCorpus(headers,topN){
   return{temi:temi,confidence:conf,examples:examples};
 }
 function showPanel(headers){
+  if(!headers || headers.length < 2){ document.getElementById('corpus-panel').style.display='none'; return; }
   var r=matchCorpus(headers),panel=document.getElementById("corpus-panel");
   if(!panel||!r.temi.length){if(panel)panel.style.display="none";return;}
   document.getElementById("corpus-temi").innerHTML=r.temi.map(function(t){var c=r.confidence[t]||0,col=COLORI[t]||"#555";return"<span class=\"corpus-badge\" style=\"background:"+col+"\">"+t+" <span style=\"opacity:.75\">"+c+"%</span></span>";}).join("");

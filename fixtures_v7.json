@@ -1,7 +1,7 @@
 {
   "generated": "2026-03-20",
-  "script_version": "v10",
-  "total": 269,
+  "script_version": "v11",
+  "total": 274,
   "false_positives_excluded": 0,
   "corpus": [
     {
@@ -22288,6 +22288,327 @@
           "centro_per_impiego": "CIRIE'",
           "reddito_imponibile": "1098864",
           "numero_contribuenti": "80"
+        }
+      ]
+    },
+    {
+      "seq": 270,
+      "id": "i0001-anagrafe-scuole-provincia-mb",
+      "name": "anagrafe-scuole-codice-autonomia-lombardia",
+      "title": "Anagrafe scuole — codice istituto, tipologia, organico e autonomia (Lombardia/MB)",
+      "org": "pa-locale",
+      "ente": "Provincia di Monza Brianza / MIUR",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "EDUC"
+      ],
+      "tema_onto": [
+        "SMAPIT",
+        "CLV",
+        "RO-AP_IT"
+      ],
+      "tema_target": [
+        "SMAPIT",
+        "CLV",
+        "RO-AP_IT",
+        "l0",
+        "QB"
+      ],
+      "score": 85,
+      "resource_id": "anagrafe-scuole-mb-lombardia",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "Provincia",
+        "Codice",
+        "Tipologia",
+        "Denominazione",
+        "Indirizzo",
+        "Civico",
+        "Comune",
+        "CAP",
+        "Cod. comune",
+        "Distr.",
+        "Telefono",
+        "Caratteristica scuola",
+        "Sede direttivo",
+        "Codice sede riferimento",
+        "Codice sede di direttivo",
+        "Denominazione sede direttivo",
+        "Classificazione Autonomia",
+        "Organico Autonomia",
+        "Organico Sede"
+      ],
+      "sample_rows": [
+        {
+          "Codice": "MIEE8F902L",
+          "Tipologia": "Istituto Istruzione Primario",
+          "Denominazione": "Primaria - Carlo Collodi",
+          "Indirizzo": "Via Giotto",
+          "Civico": "28",
+          "Comune": "LIMBIATE",
+          "CAP": "20812",
+          "Provincia": "MB",
+          "Classificazione Autonomia": "Autonomia"
+        },
+        {
+          "Codice": "MBIC84900E",
+          "Tipologia": "Istituto Comprensivo",
+          "Denominazione": "IC Monza 1",
+          "Indirizzo": "Via Roma",
+          "Civico": "10",
+          "Comune": "MONZA",
+          "CAP": "20900",
+          "Provincia": "MB"
+        }
+      ]
+    },
+    {
+      "seq": 271,
+      "id": "i0002-scuole-geolocalizzate-molinella",
+      "name": "scuole-geolocalizzate-latlon-molinella",
+      "title": "Scuole geolocalizzate con lat/lon — Comune di Molinella (GitHub opendata)",
+      "org": "comune-molinella",
+      "ente": "Comune di Molinella",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "EDUC"
+      ],
+      "tema_onto": [
+        "SMAPIT",
+        "POI",
+        "CLV"
+      ],
+      "tema_target": [
+        "SMAPIT",
+        "POI",
+        "CLV",
+        "l0"
+      ],
+      "score": 80,
+      "resource_id": "scuole-molinella-github",
+      "csv_url": "https://raw.githubusercontent.com/ComuneMolinella/opendata/refs/heads/main/data/scuole/Scuole.csv",
+      "datastore": false,
+      "source": "url_csv",
+      "headers": [
+        "NomeIstituto",
+        "IndirizzoDirezioneDidattica",
+        "CittaDirezioneDidattica",
+        "CapDirezioneDidattica",
+        "IndirizzoSedeIstituto",
+        "CittaSedeIstituto",
+        "CapSedeIstituto",
+        "LatitudineIstituto",
+        "LongitudineIstituto"
+      ],
+      "sample_rows": [
+        {
+          "NomeIstituto": "Istituto musicale Adriano Banchieri",
+          "IndirizzoDirezioneDidattica": "Via del Lavoro 8",
+          "CittaDirezioneDidattica": "Molinella",
+          "CapDirezioneDidattica": "40062",
+          "LatitudineIstituto": "44.6199832",
+          "LongitudineIstituto": "11.6674831"
+        },
+        {
+          "NomeIstituto": "Istituto Comprensivo di Molinella",
+          "IndirizzoDirezioneDidattica": "Via De Amicis 1",
+          "CittaDirezioneDidattica": "Molinella",
+          "LatitudineIstituto": "44.6180098",
+          "LongitudineIstituto": "11.6712594"
+        }
+      ]
+    },
+    {
+      "seq": 272,
+      "id": "i0003-lombardia-opere-arte-catalogate",
+      "name": "lombardia-opere-arte-catalogo-iccd-oa",
+      "title": "Lombardia — Opere d'arte catalogate ICCD (98.943 schede OA)",
+      "org": "ministero-cultura",
+      "ente": "Ministero della Cultura / Regione Lombardia — ICCD",
+      "categoria": "regione",
+      "tema_dcat": [
+        "EDUC",
+        "CULT"
+      ],
+      "tema_onto": [
+        "MUAPIT",
+        "Cultural-ON",
+        "arco",
+        "CLV"
+      ],
+      "tema_target": [
+        "MUAPIT",
+        "Cultural-ON",
+        "arco",
+        "CLV",
+        "l0"
+      ],
+      "score": 84,
+      "resource_id": "lombardia-opere-arte-iccd",
+      "csv_url": "https://dati.cultura.gov.it/sparql",
+      "datastore": false,
+      "source": "sparql:http://dati.beniculturali.it/lombardia/opere",
+      "headers": [
+        "id_catalogo",
+        "label",
+        "tipo_bene",
+        "autore",
+        "datazione",
+        "localizzazione",
+        "comune",
+        "provincia",
+        "regione",
+        "tecnica",
+        "materiale",
+        "dimensioni",
+        "conservazione",
+        "numero_inventario",
+        "fotografo"
+      ],
+      "sample_rows": [
+        {
+          "tipo_bene": "CatalogueRecordOA",
+          "label": "Madonna con Bambino",
+          "comune": "Milano",
+          "provincia": "MI",
+          "regione": "Lombardia",
+          "numero_inventario": "LOM-MI-001"
+        },
+        {
+          "tipo_bene": "CatalogueRecordOA",
+          "label": "Ritratto di gentiluomo",
+          "comune": "Bergamo",
+          "provincia": "BG",
+          "regione": "Lombardia"
+        }
+      ]
+    },
+    {
+      "seq": 273,
+      "id": "i0004-bolzano-beni-culturali-mobili",
+      "name": "bolzano-beni-culturali-mobili-arco",
+      "title": "Bolzano/Alto Adige — Beni culturali mobili (162.950 oggetti, bilingue)",
+      "org": "provincia-bolzano",
+      "ente": "Provincia Autonoma di Bolzano / Soprintendenza",
+      "categoria": "regione",
+      "tema_dcat": [
+        "EDUC",
+        "CULT"
+      ],
+      "tema_onto": [
+        "MUAPIT",
+        "Cultural-ON",
+        "arco",
+        "CLV"
+      ],
+      "tema_target": [
+        "MUAPIT",
+        "Cultural-ON",
+        "arco",
+        "CLV",
+        "l0"
+      ],
+      "score": 83,
+      "resource_id": "bolzano-beni-culturali-mobili",
+      "csv_url": "https://dati.cultura.gov.it/sparql",
+      "datastore": false,
+      "source": "sparql:http://dati.beniculturali.it/bolzano/beni-culturali",
+      "headers": [
+        "id",
+        "label",
+        "tipo_bene",
+        "categoria",
+        "autore",
+        "datazione",
+        "localizzazione",
+        "comune",
+        "provincia",
+        "materiale",
+        "tecnica",
+        "misure",
+        "numero_inventario",
+        "collocazione"
+      ],
+      "sample_rows": [
+        {
+          "tipo_bene": "MovableCulturalProperty",
+          "label": "Zither",
+          "categoria": "strumento musicale",
+          "comune": "Bolzano",
+          "provincia": "BZ",
+          "regione": "Alto Adige"
+        },
+        {
+          "tipo_bene": "MovableCulturalProperty",
+          "label": "Altare ligneo",
+          "categoria": "arredo sacro",
+          "comune": "Merano",
+          "provincia": "BZ"
+        }
+      ]
+    },
+    {
+      "seq": 274,
+      "id": "i0005-iccd-schede-catalogo-nazionale",
+      "name": "iccd-schede-catalogo-nazionale-beni-culturali",
+      "title": "ICCD — Schede catalogo nazionale beni culturali (758.858 schede)",
+      "org": "ministero-cultura",
+      "ente": "Ministero della Cultura — ICCD",
+      "categoria": "ministero",
+      "tema_dcat": [
+        "EDUC",
+        "CULT"
+      ],
+      "tema_onto": [
+        "MUAPIT",
+        "Cultural-ON",
+        "arco",
+        "ADMS"
+      ],
+      "tema_target": [
+        "MUAPIT",
+        "Cultural-ON",
+        "arco",
+        "ADMS",
+        "l0"
+      ],
+      "score": 86,
+      "resource_id": "iccd-schede-catalogo-nazionale",
+      "csv_url": "https://dati.cultura.gov.it/sparql",
+      "datastore": false,
+      "source": "sparql:http://dati.beniculturali.it/iccd/schede",
+      "headers": [
+        "id_scheda",
+        "tipo_scheda",
+        "denominazione",
+        "autore",
+        "datazione",
+        "collocazione",
+        "comune",
+        "provincia",
+        "regione",
+        "codice_univoco",
+        "ente_schedatore",
+        "anno_schedatura",
+        "ultima_modifica"
+      ],
+      "sample_rows": [
+        {
+          "tipo_scheda": "OA",
+          "denominazione": "Dipinto su tavola",
+          "comune": "Firenze",
+          "provincia": "FI",
+          "regione": "Toscana",
+          "codice_univoco": "OA-FI-001"
+        },
+        {
+          "tipo_scheda": "BDI",
+          "denominazione": "Fotografia storica",
+          "comune": "Roma",
+          "provincia": "RM",
+          "regione": "Lazio"
         }
       ]
     }

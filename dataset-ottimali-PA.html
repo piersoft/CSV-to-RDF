@@ -346,7 +346,7 @@
   </div>
 
   <!-- Scoring corpus -->
-  <h2 class="section-title">Score stimato corpus attuale — 258 dataset · v2026.03.20.21</h2>
+  <h2 class="section-title">Score stimato corpus attuale — 262 dataset · v2026.03.20.22</h2>
   <div class="scoring-grid">
     <div class="score-card green"><div class="score-onto">QB</div><div class="score-val">91%</div><div class="score-label">155 fixture · 64%</div></div>
     <div class="score-card green"><div class="score-onto">POI</div><div class="score-val">86%</div><div class="score-label">63 fixture · 26%</div></div>
@@ -356,10 +356,11 @@
     <div class="score-card blue"><div class="score-onto">ACCO</div><div class="score-val">74%</div><div class="score-label">23 fixture · 9%</div></div>
     <div class="score-card blue"><div class="score-onto">TI</div><div class="score-val">71%</div><div class="score-label">21 fixture · 9%</div></div>
     <div class="score-card blue"><div class="score-onto">Cultural-ON</div><div class="score-val">72%</div><div class="score-label">17 fixture · 7%</div></div>
-    <div class="score-card yellow"><div class="score-onto">ADMS</div><div class="score-val">66%</div><div class="score-label">11 fixture · 4%</div></div>
+    <div class="score-card yellow"><div class="score-onto">ADMS</div><div class="score-val">68%</div><div class="score-label">15 fixture · 6%</div></div>
     <div class="score-card green"><div class="score-onto">DCATAPIT</div><div class="score-val">100%</div><div class="score-label">3 fixture · 1%</div></div>
     <div class="score-card yellow"><div class="score-onto">RO-AP_IT</div><div class="score-val">62%</div><div class="score-label">10 fixture · 4%</div></div>
-    <div class="score-card yellow"><div class="score-onto">COV-AP_IT</div><div class="score-val">60%</div><div class="score-label">9 fixture · 4%</div></div>
+    <div class="score-card yellow"><div class="score-onto">COV-AP_IT</div><div class="score-val">64%</div><div class="score-label">12 fixture · 5%</div></div>
+    <div class="score-card yellow"><div class="score-onto">PublicOrganization</div><div class="score-val">55%</div><div class="score-label">3 fixture · 1%</div></div>
     <div class="score-card yellow"><div class="score-onto">CPVAPIT</div><div class="score-val">58%</div><div class="score-label">7 fixture · 3%</div></div>
     <div class="score-card yellow"><div class="score-onto">GTFS</div><div class="score-val">62%</div><div class="score-label">10 fixture · 4%</div></div>
     <div class="score-card red"><div class="score-onto">SMAPIT</div><div class="score-val">50%</div><div class="score-label">6 fixture · 2%</div></div>
@@ -386,6 +387,7 @@
       <div class="legend-item"><div class="legend-dot" style="background:#e879f9"></div><div class="legend-text"><strong>MUAPIT</strong> <span>— Musei e luoghi della cultura: istituti culturali MiC/ArCo</span></div></div>
       <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div><div class="legend-text"><strong>COV-AP_IT</strong> <span>— Organizzazioni PA: personale, contratti, comparti NoiPA/BDAP</span></div></div>
       <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div><div class="legend-text"><strong>RO-AP_IT</strong> <span>— Ruoli e incarichi: consiglieri, assessori, eletti, presenze</span></div></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#22d3ee"></div><div class="legend-text"><strong>PublicOrganization</strong> <span>— Organizzazioni pubbliche: enti PA, ASL, enti strumentali (IPA, org:Organization)</span></div></div>
       <div class="legend-item"><div class="legend-dot" style="background:#0ea5e9"></div><div class="legend-text"><strong>DCATAPIT</strong> <span>— Catalogo open data: metadati DCAT-AP_IT, distribuzioni, publisher, licenze</span></div></div>
       <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div><div class="legend-text"><strong>CPVAPIT</strong> <span>— Persone fisiche: anagrafica candidati, dipendenti PA, ruoli nominativi</span></div></div>
     </div>
@@ -410,6 +412,7 @@
     <button class="filter-btn" data-onto="MUAPIT" aria-pressed="false">MUAPIT</button>
     <button class="filter-btn" data-onto="COV-AP_IT" aria-pressed="false">COV-AP_IT</button>
     <button class="filter-btn" data-onto="RO-AP_IT" aria-pressed="false">RO-AP_IT</button>
+    <button class="filter-btn" data-onto="PublicOrganization" aria-pressed="false">PublicOrganization</button>
     <button class="filter-btn" data-onto="DCATAPIT" aria-pressed="false">DCATAPIT</button>
     <button class="filter-btn" data-onto="CPVAPIT" aria-pressed="false">CPVAPIT</button>
   </div>
@@ -1003,12 +1006,55 @@
       <div class="score-bar"><div class="score-bar-fill" style="width:80%"></div></div>
     </div>
 
+  
+    <!-- PublicOrganization — IPA -->
+    <div class="card" data-onto="PublicOrganization">
+      <div class="card-top"><span class="card-onto" style="background:#22d3ee;color:#fff">PublicOrganization</span><span class="card-tipo">AGID · ELENCO ENTI PA</span></div>
+      <div class="card-title">IPA — Indice delle Pubbliche Amministrazioni (23.677 enti)</div>
+      <div class="card-ente">AgID — Agenzia per l'Italia Digitale (indicepa.gov.it)</div>
+      <div class="card-note">Il registro ufficiale di tutte le PA italiane: Comuni, Regioni, Ministeri, ASL, Università, enti strumentali. Include codice IPA, tipologia ISTAT, CF, indirizzi, email PEC, siti istituzionali e responsabili. Ontologia org:Organization + foaf:Agent.</div>
+      <div class="card-headers">
+        <span class="header-tag key">cod_amm</span><span class="header-tag key">des_amm</span><span class="header-tag key">tipologia_istat</span><span class="header-tag key">cf</span><span class="header-tag">Comune</span><span class="header-tag">Provincia</span><span class="header-tag">Regione</span><span class="header-tag">Indirizzo</span><span class="header-tag">Cap</span><span class="header-tag">sito_istituzionale</span><span class="header-tag">mail1</span><span class="header-tag">acronimo</span>
+      </div>
+      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
+      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">92%</span></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:92%"></div></div>
+    </div>
+
+    <!-- ADMS + CLV — comuni ISTAT -->
+    <div class="card" data-onto="ADMS">
+      <div class="card-top"><span class="card-onto" style="background:#94a3b8;color:#fff">ADMS + CLV</span><span class="card-tipo">ISTAT · VOCABOLARIO CONTROLLATO</span></div>
+      <div class="card-title">Comuni italiani — codici ISTAT, codice catastale, NUTS e province</div>
+      <div class="card-ente">ISTAT — Istituto Nazionale di Statistica</div>
+      <div class="card-note">Vocabolario controllato ufficiale di tutti i Comuni italiani con codici ISTAT alfanumerici e numerici, codice catastale, sigla automobilistica, codici NUTS 2021/2024, denominazione in italiano e in altra lingua. Fondamentale per allineamento URIs.</div>
+      <div class="card-headers">
+        <span class="header-tag key">Codice Comune formato alfanumerico</span><span class="header-tag key">Denominazione in italiano</span><span class="header-tag key">Codice Catastale del Comune</span><span class="header-tag key">Codice NUTS3 2021</span><span class="header-tag">Sigla automobilistica</span><span class="header-tag">Denominazione Regione</span><span class="header-tag">Codice NUTS2 2021</span><span class="header-tag">Codice Regione</span>
+      </div>
+      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
+      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">88%</span></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:88%"></div></div>
+    </div>
+
+    <!-- COV-AP_IT + CPSV — PNRR PA Digitale 2026 -->
+    <div class="card" data-onto="COV-AP_IT">
+      <div class="card-top"><span class="card-onto" style="background:#f59e0b;color:#fff">COV-AP_IT + CPSV</span><span class="card-tipo">PNRR · TRASFORMAZIONE DIGITALE</span></div>
+      <div class="card-title">PA Digitale 2026 — candidature finanziate PNRR (3.055 enti)</div>
+      <div class="card-ente">Dipartimento per la Trasformazione Digitale — github.com/teamdigitale</div>
+      <div class="card-note">Enti finanziati dal PNRR per digitalizzazione PA: codice IPA, tipologia ente, importo finanziamento, avviso, CUP, decreto, stato candidatura. Dataset aggiornato in tempo reale su GitHub. Copre COV-AP_IT (ente) + CPSV (servizio/finanziamento).</div>
+      <div class="card-headers">
+        <span class="header-tag key">codice_ipa</span><span class="header-tag key">ente</span><span class="header-tag key">importo_finanziamento</span><span class="header-tag key">codice_cup</span><span class="header-tag key">stato_candidatura</span><span class="header-tag">tipologia_ente</span><span class="header-tag">comune</span><span class="header-tag">provincia</span><span class="header-tag">regione</span><span class="header-tag">avviso</span><span class="header-tag">decreto_finanziamento</span>
+      </div>
+      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
+      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">86%</span></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:86%"></div></div>
+    </div>
+
     </div><!-- /cards-grid -->
 
   <!-- Footer -->
   <div class="footer">
     <div class="footer-left">
-      piersoft.github.io/CSV-to-RDF · Corpus v10 · 258 dataset · 17 ontologie
+      piersoft.github.io/CSV-to-RDF · Corpus v10 · 262 dataset · 18 ontologie
     </div>
     <div class="footer-right">
       Generato: 2026-03-20 · dati-semantic-assets / DCAT-AP_IT / schema.gov.it

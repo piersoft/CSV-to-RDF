@@ -346,7 +346,7 @@
   </div>
 
   <!-- Scoring corpus -->
-  <h2 class="section-title">Score stimato corpus attuale — 251 dataset · v2026.03.20.19</h2>
+  <h2 class="section-title">Score stimato corpus attuale — 252 dataset · v2026.03.20.20</h2>
   <div class="scoring-grid">
     <div class="score-card green"><div class="score-onto">QB</div><div class="score-val">91%</div><div class="score-label">155 fixture · 64%</div></div>
     <div class="score-card green"><div class="score-onto">POI</div><div class="score-val">86%</div><div class="score-label">63 fixture · 26%</div></div>
@@ -362,8 +362,8 @@
     <div class="score-card yellow"><div class="score-onto">COV-AP_IT</div><div class="score-val">60%</div><div class="score-label">9 fixture · 4%</div></div>
     <div class="score-card yellow"><div class="score-onto">CPVAPIT</div><div class="score-val">58%</div><div class="score-label">7 fixture · 3%</div></div>
     <div class="score-card yellow"><div class="score-onto">GTFS</div><div class="score-val">56%</div><div class="score-label">8 fixture · 3%</div></div>
-    <div class="score-card red"><div class="score-onto">SMAPIT</div><div class="score-val">42%</div><div class="score-label">4 fixture · 2%</div></div>
-    <div class="score-card red"><div class="score-onto">IoT-AP_IT</div><div class="score-val">48%</div><div class="score-label">6 fixture · 2%</div></div>
+    <div class="score-card red"><div class="score-onto">SMAPIT</div><div class="score-val">46%</div><div class="score-label">5 fixture · 2%</div></div>
+    <div class="score-card red"><div class="score-onto">IoT-AP_IT</div><div class="score-val">52%</div><div class="score-label">7 fixture · 3%</div></div>
     <div class="score-card red"><div class="score-onto">MUAPIT</div><div class="score-val">58%</div><div class="score-label">7 fixture · 3%</div></div>
   </div>
 
@@ -931,12 +931,27 @@
       <div class="score-bar"><div class="score-bar-fill" style="width:95%"></div></div>
     </div>
 
+  
+    <!-- IoT-AP_IT + SMAPIT — edifici scolastici -->
+    <div class="card" data-onto="IoT-AP_IT">
+      <div class="card-top"><span class="card-onto" style="background:#60a5fa;color:#fff">IoT-AP_IT + SMAPIT</span><span class="card-tipo">REGIONE · SCUOLE · SENSORI</span></div>
+      <div class="card-title">Misure ambientali in edifici scolastici — sensori per edificio e sito</div>
+      <div class="card-ente">Regione Piemonte / Città Metropolitana di Torino</div>
+      <div class="card-note">Unica combo SMAPIT + IoT-AP_IT: sensori fissi installati in istituti scolastici (umidità, temperatura) con ID edificio, nome scuola, timestamp orario e unità di misura. Ideale per PA che gestiscono patrimonio edilizio scolastico.</div>
+      <div class="card-headers">
+        <span class="header-tag key">ID_edificio</span><span class="header-tag key">ID_sensore</span><span class="header-tag key">Data_rilevazione</span><span class="header-tag key">Valore_misura</span><span class="header-tag key">Unita_misurazione</span><span class="header-tag">Descrizione_edificio</span><span class="header-tag">Tipo_misura</span><span class="header-tag">Nome_sito</span>
+      </div>
+      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
+      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">80%</span></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:80%"></div></div>
+    </div>
+
     </div><!-- /cards-grid -->
 
   <!-- Footer -->
   <div class="footer">
     <div class="footer-left">
-      piersoft.github.io/CSV-to-RDF · Corpus v9 · 251 dataset · 17 ontologie
+      piersoft.github.io/CSV-to-RDF · Corpus v9 · 252 dataset · 17 ontologie
     </div>
     <div class="footer-right">
       Generato: 2026-03-20 · dati-semantic-assets / DCAT-AP_IT / schema.gov.it

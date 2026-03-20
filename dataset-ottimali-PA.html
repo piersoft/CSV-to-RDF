@@ -18,8 +18,8 @@
     --warn: #f59e0b;
     --danger: #ef4444;
     --text: #e2e8f0;
-    --text-dim: #64748b;
-    --text-mid: #94a3b8;
+    --text-dim: #8c9eb8;
+    --text-mid: #a8baca;
     --font: 'IBM Plex Sans', sans-serif;
     --mono: 'IBM Plex Mono', monospace;
   }
@@ -282,10 +282,40 @@
   .footer-right { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
 
   .hidden { display: none !important; }
+
+  /* Accessibilità WCAG 2.1 AA — focus visible */
+  :focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  .filter-btn:focus-visible,
+  .card-link:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+  /* Skip link */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--accent);
+    color: #000;
+    padding: 8px 16px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 9999;
+    text-decoration: none;
+    border-radius: 0 0 4px 0;
+  }
+  .skip-link:focus { top: 0; }
+
 </style>
 </head>
 <body>
-<div class="container">
+<a href="#cards" class="skip-link">Salta al contenuto</a>
+<div class="container" role="main" id="main-content">
 
   <!-- Header -->
   <div class="header">
@@ -295,7 +325,7 @@
   </div>
 
   <!-- Scoring corpus -->
-  <div class="section-title">Score stimato corpus attuale — 217 dataset · v2026.03.20.10</div>
+  <h2 class="section-title">Score stimato corpus attuale — 217 dataset · v2026.03.20.10</h2>
   <div class="scoring-grid">
     <div class="score-card green"><div class="score-onto">QB</div><div class="score-val">88%</div><div class="score-label">135 primari · 44 org</div></div>
     <div class="score-card green"><div class="score-onto">POI</div><div class="score-val">84%</div><div class="score-label">78 primari · 19 org</div></div>
@@ -328,21 +358,21 @@
   </div>
 
   <!-- Filtri -->
-  <div class="filters" id="filters">
-    <button class="filter-btn active" data-onto="ALL">TUTTE</button>
-    <button class="filter-btn" data-onto="QB">QB</button>
-    <button class="filter-btn" data-onto="POI">POI</button>
-    <button class="filter-btn" data-onto="ACCO">ACCO</button>
-    <button class="filter-btn" data-onto="CPSV">CPSV</button>
-    <button class="filter-btn" data-onto="TI">TI</button>
-    <button class="filter-btn" data-onto="CLV">CLV</button>
-    <button class="filter-btn" data-onto="Cultural-ON">Cultural-ON</button>
-    <button class="filter-btn" data-onto="GTFS">GTFS</button>
-    <button class="filter-btn" data-onto="CPV">CPV</button>
-    <button class="filter-btn" data-onto="ADMS">ADMS</button>
+  <div class="filters" id="filters" role="group" aria-label="Filtra per ontologia">
+    <button class="filter-btn active" data-onto="ALL" aria-pressed="true">TUTTE</button>
+    <button class="filter-btn" data-onto="QB" aria-pressed="false">QB</button>
+    <button class="filter-btn" data-onto="POI" aria-pressed="false">POI</button>
+    <button class="filter-btn" data-onto="ACCO" aria-pressed="false">ACCO</button>
+    <button class="filter-btn" data-onto="CPSV" aria-pressed="false">CPSV</button>
+    <button class="filter-btn" data-onto="TI" aria-pressed="false">TI</button>
+    <button class="filter-btn" data-onto="CLV" aria-pressed="false">CLV</button>
+    <button class="filter-btn" data-onto="Cultural-ON" aria-pressed="false">Cultural-ON</button>
+    <button class="filter-btn" data-onto="GTFS" aria-pressed="false">GTFS</button>
+    <button class="filter-btn" data-onto="CPV" aria-pressed="false">CPV</button>
+    <button class="filter-btn" data-onto="ADMS" aria-pressed="false">ADMS</button>
   </div>
 
-  <div class="section-title">DATASET OTTIMALI DI RIFERIMENTO</div>
+  <h2 class="section-title">Dataset Ottimali di Riferimento</h2>
 
   <!-- Cards -->
   <div class="cards-grid" id="cards">
@@ -362,7 +392,7 @@
       </div>
       <div class="card-footer">
         <span class="card-url">dati.gov.it · popolazione-residenti</span>
-        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=popolazione+residenti+eta+sesso" target="_blank">↗ Cerca</a>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=popolazione+residenti+eta+sesso" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
       </div>
     </div>
 
@@ -380,7 +410,7 @@
       </div>
       <div class="card-footer">
         <span class="card-url">opendata.maggioli.cloud · nati-deceduti</span>
-        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=nascite+decessi+comune" target="_blank">↗ Cerca</a>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=nascite+decessi+comune" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
       </div>
     </div>
 
@@ -398,7 +428,7 @@
       </div>
       <div class="card-footer">
         <span class="card-url">opendata.maggioli.cloud · matrimoni-rito</span>
-        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=matrimoni+rito+comune" target="_blank">↗ Cerca</a>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=matrimoni+rito+comune" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
       </div>
     </div>
 
@@ -417,7 +447,7 @@
       </div>
       <div class="card-footer">
         <span class="card-url">dati.gov.it · defibrillatori-dae</span>
-        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=defibrillatori+DAE" target="_blank">↗ Cerca</a>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=defibrillatori+DAE" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
       </div>
     </div>
 
@@ -435,7 +465,7 @@
       </div>
       <div class="card-footer">
         <span class="card-url">dati.gov.it · farmacie</span>
-        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=farmacie+geolocalizzate" target="_blank">↗ Cerca</a>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=farmacie+geolocalizzate" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
       </div>
     </div>
 
@@ -454,7 +484,7 @@
       </div>
       <div class="card-footer">
         <span class="card-url">dati.gov.it · elenco-strutture-ricettive</span>
-        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset/elenco-strutture-ricettive-al-31-12-2023-terzo-quadrimestre" target="_blank">↗ Apri</a>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset/elenco-strutture-ricettive-al-31-12-2023-terzo-quadrimestre" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Apri</a>
       </div>
     </div>
 
@@ -472,7 +502,7 @@
       </div>
       <div class="card-footer">
         <span class="card-url">dati.comune.milano.it · turismo-strutture</span>
-        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=arrivi+presenze+strutture+ricettive" target="_blank">↗ Cerca</a>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=arrivi+presenze+strutture+ricettive" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
       </div>
     </div>
 
@@ -491,7 +521,7 @@
       </div>
       <div class="card-footer">
         <span class="card-url">dati.anticorruzione.it · appalti</span>
-        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=appalti+CIG+aggiudicazione" target="_blank">↗ Cerca</a>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=appalti+CIG+aggiudicazione" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
       </div>
     </div>
 
@@ -509,7 +539,7 @@
       </div>
       <div class="card-footer">
         <span class="card-url">dati.gov.it · determine-dirigenziali</span>
-        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=determine+dirigenziali+registro" target="_blank">↗ Cerca</a>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=determine+dirigenziali+registro" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
       </div>
     </div>
 
@@ -528,7 +558,7 @@
       </div>
       <div class="card-footer">
         <span class="card-url">dati.gov.it · eventi-manifestazioni</span>
-        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=eventi+manifestazioni+calendario" target="_blank">↗ Cerca</a>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=eventi+manifestazioni+calendario" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
       </div>
     </div>
 
@@ -547,7 +577,7 @@
       </div>
       <div class="card-footer">
         <span class="card-url">dati.gov.it · stradario-civici</span>
-        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=stradario+numerazione+civica" target="_blank">↗ Cerca</a>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=stradario+numerazione+civica" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
       </div>
     </div>
 
@@ -566,7 +596,7 @@
       </div>
       <div class="card-footer">
         <span class="card-url">anagrafe.iccu.sbn.it · biblioteche</span>
-        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=biblioteche+ICCU+ISIL" target="_blank">↗ Cerca</a>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=biblioteche+ICCU+ISIL" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
       </div>
     </div>
 
@@ -584,7 +614,7 @@
       </div>
       <div class="card-footer">
         <span class="card-url">dati.gov.it · musei-luoghi-cultura</span>
-        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=musei+luoghi+cultura" target="_blank">↗ Cerca</a>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=musei+luoghi+cultura" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
       </div>
     </div>
 
@@ -603,7 +633,7 @@
       </div>
       <div class="card-footer">
         <span class="card-url">dati.gov.it · trasporto-pubblico-GTFS</span>
-        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=GTFS+trasporto+pubblico" target="_blank">↗ Cerca</a>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=GTFS+trasporto+pubblico" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
       </div>
     </div>
 
@@ -622,7 +652,7 @@
       </div>
       <div class="card-footer">
         <span class="card-url">opendata.maggioli.cloud · elenco-iscritti</span>
-        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=iscritti+anagrafe+sesso+cittadinanza" target="_blank">↗ Cerca</a>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=iscritti+anagrafe+sesso+cittadinanza" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
       </div>
     </div>
 
@@ -640,7 +670,7 @@
       </div>
       <div class="card-footer">
         <span class="card-url">dati.comune.milano.it · residenti-cittadinanza</span>
-        <a class="card-link" href="https://dati.comune.milano.it/dataset/ds27-popolazione-residenti-cittadinanza-quartiere-serie-storica" target="_blank">↗ Apri</a>
+        <a class="card-link" href="https://dati.comune.milano.it/dataset/ds27-popolazione-residenti-cittadinanza-quartiere-serie-storica" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Apri</a>
       </div>
     </div>
 
@@ -659,7 +689,7 @@
       </div>
       <div class="card-footer">
         <span class="card-url">dati.gov.it · catalogo-opendata</span>
-        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=catalogo+open+data" target="_blank">↗ Cerca</a>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=catalogo+open+data" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
       </div>
     </div>
 
@@ -684,8 +714,8 @@ const cards = document.querySelectorAll('.card');
 
 btns.forEach(btn => {
   btn.addEventListener('click', () => {
-    btns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    btns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+    btn.classList.add('active'); btn.setAttribute('aria-pressed', 'true');
     const onto = btn.dataset.onto;
     cards.forEach(card => {
       if (onto === 'ALL' || card.dataset.onto === onto) {

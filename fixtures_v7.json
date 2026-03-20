@@ -1,7 +1,7 @@
 {
   "generated": "2026-03-20",
   "script_version": "v9",
-  "total": 248,
+  "total": 251,
   "false_positives_excluded": 0,
   "corpus": [
     {
@@ -20979,6 +20979,198 @@
           "TRANSITI": 75,
           "DALLE": "2019/01/31 01:00:00.000",
           "ALLE": "2019/01/31 01:59:59.999"
+        }
+      ]
+    },
+    {
+      "seq": 249,
+      "id": "d0000001-dcatapit-catalog-istat",
+      "name": "dcatapit-catalogo-istat-dati-gov-it",
+      "title": "Catalogo DCAT-AP_IT — dataset ISTAT su dati.gov.it (13 HVD)",
+      "org": "istituto-nazionale-di-statistica-istat",
+      "ente": "ISTAT — Istituto Nazionale di Statistica",
+      "categoria": "autorita_nazionale",
+      "tema_dcat": [
+        "GOVE",
+        "SOCI",
+        "ECON"
+      ],
+      "tema_onto": [
+        "DCATAPIT",
+        "ADMS",
+        "foaf",
+        "skos"
+      ],
+      "tema_target": [
+        "DCATAPIT",
+        "ADMS",
+        "foaf",
+        "skos",
+        "dcat",
+        "dct",
+        "l0"
+      ],
+      "score": 95,
+      "resource_id": "catalog-istat-dati-gov-it",
+      "csv_url": "https://dati.gov.it/opendata/catalog.ttl?fq=organization:istituto-nazionale-di-statistica-istat",
+      "datastore": false,
+      "source": "ttl:dati.gov.it/catalog",
+      "headers": [
+        "identifier",
+        "title",
+        "description",
+        "publisher",
+        "holder",
+        "issued",
+        "modified",
+        "accrualPeriodicity",
+        "language",
+        "theme",
+        "accessRights",
+        "conformsTo",
+        "hvdCategory",
+        "applicableLegislation",
+        "distribution_url",
+        "distribution_format",
+        "contactPoint",
+        "landingPage",
+        "keyword"
+      ],
+      "sample_rows": [
+        {
+          "identifier": "ISTAT:disoccupazione",
+          "title": "Disoccupazione",
+          "description": "Fornisce il tasso di disoccupazione",
+          "publisher": "Istituto Nazionale di Statistica - ISTAT",
+          "accrualPeriodicity": "QUARTERLY",
+          "theme": "SOCI",
+          "accessRights": "PUBLIC",
+          "conformsTo": "DCAT-AP_IT",
+          "hvdCategory": "http://data.europa.eu/bna/c_e1da4e07",
+          "distribution_format": "SDMX"
+        },
+        {
+          "identifier": "ISTAT:statistiche-demografiche-popolazione",
+          "title": "Statistiche demografiche: popolazione",
+          "description": "Fornisce i dati relativi alla popolazione residente",
+          "publisher": "Istituto Nazionale di Statistica - ISTAT",
+          "accrualPeriodicity": "ANNUAL",
+          "theme": "SOCI",
+          "distribution_format": "SDMX"
+        }
+      ]
+    },
+    {
+      "seq": 250,
+      "id": "d0000002-dcatapit-catalog-comune",
+      "name": "dcatapit-catalogo-opendata-comune",
+      "title": "Catalogo DCAT-AP_IT — dataset di un Comune su dati.gov.it",
+      "org": "comune",
+      "ente": "Comune italiano (generico)",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "GOVE"
+      ],
+      "tema_onto": [
+        "DCATAPIT",
+        "ADMS",
+        "foaf"
+      ],
+      "tema_target": [
+        "DCATAPIT",
+        "ADMS",
+        "foaf",
+        "dcat",
+        "dct",
+        "l0",
+        "skos"
+      ],
+      "score": 88,
+      "resource_id": "catalog-comune-dati-gov-it",
+      "csv_url": "https://dati.gov.it/opendata/catalog.ttl",
+      "datastore": false,
+      "source": "ttl:dati.gov.it/catalog",
+      "headers": [
+        "identifier",
+        "title",
+        "description",
+        "publisher",
+        "holder",
+        "issued",
+        "modified",
+        "accrualPeriodicity",
+        "language",
+        "theme",
+        "accessRights",
+        "distribution_url",
+        "distribution_format",
+        "contactPoint",
+        "landingPage",
+        "keyword",
+        "spatial"
+      ],
+      "sample_rows": [
+        {
+          "identifier": "comune:dataset-001",
+          "title": "Dataset open data comunale",
+          "publisher": "Comune di [Nome]",
+          "accrualPeriodicity": "ANNUAL",
+          "theme": "GOVE",
+          "accessRights": "PUBLIC",
+          "conformsTo": "DCAT-AP_IT",
+          "language": "ITA"
+        }
+      ]
+    },
+    {
+      "seq": 251,
+      "id": "d0000003-dcatapit-distribution-format",
+      "name": "dcatapit-distribuzione-formato-licenza",
+      "title": "DCAT-AP_IT Distribution — formato, licenza e URL di distribuzione",
+      "org": "pa-generica",
+      "ente": "PA italiana generica",
+      "categoria": "altro",
+      "tema_dcat": [
+        "GOVE"
+      ],
+      "tema_onto": [
+        "DCATAPIT",
+        "ADMS"
+      ],
+      "tema_target": [
+        "DCATAPIT",
+        "ADMS",
+        "dcat",
+        "dct",
+        "l0"
+      ],
+      "score": 82,
+      "resource_id": "dcatapit-distribution",
+      "csv_url": "https://dati.gov.it/opendata/catalog.ttl",
+      "datastore": false,
+      "source": "ttl:dati.gov.it/catalog",
+      "headers": [
+        "dataset_identifier",
+        "distribution_title",
+        "accessURL",
+        "downloadURL",
+        "mediaType",
+        "byteSize",
+        "format",
+        "license",
+        "issued",
+        "modified",
+        "conformsTo",
+        "language"
+      ],
+      "sample_rows": [
+        {
+          "dataset_identifier": "ISTAT:disoccupazione",
+          "format": "SDMX",
+          "mediaType": "application/xml",
+          "accessURL": "https://esploradati.istat.it/HVD/rest/data/",
+          "license": "CC BY 4.0",
+          "language": "ITA"
         }
       ]
     }

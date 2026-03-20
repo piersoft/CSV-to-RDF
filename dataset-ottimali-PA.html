@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dataset Ottimali PA — Riferimento Ontologie LOD</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap');
+
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e2d45;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --warn: #f59e0b;
+    --danger: #ef4444;
+    --text: #e2e8f0;
+    --text-dim: #64748b;
+    --text-mid: #94a3b8;
+    --font: 'IBM Plex Sans', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 40px 24px; }
+
+  /* Header */
+  .header { margin-bottom: 48px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3);
+    color: var(--accent); font-family: var(--mono); font-size: 11px;
+    padding: 4px 12px; border-radius: 2px; margin-bottom: 20px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .badge::before { content: '●'; font-size: 8px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  h1 {
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    font-size: 16px; color: var(--text-mid); max-width: 700px;
+    line-height: 1.6; font-weight: 300;
+  }
+
+  /* Scoring panel */
+  .scoring-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin: 32px 0;
+  }
+  .score-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .score-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .score-card.green::after { background: var(--accent3); }
+  .score-card.blue::after { background: var(--accent); }
+  .score-card.yellow::after { background: var(--warn); }
+  .score-card.red::after { background: var(--danger); }
+
+  .score-onto { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-bottom: 6px; }
+  .score-val { font-size: 26px; font-weight: 700; font-family: var(--mono); }
+  .score-card.green .score-val { color: var(--accent3); }
+  .score-card.blue .score-val { color: var(--accent); }
+  .score-card.yellow .score-val { color: var(--warn); }
+  .score-card.red .score-val { color: var(--danger); }
+  .score-label { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+
+  /* Filters */
+  .filters {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 24px;
+  }
+  .filter-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-mid);
+    font-family: var(--mono); font-size: 11px;
+    padding: 6px 14px; border-radius: 2px;
+    cursor: pointer; transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active { background: rgba(0,212,255,0.1); border-color: var(--accent); color: var(--accent); }
+
+  /* Section title */
+  .section-title {
+    font-family: var(--mono); font-size: 11px;
+    color: var(--text-dim); letter-spacing: 0.15em;
+    text-transform: uppercase; margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Dataset cards */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: default;
+    position: relative;
+  }
+  .card:hover { border-color: rgba(0,212,255,0.4); transform: translateY(-2px); }
+
+  .card-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 12px; gap: 8px;
+  }
+
+  .card-onto {
+    font-family: var(--mono); font-size: 10px;
+    padding: 3px 8px; border-radius: 2px;
+    font-weight: 600; letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+  .onto-QB { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+  .onto-POI { background: rgba(0,212,255,0.12); color: #00d4ff; border: 1px solid rgba(0,212,255,0.3); }
+  .onto-ACCO { background: rgba(124,58,237,0.15); color: #a78bfa; border: 1px solid rgba(124,58,237,0.3); }
+  .onto-CPSV { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+  .onto-TI { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+  .onto-CLV { background: rgba(236,72,153,0.12); color: #f472b6; border: 1px solid rgba(236,72,153,0.3); }
+  .onto-Cultural-ON { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.3); }
+  .onto-GTFS { background: rgba(20,184,166,0.12); color: #2dd4bf; border: 1px solid rgba(20,184,166,0.3); }
+  .onto-CPV { background: rgba(249,115,22,0.12); color: #fb923c; border: 1px solid rgba(249,115,22,0.3); }
+  .onto-ADMS { background: rgba(148,163,184,0.1); color: #94a3b8; border: 1px solid rgba(148,163,184,0.3); }
+
+  .card-tipo {
+    font-size: 10px; color: var(--text-dim);
+    font-family: var(--mono);
+  }
+
+  .card-title {
+    font-size: 15px; font-weight: 600; line-height: 1.35;
+    margin-bottom: 6px; color: var(--text);
+  }
+
+  .card-ente {
+    font-size: 12px; color: var(--text-mid); margin-bottom: 12px;
+  }
+
+  .card-headers {
+    display: flex; flex-wrap: wrap; gap: 4px;
+    margin-bottom: 14px;
+  }
+  .header-tag {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-family: var(--mono); font-size: 10px;
+    color: var(--text-dim); padding: 2px 6px; border-radius: 2px;
+  }
+  .header-tag.key {
+    border-color: rgba(0,212,255,0.3);
+    color: var(--accent);
+    background: rgba(0,212,255,0.05);
+  }
+
+  .card-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    gap: 8px;
+  }
+
+  .card-url {
+    font-family: var(--mono); font-size: 10px;
+    color: var(--text-dim); overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+    flex: 1;
+  }
+
+  .card-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: var(--mono); font-size: 10px;
+    color: var(--accent); text-decoration: none;
+    padding: 4px 10px; border: 1px solid rgba(0,212,255,0.3);
+    border-radius: 2px; white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .card-link:hover { background: rgba(0,212,255,0.1); }
+
+  .card-note {
+    font-size: 11px; color: var(--text-dim);
+    line-height: 1.5; margin-bottom: 10px;
+    padding: 8px 10px;
+    background: var(--surface2);
+    border-left: 2px solid var(--border);
+    border-radius: 0 2px 2px 0;
+  }
+
+  /* Score bar */
+  .score-bar-wrap { margin-bottom: 14px; }
+  .score-bar-label {
+    display: flex; justify-content: space-between;
+    font-size: 10px; font-family: var(--mono);
+    color: var(--text-dim); margin-bottom: 4px;
+  }
+  .score-bar-track {
+    height: 3px; background: var(--border); border-radius: 2px; overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%; border-radius: 2px;
+    transition: width 0.8s ease;
+  }
+
+  /* Legend */
+  .legend {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin-bottom: 32px;
+  }
+  .legend-title { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-bottom: 14px; letter-spacing: 0.1em; }
+  .legend-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;
+  }
+  .legend-item { display: flex; align-items: flex-start; gap: 8px; }
+  .legend-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .legend-text { font-size: 12px; line-height: 1.4; }
+  .legend-text strong { color: var(--text); font-weight: 600; }
+  .legend-text span { color: var(--text-dim); }
+
+  /* Footer */
+  .footer {
+    margin-top: 48px; padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+  }
+  .footer-left { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
+  .footer-right { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="badge">Linked Open Data PA · Ontologie DCAT-AP_IT</div>
+    <h1>Dataset Ottimali<br><span>di Riferimento per PA</span></h1>
+    <p class="subtitle">Catalogo dei dataset CSV ideali per Comuni e Regioni che vogliono pubblicare dati conformi alle ontologie OntoPiA. Per ogni tipologia: headers chiave, ente modello e URL di riferimento su dati.gov.it.</p>
+  </div>
+
+  <!-- Scoring corpus -->
+  <div class="section-title">Score stimato corpus attuale — 217 dataset · v2026.03.20.10</div>
+  <div class="scoring-grid">
+    <div class="score-card green"><div class="score-onto">QB</div><div class="score-val">88%</div><div class="score-label">135 primari · 44 org</div></div>
+    <div class="score-card green"><div class="score-onto">POI</div><div class="score-val">84%</div><div class="score-label">78 primari · 19 org</div></div>
+    <div class="score-card blue"><div class="score-onto">ADMS</div><div class="score-val">81%</div><div class="score-label">44 primari · 11 org</div></div>
+    <div class="score-card blue"><div class="score-onto">Cultural-ON</div><div class="score-val">76%</div><div class="score-label">37 primari · 8 org</div></div>
+    <div class="score-card blue"><div class="score-onto">ACCO</div><div class="score-val">74%</div><div class="score-label">27 primari · 7 org</div></div>
+    <div class="score-card blue"><div class="score-onto">GTFS</div><div class="score-val">72%</div><div class="score-label">24 primari · 8 org</div></div>
+    <div class="score-card yellow"><div class="score-onto">CPSV</div><div class="score-val">70%</div><div class="score-label">21 primari · 11 org</div></div>
+    <div class="score-card yellow"><div class="score-onto">CLV</div><div class="score-val">65%</div><div class="score-label">16 primari · 4 org</div></div>
+    <div class="score-card yellow"><div class="score-onto">TI</div><div class="score-val">63%</div><div class="score-label">13 primari · 6 org</div></div>
+    <div class="score-card red"><div class="score-onto">CPV</div><div class="score-val">60%</div><div class="score-label">11 primari · 8 org</div></div>
+    <div class="score-card red"><div class="score-onto">COV</div><div class="score-val">42%</div><div class="score-label">3 primari · 1 org</div></div>
+  </div>
+
+  <!-- Legend ontologie -->
+  <div class="legend">
+    <div class="legend-title">GLOSSARIO ONTOLOGIE</div>
+    <div class="legend-grid">
+      <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div><div class="legend-text"><strong>QB</strong> <span>— RDF Data Cube: statistiche, indicatori, serie temporali</span></div></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#00d4ff"></div><div class="legend-text"><strong>POI</strong> <span>— Point of Interest: luoghi geolocalizzati con lat/lon</span></div></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div><div class="legend-text"><strong>ACCO</strong> <span>— Accommodation: strutture ricettive e turismo</span></div></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div><div class="legend-text"><strong>CPSV</strong> <span>— Core Public Service: appalti, gare, determine, atti PA</span></div></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div><div class="legend-text"><strong>TI</strong> <span>— Time Interval: eventi con data inizio/fine</span></div></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f472b6"></div><div class="legend-text"><strong>CLV</strong> <span>— Controlled Vocabulary: stradari, civici, indirizzi</span></div></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#818cf8"></div><div class="legend-text"><strong>Cultural-ON</strong> <span>— Patrimonio culturale: musei, biblioteche, archivi</span></div></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#2dd4bf"></div><div class="legend-text"><strong>GTFS</strong> <span>— General Transit Feed: fermate, linee, orari TPL</span></div></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fb923c"></div><div class="legend-text"><strong>CPV</strong> <span>— Core Person Vocabulary: popolazione, anagrafe, cittadinanza</span></div></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#94a3b8"></div><div class="legend-text"><strong>ADMS</strong> <span>— Asset Description: catalogo dataset e portali open data</span></div></div>
+    </div>
+  </div>
+
+  <!-- Filtri -->
+  <div class="filters" id="filters">
+    <button class="filter-btn active" data-onto="ALL">TUTTE</button>
+    <button class="filter-btn" data-onto="QB">QB</button>
+    <button class="filter-btn" data-onto="POI">POI</button>
+    <button class="filter-btn" data-onto="ACCO">ACCO</button>
+    <button class="filter-btn" data-onto="CPSV">CPSV</button>
+    <button class="filter-btn" data-onto="TI">TI</button>
+    <button class="filter-btn" data-onto="CLV">CLV</button>
+    <button class="filter-btn" data-onto="Cultural-ON">Cultural-ON</button>
+    <button class="filter-btn" data-onto="GTFS">GTFS</button>
+    <button class="filter-btn" data-onto="CPV">CPV</button>
+    <button class="filter-btn" data-onto="ADMS">ADMS</button>
+  </div>
+
+  <div class="section-title">DATASET OTTIMALI DI RIFERIMENTO</div>
+
+  <!-- Cards -->
+  <div class="cards-grid" id="cards">
+
+    <!-- QB -->
+    <div class="card" data-onto="QB">
+      <div class="card-top"><span class="card-onto onto-QB">QB</span><span class="card-tipo">COMUNE · STATISTICO</span></div>
+      <div class="card-title">Popolazione residente per età, sesso e stato civile</div>
+      <div class="card-ente">Comuni italiani — Istat / Maggioli</div>
+      <div class="card-note">Template ideale per tutti i comuni. Serie storica con breakdowns demografici. Facilmente replicabile da qualsiasi ufficio anagrafe.</div>
+      <div class="card-headers">
+        <span class="header-tag key">Anno</span><span class="header-tag key">Fascia_Eta</span><span class="header-tag key">Sesso</span><span class="header-tag key">Stato_Civile</span><span class="header-tag">Residenti</span><span class="header-tag">Comune</span><span class="header-tag">Codice_ISTAT</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">88%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:88%;background:#10b981"></div></div>
+      </div>
+      <div class="card-footer">
+        <span class="card-url">dati.gov.it · popolazione-residenti</span>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=popolazione+residenti+eta+sesso" target="_blank">↗ Cerca</a>
+      </div>
+    </div>
+
+    <div class="card" data-onto="QB">
+      <div class="card-top"><span class="card-onto onto-QB">QB</span><span class="card-tipo">COMUNE · STATISTICO</span></div>
+      <div class="card-title">Nascite, decessi e saldo naturale per mese</div>
+      <div class="card-ente">Comuni italiani — Maggioli OpenData</div>
+      <div class="card-note">Dataset mensile obbligatorio per trasparenza anagrafica. Producibile automaticamente dai sistemi demografici comunali.</div>
+      <div class="card-headers">
+        <span class="header-tag key">Anno</span><span class="header-tag key">Mese</span><span class="header-tag">Nati_Vivi</span><span class="header-tag">Deceduti</span><span class="header-tag">Saldo_Naturale</span><span class="header-tag">Comune</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">91%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:91%;background:#10b981"></div></div>
+      </div>
+      <div class="card-footer">
+        <span class="card-url">opendata.maggioli.cloud · nati-deceduti</span>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=nascite+decessi+comune" target="_blank">↗ Cerca</a>
+      </div>
+    </div>
+
+    <div class="card" data-onto="QB">
+      <div class="card-top"><span class="card-onto onto-QB">QB</span><span class="card-tipo">REGIONE · STATISTICO</span></div>
+      <div class="card-title">Matrimoni celebrati per rito e mese</div>
+      <div class="card-ente">Comuni italiani — Maggioli OpenData</div>
+      <div class="card-note">Dati ISTAT standardizzati. Codici ISTAT provincia/comune già presenti. Ideale come primo dataset per comuni che iniziano con LOD.</div>
+      <div class="card-headers">
+        <span class="header-tag key">Anno</span><span class="header-tag key">Mese</span><span class="header-tag key">Codice_Comune</span><span class="header-tag">Provincia</span><span class="header-tag">Rito_Religioso</span><span class="header-tag">Rito_Civile</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">89%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:89%;background:#10b981"></div></div>
+      </div>
+      <div class="card-footer">
+        <span class="card-url">opendata.maggioli.cloud · matrimoni-rito</span>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=matrimoni+rito+comune" target="_blank">↗ Cerca</a>
+      </div>
+    </div>
+
+    <!-- POI -->
+    <div class="card" data-onto="POI">
+      <div class="card-top"><span class="card-onto onto-POI">POI</span><span class="card-tipo">COMUNE · GEOGRAFICO</span></div>
+      <div class="card-title">Defibrillatori DAE geolocalizzati</div>
+      <div class="card-ente">Comuni e ASL — OpenStreetMap / portali regionali</div>
+      <div class="card-note">Dataset ad alto impatto civico. Richiesto dal DL 158/2012. Lat/lon obbligatori. Ottimo per iniziare con POI-AP_IT e CLV-AP_IT.</div>
+      <div class="card-headers">
+        <span class="header-tag key">lat</span><span class="header-tag key">lon</span><span class="header-tag key">nome</span><span class="header-tag">indirizzo</span><span class="header-tag">comune</span><span class="header-tag">cap</span><span class="header-tag">accessibile_h24</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>Match corpus</span><span style="color:#00d4ff">86%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:86%;background:#00d4ff"></div></div>
+      </div>
+      <div class="card-footer">
+        <span class="card-url">dati.gov.it · defibrillatori-dae</span>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=defibrillatori+DAE" target="_blank">↗ Cerca</a>
+      </div>
+    </div>
+
+    <div class="card" data-onto="POI">
+      <div class="card-top"><span class="card-onto onto-POI">POI</span><span class="card-tipo">COMUNE · GEOGRAFICO</span></div>
+      <div class="card-title">Farmacie e parafarmacie con orari</div>
+      <div class="card-ente">Comuni e ASL italiane</div>
+      <div class="card-note">Dataset essenziale per servizi di prossimità. Facilmente esportabile da anagrafe ASL. Aggiornabile trimestralmente.</div>
+      <div class="card-headers">
+        <span class="header-tag key">lat</span><span class="header-tag key">lon</span><span class="header-tag key">denominazione</span><span class="header-tag">indirizzo</span><span class="header-tag">comune</span><span class="header-tag">orario_apertura</span><span class="header-tag">telefono</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>Match corpus</span><span style="color:#00d4ff">83%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:83%;background:#00d4ff"></div></div>
+      </div>
+      <div class="card-footer">
+        <span class="card-url">dati.gov.it · farmacie</span>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=farmacie+geolocalizzate" target="_blank">↗ Cerca</a>
+      </div>
+    </div>
+
+    <!-- ACCO -->
+    <div class="card" data-onto="ACCO">
+      <div class="card-top"><span class="card-onto onto-ACCO">ACCO</span><span class="card-tipo">REGIONE · TURISMO</span></div>
+      <div class="card-title">Elenco strutture ricettive con classificazione</div>
+      <div class="card-ente">Regione Campania / Regione Puglia</div>
+      <div class="card-note">Standard minimo: codice CUSR, tipologia (albergo/B&B/agriturismo), classificazione stelle, capacità ricettiva. Aggiornamento annuale obbligatorio per legge regionale.</div>
+      <div class="card-headers">
+        <span class="header-tag key">Codice_CUSR</span><span class="header-tag key">Tipologia</span><span class="header-tag key">Classificazione</span><span class="header-tag">Denominazione</span><span class="header-tag">Comune</span><span class="header-tag">Provincia</span><span class="header-tag">Posti_letto</span><span class="header-tag">Camere</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>Match corpus</span><span style="color:#a78bfa">78%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:78%;background:#a78bfa"></div></div>
+      </div>
+      <div class="card-footer">
+        <span class="card-url">dati.gov.it · elenco-strutture-ricettive</span>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset/elenco-strutture-ricettive-al-31-12-2023-terzo-quadrimestre" target="_blank">↗ Apri</a>
+      </div>
+    </div>
+
+    <div class="card" data-onto="ACCO">
+      <div class="card-top"><span class="card-onto onto-ACCO">ACCO</span><span class="card-tipo">COMUNE · TURISMO</span></div>
+      <div class="card-title">Arrivi e presenze turistiche per provenienza</div>
+      <div class="card-ente">Comune di Milano / Regioni italiane</div>
+      <div class="card-note">Serie storica annuale. Indispensabile per pianificazione turistica e rendicontazione fondi regionali. Dati aggregati, nessun problema privacy.</div>
+      <div class="card-headers">
+        <span class="header-tag key">Anno</span><span class="header-tag key">Area_geografica</span><span class="header-tag key">Paese_provenienza</span><span class="header-tag">Arrivi</span><span class="header-tag">Presenze</span><span class="header-tag">Tipo_struttura</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>Match corpus</span><span style="color:#a78bfa">74%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:74%;background:#a78bfa"></div></div>
+      </div>
+      <div class="card-footer">
+        <span class="card-url">dati.comune.milano.it · turismo-strutture</span>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=arrivi+presenze+strutture+ricettive" target="_blank">↗ Cerca</a>
+      </div>
+    </div>
+
+    <!-- CPSV -->
+    <div class="card" data-onto="CPSV">
+      <div class="card-top"><span class="card-onto onto-CPSV">CPSV</span><span class="card-tipo">COMUNE · APPALTI</span></div>
+      <div class="card-title">Gare e appalti con CIG e aggiudicatario</div>
+      <div class="card-ente">Comune di Bologna / Città Metropolitane</div>
+      <div class="card-note">Dati obbligatori per trasparenza (D.Lgs 33/2013 e D.Lgs 36/2023). CIG univoco come chiave. Esportabile da ANAC o da sistemi gestionali comunali.</div>
+      <div class="card-headers">
+        <span class="header-tag key">CIG</span><span class="header-tag key">CUP</span><span class="header-tag key">Oggetto</span><span class="header-tag">Tipo_procedura</span><span class="header-tag">Importo_base</span><span class="header-tag">Aggiudicatario</span><span class="header-tag">Data_aggiudicazione</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>Match corpus</span><span style="color:#f87171">72%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:72%;background:#f87171"></div></div>
+      </div>
+      <div class="card-footer">
+        <span class="card-url">dati.anticorruzione.it · appalti</span>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=appalti+CIG+aggiudicazione" target="_blank">↗ Cerca</a>
+      </div>
+    </div>
+
+    <div class="card" data-onto="CPSV">
+      <div class="card-top"><span class="card-onto onto-CPSV">CPSV</span><span class="card-tipo">PROVINCIA · ATTI</span></div>
+      <div class="card-title">Registro determine dirigenziali</div>
+      <div class="card-ente">Province e Comuni — albo pretorio</div>
+      <div class="card-note">Atti amministrativi pubblicati per obbligo normativo. Struttura semplice e uniforme. Ottimo dataset iniziale per CPSV.</div>
+      <div class="card-headers">
+        <span class="header-tag key">Num_Reg</span><span class="header-tag key">Data_Atto</span><span class="header-tag key">Oggetto</span><span class="header-tag">Settore</span><span class="header-tag">Mov_Finanziaria</span><span class="header-tag">Data_Pubblicazione</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>Match corpus</span><span style="color:#f87171">68%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:68%;background:#f87171"></div></div>
+      </div>
+      <div class="card-footer">
+        <span class="card-url">dati.gov.it · determine-dirigenziali</span>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=determine+dirigenziali+registro" target="_blank">↗ Cerca</a>
+      </div>
+    </div>
+
+    <!-- TI -->
+    <div class="card" data-onto="TI">
+      <div class="card-top"><span class="card-onto onto-TI">TI</span><span class="card-tipo">COMUNE/REGIONE · EVENTI</span></div>
+      <div class="card-title">Calendario eventi culturali e manifestazioni</div>
+      <div class="card-ente">Regione Marche / Comuni lombardi</div>
+      <div class="card-note">Dataset ad alto valore turistico. Data_inizio e Data_fine obbligatorie. Se include lat/lon diventa anche POI. Aggiornamento continuo raccomandato.</div>
+      <div class="card-headers">
+        <span class="header-tag key">Data_Inizio</span><span class="header-tag key">Data_Fine</span><span class="header-tag key">Titolo</span><span class="header-tag">Tipo</span><span class="header-tag">Comune</span><span class="header-tag">Indirizzo</span><span class="header-tag">Organizzatore</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>Match corpus</span><span style="color:#fbbf24">65%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:65%;background:#fbbf24"></div></div>
+      </div>
+      <div class="card-footer">
+        <span class="card-url">dati.gov.it · eventi-manifestazioni</span>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=eventi+manifestazioni+calendario" target="_blank">↗ Cerca</a>
+      </div>
+    </div>
+
+    <!-- CLV -->
+    <div class="card" data-onto="CLV">
+      <div class="card-top"><span class="card-onto onto-CLV">CLV</span><span class="card-tipo">COMUNE · TERRITORIO</span></div>
+      <div class="card-title">Stradario comunale con numerazione civica</div>
+      <div class="card-ente">Comuni italiani — Anagrafe Nazionale</div>
+      <div class="card-note">Base fondamentale per ogni servizio digitale comunale. Codice ISTAT via obbligatorio. Necessario per interoperabilità con ANPR e sistemi catastali.</div>
+      <div class="card-headers">
+        <span class="header-tag key">Codice_Via</span><span class="header-tag key">Denominazione_Via</span><span class="header-tag key">Civico</span><span class="header-tag">CAP</span><span class="header-tag">Frazione</span><span class="header-tag">Codice_ISTAT</span><span class="header-tag">lat</span><span class="header-tag">lon</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>Match corpus</span><span style="color:#f472b6">66%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:66%;background:#f472b6"></div></div>
+      </div>
+      <div class="card-footer">
+        <span class="card-url">dati.gov.it · stradario-civici</span>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=stradario+numerazione+civica" target="_blank">↗ Cerca</a>
+      </div>
+    </div>
+
+    <!-- Cultural-ON -->
+    <div class="card" data-onto="Cultural-ON">
+      <div class="card-top"><span class="card-onto onto-Cultural-ON">Cultural-ON</span><span class="card-tipo">REGIONE · PATRIMONIO</span></div>
+      <div class="card-title">Anagrafe biblioteche con tipologia e geolocalizzazione</div>
+      <div class="card-ente">ICCU — Istituto Centrale Catalogo Unico</div>
+      <div class="card-note">13.691 biblioteche italiane con codice ISIL univoco. Dataset nazionale di riferimento. Aggiornato periodicamente da ICCU/MiC.</div>
+      <div class="card-headers">
+        <span class="header-tag key">codice-isil</span><span class="header-tag key">denominazione</span><span class="header-tag">tipologia_funzionale</span><span class="header-tag">indirizzo</span><span class="header-tag">comune</span><span class="header-tag">regione</span><span class="header-tag key">latitudine</span><span class="header-tag key">longitudine</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>Match corpus</span><span style="color:#818cf8">79%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:79%;background:#818cf8"></div></div>
+      </div>
+      <div class="card-footer">
+        <span class="card-url">anagrafe.iccu.sbn.it · biblioteche</span>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=biblioteche+ICCU+ISIL" target="_blank">↗ Cerca</a>
+      </div>
+    </div>
+
+    <div class="card" data-onto="Cultural-ON">
+      <div class="card-top"><span class="card-onto onto-Cultural-ON">Cultural-ON</span><span class="card-tipo">COMUNE/REGIONE · PATRIMONIO</span></div>
+      <div class="card-title">Elenco musei e luoghi della cultura</div>
+      <div class="card-ente">MiC / Regioni italiane</div>
+      <div class="card-note">Obbligatorio per regioni con beni tutelati. Codice MiBAC come identificatore univoco. Include orari apertura e accessibilità.</div>
+      <div class="card-headers">
+        <span class="header-tag key">Codice_MiBAC</span><span class="header-tag key">Denominazione</span><span class="header-tag">Tipologia</span><span class="header-tag">Indirizzo</span><span class="header-tag">Comune</span><span class="header-tag">lat</span><span class="header-tag">lon</span><span class="header-tag">Orari</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>Match corpus</span><span style="color:#818cf8">73%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:73%;background:#818cf8"></div></div>
+      </div>
+      <div class="card-footer">
+        <span class="card-url">dati.gov.it · musei-luoghi-cultura</span>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=musei+luoghi+cultura" target="_blank">↗ Cerca</a>
+      </div>
+    </div>
+
+    <!-- GTFS -->
+    <div class="card" data-onto="GTFS">
+      <div class="card-top"><span class="card-onto onto-GTFS">GTFS</span><span class="card-tipo">COMUNE/REGIONE · TPL</span></div>
+      <div class="card-title">Fermate trasporto pubblico (stops.txt)</div>
+      <div class="card-ente">Regioni e aziende TPL italiane</div>
+      <div class="card-note">File GTFS standard. Stop_id univoco. Stop_lat/lon obbligatori. Da estrarre dallo ZIP GTFS del gestore TPL locale. Formato universale internazionale.</div>
+      <div class="card-headers">
+        <span class="header-tag key">stop_id</span><span class="header-tag key">stop_name</span><span class="header-tag key">stop_lat</span><span class="header-tag key">stop_lon</span><span class="header-tag">stop_code</span><span class="header-tag">location_type</span><span class="header-tag">wheelchair_boarding</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>Match corpus</span><span style="color:#2dd4bf">76%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:76%;background:#2dd4bf"></div></div>
+      </div>
+      <div class="card-footer">
+        <span class="card-url">dati.gov.it · trasporto-pubblico-GTFS</span>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=GTFS+trasporto+pubblico" target="_blank">↗ Cerca</a>
+      </div>
+    </div>
+
+    <!-- CPV -->
+    <div class="card" data-onto="CPV">
+      <div class="card-top"><span class="card-onto onto-CPV">CPV</span><span class="card-tipo">COMUNE · ANAGRAFE</span></div>
+      <div class="card-title">Iscritti anagrafe per anno, sesso e cittadinanza</div>
+      <div class="card-ente">Comuni italiani — Maggioli OpenData</div>
+      <div class="card-note">Dataset minimo per CPV. Anno + Sesso + Cittadinanza + Occorrenze è il template più semplice e più diffuso. Disponibile su centinaia di comuni Maggioli.</div>
+      <div class="card-headers">
+        <span class="header-tag key">Anno_Iscrizione</span><span class="header-tag key">Sesso</span><span class="header-tag key">Cittadinanza</span><span class="header-tag">Occorrenze</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>Match corpus</span><span style="color:#fb923c">63%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:63%;background:#fb923c"></div></div>
+      </div>
+      <div class="card-footer">
+        <span class="card-url">opendata.maggioli.cloud · elenco-iscritti</span>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=iscritti+anagrafe+sesso+cittadinanza" target="_blank">↗ Cerca</a>
+      </div>
+    </div>
+
+    <div class="card" data-onto="CPV">
+      <div class="card-top"><span class="card-onto onto-CPV">CPV</span><span class="card-tipo">COMUNE · DEMOGRAFICO</span></div>
+      <div class="card-title">Residenti per quartiere, età e cittadinanza</div>
+      <div class="card-ente">Comune di Milano</div>
+      <div class="card-note">Versione avanzata con breakdown geografico. Nil/quartiere come dimensione spaziale aggiuntiva. Ottimo per analisi di equità territoriale.</div>
+      <div class="card-headers">
+        <span class="header-tag key">Anno</span><span class="header-tag key">Quartiere</span><span class="header-tag key">Eta</span><span class="header-tag key">Cittadinanza</span><span class="header-tag">Genere</span><span class="header-tag">Residenti</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>Match corpus</span><span style="color:#fb923c">67%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:67%;background:#fb923c"></div></div>
+      </div>
+      <div class="card-footer">
+        <span class="card-url">dati.comune.milano.it · residenti-cittadinanza</span>
+        <a class="card-link" href="https://dati.comune.milano.it/dataset/ds27-popolazione-residenti-cittadinanza-quartiere-serie-storica" target="_blank">↗ Apri</a>
+      </div>
+    </div>
+
+    <!-- ADMS -->
+    <div class="card" data-onto="ADMS">
+      <div class="card-top"><span class="card-onto onto-ADMS">ADMS</span><span class="card-tipo">REGIONE/ENTE · CATALOGO</span></div>
+      <div class="card-title">Catalogo dataset open data dell'ente</div>
+      <div class="card-ente">Regioni e PA — dati.gov.it</div>
+      <div class="card-note">Metadatazione del patrimonio informativo. DCAT-AP_IT obbligatorio dal CAD. Titolo, descrizione, licenza, frequenza aggiornamento, formato sono campi minimi.</div>
+      <div class="card-headers">
+        <span class="header-tag key">Titolo</span><span class="header-tag key">Descrizione</span><span class="header-tag key">Licenza</span><span class="header-tag">Formato</span><span class="header-tag">Frequenza_Aggiornamento</span><span class="header-tag">Ente_Titolare</span><span class="header-tag">URL</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>Match corpus</span><span style="color:#94a3b8">82%</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:82%;background:#94a3b8"></div></div>
+      </div>
+      <div class="card-footer">
+        <span class="card-url">dati.gov.it · catalogo-opendata</span>
+        <a class="card-link" href="https://www.dati.gov.it/opendata/dataset?q=catalogo+open+data" target="_blank">↗ Cerca</a>
+      </div>
+    </div>
+
+  </div><!-- /cards-grid -->
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-left">
+      piersoft.github.io/CSV-to-RDF · Corpus v8f · 217 dataset · 10 ontologie
+    </div>
+    <div class="footer-right">
+      Generato: 2026-03-20 · OntoPiA / DCAT-AP_IT / schema.gov.it
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// Filter logic
+const btns = document.querySelectorAll('.filter-btn');
+const cards = document.querySelectorAll('.card');
+
+btns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    btns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const onto = btn.dataset.onto;
+    cards.forEach(card => {
+      if (onto === 'ALL' || card.dataset.onto === onto) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+  });
+});
+
+// Animate score bars on load
+window.addEventListener('load', () => {
+  const fills = document.querySelectorAll('.score-bar-fill');
+  fills.forEach(f => {
+    const w = f.style.width;
+    f.style.width = '0';
+    setTimeout(() => { f.style.width = w; }, 200);
+  });
+});
+</script>
+</body>
+</html>

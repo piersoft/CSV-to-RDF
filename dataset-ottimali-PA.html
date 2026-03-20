@@ -206,6 +206,27 @@
     background: rgba(0,212,255,0.05);
   }
 
+  /* Leggenda headers */
+  .headers-legend {
+    display: flex; gap: 14px; margin-top: 6px; margin-bottom: 0;
+  }
+  .headers-legend-item {
+    display: flex; align-items: center; gap: 5px;
+    font-family: var(--mono); font-size: 9px;
+    color: var(--text-dim); letter-spacing: 0.05em;
+  }
+  .legend-swatch {
+    width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0;
+  }
+  .legend-swatch.key {
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.35);
+  }
+  .legend-swatch.std {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+  }
+
   .card-footer {
     display: flex; align-items: center; justify-content: space-between;
     padding-top: 12px;
@@ -386,6 +407,10 @@
       <div class="card-headers">
         <span class="header-tag key">Anno</span><span class="header-tag key">Fascia_Eta</span><span class="header-tag key">Sesso</span><span class="header-tag key">Stato_Civile</span><span class="header-tag">Residenti</span><span class="header-tag">Comune</span><span class="header-tag">Codice_ISTAT</span>
       </div>
+      <div class="headers-legend">
+        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
+        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
+      </div>
       <div class="score-bar-wrap">
         <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">88%</span></div>
         <div class="score-bar-track"><div class="score-bar-fill" style="width:88%;background:#10b981"></div></div>
@@ -404,6 +429,10 @@
       <div class="card-headers">
         <span class="header-tag key">Anno</span><span class="header-tag key">Mese</span><span class="header-tag">Nati_Vivi</span><span class="header-tag">Deceduti</span><span class="header-tag">Saldo_Naturale</span><span class="header-tag">Comune</span>
       </div>
+      <div class="headers-legend">
+        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
+        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
+      </div>
       <div class="score-bar-wrap">
         <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">91%</span></div>
         <div class="score-bar-track"><div class="score-bar-fill" style="width:91%;background:#10b981"></div></div>
@@ -421,6 +450,10 @@
       <div class="card-note">Dati ISTAT standardizzati. Codici ISTAT provincia/comune già presenti. Ideale come primo dataset per comuni che iniziano con LOD.</div>
       <div class="card-headers">
         <span class="header-tag key">Anno</span><span class="header-tag key">Mese</span><span class="header-tag key">Codice_Comune</span><span class="header-tag">Provincia</span><span class="header-tag">Rito_Religioso</span><span class="header-tag">Rito_Civile</span>
+      </div>
+      <div class="headers-legend">
+        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
+        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
       </div>
       <div class="score-bar-wrap">
         <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">89%</span></div>
@@ -441,6 +474,10 @@
       <div class="card-headers">
         <span class="header-tag key">lat</span><span class="header-tag key">lon</span><span class="header-tag key">nome</span><span class="header-tag">indirizzo</span><span class="header-tag">comune</span><span class="header-tag">cap</span><span class="header-tag">accessibile_h24</span>
       </div>
+      <div class="headers-legend">
+        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
+        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
+      </div>
       <div class="score-bar-wrap">
         <div class="score-bar-label"><span>Match corpus</span><span style="color:#00d4ff">86%</span></div>
         <div class="score-bar-track"><div class="score-bar-fill" style="width:86%;background:#00d4ff"></div></div>
@@ -458,6 +495,10 @@
       <div class="card-note">Dataset essenziale per servizi di prossimità. Facilmente esportabile da anagrafe ASL. Aggiornabile trimestralmente.</div>
       <div class="card-headers">
         <span class="header-tag key">lat</span><span class="header-tag key">lon</span><span class="header-tag key">denominazione</span><span class="header-tag">indirizzo</span><span class="header-tag">comune</span><span class="header-tag">orario_apertura</span><span class="header-tag">telefono</span>
+      </div>
+      <div class="headers-legend">
+        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
+        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
       </div>
       <div class="score-bar-wrap">
         <div class="score-bar-label"><span>Match corpus</span><span style="color:#00d4ff">83%</span></div>
@@ -478,6 +519,10 @@
       <div class="card-headers">
         <span class="header-tag key">Codice_CUSR</span><span class="header-tag key">Tipologia</span><span class="header-tag key">Classificazione</span><span class="header-tag">Denominazione</span><span class="header-tag">Comune</span><span class="header-tag">Provincia</span><span class="header-tag">Posti_letto</span><span class="header-tag">Camere</span>
       </div>
+      <div class="headers-legend">
+        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
+        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
+      </div>
       <div class="score-bar-wrap">
         <div class="score-bar-label"><span>Match corpus</span><span style="color:#a78bfa">78%</span></div>
         <div class="score-bar-track"><div class="score-bar-fill" style="width:78%;background:#a78bfa"></div></div>
@@ -495,6 +540,10 @@
       <div class="card-note">Serie storica annuale. Indispensabile per pianificazione turistica e rendicontazione fondi regionali. Dati aggregati, nessun problema privacy.</div>
       <div class="card-headers">
         <span class="header-tag key">Anno</span><span class="header-tag key">Area_geografica</span><span class="header-tag key">Paese_provenienza</span><span class="header-tag">Arrivi</span><span class="header-tag">Presenze</span><span class="header-tag">Tipo_struttura</span>
+      </div>
+      <div class="headers-legend">
+        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
+        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
       </div>
       <div class="score-bar-wrap">
         <div class="score-bar-label"><span>Match corpus</span><span style="color:#a78bfa">74%</span></div>
@@ -515,6 +564,10 @@
       <div class="card-headers">
         <span class="header-tag key">CIG</span><span class="header-tag key">CUP</span><span class="header-tag key">Oggetto</span><span class="header-tag">Tipo_procedura</span><span class="header-tag">Importo_base</span><span class="header-tag">Aggiudicatario</span><span class="header-tag">Data_aggiudicazione</span>
       </div>
+      <div class="headers-legend">
+        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
+        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
+      </div>
       <div class="score-bar-wrap">
         <div class="score-bar-label"><span>Match corpus</span><span style="color:#f87171">72%</span></div>
         <div class="score-bar-track"><div class="score-bar-fill" style="width:72%;background:#f87171"></div></div>
@@ -532,6 +585,10 @@
       <div class="card-note">Atti amministrativi pubblicati per obbligo normativo. Struttura semplice e uniforme. Ottimo dataset iniziale per CPSV.</div>
       <div class="card-headers">
         <span class="header-tag key">Num_Reg</span><span class="header-tag key">Data_Atto</span><span class="header-tag key">Oggetto</span><span class="header-tag">Settore</span><span class="header-tag">Mov_Finanziaria</span><span class="header-tag">Data_Pubblicazione</span>
+      </div>
+      <div class="headers-legend">
+        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
+        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
       </div>
       <div class="score-bar-wrap">
         <div class="score-bar-label"><span>Match corpus</span><span style="color:#f87171">68%</span></div>
@@ -552,6 +609,10 @@
       <div class="card-headers">
         <span class="header-tag key">Data_Inizio</span><span class="header-tag key">Data_Fine</span><span class="header-tag key">Titolo</span><span class="header-tag">Tipo</span><span class="header-tag">Comune</span><span class="header-tag">Indirizzo</span><span class="header-tag">Organizzatore</span>
       </div>
+      <div class="headers-legend">
+        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
+        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
+      </div>
       <div class="score-bar-wrap">
         <div class="score-bar-label"><span>Match corpus</span><span style="color:#fbbf24">65%</span></div>
         <div class="score-bar-track"><div class="score-bar-fill" style="width:65%;background:#fbbf24"></div></div>
@@ -570,6 +631,10 @@
       <div class="card-note">Base fondamentale per ogni servizio digitale comunale. Codice ISTAT via obbligatorio. Necessario per interoperabilità con ANPR e sistemi catastali.</div>
       <div class="card-headers">
         <span class="header-tag key">Codice_Via</span><span class="header-tag key">Denominazione_Via</span><span class="header-tag key">Civico</span><span class="header-tag">CAP</span><span class="header-tag">Frazione</span><span class="header-tag">Codice_ISTAT</span><span class="header-tag">lat</span><span class="header-tag">lon</span>
+      </div>
+      <div class="headers-legend">
+        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
+        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
       </div>
       <div class="score-bar-wrap">
         <div class="score-bar-label"><span>Match corpus</span><span style="color:#f472b6">66%</span></div>
@@ -590,6 +655,10 @@
       <div class="card-headers">
         <span class="header-tag key">codice-isil</span><span class="header-tag key">denominazione</span><span class="header-tag">tipologia_funzionale</span><span class="header-tag">indirizzo</span><span class="header-tag">comune</span><span class="header-tag">regione</span><span class="header-tag key">latitudine</span><span class="header-tag key">longitudine</span>
       </div>
+      <div class="headers-legend">
+        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
+        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
+      </div>
       <div class="score-bar-wrap">
         <div class="score-bar-label"><span>Match corpus</span><span style="color:#818cf8">79%</span></div>
         <div class="score-bar-track"><div class="score-bar-fill" style="width:79%;background:#818cf8"></div></div>
@@ -607,6 +676,10 @@
       <div class="card-note">Obbligatorio per regioni con beni tutelati. Codice MiBAC come identificatore univoco. Include orari apertura e accessibilità.</div>
       <div class="card-headers">
         <span class="header-tag key">Codice_MiBAC</span><span class="header-tag key">Denominazione</span><span class="header-tag">Tipologia</span><span class="header-tag">Indirizzo</span><span class="header-tag">Comune</span><span class="header-tag">lat</span><span class="header-tag">lon</span><span class="header-tag">Orari</span>
+      </div>
+      <div class="headers-legend">
+        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
+        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
       </div>
       <div class="score-bar-wrap">
         <div class="score-bar-label"><span>Match corpus</span><span style="color:#818cf8">73%</span></div>
@@ -627,6 +700,10 @@
       <div class="card-headers">
         <span class="header-tag key">stop_id</span><span class="header-tag key">stop_name</span><span class="header-tag key">stop_lat</span><span class="header-tag key">stop_lon</span><span class="header-tag">stop_code</span><span class="header-tag">location_type</span><span class="header-tag">wheelchair_boarding</span>
       </div>
+      <div class="headers-legend">
+        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
+        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
+      </div>
       <div class="score-bar-wrap">
         <div class="score-bar-label"><span>Match corpus</span><span style="color:#2dd4bf">76%</span></div>
         <div class="score-bar-track"><div class="score-bar-fill" style="width:76%;background:#2dd4bf"></div></div>
@@ -646,6 +723,10 @@
       <div class="card-headers">
         <span class="header-tag key">Anno_Iscrizione</span><span class="header-tag key">Sesso</span><span class="header-tag key">Cittadinanza</span><span class="header-tag">Occorrenze</span>
       </div>
+      <div class="headers-legend">
+        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
+        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
+      </div>
       <div class="score-bar-wrap">
         <div class="score-bar-label"><span>Match corpus</span><span style="color:#fb923c">63%</span></div>
         <div class="score-bar-track"><div class="score-bar-fill" style="width:63%;background:#fb923c"></div></div>
@@ -663,6 +744,10 @@
       <div class="card-note">Versione avanzata con breakdown geografico. Nil/quartiere come dimensione spaziale aggiuntiva. Ottimo per analisi di equità territoriale.</div>
       <div class="card-headers">
         <span class="header-tag key">Anno</span><span class="header-tag key">Quartiere</span><span class="header-tag key">Eta</span><span class="header-tag key">Cittadinanza</span><span class="header-tag">Genere</span><span class="header-tag">Residenti</span>
+      </div>
+      <div class="headers-legend">
+        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
+        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
       </div>
       <div class="score-bar-wrap">
         <div class="score-bar-label"><span>Match corpus</span><span style="color:#fb923c">67%</span></div>
@@ -682,6 +767,10 @@
       <div class="card-note">Metadatazione del patrimonio informativo. DCAT-AP_IT obbligatorio dal CAD. Titolo, descrizione, licenza, frequenza aggiornamento, formato sono campi minimi.</div>
       <div class="card-headers">
         <span class="header-tag key">Titolo</span><span class="header-tag key">Descrizione</span><span class="header-tag key">Licenza</span><span class="header-tag">Formato</span><span class="header-tag">Frequenza_Aggiornamento</span><span class="header-tag">Ente_Titolare</span><span class="header-tag">URL</span>
+      </div>
+      <div class="headers-legend">
+        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
+        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
       </div>
       <div class="score-bar-wrap">
         <div class="score-bar-label"><span>Match corpus</span><span style="color:#94a3b8">82%</span></div>

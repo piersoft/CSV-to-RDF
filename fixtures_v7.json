@@ -1,7 +1,7 @@
 {
   "generated": "2026-03-20",
-  "script_version": "corpus_v8f_patch",
-  "total": 217,
+  "script_version": "v8",
+  "total": 226,
   "false_positives_excluded": 0,
   "corpus": [
     {
@@ -19350,6 +19350,447 @@
       ],
       "validation": "ok",
       "source": "manual_upload"
+    },
+    {
+      "seq": 218,
+      "id": "7c35e865-64ca-5aa6-9891-cb584d869878",
+      "name": "anagrafe-scuole-miur-2024",
+      "title": "Anagrafe delle scuole statali italiane — MIUR 2024",
+      "org": "ministero-istruzione",
+      "ente": "Ministero dell'Istruzione e del Merito",
+      "categoria": "ministero",
+      "tema_dcat": [
+        "EDUC",
+        "GOVE"
+      ],
+      "tema_onto": [
+        "SMAPIT",
+        "CLV",
+        "POI"
+      ],
+      "tema_target": [
+        "SMAPIT",
+        "CLV",
+        "POI",
+        "l0",
+        "TI"
+      ],
+      "score": 72,
+      "resource_id": "scuanagrafestat-2024",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "ANNOSCOLASTICO",
+        "AREAGEOGRAFICA",
+        "REGIONE",
+        "PROVINCIA",
+        "CODICEISTITUTORIFERIMENTO",
+        "DENOMINAZIONEISTITUTORIFERIMENTO",
+        "CODICESCUOLA",
+        "DENOMINAZIONESCUOLA",
+        "INDIRIZZOSCUOLA",
+        "CAPSCUOLA",
+        "CODICECOMUNESCUOLA",
+        "DESCRIZIONECOMUNE",
+        "DESCRIZIONETIPOLOGIAGRADOISTRUZIONE",
+        "INDICAZIONESESSOALUNNI"
+      ],
+      "sample_rows": [
+        {
+          "CODICESCUOLA": "BAIS00100E",
+          "DENOMINAZIONESCUOLA": "IIS ALDINI VALERIANI",
+          "DESCRIZIONETIPOLOGIAGRADOISTRUZIONE": "SCUOLA SECONDARIA II GRADO",
+          "REGIONE": "EMILIA ROMAGNA"
+        }
+      ]
+    },
+    {
+      "seq": 219,
+      "id": "78b25b03-7567-5250-b620-d8a1b4778349",
+      "name": "elenco-scuole-bologna-2025",
+      "title": "Elenco delle scuole — Comune di Bologna 2025-2026",
+      "org": "comune-di-bologna",
+      "ente": "Comune di Bologna",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "EDUC",
+        "REGI"
+      ],
+      "tema_onto": [
+        "SMAPIT",
+        "CLV",
+        "POI"
+      ],
+      "tema_target": [
+        "SMAPIT",
+        "CLV",
+        "POI",
+        "l0"
+      ],
+      "score": 78,
+      "resource_id": "elenco-delle-scuole-bologna",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "CIVKEY",
+        "QUARTIERE",
+        "Indirizzo scuola",
+        "Geo Point",
+        "Geo Shape",
+        "NOME",
+        "GESTIONE",
+        "SERVIZIO",
+        "ISTITUZIONE_SCOLASTICA",
+        "CIVICO",
+        "SUBCIV",
+        "COD VIA",
+        "ANNO SCOLASTICO",
+        "GEO_ID",
+        "area statistica"
+      ],
+      "sample_rows": [
+        {
+          "NOME": "GIACCAGLIA BETTI",
+          "SERVIZIO": "NIDO D'INFANZIA",
+          "QUARTIERE": "Santo Stefano",
+          "Indirizzo scuola": "VIA IRNERIO",
+          "GESTIONE": "COMUNALE",
+          "ANNO SCOLASTICO": "2025-2026"
+        }
+      ]
+    },
+    {
+      "seq": 220,
+      "id": "0aa27b0e-db7c-5a01-b257-d6d56dda1ef0",
+      "name": "scuole-geolocalizzate-pa",
+      "title": "Scuole geolocalizzate — dataset PA generico",
+      "org": "pa-locale",
+      "ente": "PA Locale",
+      "categoria": "comune_medio",
+      "tema_dcat": [
+        "EDUC"
+      ],
+      "tema_onto": [
+        "SMAPIT",
+        "POI",
+        "CLV"
+      ],
+      "tema_target": [
+        "SMAPIT",
+        "POI",
+        "CLV",
+        "l0"
+      ],
+      "score": 65,
+      "resource_id": "scuole-geoloc",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "X",
+        "Y",
+        "OBJECTID",
+        "Gestione",
+        "NOME",
+        "TIPO"
+      ],
+      "sample_rows": [
+        {
+          "NOME": "Spallanzani",
+          "TIPO": "scuola secondaria di 1 grado",
+          "Gestione": "paritaria",
+          "X": 2328058.5,
+          "Y": 4879776
+        }
+      ]
+    },
+    {
+      "seq": 221,
+      "id": "e2bbbb68-7b92-5793-aad6-95c42d6efb0e",
+      "name": "ares-edifici-scolastici-toscana",
+      "title": "ARES — Edifici scolastici Toscana (sicurezza ambientale)",
+      "org": "regione-toscana",
+      "ente": "Regione Toscana",
+      "categoria": "regione",
+      "tema_dcat": [
+        "EDUC",
+        "ENVI"
+      ],
+      "tema_onto": [
+        "SMAPIT",
+        "CLV",
+        "POI",
+        "QB"
+      ],
+      "tema_target": [
+        "SMAPIT",
+        "CLV",
+        "POI",
+        "QB",
+        "l0"
+      ],
+      "score": 70,
+      "resource_id": "ares-sezione-b4",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "N",
+        "Codice Edificio",
+        "COMUNE",
+        "VIA/PIAZZA",
+        "DENOMINAZIONE STRADA",
+        "NUMERO CIVICO",
+        "PLESSI SCOLASTICI",
+        "GESTORE",
+        "ATTIVO SI/NO",
+        "SOLO PALESTRA SI/NO",
+        "Area sicura",
+        "Area non recintata"
+      ],
+      "sample_rows": [
+        {
+          "COMUNE": "Bagno a Ripoli",
+          "DENOMINAZIONE STRADA": "ROMA",
+          "NUMERO CIVICO": "75/77",
+          "PLESSI SCOLASTICI": "FITD028013 ITC - Alessandro Volta-",
+          "GESTORE": "PROVINCIA",
+          "ATTIVO SI/NO": "SI"
+        }
+      ]
+    },
+    {
+      "seq": 222,
+      "id": "5f853a06-0b6b-5c10-a910-378e9ab82dd8",
+      "name": "cpv-vocabolario-appalti-aggiornato",
+      "title": "CPV — Vocabolario comune per gli appalti pubblici (aggiornato)",
+      "org": "commissione-europea",
+      "ente": "Commissione Europea / ANAC",
+      "categoria": "autorita_nazionale",
+      "tema_dcat": [
+        "GOVE",
+        "ECON"
+      ],
+      "tema_onto": [
+        "CPV",
+        "ADMS",
+        "QB"
+      ],
+      "tema_target": [
+        "CPV",
+        "ADMS",
+        "QB",
+        "l0",
+        "skos"
+      ],
+      "score": 88,
+      "resource_id": "cpv-aggiornato-2024",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "ID",
+        "DESCRIZIONE"
+      ],
+      "sample_rows": [
+        {
+          "ID": "34900000-6",
+          "DESCRIZIONE": "Varie attrezzature di trasporto e parti di ricambio"
+        }
+      ]
+    },
+    {
+      "seq": 223,
+      "id": "764b3637-93ea-5e07-b8e4-d9e2d7c61297",
+      "name": "sensore-temperatura-iot-timeseries",
+      "title": "Sensore di temperatura IoT — serie temporale (RADASPLUS)",
+      "org": "pa-locale",
+      "ente": "PA / Gestore Infrastruttura IoT",
+      "categoria": "altro",
+      "tema_dcat": [
+        "ENVI",
+        "TECH"
+      ],
+      "tema_onto": [
+        "IoT-AP_IT",
+        "QB",
+        "TI"
+      ],
+      "tema_target": [
+        "IoT-AP_IT",
+        "QB",
+        "TI",
+        "sosa",
+        "ssn",
+        "time"
+      ],
+      "score": 75,
+      "resource_id": "gh-radasplus-temperatura-t3",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "inizio",
+        "valore",
+        "fine",
+        "complex_op"
+      ],
+      "sample_rows": [
+        {
+          "inizio": "2026-03-19 23:00:06.0",
+          "valore": 0.46,
+          "fine": "2026-03-20 00:00:06.0",
+          "complex_op": null
+        }
+      ]
+    },
+    {
+      "seq": 224,
+      "id": "90b0b339-41cc-5fa6-884b-5a247bd2ef16",
+      "name": "sensori-clima-bologna-meteo",
+      "title": "Sensori clima — rilevazioni meteo Bologna",
+      "org": "comune-di-bologna",
+      "ente": "Comune di Bologna",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "ENVI",
+        "TECH"
+      ],
+      "tema_onto": [
+        "IoT-AP_IT",
+        "QB",
+        "POI"
+      ],
+      "tema_target": [
+        "IoT-AP_IT",
+        "QB",
+        "POI",
+        "CLV",
+        "sosa",
+        "ssn"
+      ],
+      "score": 80,
+      "resource_id": "sensori-clima-bologna",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "Id",
+        "Valore medio",
+        "Data ricezione",
+        "Node Id",
+        "Nome sensore"
+      ],
+      "sample_rows": [
+        {
+          "Id": "WindDirection",
+          "Valore medio": 5.64,
+          "Data ricezione": "2022-06-18T17:00:00+00:00",
+          "Node Id": 2,
+          "Nome sensore": "PSA-002"
+        }
+      ]
+    },
+    {
+      "seq": 225,
+      "id": "d70feba8-8769-5bba-aa23-e4b6bb2430b7",
+      "name": "idrometri-rovereto-livello-acqua",
+      "title": "Idrometri Rovereto — misurazioni livello idrometrico",
+      "org": "provincia-trento",
+      "ente": "Provincia Autonoma di Trento",
+      "categoria": "regione",
+      "tema_dcat": [
+        "ENVI"
+      ],
+      "tema_onto": [
+        "IoT-AP_IT",
+        "QB",
+        "POI"
+      ],
+      "tema_target": [
+        "IoT-AP_IT",
+        "QB",
+        "POI",
+        "CLV",
+        "sosa",
+        "ssn",
+        "time"
+      ],
+      "score": 77,
+      "resource_id": "idrometri-rovereto",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "IdSensore",
+        "Data/Ora",
+        "Valore",
+        "Validato",
+        "OraSolare"
+      ],
+      "sample_rows": [
+        {
+          "IdSensore": 3,
+          "Data/Ora": "04/01/2024 00:00",
+          "Valore": 0.05,
+          "Validato": "NO",
+          "OraSolare": "SI"
+        }
+      ]
+    },
+    {
+      "seq": 226,
+      "id": "9f5ea9d6-70e0-5def-9784-4898c9e09ae8",
+      "name": "postazioni-sensori-fissi-sistema5t-piemonte",
+      "title": "Postazioni sensori fissi traffico — Sistema 5T Regione Piemonte",
+      "org": "regione-piemonte",
+      "ente": "Regione Piemonte / Sistema 5T",
+      "categoria": "regione",
+      "tema_dcat": [
+        "TRAN",
+        "ENVI"
+      ],
+      "tema_onto": [
+        "IoT-AP_IT",
+        "POI",
+        "CLV",
+        "TI"
+      ],
+      "tema_target": [
+        "IoT-AP_IT",
+        "POI",
+        "CLV",
+        "TI",
+        "sosa",
+        "ssn"
+      ],
+      "score": 82,
+      "resource_id": "regpie-postazioni-sensori-5t",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "ID_SENSORE",
+        "Categoria",
+        "Strada",
+        "km",
+        "Direzione",
+        "Nome",
+        "Lat_wgs84",
+        "Lon_wgs84"
+      ],
+      "sample_rows": [
+        {
+          "ID_SENSORE": 699,
+          "Categoria": "Sensori TOC",
+          "Direzione": "Cuneo (pos)",
+          "Nome": "CN-15 Cavallermaggiore",
+          "Lat_wgs84": "44,69923",
+          "Lon_wgs84": "7,68042"
+        }
+      ]
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "generated": "2026-03-20",
-  "script_version": "corpus_v8e_patch",
-  "total": 209,
+  "script_version": "corpus_v8f_patch",
+  "total": 217,
   "false_positives_excluded": 0,
   "corpus": [
     {
@@ -18810,6 +18810,546 @@
       ],
       "validation": "ok",
       "source": "url_gtfs"
+    },
+    {
+      "seq": 284,
+      "id": "anticorruzione-appalti-bari-2021",
+      "title": "Appalti anticorruzione 2021 - Comune di Bari",
+      "org": "Comune di Bari",
+      "ente": "Comune di Bari",
+      "portal": "https://opendata.comune.bari.it",
+      "headers": [
+        "CIG",
+        "Struttura proponente",
+        "Oggetto",
+        "Scelta del contraente",
+        "Elenco operatori invitati",
+        "Aggiudicatario",
+        "Importo di aggiudicazione",
+        "Tempi",
+        "Importo somme liquidate"
+      ],
+      "sample_rows": [
+        {
+          "CIG": "ZD333220E0",
+          "Struttura proponente": "80015010723-Ripartizione Infrastrutture",
+          "Oggetto": "Lavori di durata biennale per adeguamento strade",
+          "Scelta del contraente": "23-AFFIDAMENTO DIRETTO",
+          "Aggiudicatario": "Architetto Scognetti Chiara",
+          "Importo di aggiudicazione": "39900"
+        },
+        {
+          "CIG": "88514374E2",
+          "Struttura proponente": "80015010723-Comune di Bari - Stazione Unica Appaltante",
+          "Oggetto": "Procedura negoziata per lavori infrastrutture",
+          "Scelta del contraente": "04-PROCEDURA NEGOZIATA SENZA PREVIA PUBBLICAZIONE",
+          "Aggiudicatario": "GECOS S.R.L.",
+          "Importo di aggiudicazione": "2921250.0"
+        },
+        {
+          "CIG": "Z2A2FD5A8C",
+          "Struttura proponente": "80015010723-Comune di Bari - Segreteria Generale",
+          "Oggetto": "Servizio manutenzione assistenza tecnica",
+          "Scelta del contraente": "04-PROCEDURA NEGOZIATA SENZA PREVIA PUBBLICAZIONE",
+          "Aggiudicatario": "WRITE SYSTEM DI MARIA CRISTINA CROCE",
+          "Importo di aggiudicazione": "26718.0",
+          "Importo somme liquidate": "26718.0"
+        }
+      ],
+      "tema_onto": [
+        "CPSV"
+      ],
+      "tema_target": [
+        "CPSV"
+      ],
+      "confirmed_temi": [
+        "CPSV"
+      ],
+      "validation": "ok",
+      "source": "manual_upload"
+    },
+    {
+      "seq": 285,
+      "id": "as-sda-banditi-consip-2023",
+      "title": "Accordi Quadro SDA banditi 2023 - Consip",
+      "org": "Consip SpA",
+      "ente": "Consip SpA",
+      "portal": "https://www.dati.gov.it/opendata",
+      "headers": [
+        "#Anno_Riferimento",
+        "Tipologia_Amministrazione",
+        "Regione_PA",
+        "Provincia_PA",
+        "Sigla_provincia_PA",
+        "Bando_SDA",
+        "Valore_economico_Base_Asta",
+        "Durata_media_fornitura",
+        "N_AS_Pubblicati",
+        "N_PA_Appaltanti",
+        "N_PO"
+      ],
+      "sample_rows": [
+        {
+          "#Anno_Riferimento": "2023",
+          "Tipologia_Amministrazione": "AZIENDE OSPEDALIERE, POLICLINICI, IRCCS",
+          "Regione_PA": "SICILIA",
+          "Provincia_PA": "PALERMO",
+          "Sigla_provincia_PA": "PA",
+          "Bando_SDA": "Sanità",
+          "Valore_economico_Base_Asta": "2285918,35",
+          "N_AS_Pubblicati": "2",
+          "N_PA_Appaltanti": "2"
+        },
+        {
+          "#Anno_Riferimento": "2023",
+          "Tipologia_Amministrazione": "AZIENDE OSPEDALIERE, POLICLINICI, IRCCS",
+          "Regione_PA": "SICILIA",
+          "Provincia_PA": "CATANIA",
+          "Sigla_provincia_PA": "CT",
+          "Bando_SDA": "Farmaci",
+          "Valore_economico_Base_Asta": "10287924,6",
+          "Durata_media_fornitura": "24",
+          "N_AS_Pubblicati": "1"
+        },
+        {
+          "#Anno_Riferimento": "2023",
+          "Tipologia_Amministrazione": "COMUNI",
+          "Regione_PA": "LOMBARDIA",
+          "Provincia_PA": "MILANO",
+          "Sigla_provincia_PA": "MI",
+          "Bando_SDA": "Energia",
+          "Valore_economico_Base_Asta": "5000000,00",
+          "N_AS_Pubblicati": "3"
+        }
+      ],
+      "tema_onto": [
+        "CPSV",
+        "QB"
+      ],
+      "tema_target": [
+        "CPSV"
+      ],
+      "confirmed_temi": [
+        "CPSV",
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "manual_upload"
+    },
+    {
+      "seq": 286,
+      "id": "appalti-citta-metropolitana-catania",
+      "title": "Appalti pubblici - Città Metropolitana di Catania",
+      "org": "Città Metropolitana di Catania",
+      "ente": "Città Metropolitana di Catania",
+      "portal": "https://dati.cittametropolitana.ct.it",
+      "headers": [
+        "stazione_appaltante",
+        "codice_fiscale",
+        "centro_di_costo",
+        "cig",
+        "cup",
+        "codice",
+        "oggetto",
+        "pnrr",
+        "tipo",
+        "tipo_procedura",
+        "rup",
+        "imp_base_gara",
+        "imp_aggiudic",
+        "aggiudicatario",
+        "dt_pubblicazione",
+        "dt_aggiudicazione",
+        "link_bdncp"
+      ],
+      "sample_rows": [
+        {
+          "stazione_appaltante": "CITTA' METROPOLITANA DI CATANIA",
+          "codice_fiscale": "00397470873",
+          "cig": "B384D7D4AB",
+          "cup": "D34J24000010001",
+          "oggetto": "LAVORI DI RIQUALIFICAZIONE DEL PLESSO SPORTIVO DI CAMPOROTONDO",
+          "pnrr": "No",
+          "tipo": "Lavori",
+          "tipo_procedura": "Procedura aperta",
+          "imp_base_gara": "12.590.260,29",
+          "dt_pubblicazione": "17-10-2024"
+        },
+        {
+          "stazione_appaltante": "CITTA' METROPOLITANA DI CATANIA",
+          "codice_fiscale": "00397470873",
+          "cig": "B1CE002591",
+          "cup": "D32C21001160001",
+          "oggetto": "SERVIZIO DI INGEGNERIA PER PROGETTAZIONE ESECUTIVA",
+          "tipo": "Servizi",
+          "tipo_procedura": "Procedura aperta",
+          "imp_base_gara": "2.609.000,00",
+          "dt_pubblicazione": "30-05-2024"
+        },
+        {
+          "stazione_appaltante": "CITTA' METROPOLITANA DI CATANIA",
+          "codice_fiscale": "00397470873",
+          "cig": "9763573353",
+          "cup": "D66J17000180001",
+          "oggetto": "RIQUALIFICAZIONE CENTRO CONGRESSUALE",
+          "tipo": "Lavori",
+          "tipo_procedura": "Procedura aperta",
+          "imp_base_gara": "7.220.779,65",
+          "imp_aggiudic": "7.220.779,65",
+          "aggiudicatario": "CONPAT SCARL",
+          "dt_aggiudicazione": "18-10-2024"
+        }
+      ],
+      "tema_onto": [
+        "CPSV"
+      ],
+      "tema_target": [
+        "CPSV"
+      ],
+      "confirmed_temi": [
+        "CPSV"
+      ],
+      "validation": "ok",
+      "source": "manual_upload"
+    },
+    {
+      "seq": 287,
+      "id": "as-aq-banditi-consip-2024",
+      "title": "Accordi Quadro banditi 2024 - Consip",
+      "org": "Consip SpA",
+      "ente": "Consip SpA",
+      "portal": "https://www.dati.gov.it/opendata",
+      "headers": [
+        "#Anno_Riferimento",
+        "Tipologia_Amministrazione",
+        "AQ",
+        "Lotto",
+        "Regione_PA",
+        "Provincia_PA",
+        "Sigla_provincia_PA",
+        "Durata_media_fornitura",
+        "Valore_economico_Base_Asta",
+        "N_PA_Appaltanti",
+        "N_PO",
+        "N_AS_Pubblicati"
+      ],
+      "sample_rows": [
+        {
+          "#Anno_Riferimento": "2024",
+          "Tipologia_Amministrazione": "ISTITUTI/ENTI DI RICERCA",
+          "AQ": "PC PORTATILI, MOBILE WORKSTATION E CHROMEBOOK",
+          "Lotto": "LOTTO 1 - PERSONAL COMPUTER PORTATILI",
+          "Regione_PA": "CAMPANIA",
+          "Provincia_PA": "NAPOLI",
+          "Valore_economico_Base_Asta": "11305,35",
+          "N_PA_Appaltanti": "1"
+        },
+        {
+          "#Anno_Riferimento": "2024",
+          "Tipologia_Amministrazione": "ISTITUTI/ENTI DI RICERCA",
+          "AQ": "DIGITAL TRANSFORMATION 2",
+          "Lotto": "LOTTO 2 - DIGITALIZZAZIONE DEI PROCESSI",
+          "Regione_PA": "CAMPANIA",
+          "Provincia_PA": "NAPOLI",
+          "Valore_economico_Base_Asta": "3277792,1",
+          "Durata_media_fornitura": "12"
+        },
+        {
+          "#Anno_Riferimento": "2024",
+          "Tipologia_Amministrazione": "COMUNI",
+          "AQ": "Fuel Card 3",
+          "Lotto": "Fuel Card",
+          "Regione_PA": "PIEMONTE",
+          "Provincia_PA": "TORINO",
+          "Durata_media_fornitura": "34"
+        }
+      ],
+      "tema_onto": [
+        "CPSV",
+        "QB"
+      ],
+      "tema_target": [
+        "CPSV"
+      ],
+      "confirmed_temi": [
+        "CPSV",
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "manual_upload"
+    },
+    {
+      "seq": 288,
+      "id": "appalti-pubblici-comune-lecce",
+      "title": "Appalti pubblici geolocalizzati - Comune di Lecce",
+      "org": "Comune di Lecce",
+      "ente": "Comune di Lecce",
+      "portal": "https://www.comune.lecce.it/opendata",
+      "headers": [
+        "cig",
+        "cup",
+        "importo_progetto",
+        "oggetto_della_gara",
+        "area_di_intervento",
+        "toponomastica",
+        "responsabile_procedimento",
+        "aggiudicatario",
+        "data_pubblic_bando",
+        "data_aggiudicazione",
+        "contratto",
+        "importo_gara",
+        "importo_agg.",
+        "fonte_finanziamento",
+        "lat",
+        "lon"
+      ],
+      "sample_rows": [
+        {
+          "cig": "5336086577",
+          "cup": "C82C13000040007",
+          "importo_progetto": "1.000.000,00",
+          "oggetto_della_gara": "Valorizzazione e fruizione del fondo anfiteatro a Rudiae",
+          "area_di_intervento": "parco archeologico",
+          "aggiudicatario": "Rudiae Archeologica S.C. A R.L.",
+          "data_aggiudicazione": "15/04/2014",
+          "importo_agg.": "658.011,82",
+          "lat": "40.33343",
+          "lon": "18.14684"
+        },
+        {
+          "cig": "533612125A",
+          "cup": "C82CI10000140006",
+          "importo_progetto": "4.900.000,00",
+          "oggetto_della_gara": "Valorizzazione Mura Urbiche primo lotto",
+          "area_di_intervento": "centro città",
+          "aggiudicatario": "A.T.I. Capriello-Tecnores",
+          "importo_agg.": "3.302.574,00",
+          "lat": "40.35266",
+          "lon": "18.17512"
+        },
+        {
+          "cig": "5475580F8B",
+          "cup": "C87H13001230004",
+          "importo_progetto": "110.000,00",
+          "oggetto_della_gara": "Manutenzione strada",
+          "area_di_intervento": "via",
+          "aggiudicatario": "SARACINO COSTRUZIONI srl",
+          "importo_agg.": "80.232,14",
+          "lat": "40.3375",
+          "lon": "18.17525"
+        }
+      ],
+      "tema_onto": [
+        "CPSV",
+        "CLV",
+        "POI"
+      ],
+      "tema_target": [
+        "CPSV"
+      ],
+      "confirmed_temi": [
+        "CPSV",
+        "CLV",
+        "POI"
+      ],
+      "validation": "ok",
+      "source": "manual_upload"
+    },
+    {
+      "seq": 289,
+      "id": "gare-appalti-comune-bologna",
+      "title": "Gare e appalti - Comune di Bologna",
+      "org": "Comune di Bologna",
+      "ente": "Comune di Bologna",
+      "portal": "https://opendata.comune.bologna.it",
+      "headers": [
+        "id",
+        "N.Pg atto autorizzativo",
+        "Anno Pg autorizzativo",
+        "Tipo gara",
+        "Titolo",
+        "Cig",
+        "Oggetto atto",
+        "Importo appalto (Euro)",
+        "Tipo appalto",
+        "Durata contratto",
+        "Utilizzo Mepa",
+        "Settore/Dipartimento",
+        "Responsabile del procedimento",
+        "Modalità di aggiudicazione",
+        "Data atto aggiudicazione",
+        "Aggiudicatario",
+        "Importo di aggiudicazione (Euro)"
+      ],
+      "sample_rows": [
+        {
+          "id": "1",
+          "Anno Pg autorizzativo": "2013",
+          "Tipo gara": "23-AFFIDAMENTO DIRETTO",
+          "Titolo": "AFFIDAMENTO FORNITURA CD/DVD SEZ. RAGAZZI SALA BORSA",
+          "Cig": "Z3B0A75DB8",
+          "Importo appalto (Euro)": "330.6",
+          "Tipo appalto": "Forniture",
+          "Settore/Dipartimento": "ISTITUZIONE BIBLIOTECHE",
+          "Data atto aggiudicazione": "2013-06-13",
+          "Importo di aggiudicazione (Euro)": "330.6"
+        },
+        {
+          "id": "3",
+          "Anno Pg autorizzativo": "2013",
+          "Tipo gara": "23-AFFIDAMENTO DIRETTO",
+          "Titolo": "AFFIDAMENTO FORNITURA LIBRI IN LINGUA RUSSA",
+          "Cig": "Z5A0A75F36",
+          "Importo appalto (Euro)": "900.0",
+          "Tipo appalto": "Forniture",
+          "Data atto aggiudicazione": "2013-06-13"
+        },
+        {
+          "id": "100",
+          "Anno Pg autorizzativo": "2015",
+          "Tipo gara": "01-PROCEDURA APERTA",
+          "Titolo": "SERVIZIO TRASPORTO SCOLASTICO",
+          "Cig": "A1B2C3D4E5",
+          "Importo appalto (Euro)": "450000.0",
+          "Tipo appalto": "Servizi",
+          "Data atto aggiudicazione": "2015-09-01"
+        }
+      ],
+      "tema_onto": [
+        "CPSV"
+      ],
+      "tema_target": [
+        "CPSV"
+      ],
+      "confirmed_temi": [
+        "CPSV"
+      ],
+      "validation": "ok",
+      "source": "manual_upload"
+    },
+    {
+      "seq": 290,
+      "id": "determine-provincia-pescara-2023",
+      "title": "Determine 2023 - Provincia di Pescara",
+      "org": "Provincia di Pescara",
+      "ente": "Provincia di Pescara",
+      "portal": "https://www.provincia.pescara.it/opendata",
+      "headers": [
+        "Num. Reg.",
+        "Data Atto",
+        "Registro",
+        "Num. Reg. Gen.",
+        "Data Esecutività",
+        "Anno Prop.",
+        "Numero Prop.",
+        "Oggetto",
+        "Mov. in Finanziaria",
+        "Settore",
+        "Ufficio",
+        "Trasparenza",
+        "Data Pubblicazione",
+        "Data Fine Pubblicazione"
+      ],
+      "sample_rows": [
+        {
+          "Num. Reg.": "1",
+          "Data Atto": "10/1/2023",
+          "Registro": "REGISTRO GENERALE DETERMINE",
+          "Num. Reg. Gen.": "1",
+          "Data Esecutività": "10/1/2023",
+          "Anno Prop.": "2023",
+          "Oggetto": "Polizia Provinciale - Proroga Autorizzazione Lavoro Agile",
+          "Mov. in Finanziaria": "Non Rilevante in Contabilità",
+          "Settore": "CORPO DI POLIZIA PROVINCIALE",
+          "Data Pubblicazione": "12/1/2023"
+        },
+        {
+          "Num. Reg.": "1",
+          "Data Atto": "11/1/2023",
+          "Registro": "REGISTRO GENERALE DETERMINE",
+          "Num. Reg. Gen.": "2",
+          "Oggetto": "RUOLI/NOTE DI DEBITO CPDEL E INADEL PER RECUPERO QUOTE",
+          "Mov. in Finanziaria": "Impegno e Liquidazione",
+          "Settore": "SETTORE III - RISORSE UMANE E PRESIDENZA"
+        },
+        {
+          "Num. Reg.": "2",
+          "Data Atto": "11/1/2023",
+          "Registro": "REGISTRO GENERALE DETERMINE",
+          "Num. Reg. Gen.": "3",
+          "Oggetto": "Congedo art. 42 D.lgs. 151/2001",
+          "Settore": "SETTORE III - RISORSE UMANE E PRESIDENZA",
+          "Ufficio": "SERVIZIO GESTIONE GIURIDICA DEL PERSONALE"
+        }
+      ],
+      "tema_onto": [
+        "CPSV"
+      ],
+      "tema_target": [
+        "CPSV"
+      ],
+      "confirmed_temi": [
+        "CPSV"
+      ],
+      "validation": "ok",
+      "source": "manual_upload"
+    },
+    {
+      "seq": 291,
+      "id": "89220107-73e2-4802-8419-4eac8743f2fc",
+      "title": "Atti amministrativi per tipo e mese - PA",
+      "org": "PA italiana",
+      "ente": "PA italiana",
+      "portal": "https://www.dati.gov.it/opendata",
+      "headers": [
+        "ANNO",
+        "MESE",
+        "TIPO ATTO",
+        "TOTALE ATTI",
+        "MEDIA GG APPROVAZIONE",
+        "TOTALE IMPEGNATO",
+        "TOTALE MANDATI"
+      ],
+      "sample_rows": [
+        {
+          "ANNO": "2020",
+          "MESE": "1",
+          "TIPO ATTO": "ATTI DI LIQUIDAZIONE",
+          "TOTALE ATTI": "43.00",
+          "TOTALE IMPEGNATO": "0.00",
+          "TOTALE MANDATI": "0.00"
+        },
+        {
+          "ANNO": "2020",
+          "MESE": "1",
+          "TIPO ATTO": "DELIBERA DI GIUNTA",
+          "TOTALE ATTI": "11.00",
+          "MEDIA GG APPROVAZIONE": "9.09",
+          "TOTALE IMPEGNATO": "0.00"
+        },
+        {
+          "ANNO": "2021",
+          "MESE": "3",
+          "TIPO ATTO": "DETERMINE",
+          "TOTALE ATTI": "28.00",
+          "MEDIA GG APPROVAZIONE": "5.2",
+          "TOTALE IMPEGNATO": "150000.00",
+          "TOTALE MANDATI": "120000.00"
+        }
+      ],
+      "tema_onto": [
+        "CPSV",
+        "QB"
+      ],
+      "tema_target": [
+        "CPSV"
+      ],
+      "confirmed_temi": [
+        "CPSV",
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "manual_upload"
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "generated": "2026-03-20",
-  "script_version": "v8",
-  "total": 242,
+  "script_version": "v9",
+  "total": 248,
   "false_positives_excluded": 0,
   "corpus": [
     {
@@ -20628,6 +20628,357 @@
           "classe": "EntryResidenti",
           "provincia_della_sede": "MILANO",
           "numero": "768847"
+        }
+      ]
+    },
+    {
+      "seq": 243,
+      "id": "c0000001-mibact-eventi-culturali",
+      "name": "mibact-eventi-culturali-mostre-concerti",
+      "title": "Eventi culturali MiC — mostre, concerti, spettacoli (42.892 eventi)",
+      "org": "ministero-cultura",
+      "ente": "Ministero della Cultura",
+      "categoria": "ministero",
+      "tema_dcat": [
+        "EDUC",
+        "TOUR",
+        "CULT"
+      ],
+      "tema_onto": [
+        "MUAPIT",
+        "Cultural-ON",
+        "TI",
+        "POI",
+        "CLV"
+      ],
+      "tema_target": [
+        "MUAPIT",
+        "Cultural-ON",
+        "TI",
+        "POI",
+        "CLV",
+        "l0",
+        "cis",
+        "pot"
+      ],
+      "score": 88,
+      "resource_id": "mibact-eventi-culturali",
+      "csv_url": "https://dati.cultura.gov.it/sparql",
+      "datastore": false,
+      "source": "sparql:http://dati.beniculturali.it/mibact/eventi",
+      "headers": [
+        "codice",
+        "nome",
+        "tipo",
+        "descrizione",
+        "luogo",
+        "comune",
+        "provincia",
+        "regione",
+        "lat",
+        "lon",
+        "data_inizio",
+        "data_fine",
+        "prezzo_intero",
+        "prezzo_ridotto",
+        "sito",
+        "email",
+        "depiction"
+      ],
+      "sample_rows": [
+        {
+          "codice": "32721",
+          "nome": "SPOLETO 1964. IL SETTIMO FESTIVAL DEI DUE MONDI",
+          "tipo": "Mostra",
+          "comune": "Spoleto",
+          "provincia": "Perugia",
+          "regione": "Umbria"
+        },
+        {
+          "codice": "32722",
+          "nome": "ARCHEOVIBO al Museo archeologico nazionale di Vibo Valentia",
+          "tipo": "Mostra",
+          "comune": "Vibo Valentia",
+          "provincia": "Vibo Valentia",
+          "regione": "Calabria"
+        }
+      ]
+    },
+    {
+      "seq": 244,
+      "id": "c0000002-iccd-fotografico-heritage",
+      "name": "iccd-patrimonio-fotografico-nazionale",
+      "title": "ICCD — Patrimonio fotografico nazionale (483.136 beni)",
+      "org": "ministero-cultura",
+      "ente": "Ministero della Cultura — ICCD",
+      "categoria": "ministero",
+      "tema_dcat": [
+        "EDUC",
+        "CULT"
+      ],
+      "tema_onto": [
+        "MUAPIT",
+        "Cultural-ON",
+        "arco"
+      ],
+      "tema_target": [
+        "MUAPIT",
+        "Cultural-ON",
+        "arco",
+        "l0",
+        "CLV"
+      ],
+      "score": 82,
+      "resource_id": "iccd-fotografico",
+      "csv_url": "https://dati.cultura.gov.it/sparql",
+      "datastore": false,
+      "source": "sparql:http://dati.beniculturali.it/iccd/fotografico",
+      "headers": [
+        "id",
+        "label",
+        "tipo_bene",
+        "autore",
+        "datazione",
+        "localizzazione",
+        "comune",
+        "provincia",
+        "regione",
+        "numero_catalogo",
+        "documentazione",
+        "depiction"
+      ],
+      "sample_rows": [
+        {
+          "tipo_bene": "PhotographicHeritage",
+          "comune": "Roma",
+          "regione": "Lazio",
+          "numero_catalogo": "483001"
+        },
+        {
+          "tipo_bene": "MovableCulturalProperty",
+          "comune": "Milano",
+          "regione": "Lombardia"
+        }
+      ]
+    },
+    {
+      "seq": 245,
+      "id": "c0000003-iccd-modi-beni-mobili",
+      "name": "iccd-modi-beni-mobili-catalogati",
+      "title": "ICCD MODI — Beni mobili catalogati (80.945 beni: dipinti, sculture, oggetti)",
+      "org": "ministero-cultura",
+      "ente": "Ministero della Cultura — ICCD",
+      "categoria": "ministero",
+      "tema_dcat": [
+        "EDUC",
+        "CULT"
+      ],
+      "tema_onto": [
+        "MUAPIT",
+        "Cultural-ON",
+        "arco",
+        "CLV"
+      ],
+      "tema_target": [
+        "MUAPIT",
+        "Cultural-ON",
+        "arco",
+        "CLV",
+        "l0"
+      ],
+      "score": 84,
+      "resource_id": "iccd-modi-beni-mobili",
+      "csv_url": "https://dati.cultura.gov.it/sparql",
+      "datastore": false,
+      "source": "sparql:http://dati.beniculturali.it/iccd/MODI",
+      "headers": [
+        "id",
+        "label",
+        "tipo_bene",
+        "categoria",
+        "autore",
+        "datazione",
+        "localizzazione",
+        "comune",
+        "provincia",
+        "regione",
+        "numero_inventario",
+        "conservazione",
+        "uso"
+      ],
+      "sample_rows": [
+        {
+          "tipo_bene": "CulturalProperty",
+          "categoria": "Dipinto",
+          "comune": "Firenze",
+          "regione": "Toscana"
+        },
+        {
+          "tipo_bene": "CulturalProperty",
+          "categoria": "Scultura",
+          "comune": "Roma",
+          "regione": "Lazio"
+        }
+      ]
+    },
+    {
+      "seq": 246,
+      "id": "c0000004-san-archivi-storici",
+      "name": "san-archivi-storici-italiani",
+      "title": "SAN — Sistema Archivistico Nazionale: archivi storici italiani",
+      "org": "ministero-cultura",
+      "ente": "Ministero della Cultura — DGA",
+      "categoria": "ministero",
+      "tema_dcat": [
+        "EDUC",
+        "GOVE",
+        "CULT"
+      ],
+      "tema_onto": [
+        "MUAPIT",
+        "CLV",
+        "COV-AP_IT"
+      ],
+      "tema_target": [
+        "MUAPIT",
+        "CLV",
+        "COV-AP_IT",
+        "l0",
+        "cis"
+      ],
+      "score": 78,
+      "resource_id": "san-archivi-storici",
+      "csv_url": "https://dati.cultura.gov.it/sparql",
+      "datastore": false,
+      "source": "sparql:http://dati.beniculturali.it/SAN",
+      "headers": [
+        "id",
+        "nome",
+        "tipo_archivio",
+        "indirizzo",
+        "comune",
+        "provincia",
+        "regione",
+        "lat",
+        "lon",
+        "telefono",
+        "email",
+        "sito"
+      ],
+      "sample_rows": [
+        {
+          "tipo_archivio": "Archivio di Stato",
+          "comune": "Firenze",
+          "provincia": "Firenze",
+          "regione": "Toscana"
+        },
+        {
+          "tipo_archivio": "Archivio Storico Comunale",
+          "comune": "Bologna",
+          "provincia": "Bologna",
+          "regione": "Emilia-Romagna"
+        }
+      ]
+    },
+    {
+      "seq": 247,
+      "id": "c0000005-sensori-velocita-veicoli-oraria",
+      "name": "sensori-velocita-media-oraria-veicoli",
+      "title": "Velocità media oraria veicoli — sensori traffico geolocalizzati",
+      "org": "pa-locale",
+      "ente": "Comune / Provincia (Ferrara / Emilia-Romagna)",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "TRAN",
+        "ENVI"
+      ],
+      "tema_onto": [
+        "IoT-AP_IT",
+        "QB",
+        "POI",
+        "TI"
+      ],
+      "tema_target": [
+        "IoT-AP_IT",
+        "QB",
+        "POI",
+        "TI",
+        "CLV",
+        "sosa",
+        "ssn",
+        "time"
+      ],
+      "score": 83,
+      "resource_id": "velocita-media-oraria-veicoli",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "FID",
+        "the_geom",
+        "ID",
+        "AVGSPEED",
+        "DALLE",
+        "ALLE"
+      ],
+      "sample_rows": [
+        {
+          "ID": "traffico_cofe_ricciarelli",
+          "the_geom": "POINT (44.8126613675336 11.6571422275405)",
+          "AVGSPEED": 50,
+          "DALLE": "2019/01/31 12:00:00.000",
+          "ALLE": "2019/01/31 12:59:59.999"
+        }
+      ]
+    },
+    {
+      "seq": 248,
+      "id": "c0000006-sensori-transiti-orari-veicoli",
+      "name": "sensori-numero-transiti-orari-veicoli",
+      "title": "Numero di transiti orari — sensori traffico geolocalizzati",
+      "org": "pa-locale",
+      "ente": "Comune / Provincia (Ferrara / Emilia-Romagna)",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "TRAN",
+        "ENVI"
+      ],
+      "tema_onto": [
+        "IoT-AP_IT",
+        "QB",
+        "POI",
+        "TI"
+      ],
+      "tema_target": [
+        "IoT-AP_IT",
+        "QB",
+        "POI",
+        "TI",
+        "CLV",
+        "sosa",
+        "ssn",
+        "time"
+      ],
+      "score": 83,
+      "resource_id": "numero-transiti-orari-veicoli",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "FID",
+        "the_geom",
+        "TRANSITI",
+        "ID",
+        "DALLE",
+        "ALLE"
+      ],
+      "sample_rows": [
+        {
+          "ID": "traffico_cofe_ravenna_sud",
+          "the_geom": "POINT (44.8152806965666 11.6307134860436)",
+          "TRANSITI": 75,
+          "DALLE": "2019/01/31 01:00:00.000",
+          "ALLE": "2019/01/31 01:59:59.999"
         }
       ]
     }

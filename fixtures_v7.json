@@ -1,7 +1,7 @@
 {
   "generated": "2026-03-20",
   "script_version": "v10",
-  "total": 262,
+  "total": 269,
   "false_positives_excluded": 0,
   "corpus": [
     {
@@ -21900,6 +21900,394 @@
           "regione": "Lazio",
           "importo_finanziamento": "500000.0",
           "stato_candidatura": "F"
+        }
+      ]
+    },
+    {
+      "seq": 263,
+      "id": "h0001-extcon-pagamenti-bolzano",
+      "name": "extcon-pagamenti-contratti-pa-bolzano",
+      "title": "Pagamenti e contratti PA — Bolzano/Alto Adige (43.315 atti, bilingue)",
+      "org": "provincia-bolzano",
+      "ente": "Provincia Autonoma di Bolzano",
+      "categoria": "regione",
+      "tema_dcat": [
+        "GOVE",
+        "ECON"
+      ],
+      "tema_onto": [
+        "CPV",
+        "CPSV",
+        "RO-AP_IT",
+        "QB"
+      ],
+      "tema_target": [
+        "CPV",
+        "CPSV",
+        "RO-AP_IT",
+        "QB",
+        "l0",
+        "ADMS"
+      ],
+      "score": 82,
+      "resource_id": "extcon-pagamenti-bolzano-2016",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "IDREF",
+        "ORGA_DE",
+        "ORGA_IT",
+        "DOCTYPE_DE",
+        "DOCTYPE_IT",
+        "DOCDATE",
+        "DOCNR",
+        "ACTION_DE",
+        "ACTION_IT",
+        "CONTRACTOR_FIRSTNAME",
+        "CONTRACTOR_NAME",
+        "CONTRACTOR_IVA",
+        "AMOUNT"
+      ],
+      "sample_rows": [
+        {
+          "IDREF": "O31",
+          "ORGA_IT": "Agricoltura (Rip. 31)",
+          "DOCTYPE_IT": "NULLA OSTA",
+          "DOCDATE": "27.01.2016",
+          "DOCNR": "453",
+          "CONTRACTOR_NAME": "MUSTER GMBH",
+          "CONTRACTOR_IVA": "12345678901",
+          "AMOUNT": "5000.00"
+        }
+      ]
+    },
+    {
+      "seq": 264,
+      "id": "h0002-651-beneficiari-spesa-liguria",
+      "name": "beneficiari-spesa-pubblica-regionale-liguria",
+      "title": "Beneficiari spesa pubblica regionale — Regione Liguria (43.417 atti)",
+      "org": "regione-liguria",
+      "ente": "Regione Liguria",
+      "categoria": "regione",
+      "tema_dcat": [
+        "GOVE",
+        "ECON"
+      ],
+      "tema_onto": [
+        "CPSV",
+        "CPV",
+        "PublicOrganization",
+        "QB"
+      ],
+      "tema_target": [
+        "CPSV",
+        "CPV",
+        "PublicOrganization",
+        "QB",
+        "l0",
+        "RO-AP_IT"
+      ],
+      "score": 84,
+      "resource_id": "beneficiari-spesa-liguria",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "N.",
+        "Anno Esercizio",
+        "Nominativo Beneficiario",
+        "Cod.Fiscale/P.IVA Beneficiario",
+        "Importo impegnato",
+        "Tipologia di beneficiario",
+        "Norma o titolo di attribuzione",
+        "Struttura Regionale Competente"
+      ],
+      "sample_rows": [
+        {
+          "N.": "1",
+          "Anno Esercizio": "2020",
+          "Nominativo Beneficiario": "BDO ITALIA S.P.A.",
+          "Cod.Fiscale/P.IVA Beneficiario": "07722780967",
+          "Importo impegnato": "185958.14",
+          "Tipologia di beneficiario": "Titolari di contratti di fornitura beni e servizi",
+          "Norma o titolo di attribuzione": "dgr 980/2017",
+          "Struttura Regionale Competente": "Sistema regionale della formazione - Settore"
+        }
+      ]
+    },
+    {
+      "seq": 265,
+      "id": "h0003-incarichi-collaborazione",
+      "name": "incarichi-collaborazione-pa-ragione-sociale",
+      "title": "Incarichi di collaborazione PA — ragione sociale, CF, importo, durata",
+      "org": "comune",
+      "ente": "Comune (generico)",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "GOVE"
+      ],
+      "tema_onto": [
+        "RO-AP_IT",
+        "CPVAPIT",
+        "CPSV",
+        "QB"
+      ],
+      "tema_target": [
+        "RO-AP_IT",
+        "CPVAPIT",
+        "CPSV",
+        "QB",
+        "l0",
+        "COV-AP_IT"
+      ],
+      "score": 83,
+      "resource_id": "incarichi-collaborazione-pa",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "id",
+        "N. PG Atto",
+        "Anno PG Atto",
+        "Oggetto",
+        "Classificazione incarichi",
+        "Descrizione classificazione incarichi",
+        "Norma o titolo a base dell'attribuzione",
+        "Importo (Euro)",
+        "Settore/Dipartimento/Area",
+        "Servizio",
+        "Uo",
+        "Dirigente",
+        "Responsabile",
+        "Ragione sociale",
+        "Partita iva",
+        "Codice fiscale",
+        "Durata dal",
+        "Durata al",
+        "Curriculum: Link"
+      ],
+      "sample_rows": [
+        {
+          "id": "7",
+          "N. PG Atto": "7494",
+          "Anno PG Atto": "2019",
+          "Oggetto": "CONFERIMENTO INCARICO LEGALE",
+          "Classificazione incarichi": "X2",
+          "Descrizione classificazione incarichi": "incarichi di difesa in giudizio e/o domiciliazione",
+          "Importo (Euro)": "467.55",
+          "Ragione sociale": "AVV. MARIO ROSSI",
+          "Codice fiscale": "RSSMRA70A01H501Z"
+        }
+      ]
+    },
+    {
+      "seq": 266,
+      "id": "h0004-avviati-lavoro-milano-metro",
+      "name": "avviamenti-lavoro-comune-mese-citta-metropolitana-milano",
+      "title": "Avviati al lavoro per comune e mese — Città Metropolitana di Milano",
+      "org": "citta-metropolitana-milano",
+      "ente": "Città Metropolitana di Milano",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "SOCI",
+        "ECON"
+      ],
+      "tema_onto": [
+        "QB",
+        "CLV",
+        "TI"
+      ],
+      "tema_target": [
+        "QB",
+        "CLV",
+        "TI",
+        "l0",
+        "CPV"
+      ],
+      "score": 78,
+      "resource_id": "avviati-lavoro-citta-metropolitana-milano",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "Comune",
+        "Anno",
+        "Mese",
+        "TotaleAvviati"
+      ],
+      "sample_rows": [
+        {
+          "Comune": "MESERO",
+          "Anno": "2017",
+          "Mese": "2",
+          "TotaleAvviati": "27"
+        },
+        {
+          "Comune": "MILANO",
+          "Anno": "2020",
+          "Mese": "1",
+          "TotaleAvviati": "4821"
+        }
+      ]
+    },
+    {
+      "seq": 267,
+      "id": "h0005-popolazione-classi-eta-torino",
+      "name": "distribuzione-popolazione-classi-eta-comuni-torino-metropolitana",
+      "title": "Distribuzione popolazione per classi d'età — comuni area metropolitana Torino",
+      "org": "citta-metropolitana-torino",
+      "ente": "Città Metropolitana di Torino / MetroTO",
+      "categoria": "regione",
+      "tema_dcat": [
+        "DEMO",
+        "SOCI"
+      ],
+      "tema_onto": [
+        "QB",
+        "CLV",
+        "CPV"
+      ],
+      "tema_target": [
+        "QB",
+        "CLV",
+        "CPV",
+        "l0",
+        "ADMS"
+      ],
+      "score": 86,
+      "resource_id": "distribuzione-popolazione-classi-eta-torino",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "anno",
+        "codice_istat_comune",
+        "nome_comune",
+        "codice_zona_omogenea",
+        "nome_zona_omogenea",
+        "codice_unione_comuni",
+        "nome_unione_comuni",
+        "codice_unione_montana_comuni",
+        "nome_unione_montana_comuni",
+        "is_fua",
+        "is_1a_cintura",
+        "popolazione_totale_0_14",
+        "popolazione_totale_15_64",
+        "popolazione_totale_65_100",
+        "popolazione_totale"
+      ],
+      "sample_rows": [
+        {
+          "anno": "2023",
+          "codice_istat_comune": "1028",
+          "nome_comune": "BORGARO TORINESE",
+          "codice_zona_omogenea": "4",
+          "nome_zona_omogenea": "Zona 04 Area Metropolitana Torino NORD",
+          "popolazione_totale_0_14": "2156",
+          "popolazione_totale_15_64": "9874",
+          "popolazione_totale_65_100": "3421",
+          "popolazione_totale": "15451"
+        }
+      ]
+    },
+    {
+      "seq": 268,
+      "id": "h0006-redditi-irpef-classi",
+      "name": "redditi-irpef-classi-reddito-serie-storica",
+      "title": "Redditi IRPEF per classi di reddito — serie storica 2007-2011",
+      "org": "comune",
+      "ente": "Comune (generico) / MEF",
+      "categoria": "comune_medio",
+      "tema_dcat": [
+        "ECON",
+        "SOCI"
+      ],
+      "tema_onto": [
+        "QB",
+        "CPV"
+      ],
+      "tema_target": [
+        "QB",
+        "CPV",
+        "l0",
+        "ADMS"
+      ],
+      "score": 75,
+      "resource_id": "redditi-irpef-classi-reddito-2007-2011",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "CLASSI_DI_REDDITO",
+        "FREQUENZA_2007",
+        "AMMONTARE_2007",
+        "FREQUENZA_2008",
+        "AMMONTARE_2008",
+        "FREQUENZA_2009",
+        "AMMONTARE_2009",
+        "FREQUENZA_2010",
+        "AMMONTARE_2010",
+        "FREQUENZA_2011",
+        "AMMONTARE_2011"
+      ],
+      "sample_rows": [
+        {
+          "CLASSI_DI_REDDITO": "fino a 1.000",
+          "FREQUENZA_2011": "622",
+          "AMMONTARE_2011": "297677",
+          "FREQUENZA_2009": "685",
+          "AMMONTARE_2009": "331691"
+        }
+      ]
+    },
+    {
+      "seq": 269,
+      "id": "h0007-trend-reddito-comune-torino",
+      "name": "trend-reddito-imponibile-contribuenti-comuni-torino",
+      "title": "Trend reddito imponibile e contribuenti per comune — area metropolitana Torino",
+      "org": "citta-metropolitana-torino",
+      "ente": "Città Metropolitana di Torino / MetroTO",
+      "categoria": "regione",
+      "tema_dcat": [
+        "ECON",
+        "SOCI"
+      ],
+      "tema_onto": [
+        "QB",
+        "CLV",
+        "CPV"
+      ],
+      "tema_target": [
+        "QB",
+        "CLV",
+        "CPV",
+        "l0",
+        "TI"
+      ],
+      "score": 82,
+      "resource_id": "trend-reddito-contribuenti-comuni-torino",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "anno",
+        "codice_istat_comune",
+        "nome_comune",
+        "zona_omogenea",
+        "centro_per_impiego",
+        "reddito_imponibile",
+        "numero_contribuenti"
+      ],
+      "sample_rows": [
+        {
+          "anno": "2020",
+          "codice_istat_comune": "1019",
+          "nome_comune": "BALME",
+          "zona_omogenea": "ZONA 07 CIRIACESE - VALLI DI LANZO",
+          "centro_per_impiego": "CIRIE'",
+          "reddito_imponibile": "1098864",
+          "numero_contribuenti": "80"
         }
       ]
     }

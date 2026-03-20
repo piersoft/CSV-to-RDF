@@ -1,7 +1,7 @@
 {
   "generated": "2026-03-20",
-  "script_version": "v9",
-  "total": 252,
+  "script_version": "v10",
+  "total": 258,
   "false_positives_excluded": 0,
   "corpus": [
     {
@@ -21238,6 +21238,390 @@
           "Data_rilevazione": "21/02/2025 04:00",
           "Valore_misura": "32,50",
           "Unita_misurazione": "%"
+        }
+      ]
+    },
+    {
+      "seq": 253,
+      "id": "f0000001-gtfs-trentino-trasporto",
+      "name": "gtfs-trasporti-pubblici-trentino",
+      "title": "Trasporti pubblici del Trentino — formato GTFS (fermate, linee, tariffe)",
+      "org": "provincia-autonoma-trento",
+      "ente": "Provincia Autonoma di Trento",
+      "categoria": "regione",
+      "tema_dcat": [
+        "TRAN"
+      ],
+      "tema_onto": [
+        "GTFS",
+        "POI",
+        "CLV",
+        "TI"
+      ],
+      "tema_target": [
+        "GTFS",
+        "POI",
+        "CLV",
+        "TI",
+        "l0",
+        "schema"
+      ],
+      "score": 88,
+      "resource_id": "trasporti-pubblici-trentino-gtfs",
+      "csv_url": "https://dati.trentino.it/dataset/6d5c2000-972e-4c21-aef6-fdbba94418a8",
+      "datastore": false,
+      "source": "url_gtfs",
+      "headers": [
+        "stop_id",
+        "stop_name",
+        "stop_lat",
+        "stop_lon",
+        "route_id",
+        "route_short_name",
+        "route_long_name",
+        "route_type",
+        "trip_id",
+        "arrival_time",
+        "departure_time",
+        "stop_sequence",
+        "fare_id",
+        "price",
+        "currency_type",
+        "payment_method"
+      ],
+      "sample_rows": [
+        {
+          "stop_id": "T:001",
+          "stop_name": "Trento Stazione",
+          "stop_lat": "46.0736",
+          "stop_lon": "11.1197",
+          "route_type": "3"
+        },
+        {
+          "route_id": "R:01",
+          "route_short_name": "1",
+          "route_long_name": "Trento-Rovereto",
+          "route_type": "3",
+          "fare_id": "urbano",
+          "price": "1.50",
+          "currency_type": "EUR"
+        }
+      ]
+    },
+    {
+      "seq": 254,
+      "id": "f0000002-gtfs-calabria-tpl",
+      "name": "gtfs-percorsi-linee-trasporto-pubblico-calabria",
+      "title": "Percorsi linee trasporto pubblico formato GTFS — Regione Calabria",
+      "org": "regione-calabria",
+      "ente": "Regione Calabria",
+      "categoria": "regione",
+      "tema_dcat": [
+        "TRAN"
+      ],
+      "tema_onto": [
+        "GTFS",
+        "POI",
+        "CLV",
+        "TI"
+      ],
+      "tema_target": [
+        "GTFS",
+        "POI",
+        "CLV",
+        "TI",
+        "l0"
+      ],
+      "score": 85,
+      "resource_id": "percorsi-linee-trasporto-pubblico-gtfs-calabria",
+      "csv_url": "https://dati.gov.it/opendata/dataset/percorsi-linee-trasporto-pubblico",
+      "datastore": false,
+      "source": "url_gtfs",
+      "headers": [
+        "stop_id",
+        "stop_name",
+        "stop_lat",
+        "stop_lon",
+        "route_id",
+        "route_short_name",
+        "route_long_name",
+        "trip_id",
+        "service_id",
+        "arrival_time",
+        "departure_time",
+        "stop_sequence",
+        "shape_id",
+        "shape_pt_lat",
+        "shape_pt_lon"
+      ],
+      "sample_rows": [
+        {
+          "stop_id": "CAL:001",
+          "stop_name": "Catanzaro Centrale",
+          "stop_lat": "38.9098",
+          "stop_lon": "16.5879",
+          "route_type": "3"
+        },
+        {
+          "route_id": "CAL:R01",
+          "route_short_name": "EX01",
+          "route_long_name": "Catanzaro-Lamezia Terme",
+          "route_type": "3"
+        }
+      ]
+    },
+    {
+      "seq": 255,
+      "id": "f0000003-strutture-ricettive-umbria",
+      "name": "strutture-ricettive-umbria-tipologia-categoria",
+      "title": "Strutture ricettive — Regione Umbria (alberghi, B&B, agriturismi, campeggi)",
+      "org": "regione-umbria",
+      "ente": "Regione Umbria",
+      "categoria": "regione",
+      "tema_dcat": [
+        "TOUR",
+        "ECON"
+      ],
+      "tema_onto": [
+        "ACCO",
+        "POI",
+        "CLV"
+      ],
+      "tema_target": [
+        "ACCO",
+        "POI",
+        "CLV",
+        "l0",
+        "schema"
+      ],
+      "score": 87,
+      "resource_id": "strutture-ricettive-umbria",
+      "csv_url": "https://dati.regione.umbria.it/dataset/fe851d0b-e735-482b-9828-de81c9818b4b/resource/062d7bd6-f9c6-424e-9003-0b7cb3744cab/download/dati_strutture_ricettive.csv",
+      "datastore": false,
+      "source": "url_csv",
+      "headers": [
+        "ID",
+        "CIR",
+        "APT",
+        "COMUNE_CODICE",
+        "COMUNE",
+        "DENOMINAZIONE",
+        "TIPOLOGIA",
+        "CATEGORIA",
+        "INDIRIZZO",
+        "FRAZIONE",
+        "CAP",
+        "PROV",
+        "TELEFONO",
+        "FAX",
+        "WEB",
+        "EMAIL",
+        "COORDX",
+        "COORDY",
+        "TOTALE_UNITA",
+        "TOTALE_LETTI",
+        "TOTALE_BAGNI"
+      ],
+      "sample_rows": [
+        {
+          "ID": "4783",
+          "COMUNE": "ATTIGLIANO",
+          "DENOMINAZIONE": "HOTEL UMBRIA",
+          "TIPOLOGIA": "Albergo",
+          "CATEGORIA": "3 stelle",
+          "INDIRIZZO": "Vocabolo Pantanicci snc",
+          "CAP": "05012",
+          "PROV": "TR",
+          "TOTALE_LETTI": "60",
+          "COORDX": "12.4",
+          "COORDY": "42.5"
+        }
+      ]
+    },
+    {
+      "seq": 256,
+      "id": "f0000004-strutture-ricettive-monza",
+      "name": "strutture-ricettive-monza-brianza-lombardia",
+      "title": "Strutture ricettive — Provincia Monza Brianza (Regione Lombardia)",
+      "org": "regione-lombardia",
+      "ente": "Regione Lombardia",
+      "categoria": "regione",
+      "tema_dcat": [
+        "TOUR",
+        "ECON"
+      ],
+      "tema_onto": [
+        "ACCO",
+        "POI",
+        "CLV"
+      ],
+      "tema_target": [
+        "ACCO",
+        "POI",
+        "CLV",
+        "l0",
+        "schema"
+      ],
+      "score": 85,
+      "resource_id": "provincia-monza-brianza-strutture-ricettive",
+      "csv_url": "https://www.dati.lombardia.it/api/views/d8mp-3s3s/rows.csv?accessType=DOWNLOAD",
+      "datastore": false,
+      "source": "url_csv",
+      "headers": [
+        "COMUNE",
+        "DENOMINAZIONE STRUTTURA",
+        "CATEGORIA",
+        "CLASSIFICAZIONE",
+        "INDIRIZZO",
+        "CAP",
+        "FRAZIONE",
+        "LOCALITA",
+        "EMAIL",
+        "TEL",
+        "FAX",
+        "WEB",
+        "CAMERE",
+        "SUITE",
+        "LETTI",
+        "BAGNI",
+        "PRIMA COLAZIONE",
+        "ATTREZZATURE",
+        "SPORT",
+        "CARTE_DI_CREDITO",
+        "LINGUE"
+      ],
+      "sample_rows": [
+        {
+          "COMUNE": "MONZA",
+          "DENOMINAZIONE STRUTTURA": "B&B VILLA VALENTINA",
+          "CATEGORIA": "Alloggi privati in affitto",
+          "CLASSIFICAZIONE": "Bed & Breakfast",
+          "INDIRIZZO": "Via Luigi Casanova 31",
+          "CAP": "20900",
+          "LETTI": "4",
+          "CAMERE": "2"
+        }
+      ]
+    },
+    {
+      "seq": 257,
+      "id": "f0000005-rete-monitoraggio-aria-lazio",
+      "name": "rete-monitoraggio-qualita-aria-lazio-arpa",
+      "title": "Rete monitoraggio qualità dell'aria — ARPA Lazio (stazioni fisse PM10, NO2, O3)",
+      "org": "regione-lazio",
+      "ente": "Regione Lazio / ARPA Lazio",
+      "categoria": "regione",
+      "tema_dcat": [
+        "ENVI"
+      ],
+      "tema_onto": [
+        "IoT-AP_IT",
+        "QB",
+        "POI",
+        "CLV"
+      ],
+      "tema_target": [
+        "IoT-AP_IT",
+        "QB",
+        "POI",
+        "CLV",
+        "sosa",
+        "ssn",
+        "l0"
+      ],
+      "score": 85,
+      "resource_id": "rete-monitoraggio-qualita-aria-lazio",
+      "csv_url": "https://dati.lazio.it/catalog/it/dataset/f50934ce-3e66-4e62-907a-f84a827fd5c2/resource/0c9d32b8-06ed-4bb0-8727-9954c6d703f2/download/arpaaria2023.csv",
+      "datastore": true,
+      "source": "url_csv",
+      "headers": [
+        "stazione",
+        "comune",
+        "provincia",
+        "inquinante",
+        "unita_misura",
+        "valore",
+        "data",
+        "lat",
+        "lon",
+        "tipo_stazione",
+        "superamenti"
+      ],
+      "sample_rows": [
+        {
+          "stazione": "Roma-Prenestina",
+          "comune": "Roma",
+          "provincia": "RM",
+          "inquinante": "PM10",
+          "unita_misura": "µg/m³",
+          "valore": "28",
+          "data": "2023-01-01",
+          "tipo_stazione": "traffico"
+        },
+        {
+          "stazione": "Viterbo-Grotte Santo Stefano",
+          "comune": "Viterbo",
+          "provincia": "VT",
+          "inquinante": "NO2",
+          "unita_misura": "µg/m³",
+          "valore": "15",
+          "data": "2023-01-01"
+        }
+      ]
+    },
+    {
+      "seq": 258,
+      "id": "f0000006-edifici-scolastici-firenze",
+      "name": "anagrafe-strutture-edilizie-scuole-secondarie-firenze",
+      "title": "Anagrafe strutture edilizie scuole secondarie — Città Metropolitana di Firenze",
+      "org": "regione-toscana",
+      "ente": "Regione Toscana / Città Metropolitana di Firenze",
+      "categoria": "regione",
+      "tema_dcat": [
+        "EDUC"
+      ],
+      "tema_onto": [
+        "SMAPIT",
+        "CLV",
+        "POI",
+        "QB"
+      ],
+      "tema_target": [
+        "SMAPIT",
+        "CLV",
+        "POI",
+        "QB",
+        "l0"
+      ],
+      "score": 80,
+      "resource_id": "anagrafe-strutture-edilizie-scuole-firenze",
+      "csv_url": "https://dati.gov.it/opendata/dataset/anagrafe-delle-strutture-edilizie-delle-scuole-secondarie-superiori-citta-metropolitana-di-fire",
+      "datastore": false,
+      "source": "url_ckan",
+      "headers": [
+        "codice_scuola",
+        "denominazione",
+        "indirizzo",
+        "comune",
+        "cap",
+        "provincia",
+        "lat",
+        "lon",
+        "anno_costruzione",
+        "superficie_mq",
+        "piano_terra",
+        "piani_totali",
+        "tipo_struttura",
+        "proprietà",
+        "gestore"
+      ],
+      "sample_rows": [
+        {
+          "denominazione": "Liceo Scientifico Leonardo da Vinci",
+          "comune": "Firenze",
+          "provincia": "FI",
+          "tipo_struttura": "Edificio scolastico",
+          "proprietà": "Pubblica"
         }
       ]
     }

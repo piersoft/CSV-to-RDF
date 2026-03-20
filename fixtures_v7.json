@@ -1,7 +1,7 @@
 {
   "generated": "2026-03-20",
   "script_version": "v10",
-  "total": 258,
+  "total": 262,
   "false_positives_excluded": 0,
   "corpus": [
     {
@@ -21622,6 +21622,284 @@
           "provincia": "FI",
           "tipo_struttura": "Edificio scolastico",
           "proprietà": "Pubblica"
+        }
+      ]
+    },
+    {
+      "seq": 259,
+      "id": "g0000001-indicepa-amministrazioni",
+      "name": "indicepa-elenco-amministrazioni-pubbliche",
+      "title": "IPA — Elenco amministrazioni pubbliche italiane (23.677 enti)",
+      "org": "agid",
+      "ente": "AgID — Agenzia per l'Italia Digitale",
+      "categoria": "autorita_nazionale",
+      "tema_dcat": [
+        "GOVE"
+      ],
+      "tema_onto": [
+        "COV-AP_IT",
+        "PublicOrganization",
+        "CLV",
+        "SM"
+      ],
+      "tema_target": [
+        "COV-AP_IT",
+        "PublicOrganization",
+        "CLV",
+        "SM",
+        "l0",
+        "foaf",
+        "org"
+      ],
+      "score": 92,
+      "resource_id": "indicepa-amministrazioni",
+      "csv_url": "https://indicepa.gov.it/ipa-dati/dataset/502ff370-1b2c-4310-94c7-f39ceb7500e3/resource/3ed63523-ff9c-41f6-a6fe-980f3d9e501f/download/amministrazioni.txt",
+      "datastore": false,
+      "source": "url_txt",
+      "headers": [
+        "cod_amm",
+        "des_amm",
+        "Comune",
+        "Cap",
+        "Provincia",
+        "Regione",
+        "sito_istituzionale",
+        "Indirizzo",
+        "tipologia_istat",
+        "tipologia_amm",
+        "acronimo",
+        "cf",
+        "mail1",
+        "tipo_mail1",
+        "mail2",
+        "tipo_mail2",
+        "url_facebook",
+        "url_twitter",
+        "url_youtube",
+        "url_linkedin",
+        "nome_resp",
+        "cogn_resp",
+        "titolo_resp"
+      ],
+      "sample_rows": [
+        {
+          "cod_amm": "c_a662",
+          "des_amm": "Comune di Roma",
+          "Comune": "Roma",
+          "Provincia": "RM",
+          "Regione": "Lazio",
+          "tipologia_istat": "Comuni e loro Consorzi",
+          "tipologia_amm": "Comune",
+          "cf": "02438750586",
+          "sito_istituzionale": "https://www.comune.roma.it"
+        },
+        {
+          "cod_amm": "asl_rm1",
+          "des_amm": "ASL Roma 1",
+          "Comune": "Roma",
+          "Provincia": "RM",
+          "Regione": "Lazio",
+          "tipologia_istat": "Aziende Sanitarie Locali"
+        }
+      ]
+    },
+    {
+      "seq": 260,
+      "id": "g0000002-elenco-strutture-sanitarie-pubbliche",
+      "name": "elenco-strutture-sanitarie-pubbliche-asl",
+      "title": "Elenco strutture sanitarie pubbliche — ASL e presidi ospedalieri",
+      "org": "ministero-salute",
+      "ente": "Ministero della Salute / Regioni",
+      "categoria": "ministero",
+      "tema_dcat": [
+        "HEAL",
+        "GOVE"
+      ],
+      "tema_onto": [
+        "PublicOrganization",
+        "CLV",
+        "POI",
+        "SM"
+      ],
+      "tema_target": [
+        "PublicOrganization",
+        "CLV",
+        "POI",
+        "SM",
+        "l0",
+        "org"
+      ],
+      "score": 80,
+      "resource_id": "elenco-strutture-sanitarie-pubbliche",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "CodTS",
+        "Denominazione",
+        "Indirizzo",
+        "Località"
+      ],
+      "sample_rows": [
+        {
+          "CodTS": "999101",
+          "Denominazione": "ASL 1 VENOSA",
+          "Indirizzo": "VIA ROMA 187",
+          "Località": "VENOSA (PZ)"
+        },
+        {
+          "CodTS": "999102",
+          "Denominazione": "ASL NAPOLI 1 CENTRO",
+          "Indirizzo": "VIA COMUNALE DEL PRINCIPE",
+          "Località": "NAPOLI (NA)"
+        }
+      ]
+    },
+    {
+      "seq": 261,
+      "id": "g0000003-comuni-codici-istat-nuts",
+      "name": "comuni-italiani-codici-istat-catastale-nuts",
+      "title": "Comuni italiani — codici ISTAT, codice catastale, NUTS e province (Umbria/ISTAT)",
+      "org": "istituto-nazionale-di-statistica-istat",
+      "ente": "ISTAT — Istituto Nazionale di Statistica",
+      "categoria": "autorita_nazionale",
+      "tema_dcat": [
+        "GOVE",
+        "REGI"
+      ],
+      "tema_onto": [
+        "ADMS",
+        "CLV",
+        "skos",
+        "QB"
+      ],
+      "tema_target": [
+        "ADMS",
+        "CLV",
+        "skos",
+        "QB",
+        "l0",
+        "dct"
+      ],
+      "score": 88,
+      "resource_id": "comuni-codici-istat-catastale-nuts",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "Codice Regione",
+        "Codice Comune formato alfanumerico",
+        "Codice Comune formato numerico",
+        "Denominazione (Italiana e straniera)",
+        "Denominazione in italiano",
+        "Denominazione altra lingua",
+        "Codice Ripartizione Geografica",
+        "Ripartizione geografica",
+        "Denominazione Regione",
+        "Tipologia di Unità territoriale sovracomunale",
+        "Flag Comune capoluogo di Provincia",
+        "Sigla automobilistica",
+        "Codice Catastale del Comune",
+        "Codice NUTS1 2021",
+        "Codice NUTS2 2021",
+        "Codice NUTS3 2021",
+        "Codice NUTS1 2024"
+      ],
+      "sample_rows": [
+        {
+          "Codice Comune formato alfanumerico": "54001",
+          "Denominazione in italiano": "Assisi",
+          "Denominazione Regione": "Umbria",
+          "Sigla automobilistica": "PG",
+          "Codice Catastale del Comune": "A475",
+          "Codice NUTS2 2021": "ITI2",
+          "Codice NUTS3 2021": "ITI21"
+        },
+        {
+          "Codice Comune formato alfanumerico": "55004",
+          "Denominazione in italiano": "Terni",
+          "Denominazione Regione": "Umbria",
+          "Sigla automobilistica": "TR",
+          "Codice Catastale del Comune": "L117",
+          "Codice NUTS3 2021": "ITI22"
+        }
+      ]
+    },
+    {
+      "seq": 262,
+      "id": "g0000004-pnrr-padigitale2026-candidature",
+      "name": "pnrr-padigitale2026-candidature-finanziate",
+      "title": "PA Digitale 2026 — candidature finanziate altri enti (3.055 enti PNRR)",
+      "org": "dipartimento-trasformazione-digitale",
+      "ente": "Dipartimento per la Trasformazione Digitale — Presidenza del Consiglio",
+      "categoria": "ministero",
+      "tema_dcat": [
+        "GOVE",
+        "ECON"
+      ],
+      "tema_onto": [
+        "COV-AP_IT",
+        "CPSV",
+        "QB",
+        "CLV"
+      ],
+      "tema_target": [
+        "COV-AP_IT",
+        "CPSV",
+        "QB",
+        "CLV",
+        "l0",
+        "PublicOrganization",
+        "ADMS"
+      ],
+      "score": 86,
+      "resource_id": "padigitale2026-candidature-finanziate",
+      "csv_url": "https://raw.githubusercontent.com/teamdigitale/padigitale2026-opendata/main/data/candidature_altrienti_finanziate.csv",
+      "datastore": false,
+      "source": "url_csv",
+      "headers": [
+        "codice_ipa",
+        "ente",
+        "tipologia_ente",
+        "comune",
+        "cod_comune",
+        "provincia",
+        "cod_provincia",
+        "regione",
+        "cod_regione",
+        "importo_finanziamento",
+        "avviso",
+        "data_invio_candidatura",
+        "data_finanziamento",
+        "codice_cup",
+        "numero_finestra_temporale",
+        "numero_di_protocollo",
+        "decreto_finanziamento",
+        "stato_candidatura",
+        "data_stato_candidatura"
+      ],
+      "sample_rows": [
+        {
+          "codice_ipa": "iacpcac",
+          "ente": "Istituto Autonomo Case Popolare Comprensori di Acireale",
+          "tipologia_ente": "Altri Enti",
+          "comune": "Acireale",
+          "provincia": "CT",
+          "regione": "Sicilia",
+          "importo_finanziamento": "14000.0",
+          "avviso": "1.4.4 Adozione SPID CIE",
+          "stato_candidatura": "E",
+          "codice_cup": "C41F22001750006"
+        },
+        {
+          "codice_ipa": "c_a662",
+          "ente": "Comune di Roma",
+          "tipologia_ente": "Comune",
+          "comune": "Roma",
+          "provincia": "RM",
+          "regione": "Lazio",
+          "importo_finanziamento": "500000.0",
+          "stato_candidatura": "F"
         }
       ]
     }

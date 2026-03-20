@@ -1,7 +1,7 @@
 {
   "generated": "2026-03-19",
-  "script_version": "corpus_v8_patch",
-  "total": 176,
+  "script_version": "corpus_v8b_patch",
+  "total": 191,
   "false_positives_excluded": 0,
   "corpus": [
     {
@@ -16898,6 +16898,763 @@
           "Indice": "3",
           "Anno": "2016",
           "Popolazione residente": "3120"
+        }
+      ],
+      "tema_onto": [
+        "QB"
+      ],
+      "tema_target": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_maggioli"
+    },
+    {
+      "seq": 251,
+      "id": "a5c56605-51d0-401d-9184-12014b0170a4",
+      "title": "Nascite dei residenti per quartiere - Comune di Milano",
+      "org": "Comune di Milano",
+      "ente": "Comune di Milano",
+      "portal": "https://dati.comune.milano.it",
+      "headers": [
+        "Anno_evento",
+        "Quartiere",
+        "Genere",
+        "Cittadinanza_madre2",
+        "Cittadinanza_padre2",
+        "NumerositÃ"
+      ],
+      "sample_rows": [
+        {
+          "Anno_evento": 2021,
+          "Quartiere": "Adriano",
+          "Genere": "Femmine",
+          "Cittadinanza_madre2": "Italiana",
+          "Cittadinanza_padre2": "Italiana",
+          "NumerositÃ": 34
+        },
+        {
+          "Anno_evento": 2021,
+          "Quartiere": "Adriano",
+          "Genere": "Femmine",
+          "Cittadinanza_madre2": "Italiana",
+          "Cittadinanza_padre2": "Straniera",
+          "NumerositÃ": 6
+        },
+        {
+          "Anno_evento": 2022,
+          "Quartiere": "Affori",
+          "Genere": "Maschi",
+          "Cittadinanza_madre2": "Straniera",
+          "Cittadinanza_padre2": "Straniera",
+          "NumerositÃ": 12
+        }
+      ],
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "tema_target": [
+        "CPV"
+      ],
+      "confirmed_temi": [
+        "CPV",
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_milano"
+    },
+    {
+      "seq": 252,
+      "id": "fcddb7d2-b106-48f5-9a2a-64d3136621dc",
+      "title": "Caratteristiche demografiche e territoriali dei quartieri - Milano",
+      "org": "Comune di Milano",
+      "ente": "Comune di Milano",
+      "portal": "https://dati.comune.milano.it",
+      "headers": [
+        "Anno",
+        "Quartiere",
+        "Uomini",
+        "Donne",
+        "Totale",
+        "Stranieri",
+        "Morti",
+        "Immigrati",
+        "Prima cittadinanza"
+      ],
+      "sample_rows": [
+        {
+          "Anno": 2011,
+          "Quartiere": "Adriano",
+          "Uomini": 7188,
+          "Donne": 7042,
+          "Totale": 14230,
+          "Stranieri": 2538,
+          "Morti": 70,
+          "Immigrati": 896,
+          "Prima cittadinanza": "Filippine"
+        },
+        {
+          "Anno": 2011,
+          "Quartiere": "Affori",
+          "Uomini": 11497,
+          "Donne": 11564,
+          "Totale": 23061,
+          "Stranieri": 6276,
+          "Morti": 201,
+          "Immigrati": 994,
+          "Prima cittadinanza": "Cinese"
+        }
+      ],
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "tema_target": [
+        "CPV"
+      ],
+      "confirmed_temi": [
+        "CPV",
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_milano"
+    },
+    {
+      "seq": 253,
+      "id": "828c4ff0-5869-4829-97ca-7aad43303dd9",
+      "title": "Sportelli di quartiere: edicole e rivendite - Milano",
+      "org": "Comune di Milano",
+      "ente": "Comune di Milano",
+      "portal": "https://dati.comune.milano.it",
+      "headers": [
+        "via_denominazione_portale",
+        "DescrizioneVIA",
+        "Civico",
+        "CAP",
+        "MUNICIPIO",
+        "NIL",
+        "LONG_X_4326",
+        "LAT_Y_4326",
+        "Location"
+      ],
+      "sample_rows": [
+        {
+          "via_denominazione_portale": "Via Pecorari 2",
+          "Civico": 2,
+          "CAP": 20122,
+          "MUNICIPIO": 1,
+          "NIL": "DUOMO",
+          "LONG_X_4326": 9.191,
+          "LAT_Y_4326": 45.462,
+          "Location": "(45.462, 9.191)"
+        },
+        {
+          "via_denominazione_portale": "Piazza Missori fr. civico 8",
+          "Civico": 8,
+          "CAP": 20122,
+          "MUNICIPIO": 1,
+          "NIL": "DUOMO",
+          "LONG_X_4326": 9.187,
+          "LAT_Y_4326": 45.46,
+          "Location": "(45.460, 9.187)"
+        }
+      ],
+      "tema_onto": [
+        "POI",
+        "CLV"
+      ],
+      "tema_target": [
+        "POI"
+      ],
+      "confirmed_temi": [
+        "POI",
+        "CLV"
+      ],
+      "validation": "ok",
+      "source": "url_milano"
+    },
+    {
+      "seq": 254,
+      "id": "e463a418-9931-42eb-9778-51df02f157c6",
+      "title": "Eventi culturali: ingressi e spettacoli per manifestazione - Milano",
+      "org": "Comune di Milano",
+      "ente": "Comune di Milano",
+      "portal": "https://dati.comune.milano.it",
+      "headers": [
+        "ANNO",
+        "Manifestazioni",
+        "Numero Spettacoli",
+        "Numero Ingressi"
+      ],
+      "sample_rows": [
+        {
+          "ANNO": 2010,
+          "Manifestazioni": "Attività cinematografica",
+          "Numero Spettacoli": 108810,
+          "Numero Ingressi": 5153094
+        },
+        {
+          "ANNO": 2010,
+          "Manifestazioni": "Attività Teatrali",
+          "Numero Spettacoli": 9138,
+          "Numero Ingressi": 2363840
+        },
+        {
+          "ANNO": 2009,
+          "Manifestazioni": "Concerti",
+          "Numero Spettacoli": 450,
+          "Numero Ingressi": 312000
+        }
+      ],
+      "tema_onto": [
+        "QB",
+        "TI"
+      ],
+      "tema_target": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB",
+        "TI"
+      ],
+      "validation": "ok",
+      "source": "url_milano"
+    },
+    {
+      "seq": 255,
+      "id": "36ee65f6-c1a2-4734-84e9-50135bf63b34",
+      "title": "Residenti per cittadinanza e quartiere (1999-2024) - Milano",
+      "org": "Comune di Milano",
+      "ente": "Comune di Milano",
+      "portal": "https://dati.comune.milano.it",
+      "headers": [
+        "Anno",
+        "IdNil",
+        "Nil",
+        "Eta",
+        "Genere",
+        "Cittadinanza",
+        "Residenti"
+      ],
+      "sample_rows": [
+        {
+          "Anno": 2020,
+          "IdNil": 1,
+          "Nil": "DUOMO",
+          "Eta": "0-14",
+          "Genere": "M",
+          "Cittadinanza": "Italiana",
+          "Residenti": 245
+        },
+        {
+          "Anno": 2020,
+          "IdNil": 1,
+          "Nil": "DUOMO",
+          "Eta": "0-14",
+          "Genere": "F",
+          "Cittadinanza": "Straniera",
+          "Residenti": 38
+        },
+        {
+          "Anno": 2021,
+          "IdNil": 2,
+          "Nil": "Sarpi",
+          "Eta": "65+",
+          "Genere": "F",
+          "Cittadinanza": "Italiana",
+          "Residenti": 612
+        }
+      ],
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "tema_target": [
+        "CPV"
+      ],
+      "confirmed_temi": [
+        "CPV",
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_milano"
+    },
+    {
+      "seq": 256,
+      "id": "a248922e-ab9a-43ae-97e8-7447c43ac3fe",
+      "title": "Elenco Iscritti - Comune di Bussolengo",
+      "org": "Comune di Bussolengo",
+      "ente": "Comune di Bussolengo",
+      "portal": "https://www.opendata.maggioli.cloud",
+      "headers": [
+        "Anno di Iscrizione",
+        "Sesso",
+        "Cittadinanza",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno di Iscrizione": "2018",
+          "Sesso": "M",
+          "Cittadinanza": "Italiana",
+          "Occorrenze": "45"
+        },
+        {
+          "Anno di Iscrizione": "2018",
+          "Sesso": "F",
+          "Cittadinanza": "Italiana",
+          "Occorrenze": "38"
+        },
+        {
+          "Anno di Iscrizione": "2019",
+          "Sesso": "M",
+          "Cittadinanza": "Straniera",
+          "Occorrenze": "8"
+        }
+      ],
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "tema_target": [
+        "CPV"
+      ],
+      "confirmed_temi": [
+        "CPV",
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_maggioli"
+    },
+    {
+      "seq": 257,
+      "id": "bb80fbb4-57a7-4858-8773-ca6c0deffc9a",
+      "title": "Elenco Iscritti - Comune di Mentana",
+      "org": "Comune di Mentana",
+      "ente": "Comune di Mentana",
+      "portal": "https://www.opendata.maggioli.cloud",
+      "headers": [
+        "Anno di Iscrizione",
+        "Sesso",
+        "Cittadinanza",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno di Iscrizione": "2018",
+          "Sesso": "M",
+          "Cittadinanza": "Italiana",
+          "Occorrenze": "45"
+        },
+        {
+          "Anno di Iscrizione": "2018",
+          "Sesso": "F",
+          "Cittadinanza": "Italiana",
+          "Occorrenze": "38"
+        },
+        {
+          "Anno di Iscrizione": "2019",
+          "Sesso": "M",
+          "Cittadinanza": "Straniera",
+          "Occorrenze": "8"
+        }
+      ],
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "tema_target": [
+        "CPV"
+      ],
+      "confirmed_temi": [
+        "CPV",
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_maggioli"
+    },
+    {
+      "seq": 258,
+      "id": "0874e67b-dd21-4c04-8830-b8ce4e389440",
+      "title": "Elenco Iscritti - Comune di Nave",
+      "org": "Comune di Nave",
+      "ente": "Comune di Nave",
+      "portal": "https://www.opendata.maggioli.cloud",
+      "headers": [
+        "Anno di Iscrizione",
+        "Sesso",
+        "Cittadinanza",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno di Iscrizione": "2018",
+          "Sesso": "M",
+          "Cittadinanza": "Italiana",
+          "Occorrenze": "45"
+        },
+        {
+          "Anno di Iscrizione": "2018",
+          "Sesso": "F",
+          "Cittadinanza": "Italiana",
+          "Occorrenze": "38"
+        },
+        {
+          "Anno di Iscrizione": "2019",
+          "Sesso": "M",
+          "Cittadinanza": "Straniera",
+          "Occorrenze": "8"
+        }
+      ],
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "tema_target": [
+        "CPV"
+      ],
+      "confirmed_temi": [
+        "CPV",
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_maggioli"
+    },
+    {
+      "seq": 259,
+      "id": "8acd453d-0f44-411c-b956-9bb51bbf6943",
+      "title": "Elenco Iscritti - Comune di Berchidda",
+      "org": "Comune di Berchidda",
+      "ente": "Comune di Berchidda",
+      "portal": "https://www.opendata.maggioli.cloud",
+      "headers": [
+        "Anno di Iscrizione",
+        "Sesso",
+        "Cittadinanza",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno di Iscrizione": "2018",
+          "Sesso": "M",
+          "Cittadinanza": "Italiana",
+          "Occorrenze": "45"
+        },
+        {
+          "Anno di Iscrizione": "2018",
+          "Sesso": "F",
+          "Cittadinanza": "Italiana",
+          "Occorrenze": "38"
+        },
+        {
+          "Anno di Iscrizione": "2019",
+          "Sesso": "M",
+          "Cittadinanza": "Straniera",
+          "Occorrenze": "8"
+        }
+      ],
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "tema_target": [
+        "CPV"
+      ],
+      "confirmed_temi": [
+        "CPV",
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_maggioli"
+    },
+    {
+      "seq": 260,
+      "id": "c0cf6981-2dec-4ab4-bc59-bd47727d2d91",
+      "title": "Elenco Iscritti - Comune di Garda",
+      "org": "Comune di Garda",
+      "ente": "Comune di Garda",
+      "portal": "https://www.opendata.maggioli.cloud",
+      "headers": [
+        "Anno di Iscrizione",
+        "Sesso",
+        "Cittadinanza",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno di Iscrizione": "2018",
+          "Sesso": "M",
+          "Cittadinanza": "Italiana",
+          "Occorrenze": "45"
+        },
+        {
+          "Anno di Iscrizione": "2018",
+          "Sesso": "F",
+          "Cittadinanza": "Italiana",
+          "Occorrenze": "38"
+        },
+        {
+          "Anno di Iscrizione": "2019",
+          "Sesso": "M",
+          "Cittadinanza": "Straniera",
+          "Occorrenze": "8"
+        }
+      ],
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "tema_target": [
+        "CPV"
+      ],
+      "confirmed_temi": [
+        "CPV",
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_maggioli"
+    },
+    {
+      "seq": 261,
+      "id": "4b8ed92f-b4d7-4577-9f92-76a8a5e02a5b",
+      "title": "Elenco Iscritti - Comune di Orbassano",
+      "org": "Comune di Orbassano",
+      "ente": "Comune di Orbassano",
+      "portal": "https://www.opendata.maggioli.cloud",
+      "headers": [
+        "Anno di Iscrizione",
+        "Sesso",
+        "Cittadinanza",
+        "Occorrenze"
+      ],
+      "sample_rows": [
+        {
+          "Anno di Iscrizione": "2018",
+          "Sesso": "M",
+          "Cittadinanza": "Italiana",
+          "Occorrenze": "45"
+        },
+        {
+          "Anno di Iscrizione": "2018",
+          "Sesso": "F",
+          "Cittadinanza": "Italiana",
+          "Occorrenze": "38"
+        },
+        {
+          "Anno di Iscrizione": "2019",
+          "Sesso": "M",
+          "Cittadinanza": "Straniera",
+          "Occorrenze": "8"
+        }
+      ],
+      "tema_onto": [
+        "CPV",
+        "QB"
+      ],
+      "tema_target": [
+        "CPV"
+      ],
+      "confirmed_temi": [
+        "CPV",
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_maggioli"
+    },
+    {
+      "seq": 262,
+      "id": "bb5e3a0a-9b30-4dc7-bcb4-aa83ca9d6e27",
+      "title": "Matrimoni Celebrati per Rito - Comune di Albiate",
+      "org": "Comune di Albiate",
+      "ente": "Comune di Albiate",
+      "portal": "https://www.opendata.maggioli.cloud",
+      "headers": [
+        "Anno",
+        "Mese",
+        "Codice Provincia",
+        "Provincia",
+        "Codice Comune",
+        "Comune",
+        "Rito Religioso",
+        "Rito Civile"
+      ],
+      "sample_rows": [
+        {
+          "Anno": "2022",
+          "Mese": "1",
+          "Codice Provincia": "12",
+          "Provincia": "Roma",
+          "Codice Comune": "12345",
+          "Comune": "Comune di Albiate",
+          "Rito Religioso": "2",
+          "Rito Civile": "3"
+        },
+        {
+          "Anno": "2022",
+          "Mese": "6",
+          "Codice Provincia": "12",
+          "Provincia": "Roma",
+          "Codice Comune": "12345",
+          "Comune": "Comune di Albiate",
+          "Rito Religioso": "5",
+          "Rito Civile": "8"
+        }
+      ],
+      "tema_onto": [
+        "QB"
+      ],
+      "tema_target": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_maggioli"
+    },
+    {
+      "seq": 263,
+      "id": "d950733a-4b7c-4e7a-8d24-60e4170e02f1",
+      "title": "Matrimoni Celebrati per Rito - Comune di Bussolengo",
+      "org": "Comune di Bussolengo",
+      "ente": "Comune di Bussolengo",
+      "portal": "https://www.opendata.maggioli.cloud",
+      "headers": [
+        "Anno",
+        "Mese",
+        "Codice Provincia",
+        "Provincia",
+        "Codice Comune",
+        "Comune",
+        "Rito Religioso",
+        "Rito Civile"
+      ],
+      "sample_rows": [
+        {
+          "Anno": "2022",
+          "Mese": "1",
+          "Codice Provincia": "12",
+          "Provincia": "Roma",
+          "Codice Comune": "12345",
+          "Comune": "Comune di Bussolengo",
+          "Rito Religioso": "2",
+          "Rito Civile": "3"
+        },
+        {
+          "Anno": "2022",
+          "Mese": "6",
+          "Codice Provincia": "12",
+          "Provincia": "Roma",
+          "Codice Comune": "12345",
+          "Comune": "Comune di Bussolengo",
+          "Rito Religioso": "5",
+          "Rito Civile": "8"
+        }
+      ],
+      "tema_onto": [
+        "QB"
+      ],
+      "tema_target": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_maggioli"
+    },
+    {
+      "seq": 264,
+      "id": "bd3f135c-589d-46e6-8f84-cee7bfab5a04",
+      "title": "Matrimoni Celebrati per Rito - Comune di Mentana",
+      "org": "Comune di Mentana",
+      "ente": "Comune di Mentana",
+      "portal": "https://www.opendata.maggioli.cloud",
+      "headers": [
+        "Anno",
+        "Mese",
+        "Codice Provincia",
+        "Provincia",
+        "Codice Comune",
+        "Comune",
+        "Rito Religioso",
+        "Rito Civile"
+      ],
+      "sample_rows": [
+        {
+          "Anno": "2022",
+          "Mese": "1",
+          "Codice Provincia": "12",
+          "Provincia": "Roma",
+          "Codice Comune": "12345",
+          "Comune": "Comune di Mentana",
+          "Rito Religioso": "2",
+          "Rito Civile": "3"
+        },
+        {
+          "Anno": "2022",
+          "Mese": "6",
+          "Codice Provincia": "12",
+          "Provincia": "Roma",
+          "Codice Comune": "12345",
+          "Comune": "Comune di Mentana",
+          "Rito Religioso": "5",
+          "Rito Civile": "8"
+        }
+      ],
+      "tema_onto": [
+        "QB"
+      ],
+      "tema_target": [
+        "QB"
+      ],
+      "confirmed_temi": [
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_maggioli"
+    },
+    {
+      "seq": 265,
+      "id": "46ae887f-ffc8-411a-8170-94c61a669394",
+      "title": "Matrimoni Celebrati per Rito - Comune di Nave",
+      "org": "Comune di Nave",
+      "ente": "Comune di Nave",
+      "portal": "https://www.opendata.maggioli.cloud",
+      "headers": [
+        "Anno",
+        "Mese",
+        "Codice Provincia",
+        "Provincia",
+        "Codice Comune",
+        "Comune",
+        "Rito Religioso",
+        "Rito Civile"
+      ],
+      "sample_rows": [
+        {
+          "Anno": "2022",
+          "Mese": "1",
+          "Codice Provincia": "12",
+          "Provincia": "Roma",
+          "Codice Comune": "12345",
+          "Comune": "Comune di Nave",
+          "Rito Religioso": "2",
+          "Rito Civile": "3"
+        },
+        {
+          "Anno": "2022",
+          "Mese": "6",
+          "Codice Provincia": "12",
+          "Provincia": "Roma",
+          "Codice Comune": "12345",
+          "Comune": "Comune di Nave",
+          "Rito Religioso": "5",
+          "Rito Civile": "8"
         }
       ],
       "tema_onto": [

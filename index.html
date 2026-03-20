@@ -113,9 +113,36 @@
     .val-text span   { color: inherit; opacity: 0.85; }
     footer { background: #17324d; color: rgba(255,255,255,0.65); text-align: center; padding: 1rem; font-size: 0.73rem; font-family: var(--mono); margin-top: 3rem; }
     footer a { color: #80c0ff; text-decoration: none; }
-  </style>
+  
+  /* WCAG 2.1 AA — focus visible */
+  :focus-visible {
+    outline: 3px solid #f97316;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  a:focus-visible, button:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible {
+    outline: 3px solid #f97316;
+    outline-offset: 2px;
+  }
+  /* Skip link */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #f97316;
+    color: #fff;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 9999;
+    text-decoration: none;
+    border-radius: 0 0 4px 0;
+  }
+  .skip-link:focus { top: 0; }
+</style>
 </head>
 <body>
+<a href="#csv-input" class="skip-link">Salta all'area di input</a>
 
 <!-- HEADER -->
 <div class="site-header py-3">
@@ -141,7 +168,7 @@
       La PA ha già pubblicato il suo dataset su dati.gov.it o sul portale opendata locale.
       Questo strumento genera la <strong>distribuzione TTL</strong> da aggiungere al catalogo,
       arricchendo i dati con le ontologie ufficiali di
-      <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a>.
+      <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a>.
     </p>
   </div>
 </div>
@@ -163,7 +190,7 @@
             <input type="file" accept=".csv,.tsv,.txt" id="file-input" style="display:none">
             <span id="file-name" style="font-size:0.75rem;color:var(--dg-muted);font-family:var(--mono)"></span>
           </div>
-          <textarea class="inp csv-area" id="csv-input"
+          <textarea class="inp csv-area" id="csv-input" aria-label="Incolla qui il contenuto del file CSV"
             placeholder="Incolla qui il contenuto del tuo file CSV...&#10;&#10;id,nome,indirizzo,latitudine,longitudine&#10;1,Teatro Comunale,Piazza Garibaldi,40.604,17.231"></textarea>
           <div class="d-flex gap-2 mt-2 flex-wrap">
             <button class="btn-sec" onclick="parseAndPreviewCSV()">👁 Anteprima</button>
@@ -216,7 +243,7 @@
                 </select>
               </div>
             </div>
-            <div class="info-note mt-2">🔑 <a href="https://console.mistral.ai" target="_blank">console.mistral.ai</a> — <strong>mistral-large-latest</strong> consigliato per la generazione TTL · <strong>open-mistral-7b</strong> consigliato per il rilevamento ontologie (AI-detect).</div>
+            <div class="info-note mt-2">🔑 <a href="https://console.mistral.ai" target="_blank" rel="noopener noreferrer">console.mistral.ai</a> — <strong>mistral-large-latest</strong> consigliato per la generazione TTL · <strong>open-mistral-7b</strong> consigliato per il rilevamento ontologie (AI-detect).</div>
           </div>
 
           <div class="provider-panel" id="panel-groq">
@@ -237,7 +264,7 @@
                 </select>
               </div>
             </div>
-            <div class="info-note mt-2">⚡ <a href="https://console.groq.com" target="_blank">console.groq.com</a> — veloce, rate limit sul piano free.</div>
+            <div class="info-note mt-2">⚡ <a href="https://console.groq.com" target="_blank" rel="noopener noreferrer">console.groq.com</a> — veloce, rate limit sul piano free.</div>
           </div>
 
           <div class="provider-panel" id="panel-gemini">
@@ -259,7 +286,7 @@
                 </select>
               </div>
             </div>
-            <div class="info-note mt-2">✨ <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a> — piano free: 1500 req/giorno, 1M token/min.</div>
+            <div class="info-note mt-2">✨ <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a> — piano free: 1500 req/giorno, 1M token/min.</div>
           </div>
 
 
@@ -292,7 +319,7 @@
             </div>
             <div class="info-note mt-2">
               🦙 Ollama Cloud blocca le chiamate dirette dal browser (CORS). Il proxy sul tuo server fa da intermediario verso <code>ollama.com</code>.<br/>
-              API key: <a href="https://ollama.com/settings/keys" target="_blank">ollama.com/settings/keys</a>
+              API key: <a href="https://ollama.com/settings/keys" target="_blank" rel="noopener noreferrer">ollama.com/settings/keys</a>
             </div>
           </div>
 
@@ -315,7 +342,7 @@
                 </select>
               </div>
             </div>
-            <div class="info-note mt-2">🔴 <a href="https://console.anthropic.com/" target="_blank">console.anthropic.com</a> — <strong>claude-haiku</strong> consigliato per AI-detect, <strong>claude-sonnet</strong> per la generazione TTL.</div>
+            <div class="info-note mt-2">🔴 <a href="https://console.anthropic.com/" target="_blank" rel="noopener noreferrer">console.anthropic.com</a> — <strong>claude-haiku</strong> consigliato per AI-detect, <strong>claude-sonnet</strong> per la generazione TTL.</div>
           </div>
 
 
@@ -449,7 +476,7 @@
           <p>Il file TTL contiene:</p>
           <ul style="margin:0;padding-left:1.2rem">
             <li>Il <strong>titolare</strong> (<code>dct:rightsHolder</code>) con URI IPA ufficiale</li>
-            <li>Le <strong>entità LOD</strong> per ogni riga del CSV, tipizzate con le ontologie ufficiali di <a href="https://github.com/italia/dati-semantic-assets" target="_blank" style="color:var(--dg-blue)">dati-semantic-assets</a></li>
+            <li>Le <strong>entità LOD</strong> per ogni riga del CSV, tipizzate con le ontologie ufficiali di <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer" style="color:var(--dg-blue)">dati-semantic-assets</a></li>
           </ul>
           <p class="mt-2">Il file generato va aggiunto come <strong>nuova distribuzione</strong> al dataset già esistente.</p>
         </div>
@@ -461,9 +488,9 @@
 
 <footer>
   Strumento open source per la PA italiana &nbsp;·&nbsp;
-  <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank">GitHub piersoft/CSV-to-RDF</a> ·
-  <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> ·
-  <a href="https://dati.gov.it" target="_blank">dati.gov.it</a>
+  <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> ·
+  <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> ·
+  <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a>
   &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.20.10</span>
 </footer>
 

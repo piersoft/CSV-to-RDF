@@ -1,7 +1,7 @@
 {
   "generated": "2026-03-20",
   "script_version": "v9",
-  "total": 251,
+  "total": 252,
   "false_positives_excluded": 0,
   "corpus": [
     {
@@ -21171,6 +21171,73 @@
           "accessURL": "https://esploradati.istat.it/HVD/rest/data/",
           "license": "CC BY 4.0",
           "language": "ITA"
+        }
+      ]
+    },
+    {
+      "seq": 252,
+      "id": "e0000001-sensori-umidita-edifici-scolastici",
+      "name": "sensori-misure-edifici-scolastici-piemonte",
+      "title": "Sensori misure ambientali in edifici scolastici — Regione Piemonte",
+      "org": "regione-piemonte",
+      "ente": "Regione Piemonte / Città Metropolitana di Torino",
+      "categoria": "regione",
+      "tema_dcat": [
+        "EDUC",
+        "ENVI",
+        "TECH"
+      ],
+      "tema_onto": [
+        "IoT-AP_IT",
+        "SMAPIT",
+        "QB",
+        "TI"
+      ],
+      "tema_target": [
+        "IoT-AP_IT",
+        "SMAPIT",
+        "QB",
+        "TI",
+        "l0",
+        "sosa",
+        "ssn",
+        "time"
+      ],
+      "score": 80,
+      "resource_id": "sensori-edifici-scolastici-piemonte",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "ID_edificio",
+        "Descrizione_edificio",
+        "ID_sensore",
+        "Tipo_misura",
+        "Nome_sito",
+        "Data_rilevazione",
+        "Valore_misura",
+        "Unita_misurazione"
+      ],
+      "sample_rows": [
+        {
+          "ID_edificio": "2016-22-007488-A/1602",
+          "Descrizione_edificio": "L1-007-172 IP CARLO UBERTINI",
+          "ID_sensore": "2016-22-007488-A/6565",
+          "Tipo_misura": "Sensor2",
+          "Nome_sito": "PLES UBERTINI-MARTINETTI Caluso",
+          "Data_rilevazione": "21/02/2025 12:00",
+          "Valore_misura": "38,26",
+          "Unita_misurazione": "%"
+        },
+        {
+          "ID_edificio": "2016-22-007488-A/1167",
+          "Descrizione_edificio": "L1-007-060 L.C. D'Azeglio",
+          "ID_sensore": "2016-22-007488-A/4522",
+          "Tipo_misura": "Sensor2",
+          "Nome_sito": "D'AZEGLIO",
+          "Data_rilevazione": "21/02/2025 04:00",
+          "Valore_misura": "32,50",
+          "Unita_misurazione": "%"
         }
       ]
     }

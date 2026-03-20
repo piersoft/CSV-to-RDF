@@ -346,7 +346,7 @@
   </div>
 
   <!-- Scoring corpus -->
-  <h2 class="section-title">Score stimato corpus attuale — 269 dataset · v2026.03.20.23</h2>
+  <h2 class="section-title">Score stimato corpus attuale — 274 dataset · v2026.03.20.24</h2>
   <div class="scoring-grid">
     <div class="score-card green"><div class="score-onto">QB</div><div class="score-val">91%</div><div class="score-label">155 fixture · 64%</div></div>
     <div class="score-card green"><div class="score-onto">POI</div><div class="score-val">86%</div><div class="score-label">63 fixture · 26%</div></div>
@@ -355,7 +355,7 @@
     <div class="score-card blue"><div class="score-onto">CLV</div><div class="score-val">78%</div><div class="score-label">53 fixture · 20%</div></div>
     <div class="score-card blue"><div class="score-onto">ACCO</div><div class="score-val">74%</div><div class="score-label">23 fixture · 9%</div></div>
     <div class="score-card blue"><div class="score-onto">TI</div><div class="score-val">71%</div><div class="score-label">21 fixture · 9%</div></div>
-    <div class="score-card blue"><div class="score-onto">Cultural-ON</div><div class="score-val">72%</div><div class="score-label">17 fixture · 7%</div></div>
+    <div class="score-card blue"><div class="score-onto">Cultural-ON</div><div class="score-val">73%</div><div class="score-label">20 fixture · 7%</div></div>
     <div class="score-card yellow"><div class="score-onto">ADMS</div><div class="score-val">68%</div><div class="score-label">15 fixture · 6%</div></div>
     <div class="score-card green"><div class="score-onto">DCATAPIT</div><div class="score-val">100%</div><div class="score-label">3 fixture · 1%</div></div>
     <div class="score-card yellow"><div class="score-onto">RO-AP_IT</div><div class="score-val">68%</div><div class="score-label">14 fixture · 5%</div></div>
@@ -363,9 +363,9 @@
     <div class="score-card yellow"><div class="score-onto">PublicOrganization</div><div class="score-val">55%</div><div class="score-label">3 fixture · 1%</div></div>
     <div class="score-card yellow"><div class="score-onto">CPVAPIT</div><div class="score-val">60%</div><div class="score-label">9 fixture · 3%</div></div>
     <div class="score-card yellow"><div class="score-onto">GTFS</div><div class="score-val">62%</div><div class="score-label">10 fixture · 4%</div></div>
-    <div class="score-card red"><div class="score-onto">SMAPIT</div><div class="score-val">50%</div><div class="score-label">6 fixture · 2%</div></div>
+    <div class="score-card red"><div class="score-onto">SMAPIT</div><div class="score-val">55%</div><div class="score-label">8 fixture · 3%</div></div>
     <div class="score-card red"><div class="score-onto">IoT-AP_IT</div><div class="score-val">55%</div><div class="score-label">8 fixture · 3%</div></div>
-    <div class="score-card red"><div class="score-onto">MUAPIT</div><div class="score-val">58%</div><div class="score-label">7 fixture · 3%</div></div>
+    <div class="score-card red"><div class="score-onto">MUAPIT</div><div class="score-val">64%</div><div class="score-label">10 fixture · 4%</div></div>
   </div>
 
   <!-- Legend ontologie -->
@@ -1049,12 +1049,41 @@
       <div class="score-bar"><div class="score-bar-fill" style="width:86%"></div></div>
     </div>
 
+  
+    <!-- SMAPIT — anagrafe scuole codice istituto -->
+    <div class="card" data-onto="SMAPIT">
+      <div class="card-top"><span class="card-onto" style="background:#34d399;color:#fff">SMAPIT</span><span class="card-tipo">PROVINCIA · ANAGRAFE SCOLASTICA</span></div>
+      <div class="card-title">Anagrafe scuole — codice istituto, tipologia, autonomia e organico</div>
+      <div class="card-ente">Provincia di Monza Brianza / MIUR</div>
+      <div class="card-note">Anagrafe completa degli istituti scolastici con codice meccanografico ufficiale, tipologia (primaria, IC, liceo, ITC...), indirizzo, classificazione autonomia e dotazione organico. Il codice scuola è la chiave per allineare con le banche dati MIUR e NoiPA.</div>
+      <div class="card-headers">
+        <span class="header-tag key">Codice</span><span class="header-tag key">Tipologia</span><span class="header-tag key">Denominazione</span><span class="header-tag">Indirizzo</span><span class="header-tag">Comune</span><span class="header-tag">Provincia</span><span class="header-tag">CAP</span><span class="header-tag">Classificazione Autonomia</span><span class="header-tag">Organico Autonomia</span>
+      </div>
+      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
+      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">85%</span></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:85%"></div></div>
+    </div>
+
+    <!-- MUAPIT — Lombardia opere d'arte ICCD -->
+    <div class="card" data-onto="MUAPIT">
+      <div class="card-top"><span class="card-onto" style="background:#e879f9;color:#fff">MUAPIT + Cultural-ON</span><span class="card-tipo">REGIONE · CATALOGO ARTE</span></div>
+      <div class="card-title">Opere d'arte catalogate ICCD — Lombardia, Bolzano e schede nazionali</div>
+      <div class="card-ente">Ministero della Cultura / ICCD — dati.cultura.gov.it/sparql</div>
+      <div class="card-note">Tre grafi SPARQL con beni culturali mobili: Lombardia (98.943 schede OA), Bolzano (162.950 oggetti bilingue), ICCD schede nazionali (758.858 schede). Proprietà ArCo: autore, datazione, localizzazione, tecnica, materiale, numero inventario.</div>
+      <div class="card-headers">
+        <span class="header-tag key">id_catalogo</span><span class="header-tag key">tipo_bene</span><span class="header-tag key">label</span><span class="header-tag">autore</span><span class="header-tag">datazione</span><span class="header-tag">comune</span><span class="header-tag">provincia</span><span class="header-tag">regione</span><span class="header-tag">tecnica</span><span class="header-tag">numero_inventario</span>
+      </div>
+      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
+      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">85%</span></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:85%"></div></div>
+    </div>
+
     </div><!-- /cards-grid -->
 
   <!-- Footer -->
   <div class="footer">
     <div class="footer-left">
-      piersoft.github.io/CSV-to-RDF · Corpus v10 · 269 dataset · 18 ontologie
+      piersoft.github.io/CSV-to-RDF · Corpus v11 · 274 dataset · 18 ontologie
     </div>
     <div class="footer-right">
       Generato: 2026-03-20 · dati-semantic-assets / DCAT-AP_IT / schema.gov.it

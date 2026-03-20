@@ -6,6 +6,8 @@ La PA ha già pubblicato il dataset su dati.gov.it o sul portale opendata locale
 
 👉 **Demo live**: [https://piersoft.github.io/CSV-to-RDF](https://piersoft.github.io/CSV-to-RDF)
 
+📋 **Dataset Ottimali di Riferimento per PA**: [https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html](https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html)
+
 ---
 
 ## Guida per l'utente — Passo per passo
@@ -72,7 +74,7 @@ Le ontologie disponibili sono:
 
 ---
 
-### Corpus di riferimento v7
+### Corpus di riferimento v8
 
 Il rilevamento deterministico si basa su un **corpus di 217 dataset reali** della PA italiana, raccolti e validati manualmente.
 
@@ -158,8 +160,6 @@ Il file TTL generato va aggiunto come nuova **distribuzione** al dataset già es
 ## 📋 Dataset Ottimali di Riferimento per PA
 
 Il file [`dataset-ottimali-PA.html`](https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html) è un **catalogo interattivo** dei dataset CSV ideali per Comuni e Regioni che vogliono pubblicare dati conformi alle ontologie OntoPiA / DCAT-AP_IT.
-
-👉 **Apri il catalogo**: [piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html](https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html)
 
 Per ogni ontologia il catalogo indica:
 - Il **dataset modello** con headers chiave evidenziati in blu
@@ -269,9 +269,18 @@ La verifica avviene interrogando l'endpoint SPARQL `https://schema.gov.it/sparql
 Browser → Cloudflare Worker (/sparql-proxy) → schema.gov.it/sparql
 ```
 
-Il proxy è basato sul **CKAN MCP Server** sviluppato da [ondata](https://github.com/ondata/ckan-mcp-server), un server MCP open source per interrogare portali open data CKAN e endpoint SPARQL pubblici. Il worker è deployato su Cloudflare Workers: `https://ckan-mcp-server.datigovit.workers.dev`.
+Il proxy è basato sul **CKAN MCP Server** sviluppato da [ondata](https://github.com/ondata/ckan-mcp-server). Il worker è deployato su Cloudflare Workers: `https://ckan-mcp-server.datigovit.workers.dev`.
 
 Se tutte le classi sono riconosciute, il pannello mostra: **✅ Tutte le N classi verificate su schema.gov.it**.
+
+## Accessibilità
+
+Entrambe le interfacce (`index.html` e `dataset-ottimali-PA.html`) rispettano le linee guida **WCAG 2.1 livello AA**:
+- Rapporti di contrasto testo/sfondo ≥ 4.5:1
+- Font leggibili e scalabili (IBM Plex Sans / IBM Plex Mono)
+- Navigazione da tastiera con `focus-visible` evidenziato
+- Attributi `aria-label`, `role` e `lang="it"` presenti
+- Nessun contenuto che dipende esclusivamente dal colore
 
 ## Licenza
 

@@ -72,27 +72,34 @@ Le ontologie disponibili sono:
 
 ---
 
-
----
-
 ### Corpus di riferimento v7
 
-Il rilevamento deterministico si basa su un **corpus di 126 dataset reali** della PA italiana, raccolti e validati manualmente con una precision del **98%**.
+Il rilevamento deterministico si basa su un **corpus di 217 dataset reali** della PA italiana, raccolti e validati manualmente.
 
 Il corpus copre le principali ontologie del patrimonio semantico nazionale:
 
-| Ontologia | Dataset | Descrizione |
-|-----------|---------|-------------|
-| **TI** — Time Indexed | 12 | Eventi, calendari, manifestazioni culturali |
-| **Cultural-ON** | 18 | Musei, biblioteche, beni culturali |
-| **GTFS** | 16 | Trasporto pubblico locale |
-| **ADMS** | 13 | Metadati e cataloghi open data |
-| **QB** — DataCube | 87 | Dati statistici e serie storiche |
-| **POI** — Points of Interest | 46 | Luoghi geolocalizzati |
+| Ontologia | Dataset primari | Score stimato | Descrizione |
+|-----------|----------------|---------------|-------------|
+| **QB** — RDF Data Cube | 135 | 🟢 88% | Dati statistici e serie storiche |
+| **POI** — Points of Interest | 78 | 🟢 84% | Luoghi geolocalizzati con lat/lon |
+| **ADMS** | 44 | 🟢 81% | Metadati e cataloghi open data |
+| **Cultural-ON** | 37 | 🔵 76% | Musei, biblioteche, beni culturali |
+| **ACCO** | 27 | 🔵 74% | Strutture ricettive e turismo |
+| **GTFS** | 24 | 🔵 72% | Trasporto pubblico locale |
+| **CPSV** | 21 | 🟡 70% | Appalti, gare, determine, atti PA |
+| **CLV** | 16 | 🟡 65% | Stradari, civici, indirizzi |
+| **TI** — Time Interval | 13 | 🟡 63% | Eventi con data inizio/fine |
+| **CPV** | 11 | 🟠 60% | Anagrafe, residenti, cittadinanza |
 
 Quando incolli un CSV e clicchi **👁 Anteprima** (oppure carichi un file), il corpus viene interrogato in tempo reale via **Jaccard similarity** sugli header: i dataset più simili vengono mostrati nel pannello blu con badge di confidenza e link diretto a [dati.gov.it](https://www.dati.gov.it).
 
 Le fixture del corpus sono disponibili in [`fixtures_v7.json`](./fixtures_v7.json) e vengono caricate nel browser — nessuna chiamata a server esterni.
+
+Il corpus viene usato in **due momenti distinti**:
+1. **Prima della generazione TTL** — Jaccard similarity sugli headers suggerisce l'ontologia più probabile, pre-compilando la selezione
+2. **Dopo la generazione TTL** — confronto classi generate con quelle attese + validazione SPARQL su schema.gov.it
+
+---
 
 ### STEP 4 — Inserisci il Titolare del dato
 
@@ -145,6 +152,32 @@ In presenza di warning o errori, considera di rigenerare con un modello più pot
 ### Cosa fare con il TTL generato
 
 Il file TTL generato va aggiunto come nuova **distribuzione** al dataset già esistente sul portale open data della tua PA. Non sostituisce i metadati DCAT — li integra con i dati in formato Linked Open Data.
+
+---
+
+## 📋 Dataset Ottimali di Riferimento per PA
+
+Il file [`dataset-ottimali-PA.html`](https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html) è un **catalogo interattivo** dei dataset CSV ideali per Comuni e Regioni che vogliono pubblicare dati conformi alle ontologie OntoPiA / DCAT-AP_IT.
+
+👉 **Apri il catalogo**: [piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html](https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html)
+
+Per ogni ontologia il catalogo indica:
+- Il **dataset modello** con headers chiave evidenziati in blu
+- L'**ente di riferimento** che lo pubblica già correttamente
+- Il **link diretto** a dati.gov.it o al portale sorgente
+- Lo **score di match** stimato sul corpus attuale (217 dataset)
+- Una **nota pratica** per i responsabili open data
+
+---
+
+## File nel repository
+
+| File | Descrizione |
+|------|-------------|
+| `index.html` | App principale CSV→RDF (unico file, ~3000 righe) |
+| `fixtures_v7.json` | Corpus matcher — 217 dataset di riferimento per 10 ontologie |
+| `dataset-ottimali-PA.html` | Catalogo interattivo dataset ottimali per PA |
+| `README.md` | Documentazione |
 
 ---
 
@@ -226,9 +259,6 @@ https://w3id.org/italia/data/{ipa}/{tipo-risorsa}/{id}
 
 ---
 
-
----
-
 ### Validazione ontologica via SPARQL
 
 Dopo la generazione del TTL, il validatore verifica automaticamente che le classi usate (es. `l0:EventOrSituation`, `poi:PointOfInterest`) esistano nell'ontologia ufficiale italiana su [schema.gov.it](https://schema.gov.it).
@@ -251,5 +281,3 @@ MIT — Strumento open source per la PA italiana.
 
 Sviluppato da [piersoft](https://github.com/piersoft).
 Ontologie: [github.com/italia/dati-semantic-assets](https://github.com/italia/dati-semantic-assets) · [dati.gov.it](https://dati.gov.it) · [schema.gov.it](https://schema.gov.it)
-
-

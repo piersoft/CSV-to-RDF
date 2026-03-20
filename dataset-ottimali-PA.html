@@ -346,14 +346,14 @@
   </div>
 
   <!-- Scoring corpus -->
-  <h2 class="section-title">Score stimato corpus attuale — 252 dataset · v2026.03.20.20</h2>
+  <h2 class="section-title">Score stimato corpus attuale — 258 dataset · v2026.03.20.21</h2>
   <div class="scoring-grid">
     <div class="score-card green"><div class="score-onto">QB</div><div class="score-val">91%</div><div class="score-label">155 fixture · 64%</div></div>
     <div class="score-card green"><div class="score-onto">POI</div><div class="score-val">86%</div><div class="score-label">63 fixture · 26%</div></div>
     <div class="score-card green"><div class="score-onto">CPV</div><div class="score-val">85%</div><div class="score-label">60 fixture · 25%</div></div>
     <div class="score-card blue"><div class="score-onto">CPSV</div><div class="score-val">78%</div><div class="score-label">42 fixture · 17%</div></div>
     <div class="score-card blue"><div class="score-onto">CLV</div><div class="score-val">76%</div><div class="score-label">39 fixture · 16%</div></div>
-    <div class="score-card blue"><div class="score-onto">ACCO</div><div class="score-val">72%</div><div class="score-label">21 fixture · 9%</div></div>
+    <div class="score-card blue"><div class="score-onto">ACCO</div><div class="score-val">74%</div><div class="score-label">23 fixture · 9%</div></div>
     <div class="score-card blue"><div class="score-onto">TI</div><div class="score-val">71%</div><div class="score-label">21 fixture · 9%</div></div>
     <div class="score-card blue"><div class="score-onto">Cultural-ON</div><div class="score-val">72%</div><div class="score-label">17 fixture · 7%</div></div>
     <div class="score-card yellow"><div class="score-onto">ADMS</div><div class="score-val">66%</div><div class="score-label">11 fixture · 4%</div></div>
@@ -361,9 +361,9 @@
     <div class="score-card yellow"><div class="score-onto">RO-AP_IT</div><div class="score-val">62%</div><div class="score-label">10 fixture · 4%</div></div>
     <div class="score-card yellow"><div class="score-onto">COV-AP_IT</div><div class="score-val">60%</div><div class="score-label">9 fixture · 4%</div></div>
     <div class="score-card yellow"><div class="score-onto">CPVAPIT</div><div class="score-val">58%</div><div class="score-label">7 fixture · 3%</div></div>
-    <div class="score-card yellow"><div class="score-onto">GTFS</div><div class="score-val">56%</div><div class="score-label">8 fixture · 3%</div></div>
-    <div class="score-card red"><div class="score-onto">SMAPIT</div><div class="score-val">46%</div><div class="score-label">5 fixture · 2%</div></div>
-    <div class="score-card red"><div class="score-onto">IoT-AP_IT</div><div class="score-val">52%</div><div class="score-label">7 fixture · 3%</div></div>
+    <div class="score-card yellow"><div class="score-onto">GTFS</div><div class="score-val">62%</div><div class="score-label">10 fixture · 4%</div></div>
+    <div class="score-card red"><div class="score-onto">SMAPIT</div><div class="score-val">50%</div><div class="score-label">6 fixture · 2%</div></div>
+    <div class="score-card red"><div class="score-onto">IoT-AP_IT</div><div class="score-val">55%</div><div class="score-label">8 fixture · 3%</div></div>
     <div class="score-card red"><div class="score-onto">MUAPIT</div><div class="score-val">58%</div><div class="score-label">7 fixture · 3%</div></div>
   </div>
 
@@ -946,12 +946,69 @@
       <div class="score-bar"><div class="score-bar-fill" style="width:80%"></div></div>
     </div>
 
+  
+    <!-- GTFS — Trentino -->
+    <div class="card" data-onto="GTFS">
+      <div class="card-top"><span class="card-onto" style="background:#2dd4bf;color:#fff">GTFS</span><span class="card-tipo">REGIONE · TRASPORTO PUBBLICO</span></div>
+      <div class="card-title">Trasporti pubblici del Trentino — fermate, linee, orari e tariffe GTFS</div>
+      <div class="card-ente">Provincia Autonoma di Trento — dati.trentino.it</div>
+      <div class="card-note">Dataset GTFS completo con fermate geolocalizzate, percorsi linee, orari urbani ed extraurbani e tariffe. Formato standard internazionale GTFS: stops.txt, routes.txt, trips.txt, stop_times.txt, fare_attributes.txt.</div>
+      <div class="card-headers">
+        <span class="header-tag key">stop_id</span><span class="header-tag key">stop_name</span><span class="header-tag key">stop_lat</span><span class="header-tag key">stop_lon</span><span class="header-tag key">route_id</span><span class="header-tag key">arrival_time</span><span class="header-tag">route_short_name</span><span class="header-tag">route_type</span><span class="header-tag">trip_id</span><span class="header-tag">fare_id</span><span class="header-tag">price</span>
+      </div>
+      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
+      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">88%</span></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:88%"></div></div>
+    </div>
+
+    <!-- ACCO — strutture ricettive Umbria -->
+    <div class="card" data-onto="ACCO">
+      <div class="card-top"><span class="card-onto" style="background:#a78bfa;color:#fff">ACCO</span><span class="card-tipo">REGIONE · TURISMO</span></div>
+      <div class="card-title">Strutture ricettive — Regione Umbria (alberghi, B&B, agriturismi, campeggi)</div>
+      <div class="card-ente">Regione Umbria — dati.regione.umbria.it</div>
+      <div class="card-note">Elenco completo strutture ricettive con tipologia, categoria stelle, indirizzo, coordinate, contatti, totale letti e unità. Comprende alberghi, bed & breakfast, agriturismi, campeggi e residenze d'epoca.</div>
+      <div class="card-headers">
+        <span class="header-tag key">ID</span><span class="header-tag key">DENOMINAZIONE</span><span class="header-tag key">TIPOLOGIA</span><span class="header-tag key">CATEGORIA</span><span class="header-tag">COMUNE</span><span class="header-tag">PROV</span><span class="header-tag">INDIRIZZO</span><span class="header-tag">CAP</span><span class="header-tag">COORDX</span><span class="header-tag">COORDY</span><span class="header-tag">TOTALE_LETTI</span><span class="header-tag">EMAIL</span><span class="header-tag">WEB</span>
+      </div>
+      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
+      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">87%</span></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:87%"></div></div>
+    </div>
+
+    <!-- IoT-AP_IT — qualità aria ARPA -->
+    <div class="card" data-onto="IoT-AP_IT">
+      <div class="card-top"><span class="card-onto" style="background:#60a5fa;color:#fff">IoT-AP_IT + QB</span><span class="card-tipo">REGIONE · AMBIENTE · ARPA</span></div>
+      <div class="card-title">Rete monitoraggio qualità dell'aria — stazioni fisse ARPA (PM10, NO2, O3)</div>
+      <div class="card-ente">Regione Lazio / ARPA — dati.lazio.it</div>
+      <div class="card-note">Stazioni fisse di rilevamento atmosferico: PM10, PM2.5, NO2, ozono, biossido di azoto. Dati annuali con valori misurati, superamenti soglia, tipo stazione (traffico/fondo/industriale) e coordinate geografiche.</div>
+      <div class="card-headers">
+        <span class="header-tag key">stazione</span><span class="header-tag key">inquinante</span><span class="header-tag key">valore</span><span class="header-tag key">data</span><span class="header-tag key">unita_misura</span><span class="header-tag">comune</span><span class="header-tag">provincia</span><span class="header-tag">lat</span><span class="header-tag">lon</span><span class="header-tag">tipo_stazione</span><span class="header-tag">superamenti</span>
+      </div>
+      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
+      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">85%</span></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:85%"></div></div>
+    </div>
+
+    <!-- SMAPIT — edifici scolastici Firenze -->
+    <div class="card" data-onto="SMAPIT">
+      <div class="card-top"><span class="card-onto" style="background:#34d399;color:#fff">SMAPIT</span><span class="card-tipo">REGIONE · EDILIZIA SCOLASTICA</span></div>
+      <div class="card-title">Anagrafe strutture edilizie scuole secondarie — Città Metropolitana di Firenze</div>
+      <div class="card-ente">Regione Toscana / Città Metropolitana di Firenze</div>
+      <div class="card-note">Censimento edifici scolastici con codice scuola, denominazione, indirizzo, anno costruzione, superficie, piani, tipo struttura e proprietà. Dataset complementare all'anagrafe MIUR per la gestione del patrimonio edilizio scolastico.</div>
+      <div class="card-headers">
+        <span class="header-tag key">codice_scuola</span><span class="header-tag key">denominazione</span><span class="header-tag key">tipo_struttura</span><span class="header-tag">indirizzo</span><span class="header-tag">comune</span><span class="header-tag">provincia</span><span class="header-tag">lat</span><span class="header-tag">lon</span><span class="header-tag">anno_costruzione</span><span class="header-tag">superficie_mq</span><span class="header-tag">proprietà</span>
+      </div>
+      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
+      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">80%</span></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:80%"></div></div>
+    </div>
+
     </div><!-- /cards-grid -->
 
   <!-- Footer -->
   <div class="footer">
     <div class="footer-left">
-      piersoft.github.io/CSV-to-RDF · Corpus v9 · 252 dataset · 17 ontologie
+      piersoft.github.io/CSV-to-RDF · Corpus v10 · 258 dataset · 17 ontologie
     </div>
     <div class="footer-right">
       Generato: 2026-03-20 · dati-semantic-assets / DCAT-AP_IT / schema.gov.it

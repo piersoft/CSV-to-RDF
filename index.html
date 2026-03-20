@@ -216,7 +216,23 @@
             <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--dg-muted);margin-bottom:0.4rem;">
               🔍 Analisi qualità CSV
             </div>
-            <div id="csv-validation-items"></div>
+            <style>
+#corpus-panel{display:none;margin:1em 0;padding:1em;border:2px solid #4a90d9;border-radius:8px;background:#f0f7ff;font-family:sans-serif}
+#corpus-panel h3{margin:0 0 .5em;color:#2c5f8a;font-size:1em}
+.corpus-badge{display:inline-block;padding:.2em .55em;border-radius:4px;color:#fff;font-size:.8em;font-weight:700;margin:.15em}
+.corpus-ex{margin:.3em 0;padding:.4em;background:#fff;border-radius:4px;border-left:3px solid #4a90d9;font-size:.83em}
+.corpus-ex strong{display:block}
+.corpus-ex code{color:#555;font-size:.78em}
+</style>
+<div id="corpus-panel">
+  <h3>Ontologie suggerite dal corpus PA (v7)</h3>
+  <div id="corpus-temi"></div>
+  <details style="margin-top:.6em">
+    <summary style="cursor:pointer;color:#2c5f8a;font-size:.88em">Dataset simili nel corpus (<span id="corpus-count">0</span>)</summary>
+    <div id="corpus-examples" style="margin-top:.4em"></div>
+  </details>
+</div>
+<div id="csv-validation-items"></div>
           </div>
         </div>
       </div>
@@ -500,7 +516,7 @@
   <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> ·
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> ·
   <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a>
-  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.20.12</span>
+  &nbsp;·&nbsp;<span style="opacity:0.5">v2026.03.20.13</span>
 </footer>
 
 <script>
@@ -2324,7 +2340,10 @@ async function callAI(prompt) {
 function cleanTTL(text) {
   // Rimuove backtick e markdown
   text = text
-    .replace(/^```\w*\s*\n?/gim, '')
+    
+  // Fix: aggiunge @it ai literal l0:name senza lang tag
+  text = text.replace(/\bl0:name\s+"([^"@\n]+)"\s*([.;])/g, 'l0:name "$1"@it $2');
+  .replace(/^```\w*\s*\n?/gim, '')
     .replace(/\n?```\s*$/gim, '')
     .replace(/```/g, '');
   // Rimuove righe di testo in prosa prima delle triple Turtle
@@ -2974,22 +2993,7 @@ window.validateSPARQL = validateSPARQL;
 
 </script>
 <!-- ===== CORPUS MATCHER v7 ===== -->
-<style>
-#corpus-panel{display:none;margin:1em 0;padding:1em;border:2px solid #4a90d9;border-radius:8px;background:#f0f7ff;font-family:sans-serif}
-#corpus-panel h3{margin:0 0 .5em;color:#2c5f8a;font-size:1em}
-.corpus-badge{display:inline-block;padding:.2em .55em;border-radius:4px;color:#fff;font-size:.8em;font-weight:700;margin:.15em}
-.corpus-ex{margin:.3em 0;padding:.4em;background:#fff;border-radius:4px;border-left:3px solid #4a90d9;font-size:.83em}
-.corpus-ex strong{display:block}
-.corpus-ex code{color:#555;font-size:.78em}
-</style>
-<div id="corpus-panel">
-  <h3>Ontologie suggerite dal corpus PA (v7)</h3>
-  <div id="corpus-temi"></div>
-  <details style="margin-top:.6em">
-    <summary style="cursor:pointer;color:#2c5f8a;font-size:.88em">Dataset simili nel corpus (<span id="corpus-count">0</span>)</summary>
-    <div id="corpus-examples" style="margin-top:.4em"></div>
-  </details>
-</div>
+
 <script>
 (function(){
 var COLORI={"TI":"#c0392b","Cultural-ON":"#6c3483","GTFS":"#1e8449","QB":"#1a5276","POI":"#0e6655","ADMS":"#784212","CLV":"#626567","ACCO":"#922b21","CPV":"#515a5a","CPSV":"#1b4f72"};

@@ -1,0 +1,33 @@
+name: Sync README corpus stats
+
+on:
+  push:
+    paths:
+      - 'fixtures_v7.json'
+  workflow_dispatch:
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Update README corpus table
+        run: python scripts/update_readme_corpus.py
+
+      - name: Commit updated README
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git diff --staged --quiet || git commit -m "docs: auto-sync README corpus stats from fixtures_v7.json"
+          git push

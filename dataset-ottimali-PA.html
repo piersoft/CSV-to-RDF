@@ -346,7 +346,7 @@
   </div>
 
   <!-- Scoring corpus -->
-  <h2 class="section-title">Score stimato corpus attuale — 248 dataset · v2026.03.20.18</h2>
+  <h2 class="section-title">Score stimato corpus attuale — 251 dataset · v2026.03.20.19</h2>
   <div class="scoring-grid">
     <div class="score-card green"><div class="score-onto">QB</div><div class="score-val">91%</div><div class="score-label">155 fixture · 64%</div></div>
     <div class="score-card green"><div class="score-onto">POI</div><div class="score-val">86%</div><div class="score-label">63 fixture · 26%</div></div>
@@ -356,7 +356,8 @@
     <div class="score-card blue"><div class="score-onto">ACCO</div><div class="score-val">72%</div><div class="score-label">21 fixture · 9%</div></div>
     <div class="score-card blue"><div class="score-onto">TI</div><div class="score-val">71%</div><div class="score-label">21 fixture · 9%</div></div>
     <div class="score-card blue"><div class="score-onto">Cultural-ON</div><div class="score-val">72%</div><div class="score-label">17 fixture · 7%</div></div>
-    <div class="score-card yellow"><div class="score-onto">ADMS</div><div class="score-val">65%</div><div class="score-label">11 fixture · 5%</div></div>
+    <div class="score-card yellow"><div class="score-onto">ADMS</div><div class="score-val">66%</div><div class="score-label">11 fixture · 4%</div></div>
+    <div class="score-card yellow"><div class="score-onto">DCATAPIT</div><div class="score-val">68%</div><div class="score-label">3 fixture · 1%</div></div>
     <div class="score-card yellow"><div class="score-onto">RO-AP_IT</div><div class="score-val">62%</div><div class="score-label">10 fixture · 4%</div></div>
     <div class="score-card yellow"><div class="score-onto">COV-AP_IT</div><div class="score-val">60%</div><div class="score-label">9 fixture · 4%</div></div>
     <div class="score-card yellow"><div class="score-onto">CPVAPIT</div><div class="score-val">58%</div><div class="score-label">7 fixture · 3%</div></div>
@@ -385,6 +386,7 @@
       <div class="legend-item"><div class="legend-dot" style="background:#e879f9"></div><div class="legend-text"><strong>MUAPIT</strong> <span>— Musei e luoghi della cultura: istituti culturali MiC/ArCo</span></div></div>
       <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div><div class="legend-text"><strong>COV-AP_IT</strong> <span>— Organizzazioni PA: personale, contratti, comparti NoiPA/BDAP</span></div></div>
       <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div><div class="legend-text"><strong>RO-AP_IT</strong> <span>— Ruoli e incarichi: consiglieri, assessori, eletti, presenze</span></div></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#0ea5e9"></div><div class="legend-text"><strong>DCATAPIT</strong> <span>— Catalogo open data: metadati DCAT-AP_IT, distribuzioni, publisher, licenze</span></div></div>
       <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div><div class="legend-text"><strong>CPVAPIT</strong> <span>— Persone fisiche: anagrafica candidati, dipendenti PA, ruoli nominativi</span></div></div>
     </div>
   </div>
@@ -408,6 +410,7 @@
     <button class="filter-btn" data-onto="MUAPIT" aria-pressed="false">MUAPIT</button>
     <button class="filter-btn" data-onto="COV-AP_IT" aria-pressed="false">COV-AP_IT</button>
     <button class="filter-btn" data-onto="RO-AP_IT" aria-pressed="false">RO-AP_IT</button>
+    <button class="filter-btn" data-onto="DCATAPIT" aria-pressed="false">DCATAPIT</button>
     <button class="filter-btn" data-onto="CPVAPIT" aria-pressed="false">CPVAPIT</button>
   </div>
 
@@ -913,12 +916,27 @@
       <div class="score-bar"><div class="score-bar-fill" style="width:83%"></div></div>
     </div>
 
+  
+    <!-- DCATAPIT -->
+    <div class="card" data-onto="DCATAPIT">
+      <div class="card-top"><span class="card-onto" style="background:#0ea5e9;color:#fff">DCATAPIT</span><span class="card-tipo">PA · METADATI CATALOGO</span></div>
+      <div class="card-title">Catalogo DCAT-AP_IT — metadati dataset open data italiani</div>
+      <div class="card-ente">dati.gov.it — tutte le PA italiane</div>
+      <div class="card-note">Il file catalog.ttl di dati.gov.it espone i metadati DCAT-AP_IT di tutti i dataset pubblicati. Struttura: dcatapit:Dataset, dct:publisher, dcat:distribution, foaf:Agent, skos:Concept. Filtro per organizzazione: ?fq=organization:nome-ente</div>
+      <div class="card-headers">
+        <span class="header-tag key">identifier</span><span class="header-tag key">title</span><span class="header-tag key">publisher</span><span class="header-tag key">distribution_url</span><span class="header-tag">description</span><span class="header-tag">accrualPeriodicity</span><span class="header-tag">theme</span><span class="header-tag">issued</span><span class="header-tag">modified</span><span class="header-tag">license</span><span class="header-tag">format</span><span class="header-tag">keyword</span>
+      </div>
+      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
+      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">95%</span></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:95%"></div></div>
+    </div>
+
     </div><!-- /cards-grid -->
 
   <!-- Footer -->
   <div class="footer">
     <div class="footer-left">
-      piersoft.github.io/CSV-to-RDF · Corpus v9 · 248 dataset · 16 ontologie
+      piersoft.github.io/CSV-to-RDF · Corpus v9 · 251 dataset · 17 ontologie
     </div>
     <div class="footer-right">
       Generato: 2026-03-20 · dati-semantic-assets / DCAT-AP_IT / schema.gov.it

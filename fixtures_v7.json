@@ -1,7 +1,7 @@
 {
-  "generated": "2026-03-19",
-  "script_version": "corpus_v8b_patch",
-  "total": 191,
+  "generated": "2026-03-20",
+  "script_version": "corpus_v8c_patch",
+  "total": 196,
   "false_positives_excluded": 0,
   "corpus": [
     {
@@ -17668,6 +17668,293 @@
       ],
       "validation": "ok",
       "source": "url_maggioli"
+    },
+    {
+      "seq": 266,
+      "id": "df288a16-5978-4269-9307-c0f35234e151",
+      "title": "Elenco Strutture Ricettive al 31/12/2023 - Regione Campania",
+      "org": "Regione Campania",
+      "ente": "Regione Campania",
+      "portal": "https://www.dati.gov.it/opendata",
+      "headers": [
+        "Codice Unico CUSR",
+        "Provincia",
+        "Comune",
+        "Tipologia",
+        "Classificazione",
+        "Denominazione",
+        "Indirizzo",
+        "N. Civico",
+        "CAP",
+        "Sito Web",
+        "Numero camere",
+        "Numero unita' abitative",
+        "Numero piazzole",
+        "Numero posti letto",
+        "Numero bagni"
+      ],
+      "sample_rows": [
+        {
+          "Codice Unico CUSR": "15064001ALB0001",
+          "Provincia": "Avellino",
+          "Comune": "Aiello del Sabato",
+          "Tipologia": "Albergo",
+          "Classificazione": "4 Stelle",
+          "Denominazione": "La Locandina",
+          "Indirizzo": "Via Palazzo Parisi",
+          "N. Civico": "13",
+          "CAP": "83020",
+          "Numero camere": "11",
+          "Numero posti letto": "25"
+        },
+        {
+          "Codice Unico CUSR": "15064002EXT0001",
+          "Provincia": "Avellino",
+          "Comune": "Altavilla Irpina",
+          "Tipologia": "Residenza Rurale (Country House)",
+          "Classificazione": "",
+          "Denominazione": "Masseria del Notaio",
+          "Indirizzo": "C.da Sassano",
+          "N. Civico": "8",
+          "CAP": "83011",
+          "Numero camere": "9",
+          "Numero posti letto": "18"
+        },
+        {
+          "Codice Unico CUSR": "15064003EXT0001",
+          "Provincia": "Avellino",
+          "Comune": "Andretta",
+          "Tipologia": "Casa o Appartamento per Vacanze",
+          "Classificazione": "",
+          "Denominazione": "Rocco Miele",
+          "Indirizzo": "Via Mattinella",
+          "N. Civico": "48",
+          "CAP": "83040",
+          "Numero camere": "2",
+          "Numero posti letto": "8"
+        }
+      ],
+      "tema_onto": [
+        "ACCO",
+        "CLV"
+      ],
+      "tema_target": [
+        "ACCO"
+      ],
+      "confirmed_temi": [
+        "ACCO",
+        "CLV"
+      ],
+      "validation": "ok",
+      "source": "url_campania"
+    },
+    {
+      "seq": 267,
+      "id": "a0875e2b-229a-47ff-877b-f182c927d38a",
+      "title": "Turismo: strutture ricettive per tipologia - Comune di Milano",
+      "org": "Comune di Milano",
+      "ente": "Comune di Milano",
+      "portal": "https://dati.comune.milano.it",
+      "headers": [
+        "Anno",
+        "Categoria",
+        "Tipologia esercizio",
+        "N_Esercizi",
+        "N_Letti",
+        "N_Camere",
+        "N_Bagni"
+      ],
+      "sample_rows": [
+        {
+          "Anno": 2020,
+          "Categoria": "Alberghiero",
+          "Tipologia esercizio": "Albergo 5 stelle",
+          "N_Esercizi": 18,
+          "N_Letti": 3240,
+          "N_Camere": "1580",
+          "N_Bagni": "1580"
+        },
+        {
+          "Anno": 2020,
+          "Categoria": "Alberghiero",
+          "Tipologia esercizio": "Albergo 4 stelle",
+          "N_Esercizi": 142,
+          "N_Letti": 18900,
+          "N_Camere": "9800",
+          "N_Bagni": "9800"
+        },
+        {
+          "Anno": 2021,
+          "Categoria": "Extra-alberghiero",
+          "Tipologia esercizio": "Bed and Breakfast",
+          "N_Esercizi": 320,
+          "N_Letti": 2100,
+          "N_Camere": "980",
+          "N_Bagni": "0"
+        }
+      ],
+      "tema_onto": [
+        "ACCO",
+        "QB"
+      ],
+      "tema_target": [
+        "ACCO"
+      ],
+      "confirmed_temi": [
+        "ACCO",
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_milano"
+    },
+    {
+      "seq": 268,
+      "id": "c8744298-d162-47ba-9854-7b1b1f7d0c1a",
+      "title": "Turismo: arrivi nelle strutture ricettive per provenienza 2005-2024 - Milano",
+      "org": "Comune di Milano",
+      "ente": "Comune di Milano",
+      "portal": "https://dati.comune.milano.it",
+      "headers": [
+        "Area geografica",
+        "Paese di provenienza",
+        "Anno",
+        "valori"
+      ],
+      "sample_rows": [
+        {
+          "Area geografica": "Europa",
+          "Paese di provenienza": "Francia",
+          "Anno": 2022,
+          "valori": 85000
+        },
+        {
+          "Area geografica": "America",
+          "Paese di provenienza": "USA",
+          "Anno": 2022,
+          "valori": 120000
+        },
+        {
+          "Area geografica": "Asia",
+          "Paese di provenienza": "Cina",
+          "Anno": 2022,
+          "valori": 45000
+        }
+      ],
+      "tema_onto": [
+        "ACCO",
+        "QB"
+      ],
+      "tema_target": [
+        "ACCO"
+      ],
+      "confirmed_temi": [
+        "ACCO",
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_milano"
+    },
+    {
+      "seq": 269,
+      "id": "14d4632c-44f2-4b03-8467-e9546b72942b",
+      "title": "Turismo: presenze nelle strutture ricettive per provenienza 2000-2024 - Milano",
+      "org": "Comune di Milano",
+      "ente": "Comune di Milano",
+      "portal": "https://dati.comune.milano.it",
+      "headers": [
+        "Area geografica",
+        "Paese di provenienza",
+        "Anno",
+        "Valore"
+      ],
+      "sample_rows": [
+        {
+          "Area geografica": "Europa",
+          "Paese di provenienza": "Germania",
+          "Anno": 2022,
+          "Valore": 210000
+        },
+        {
+          "Area geografica": "America",
+          "Paese di provenienza": "USA",
+          "Anno": 2022,
+          "Valore": 380000
+        },
+        {
+          "Area geografica": "Italia",
+          "Paese di provenienza": "Lombardia",
+          "Anno": 2022,
+          "Valore": 950000
+        }
+      ],
+      "tema_onto": [
+        "ACCO",
+        "QB"
+      ],
+      "tema_target": [
+        "ACCO"
+      ],
+      "confirmed_temi": [
+        "ACCO",
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_milano"
+    },
+    {
+      "seq": 270,
+      "id": "25e4340a-7255-4959-9f6f-0eb31e153c2e",
+      "title": "Turismo: arrivi turisti stranieri per struttura ricettiva 2008-2024 - Milano",
+      "org": "Comune di Milano",
+      "ente": "Comune di Milano",
+      "portal": "https://dati.comune.milano.it",
+      "headers": [
+        "Anno",
+        "Area geografica",
+        "Provenienza",
+        "Strutture Alberghiere",
+        "Strutture extra - alberghiere",
+        "Totale strutture ricettive"
+      ],
+      "sample_rows": [
+        {
+          "Anno": 2022,
+          "Area geografica": "Europa",
+          "Provenienza": "Francia",
+          "Strutture Alberghiere": 42000,
+          "Strutture extra - alberghiere": 8000,
+          "Totale strutture ricettive": 50000
+        },
+        {
+          "Anno": 2022,
+          "Area geografica": "America",
+          "Provenienza": "USA",
+          "Strutture Alberghiere": 78000,
+          "Strutture extra - alberghiere": 12000,
+          "Totale strutture ricettive": 90000
+        },
+        {
+          "Anno": 2023,
+          "Area geografica": "Asia",
+          "Provenienza": "Giappone",
+          "Strutture Alberghiere": 18000,
+          "Strutture extra - alberghiere": 3000,
+          "Totale strutture ricettive": 21000
+        }
+      ],
+      "tema_onto": [
+        "ACCO",
+        "QB"
+      ],
+      "tema_target": [
+        "ACCO"
+      ],
+      "confirmed_temi": [
+        "ACCO",
+        "QB"
+      ],
+      "validation": "ok",
+      "source": "url_milano"
     }
   ]
 }

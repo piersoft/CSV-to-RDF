@@ -1,7 +1,7 @@
 {
   "generated": "2026-03-20",
   "script_version": "v8",
-  "total": 229,
+  "total": 242,
   "false_positives_excluded": 0,
   "corpus": [
     {
@@ -19981,6 +19981,653 @@
           "comune": "Firenze",
           "provincia": "Firenze",
           "regione": "Toscana"
+        }
+      ]
+    },
+    {
+      "seq": 230,
+      "id": "b1000001-noipa-assegni-familiari",
+      "name": "noipa-assegni-familiari-pa",
+      "title": "NoiPA — Assegni familiari per provincia e amministrazione",
+      "org": "mef-noipa",
+      "ente": "MEF / NoiPA",
+      "categoria": "ministero",
+      "tema_dcat": [
+        "GOVE",
+        "SOCI"
+      ],
+      "tema_onto": [
+        "COV-AP_IT",
+        "QB",
+        "CPVAPIT"
+      ],
+      "tema_target": [
+        "COV-AP_IT",
+        "QB",
+        "CPVAPIT",
+        "l0",
+        "RO-AP_IT"
+      ],
+      "score": 80,
+      "resource_id": "noipa-assegni-familiari-202212",
+      "csv_url": "https://sparql-noipa.mef.gov.it/sparql",
+      "datastore": false,
+      "source": "upload+sparql:noipa",
+      "headers": [
+        "provincia_della_sede",
+        "amministrazione",
+        "numero",
+        "importo"
+      ],
+      "sample_rows": [
+        {
+          "provincia_della_sede": "AGRIGENTO",
+          "amministrazione": "MINISTERO DELL'ISTRUZIONE",
+          "numero": "108",
+          "importo": "2585.22"
+        }
+      ]
+    },
+    {
+      "seq": 231,
+      "id": "b1000002-noipa-contratti-gestiti",
+      "name": "noipa-contratti-personale-pa",
+      "title": "NoiPA — Contratti gestiti per provincia, sesso, comparto e inquadramento",
+      "org": "mef-noipa",
+      "ente": "MEF / NoiPA",
+      "categoria": "ministero",
+      "tema_dcat": [
+        "GOVE",
+        "SOCI"
+      ],
+      "tema_onto": [
+        "COV-AP_IT",
+        "QB",
+        "RO-AP_IT",
+        "CPVAPIT"
+      ],
+      "tema_target": [
+        "COV-AP_IT",
+        "QB",
+        "RO-AP_IT",
+        "CPVAPIT",
+        "l0"
+      ],
+      "score": 85,
+      "resource_id": "noipa-contratti-202512",
+      "csv_url": "https://sparql-noipa.mef.gov.it/sparql",
+      "datastore": false,
+      "source": "upload+sparql:noipa",
+      "headers": [
+        "provincia_della_sede",
+        "amministrazione",
+        "eta_min",
+        "eta_max",
+        "sesso",
+        "comparto",
+        "inquadramento",
+        "numero"
+      ],
+      "sample_rows": [
+        {
+          "provincia_della_sede": "AGRIGENTO",
+          "amministrazione": "AGENZIA DELLE DOGANE",
+          "eta_min": "45",
+          "eta_max": "54",
+          "sesso": "M",
+          "comparto": "COMPARTO FUNZIONI CENTRALI",
+          "inquadramento": "FUNZIONARI-DOGANE- EX III F 3",
+          "numero": "6"
+        }
+      ]
+    },
+    {
+      "seq": 232,
+      "id": "b1000003-dipendenti-pa-bdap-ente",
+      "name": "dipendenti-pa-bdap-per-ente-categoria",
+      "title": "Dipendenti PA per ente, comparto, categoria e genere — BDAP",
+      "org": "mef-bdap",
+      "ente": "MEF / BDAP",
+      "categoria": "ministero",
+      "tema_dcat": [
+        "GOVE",
+        "SOCI"
+      ],
+      "tema_onto": [
+        "COV-AP_IT",
+        "QB",
+        "RO-AP_IT"
+      ],
+      "tema_target": [
+        "COV-AP_IT",
+        "QB",
+        "RO-AP_IT",
+        "l0",
+        "CPVAPIT"
+      ],
+      "score": 88,
+      "resource_id": "bdap-dipendenti-ente-2022",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "Anno Rilevazione",
+        "Descrizione Tipo Istituzione",
+        "Codice Istituzione",
+        "Codice Ente BDAP",
+        "Descrizione Ente",
+        "Codice Comparto",
+        "Descrizione Comparto",
+        "Codice Contratto Lavoro",
+        "Descrizione Contratto Lavoro",
+        "Codice Macrocategoria",
+        "Descrizione Macrocategoria",
+        "Codice Categoria",
+        "Descrizione Categoria",
+        "Numero Dipendenti Donne Tempo Pieno",
+        "Numero Dipendenti Uomini Tempo Pieno",
+        "Numero Dipendenti Donne Part time Inf. 50%",
+        "Numero Dipendenti Uomini Part time Inf. 50%",
+        "Numero Dipendenti Donne Assunte",
+        "Numero Dipendenti Uomini Assunti",
+        "Numero Dipendenti Donne Cessate",
+        "Numero Dipendenti Uomini Cessati"
+      ],
+      "sample_rows": [
+        {
+          "Anno Rilevazione": "2022",
+          "Descrizione Ente": "ACCADEMIA DI BELLE ARTI DI FOGGIA",
+          "Codice Comparto": "IR",
+          "Descrizione Comparto": "ISTRUZIONE E RICERCA",
+          "Descrizione Categoria": "PERSONALE DELLE AREE A TEMPO DETERMINATO",
+          "Numero Dipendenti Donne Tempo Pieno": "1.0",
+          "Numero Dipendenti Uomini Tempo Pieno": "0.0"
+        }
+      ]
+    },
+    {
+      "seq": 233,
+      "id": "b1000004-dipendenti-pa-bdap-comparto",
+      "name": "dipendenti-pa-bdap-per-comparto",
+      "title": "Dipendenti PA per comparto e contratto — serie storica BDAP",
+      "org": "mef-bdap",
+      "ente": "MEF / BDAP",
+      "categoria": "ministero",
+      "tema_dcat": [
+        "GOVE",
+        "SOCI"
+      ],
+      "tema_onto": [
+        "COV-AP_IT",
+        "QB"
+      ],
+      "tema_target": [
+        "COV-AP_IT",
+        "QB",
+        "l0"
+      ],
+      "score": 82,
+      "resource_id": "bdap-dipendenti-comparto-storico",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "Anno Rilevazione",
+        "Descrizione Comparto",
+        "Descrizione Aggregato",
+        "Codice Contratto Lavoro",
+        "Descrizione Contratto Lavoro",
+        "Numero Dipendenti Donne Tempo Pieno",
+        "Numero Dipendenti Uomini Tempo Pieno",
+        "Numero Dipendenti Tempo Pieno"
+      ],
+      "sample_rows": [
+        {
+          "Anno Rilevazione": "2010",
+          "Descrizione Comparto": "COMPARTO AUTONOMO O FUORI COMPARTO",
+          "Descrizione Aggregato": "AUTORITA' INDIPENDENTI",
+          "Numero Dipendenti Donne Tempo Pieno": "759.0",
+          "Numero Dipendenti Uomini Tempo Pieno": "697.0",
+          "Numero Dipendenti Tempo Pieno": "1456.0"
+        }
+      ]
+    },
+    {
+      "seq": 234,
+      "id": "b1000005-od-personale-struttura",
+      "name": "od-personale-pa-struttura-ruolo",
+      "title": "Personale PA per struttura, ruolo, qualifica e genere",
+      "org": "pa-locale",
+      "ente": "PA Sanitaria/Pubblica",
+      "categoria": "altro",
+      "tema_dcat": [
+        "GOVE",
+        "SOCI"
+      ],
+      "tema_onto": [
+        "COV-AP_IT",
+        "RO-AP_IT",
+        "QB"
+      ],
+      "tema_target": [
+        "COV-AP_IT",
+        "RO-AP_IT",
+        "QB",
+        "l0",
+        "CPVAPIT"
+      ],
+      "score": 78,
+      "resource_id": "od-personale-struttura",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "Struttura",
+        "Ruolo",
+        "Qualifica",
+        "Genere",
+        "Classe Eta",
+        "Numero",
+        "Data aggiornamento"
+      ],
+      "sample_rows": [
+        {
+          "Struttura": "Accettazione Ancona",
+          "Ruolo": "Assistente amministrativo",
+          "Qualifica": "Amministrativo",
+          "Genere": "M",
+          "Classe Eta": "60-64",
+          "Numero": "1"
+        }
+      ]
+    },
+    {
+      "seq": 235,
+      "id": "b1000006-consiglieri-compensi",
+      "name": "consiglieri-comunali-compensi",
+      "title": "Consiglieri comunali — compensi e spese",
+      "org": "comune",
+      "ente": "Comune (generico)",
+      "categoria": "comune_medio",
+      "tema_dcat": [
+        "GOVE"
+      ],
+      "tema_onto": [
+        "RO-AP_IT",
+        "CPVAPIT",
+        "QB"
+      ],
+      "tema_target": [
+        "RO-AP_IT",
+        "CPVAPIT",
+        "QB",
+        "l0",
+        "COV-AP_IT"
+      ],
+      "score": 72,
+      "resource_id": "consiglieri-compensi-2012",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "nome",
+        "compensi",
+        "spese",
+        "totale"
+      ],
+      "sample_rows": [
+        {
+          "nome": "Mario Rossi",
+          "compensi": "27880.88",
+          "spese": "0",
+          "totale": "27880.88"
+        }
+      ]
+    },
+    {
+      "seq": 236,
+      "id": "b1000007-voti-consiglieri-sezione",
+      "name": "voti-consiglieri-comunali-per-sezione",
+      "title": "Voti per consigliere comunale per sezione elettorale — 2024",
+      "org": "comune-ferrara",
+      "ente": "Comune di Ferrara",
+      "categoria": "comune_medio",
+      "tema_dcat": [
+        "GOVE",
+        "JUST"
+      ],
+      "tema_onto": [
+        "RO-AP_IT",
+        "CPVAPIT",
+        "CLV",
+        "QB"
+      ],
+      "tema_target": [
+        "RO-AP_IT",
+        "CPVAPIT",
+        "CLV",
+        "QB",
+        "l0"
+      ],
+      "score": 80,
+      "resource_id": "voti-consiglieri-sezione-2024",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "Comune",
+        "Sezione",
+        "Numero lista",
+        "Sigla Lista",
+        "Numero Candidato",
+        "Cognome Candidato",
+        "Nome Candidato",
+        "Voti Validi",
+        "Voti Contestati Assegnati",
+        "Area"
+      ],
+      "sample_rows": [
+        {
+          "Comune": "FERRARA",
+          "Sezione": "1",
+          "Sigla Lista": "FE FUTURA",
+          "Cognome Candidato": "HIEDEMANN",
+          "Nome Candidato": "ALEXANDER MAXIMILIAN",
+          "Voti Validi": "0"
+        }
+      ]
+    },
+    {
+      "seq": 237,
+      "id": "b1000008-elezioni-comunali-candidati",
+      "name": "elezioni-comunali-candidati-voti",
+      "title": "Elezioni comunali — candidati e voti validi per lista",
+      "org": "comune",
+      "ente": "Comune (generico)",
+      "categoria": "comune_medio",
+      "tema_dcat": [
+        "GOVE",
+        "JUST"
+      ],
+      "tema_onto": [
+        "RO-AP_IT",
+        "CPVAPIT",
+        "QB"
+      ],
+      "tema_target": [
+        "RO-AP_IT",
+        "CPVAPIT",
+        "QB",
+        "l0"
+      ],
+      "score": 78,
+      "resource_id": "od-elezioni-comunali-2019-candidati",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "NOME_CONS",
+        "NOME_LISTA",
+        "NUMERO_CONS",
+        "VOTI_VALIDI"
+      ],
+      "sample_rows": [
+        {
+          "NOME_CONS": "GIUNCHI ANGELA",
+          "NOME_LISTA": "PARTITO DEMOCRATICO",
+          "NUMERO_CONS": "10",
+          "VOTI_VALIDI": "245"
+        }
+      ]
+    },
+    {
+      "seq": 238,
+      "id": "b1000009-presenze-consiglio",
+      "name": "presenze-sedute-consiglio-comunale",
+      "title": "Presenze dei consiglieri alle sedute del Consiglio — 2019",
+      "org": "comune",
+      "ente": "Comune (generico)",
+      "categoria": "comune_medio",
+      "tema_dcat": [
+        "GOVE"
+      ],
+      "tema_onto": [
+        "RO-AP_IT",
+        "CPVAPIT",
+        "TI",
+        "QB"
+      ],
+      "tema_target": [
+        "RO-AP_IT",
+        "CPVAPIT",
+        "TI",
+        "QB",
+        "l0"
+      ],
+      "score": 75,
+      "resource_id": "presenze-consiglio-2019",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "NOMINATIVO",
+        "DATA",
+        "ORA_INIZIO",
+        "ORA_TERMINE",
+        "TITOLO",
+        "COMMISSIONI"
+      ],
+      "sample_rows": [
+        {
+          "NOMINATIVO": "FORNARI ANTONIO",
+          "DATA": "07/01/2019",
+          "ORA_INIZIO": "09,30",
+          "ORA_TERMINE": "10,56",
+          "TITOLO": "T",
+          "COMMISSIONI": "1° CCP, 6° CCP"
+        }
+      ]
+    },
+    {
+      "seq": 239,
+      "id": "b1000010-consiglieri-regionali-lombardia",
+      "name": "consiglieri-assessori-regionali-lombardia",
+      "title": "Consiglieri e Assessori regionali della Lombardia — anagrafica",
+      "org": "regione-lombardia",
+      "ente": "Consiglio Regionale della Lombardia",
+      "categoria": "regione",
+      "tema_dcat": [
+        "GOVE"
+      ],
+      "tema_onto": [
+        "RO-AP_IT",
+        "CPVAPIT",
+        "COV-AP_IT",
+        "CLV"
+      ],
+      "tema_target": [
+        "RO-AP_IT",
+        "CPVAPIT",
+        "COV-AP_IT",
+        "CLV",
+        "l0"
+      ],
+      "score": 87,
+      "resource_id": "crl-consiglieri-assessori-lombardi",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "ID_consigliere",
+        "Cognome",
+        "Nome",
+        "Data_nascita",
+        "Citta_nascita",
+        "Provincia_nascita",
+        "Sesso",
+        "Legislatura",
+        "Non_consigliere"
+      ],
+      "sample_rows": [
+        {
+          "ID_consigliere": "40",
+          "Cognome": "AGOSTINELLI",
+          "Nome": "Mario",
+          "Data_nascita": "04/06/1944",
+          "Citta_nascita": "TREVIGLIO",
+          "Provincia_nascita": "BG",
+          "Sesso": "M",
+          "Legislatura": "-VIII-"
+        }
+      ]
+    },
+    {
+      "seq": 240,
+      "id": "b1000011-link-consiglieri-legislatura",
+      "name": "link-consiglieri-legislatura-lombardia",
+      "title": "Associazione consiglieri-legislatura — Regione Lombardia",
+      "org": "regione-lombardia",
+      "ente": "Consiglio Regionale della Lombardia",
+      "categoria": "regione",
+      "tema_dcat": [
+        "GOVE"
+      ],
+      "tema_onto": [
+        "RO-AP_IT",
+        "COV-AP_IT"
+      ],
+      "tema_target": [
+        "RO-AP_IT",
+        "COV-AP_IT",
+        "l0"
+      ],
+      "score": 70,
+      "resource_id": "crl-link-consiglieri-legislatura",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "id_link_c_l",
+        "ID_consigliere",
+        "Legislatura"
+      ],
+      "sample_rows": [
+        {
+          "id_link_c_l": "lnk-101-IX",
+          "ID_consigliere": "101",
+          "Legislatura": "IX"
+        }
+      ]
+    },
+    {
+      "seq": 241,
+      "id": "b1000012-interpellanze-risposta-scritta",
+      "name": "interpellanze-risposta-scritta-consiglio",
+      "title": "Interpellanze a risposta scritta — atti consiliari",
+      "org": "comune",
+      "ente": "Comune di Bologna",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "GOVE",
+        "JUST"
+      ],
+      "tema_onto": [
+        "CPSV",
+        "RO-AP_IT",
+        "COV-AP_IT"
+      ],
+      "tema_target": [
+        "CPSV",
+        "RO-AP_IT",
+        "COV-AP_IT",
+        "l0",
+        "ADMS"
+      ],
+      "score": 76,
+      "resource_id": "interpellanze-risposta-scritta-bologna",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "Progressivo Consigliere Interpellante",
+        "Tipologia Atto",
+        "Data Seduta Consiglio",
+        "Data Risposta Scritta",
+        "Num. PG",
+        "Anno PG",
+        "Oggetto Atto",
+        "Consigliere Interpellante",
+        "Gruppo Consiliare Interpellante",
+        "Ass Capofila - Progressivo",
+        "Tipo Risposta"
+      ],
+      "sample_rows": [
+        {
+          "Tipologia Atto": "Interpellanza",
+          "Data Seduta Consiglio": "2011-12-02",
+          "Oggetto Atto": "ABUSIVISMO SUI MEZZI ATC - 14 OTTOBRE 2011",
+          "Consigliere Interpellante": "ALDROVANDI STEFANO",
+          "Gruppo Consiliare Interpellante": "BOLOGNA 2016"
+        }
+      ]
+    },
+    {
+      "seq": 242,
+      "id": "b1000013-noipa-sparql-endpoint",
+      "name": "noipa-sparql-personale-pa-mef",
+      "title": "NoiPA SPARQL — Personale PA (inquadramenti, residenti, contratti) — MEF",
+      "org": "mef-noipa",
+      "ente": "MEF / NoiPA",
+      "categoria": "ministero",
+      "tema_dcat": [
+        "GOVE",
+        "SOCI"
+      ],
+      "tema_onto": [
+        "COV-AP_IT",
+        "RO-AP_IT",
+        "QB",
+        "CPVAPIT"
+      ],
+      "tema_target": [
+        "COV-AP_IT",
+        "RO-AP_IT",
+        "QB",
+        "CPVAPIT",
+        "l0",
+        "CLV"
+      ],
+      "score": 92,
+      "resource_id": "noipa-sparql-endpoint",
+      "csv_url": "https://sparql-noipa.mef.gov.it/sparql",
+      "datastore": false,
+      "source": "sparql:https://sparql-noipa.mef.gov.it",
+      "headers": [
+        "provincia_della_sede",
+        "amministrazione",
+        "comparto",
+        "inquadramento",
+        "eta_min",
+        "eta_max",
+        "sesso",
+        "numero",
+        "importo",
+        "tipo_contratto",
+        "anno"
+      ],
+      "sample_rows": [
+        {
+          "classe": "EntryInquadramenti",
+          "provincia_della_sede": "ROMA",
+          "amministrazione": "MINISTERO DELL'ECONOMIA",
+          "comparto": "COMPARTO FUNZIONI CENTRALI",
+          "sesso": "F",
+          "numero": "1739845"
+        },
+        {
+          "classe": "EntryResidenti",
+          "provincia_della_sede": "MILANO",
+          "numero": "768847"
         }
       ]
     }

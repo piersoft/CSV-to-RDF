@@ -1,3 +1,23 @@
+| Ontologia | Fixture | Score | Descrizione |
+|-----------|--------:|------:|-------------|
+| **QB** — RDF Data Cube | 177 | 🟢 91% | Dati statistici e serie storiche |
+| **POI** — Points of Interest | 72 | 🟢 86% | Luoghi geolocalizzati con lat/lon |
+| **CPV** — Core Person Vocab | 63 | 🟢 86% | Popolazione, anagrafe, residenti |
+| **CLV** — Controlled Vocabulary | 53 | 🟢 78% | Stradari, civici, indirizzi |
+| **CPSV** — Core Public Service | 46 | 🟢 80% | Appalti, gare, determine, atti PA |
+| **ACCO** — Accommodation | 23 | 🔵 74% | Strutture ricettive e turismo |
+| **TI** — Time Interval | 28 | 🔵 71% | Eventi con data inizio/fine |
+| **Cultural-ON** | 18 | 🔵 72% | Musei, biblioteche, beni culturali |
+| **ADMS** | 15 | 🟡 68% | Metadati e cataloghi open data |
+| **DCATAPIT** | 3 | 🟢 100% | Standard obbligatorio dati.gov.it |
+| **RO-AP_IT** | 14 | 🟡 68% | Ruoli e incarichi istituzionali |
+| **COV-AP_IT** | 12 | 🟡 64% | Personale e organizzazioni PA |
+| **CPVAPIT** | 9 | 🟡 60% | Persone fisiche nominative |
+| **PublicOrganization** | 4 | 🟡 55% | Enti pubblici (IPA, ASL, ecc.) |
+| **GTFS** | 10 | 🟡 62% | Trasporto pubblico locale |
+| **IoT-AP_IT** | 8 | 🟡 55% | Sensori IoT e misurazioni |
+| **MUAPIT** | 7 | 🟡 58% | Luoghi e beni culturali MiC/ArCo |
+| **SMAPIT** | 6 | 🟡 50% | Strutture scolastiche |
 # CSV → RDF/TTL — Linked Open Data per la PA italiana
 
 Strumento open source per trasformare dataset CSV della Pubblica Amministrazione italiana in file **Turtle (TTL) RDF**, arricchiti con le ontologie ufficiali di [github.com/italia/dati-semantic-assets](https://github.com/italia/dati-semantic-assets).
@@ -74,9 +94,9 @@ Le ontologie disponibili sono:
 
 ---
 
-### Corpus di riferimento v8
+### Corpus di riferimento v10
 
-Il rilevamento deterministico si basa su un **corpus di 217 dataset reali** della PA italiana, raccolti e validati manualmente.
+Il rilevamento deterministico si basa su un **corpus di 269 dataset reali** della PA italiana, raccolti e validati manualmente.
 
 Il corpus copre le principali ontologie del patrimonio semantico nazionale:
 
@@ -142,7 +162,7 @@ Nell'area di output trovi tre pulsanti:
 **📋 Copia TTL** — copia il testo negli appunti.
 
 **🔍 Valida** — avvia la validazione delle ontologie usate. Il report mostra:
-- ✓ verde: termini verificati nelle ontologie OntoPiA
+- ✓ verde: termini verificati nelle ontologie dati-semantic-assets
 - ◦ grigio: standard W3C/DCAT (sempre validi)
 - ⚠ arancione: termini non trovati nella mappa locale
 - ✗ rosso: termini che non esistono su schema.gov.it
@@ -159,13 +179,13 @@ Il file TTL generato va aggiunto come nuova **distribuzione** al dataset già es
 
 ## 📋 Dataset Ottimali di Riferimento per PA
 
-Il file [`dataset-ottimali-PA.html`](https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html) è un **catalogo interattivo** dei dataset CSV ideali per Comuni e Regioni che vogliono pubblicare dati conformi alle ontologie OntoPiA / DCAT-AP_IT.
+Il file [`dataset-ottimali-PA.html`](https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html) è un **catalogo interattivo** dei dataset CSV ideali per Comuni e Regioni che vogliono pubblicare dati conformi alle ontologie dati-semantic-assets / DCAT-AP_IT.
 
 Per ogni ontologia il catalogo indica:
 - Il **dataset modello** con headers chiave evidenziati in blu
 - L'**ente di riferimento** che lo pubblica già correttamente
 - Il **link diretto** a dati.gov.it o al portale sorgente
-- Lo **score di match** stimato sul corpus attuale (217 dataset)
+- Lo **score di match** stimato sul corpus attuale (269 dataset)
 - Una **nota pratica** per i responsabili open data
 
 ---
@@ -195,7 +215,7 @@ CSV
          ↓ no ↓
 2. LLM (solo per colonne semanticamente ambigue)
    ├── riceve solo le colonne non risolte deterministicamente
-   ├── prompt con classi/proprietà verificate dalle ontologie OntoPiA
+   ├── prompt con classi/proprietà verificate dalle ontologie dati-semantic-assets
    └── vocabolari controllati reali fetchati da dati-semantic-assets
          ↓
 3. SANITIZZAZIONE (whitelist JS)

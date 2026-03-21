@@ -546,7 +546,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.47</span>
+<span id="app-version">v2026.03.20.48</span>
 </footer>
 
 <script>
@@ -2859,9 +2859,8 @@ async function validateTTL() {
   }
   for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/cultural-institute\/[^>]*)>\s+a\s+([^;.\n]+)/g)) {
     const cls = m[2].trim();
-    if (!cls.includes('CulturalInstituteOrSite'))
     if (!cls.includes('CulturalInstituteOrSite') && !cls.includes('cis:Museum') && !cls.includes('cis:Library') && !cls.includes('cis:Theatre') && !cls.includes('cis:Cinema') && !cls.includes('cis:'))
-      warnings.push(`URI /cultural-institute/ ma classe "${cls.slice(0,50)}" — atteso cis:CulturalInstituteOrSite o sottoclasse (cis:Museum, cis:Library, ecc.)`);
+      warnings.push(`URI /cultural-institute/ ma classe "${cls.slice(0,50)}" — atteso cis:CulturalInstituteOrSite o una sua sottoclasse (cis:Museum, cis:Library, ecc.)`);
   for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/observation\/[^>]*)>\s+a\s+([^;.\n]+)/g)) {
     const cls = m[2].trim();
     if (!cls.includes('qb:Observation'))

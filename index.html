@@ -546,7 +546,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.40</span>
+<span id="app-version">v2026.03.20.41</span>
 </footer>
 
 <script>
@@ -3163,7 +3163,7 @@ function validateSPARQL(terms, prefixMap) {
         sparqlDiv.style.color = '#0a0';
       } else {
         var names = missing.map(function(u) { return u.split('/').pop().replace('>',''); }).join(', ');
-        sparqlDiv.innerHTML = '⚠ ' + missing.length + '/' + total + ' class' + (missing.length>1?'i':'e') + ' non in schema.gov.it: ' + names;
+        sparqlDiv.innerHTML = '⚠ ' + missing.length + '/' + total + ' class' + (missing.length>1?'i':'e') + ' non ancora in schema.gov.it: ' + missing.map(function(u){return u.replace(/.*[\/#]/,'');}).join(', ') + '<br><small style="font-size:11px;opacity:0.8">Ontologie valide (dati-semantic-assets o standard W3C/GTFS) non ancora nel catalogo nazionale. Il TTL è comunque corretto.</small>';
         sparqlDiv.style.color = '#c80';
       }
     })

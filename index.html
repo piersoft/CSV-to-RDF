@@ -538,7 +538,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.36</span>
+<span id="app-version">v2026.03.20.37</span>
 </footer>
 
 <script>
@@ -670,9 +670,11 @@ Non aggiungere spiegazioni, solo il JSON.`;
       const catalogVal = /\b(csv|json|ttl|xlsx|xml)\b/.test(sampleV2) && /\b\d{4,}\b/.test(sampleV2) && cols2.some(c => /formato|identifier|nome_dataset|nome_risorsa/i.test(c));
       if (catalogMatch || catalogVal) {
         // Forza SOLO ADMS e termina senza chiamare l'AI
+if (!window._exampleLocked) {
         document.querySelectorAll('#onto-selector .pill, #onto-selector-adv .pill').forEach(p => {
           p.classList.toggle('active', p.dataset.onto === 'ADMS');
         });
+  }
         const msgEl = document.getElementById('auto-onto-msg');
         if (msgEl) { msgEl.textContent = '🤖 CSV catalogo: ADMS (AI-detect saltato)'; msgEl.style.display='block'; }
         btn.disabled = false;
@@ -711,9 +713,11 @@ Non aggiungere spiegazioni, solo il JSON.`;
       .map(p => p.dataset.onto.toUpperCase()));
     const aiOntos = new Set(ontos.map(o => o.toUpperCase()));
     const merged = new Set([...alreadyActive, ...aiOntos]);
+if (!window._exampleLocked) {
     document.querySelectorAll('#onto-selector .pill, #onto-selector-adv .pill').forEach(p => {
       p.classList.toggle('active', merged.has(p.dataset.onto.toUpperCase()));
     });
+  }
 
     // Apri avanzate se necessario
     const advActive = [...document.querySelectorAll('#onto-selector-adv .pill.active')].length > 0;
@@ -760,9 +764,11 @@ function autoDetectOnto() {
                              cols.some(c => /formato|identifier|nome_dataset|nome_risorsa/i.test(c));
   if (catalogHeaderMatch || catalogValueMatch) {
     suggested.add('ADMS');
+if (!window._exampleLocked) {
     document.querySelectorAll('#onto-selector .pill, #onto-selector-adv .pill').forEach(p => {
       p.classList.toggle('active', p.dataset.onto === 'ADMS');
     });
+  }
     const msg = document.getElementById('auto-onto-msg');
     if (msg) { msg.textContent = '🤖 CSV catalogo rilevato: solo ADMS'; msg.style.display='block'; }
     return;
@@ -879,9 +885,11 @@ function autoDetectOnto() {
 
   // Aggiorna pillole — resetta solo se l'AI non ha ancora risposto
   if (!window._aiDetectDone) {
+if (!window._exampleLocked) {
     document.querySelectorAll('#onto-selector .pill, #onto-selector-adv .pill').forEach(p => {
       p.classList.toggle('active', suggested.has(p.dataset.onto));
     });
+  }
   }
 
   // Apri avanzate se qualcuna è lì
@@ -1184,17 +1192,18 @@ S003,Stazione Centrale,44.5058,11.3452,2,R001,1,3,08:12:00,08:12:00,3`
   };
   const csv = esempi[tipo] || esempi['poi'];
   document.getElementById('csv-input').value = csv;
-  parseAndPreviewCSV();
-  // Attiva le pill DOPO che il corpus matcher ha aggiornato le pill (150ms delay)
   const ontoMap = {
     poi:   ['CLV','POI','L0','TI'],
-    smapit:['CLV','L0','SMAPIT','TI'],
+    smapit:['CLV','L0','SMAPIT'],
     iot:   ['QB','IoT','L0','TI'],
     acco:  ['CLV','POI','ACCO','L0'],
     cpsv:  ['CLV','COV','CPSV-AP','L0'],
-    gtfs:  ['CLV','GTFS','L0','TI']
+    gtfs:  ['CLV','GTFS','L0']
   };
-  setTimeout(function(){ if (typeof setExampleOntos === 'function') setExampleOntos(ontoMap[tipo] || ontoMap['poi']); }, 150);
+  window._exampleLocked = true;
+  setExampleOntos(ontoMap[tipo] || ontoMap['poi']);
+  parseAndPreviewCSV();
+  setTimeout(function(){ window._exampleLocked = false; }, 3000);
 }
 
 function clearAll() {

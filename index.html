@@ -568,7 +568,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.62</span>
+<span id="app-version">v2026.03.20.63</span>
 </footer>
 
 <script>
@@ -684,6 +684,11 @@ REGOLE IMPORTANTI:
 - Se il CSV ha solo colonne Anno/Anno-Mese + valori numerici: suggerisci QB e L0, NON SKOS.
 - Se le colonne o i valori contengono "CulturalInstituteOrSite", "beniculturali", "mibact", "museo", "biblioteca", "monumento", "patrimonio" → includi SEMPRE "Cultural-ON"
 - Se il CSV ha colonna "subject" con URI di istituti culturali → includi "Cultural-ON"
+- ACCO: includi se i dati riguardano strutture ricettive (hotel, albergo, B&B, ostello, campeggio, agriturismo, stelle). COV NON va usato per strutture ricettive.
+- COV: includi SOLO per enti/organizzazioni pubbliche o private (comuni, regioni, aziende, associazioni). NON per strutture ricettive o luoghi fisici.
+- POI: includi per luoghi fisici generici (defibrillatori, parcheggi, fontane) ma NON se ACCO o Cultural-ON sono presenti.
+- CLV: includi SEMPRE se ci sono colonne indirizzo/lat/lon/comune/cap.
+- Se i valori contengono "albergo", "hotel", "B&B", "stelle", "letti", "camere": usa ACCO + CLV + L0, NON COV.
 
 Esempio di risposta valida: ["ACCO", "CLV", "L0"]
 Non aggiungere spiegazioni, solo il JSON.`;

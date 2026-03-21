@@ -546,7 +546,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.45</span>
+<span id="app-version">v2026.03.20.46</span>
 </footer>
 
 <script>
@@ -2059,7 +2059,7 @@ REGOLE:
   Esempi di errori da NON fare:
   - ACCO attiva → usare l0:Object invece di acco:Accommodation ❌
   - CPSV-AP attiva → usare qb:Observation invece di cpsv:PublicService ❌
-  - Cultural-ON attiva → usare qb:DataSet invece di cis:CulturalInstituteOrSite ❌
+  - Cultural-ON attiva → usare qb:DataSet o dcat:Dataset invece di cis:Museum/cis:Library/cis:CulturalInstituteOrSite ❌
   - Solo CLV attiva → usare poi:PointOfInterest invece di clv:Address ❌
   
   REGOLA CLASSE PRINCIPALE: usa la classe più specifica disponibile tra le ontologie selezionate.
@@ -2070,7 +2070,14 @@ REGOLE:
   GTFS selezionata      → gtfs:Stop per fermate, gtfs:Route per linee, gtfs:Agency per aziende di trasporto
   IoT selezionata       → iot:Sensor per sensori, iot:Observation per osservazioni (NON usare qb:Observation per IoT)
 SMAPIT selezionata    → smapit:School per scuole di qualsiasi ordine e grado (NON usare cultural-on per le scuole)
-Cultural-ON selezionata → cis:CulturalInstituteOrSite OBBLIGATORIO (namespace: http://dati.beniculturali.it/cis/). Per museo usa cis:Museum, per biblioteca cis:Library, per teatro cis:Theatre. NON usare qb:DataSet, NON usare l0:Object come classe principale
+Cultural-ON selezionata → usa SEMPRE il namespace http://dati.beniculturali.it/cis/ con queste classi OBBLIGATORIE:
+  - se tipo="Museo" o simile → cis:Museum (OBBLIGATORIO, NON dcat:Dataset NON qb:DataSet NON l0:Object)
+  - se tipo="Biblioteca" o simile → cis:Library (OBBLIGATORIO)
+  - se tipo="Teatro" o simile → cis:Theatre (OBBLIGATORIO)
+  - se tipo="Cinema" o simile → cis:Cinema (OBBLIGATORIO)
+  - per qualsiasi istituto/luogo culturale → cis:CulturalInstituteOrSite (OBBLIGATORIO)
+  Il prefisso @prefix cis: <http://dati.beniculturali.it/cis/> è già dichiarato. Usalo SEMPRE.
+  NON usare dcat:Dataset, qb:DataSet, l0:Object, l0:Location come classe principale per Cultural-ON
   CPSV-AP selezionata   → cpsv:PublicService OBBLIGATORIO per servizi pubblici e appalti PA (namespace: https://w3id.org/italia/onto/CPSV/). NON usare qb:Observation, NON usare l0:Object come classe principale
   COV selezionata       → cov:PublicOrganization per enti pubblici, cov:Company per imprese private
   RO selezionata        → ro:Role OBBLIGATORIO per incarichi e ruoli (con ro:isRoleOf e ro:withRole)

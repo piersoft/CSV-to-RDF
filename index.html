@@ -537,7 +537,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.32</span>
+<span id="app-version">v2026.03.20.33</span>
 </footer>
 
 <script>
@@ -2052,9 +2052,9 @@ function fixMeasurePrefixes(ttl) {
   ttl = ttl.replace(/<https?:\/\/[^>]+\/(morti|feriti|incidenti|count|valore|importo|totale|numero)>\s+(\d[\d.]*)/gi,
     'sdmx-measure:obsValue "$2"^^xsd:decimal');
   return ttl
-    .replace(/\bmeasure:obsValue\b/g, 'sdmx-measure:obsValue')
-    .replace(/\bdimension:timePeriod\b/g, 'sdmx-dimension:timePeriod')
-    .replace(/\bdimension:refArea\b/g, 'sdmx-dimension:refArea');
+    .replace(/(?<!sdmx-)measure:obsValue/g, 'sdmx-measure:obsValue')
+    .replace(/(?<!sdmx-)dimension:timePeriod/g, 'sdmx-dimension:timePeriod')
+    .replace(/(?<!sdmx-)dimension:refArea/g, 'sdmx-dimension:refArea');
 }
 
 

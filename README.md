@@ -133,6 +133,8 @@ Il corpus copre le principali ontologie del patrimonio semantico nazionale:
 | **cis** | 1 | 🔴 47% | — |
 | **l0** | 1 | 🔴 47% | — |
 
+> **Nota sulle ontologie:** Le ontologie contrassegnate con ✅ sono native del repository [dati-semantic-assets](https://github.com/italia/dati-semantic-assets). Le ontologie **QB** (RDF Data Cube, W3C), **GTFS** (General Transit Feed Specification), e **IoT** ([IoT-AP_IT](https://w3id.org/italia/onto/IoT/)) sono standard complementari usati dalla PA italiana per specifici domini (statistiche, trasporti, sensori). Il corpus include dataset reali che le utilizzano in modo conforme alle best practice nazionali.
+
 Quando incolli un CSV e clicchi **👁 Anteprima** (oppure carichi un file), il corpus viene interrogato in tempo reale via **Jaccard similarity** sugli header: i dataset più simili vengono mostrati nel pannello blu con badge di confidenza e link diretto a [dati.gov.it](https://www.dati.gov.it).
 
 Le fixture del corpus sono disponibili in [`fixtures_v7.json`](./fixtures_v7.json) e vengono caricate nel browser — nessuna chiamata a server esterni.

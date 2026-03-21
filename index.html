@@ -546,7 +546,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.51</span>
+<span id="app-version">v2026.03.20.52</span>
 </footer>
 
 <script>
@@ -2833,22 +2833,22 @@ async function validateTTL() {
     warnings.push(`sm:hasWebSite con URI w3id inventato (${fakeWeb.length}×) — dovrebbe essere URL reale`);
 
   // ── 11. CLASSE INCOERENTE CON TIPO URI ────────────────────────────────
-  for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/event\/[^>]*)>\s+a\s+([^;.\n]+)/g)) {
+  for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/event\/[^\/\s>]+)>\s+a\s+([^;.\n]+)/g)) {
     const cls = m[2].trim();
     if (!cls.includes('EventOrSituation'))
       warnings.push(`URI /event/ ma classe "${cls.slice(0,50)}" — atteso l0:EventOrSituation`);
   }
-  for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/cultural-institute\/[^>]*)>\s+a\s+([^;.\n]+)/g)) {
+  for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/cultural-institute\/[^\/\s>]+)>\s+a\s+([^;.\n]+)/g)) {
     const cls = m[2].trim();
     if (!cls.includes('CulturalInstituteOrSite') && !cls.startsWith('cis:'))
       warnings.push(`URI /cultural-institute/ ma classe "${cls.slice(0,50)}" — atteso cis:Museum/cis:Library/cis:CulturalInstituteOrSite`);
   }
-  for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/observation\/[^>]*)>\s+a\s+([^;.\n]+)/g)) {
+  for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/observation\/[^\/\s>]+)>\s+a\s+([^;.\n]+)/g)) {
     const cls = m[2].trim();
     if (!cls.includes('qb:Observation'))
       warnings.push(`URI /observation/ ma classe "${cls.slice(0,50)}" — atteso qb:Observation`);
   }
-  for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/point-of-interest\/[^>]*)>\s+a\s+([^;.\n]+)/g)) {
+  for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/point-of-interest\/[^\/\s>]+)>\s+a\s+([^;.\n]+)/g)) {
     const cls = m[2].trim();
     if (!cls.includes('poi:PointOfInterest'))
       warnings.push(`URI /point-of-interest/ ma classe "${cls.slice(0,50)}" — atteso poi:PointOfInterest`);

@@ -568,7 +568,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.60</span>
+<span id="app-version">v2026.03.20.61</span>
 </footer>
 
 <script>
@@ -2487,7 +2487,7 @@ REGOLE ASSOLUTE:
       'anthropic-version': '2023-06-01',
       'anthropic-dangerous-direct-browser-access': 'true'
     },
-    body: JSON.stringify({
+    body: safeJSON({
       model,
       max_tokens: 8000,
       system: systemPrompt,
@@ -2537,6 +2537,14 @@ function cleanTTL(text) {
 }
 
 
+
+// Helper: JSON.stringify con escape Unicode >127 per compatibilità fetch/ISO-8859-1
+function safeJSON(obj) {
+  return JSON.stringify(obj).replace(/[\u0080-\uFFFF]/g, function(c) {
+    return '\\u' + ('0000' + c.charCodeAt(0).toString(16)).slice(-4);
+  });
+}
+
 async function callOpenAI(prompt) {
   const key = document.getElementById('openai-key')?.value?.trim();
   if (!key) throw new Error('Inserisci la API key OpenAI.');
@@ -2544,7 +2552,7 @@ async function callOpenAI(prompt) {
   const resp = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {'Content-Type':'application/json','Authorization':'Bearer '+key},
-    body: JSON.stringify({model, messages:[{role:'user',content:prompt}], temperature:0.1, max_tokens:4000})
+    body: safeJSON({model, messages:[{role:'user',content:prompt}], temperature:0.1, max_tokens:4000})
   });
   if (!resp.ok) {
     const e = await resp.json().catch(()=>({error:{message:resp.statusText}}));
@@ -2561,7 +2569,7 @@ async function callMistral(prompt) {
   const res = await fetch('https://api.mistral.ai/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-    body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], temperature: 0.1, max_tokens: 32000 })
+    body: safeJSON({ model, messages: [{ role: 'user', content: prompt }], temperature: 0.1, max_tokens: 32000 })
   });
   if (!res.ok) { const e = await res.json(); throw new Error(e.message || `Mistral error ${res.status}`); }
   return (await res.json()).choices[0].message.content;
@@ -2574,7 +2582,7 @@ async function callGroq(prompt) {
   const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-    body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], temperature: 0.1, max_tokens: 32000 })
+    body: safeJSON({ model, messages: [{ role: 'user', content: prompt }], temperature: 0.1, max_tokens: 32000 })
   });
   if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || `Groq error ${res.status}`); }
   return (await res.json()).choices[0].message.content;
@@ -2587,7 +2595,7 @@ async function callGemini(prompt) {
   const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.1, maxOutputTokens: 32000 } })
+    body: safeJSON({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.1, maxOutputTokens: 32000 } })
   });
   if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || `Gemini error ${res.status}`); }
   return (await res.json()).candidates?.[0]?.content?.parts?.[0]?.text || '';

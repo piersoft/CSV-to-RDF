@@ -275,6 +275,7 @@
             <button class="provider-tab"        data-provider="groq"      onclick="switchProvider('groq')">⚡ Groq</button>
             <button class="provider-tab"        data-provider="gemini"    onclick="switchProvider('gemini')">✨ Gemini</button>
             <button class="provider-tab"        data-provider="ollama"    onclick="switchProvider('ollama')">🦙 Ollama Cloud</button>
+              <button class="provider-tab" data-provider="openai" onclick="switchProvider('openai')">&#x1F7E2; OpenAI</button>
             <button class="provider-tab"        data-provider="anthropic" onclick="switchProvider('anthropic')">🔴 Anthropic</button>
           </div>
 
@@ -397,6 +398,27 @@
               </div>
             </div>
             <div class="info-note mt-2">🔴 <a href="https://console.anthropic.com/" target="_blank" rel="noopener noreferrer">console.anthropic.com</a> — <strong>claude-haiku</strong> consigliato per AI-detect, <strong>claude-sonnet</strong> per la generazione TTL.</div>
+          </div>
+
+          <!-- OPENAI -->
+          <div class="provider-panel" id="panel-openai" style="display:none">
+            <div class="row g-2">
+              <div class="col-12">
+                <label class="lbl">API Key OpenAI</label>
+                <div style="display:flex;gap:6px">
+                  <input type="password" class="inp" id="openai-key" oninput="onApiKeyChange()" placeholder="Incolla la tua API key OpenAI (sk-...)"/>
+                  <button class="apikey-toggle" onclick="toggleKey('openai-key')">&#128065;</button>
+                </div>
+              </div>
+              <div class="col-12">
+                <label class="lbl">Modello</label>
+                <select class="inp" id="openai-model">
+                  <option value="gpt-4o-mini">gpt-4o-mini (economico, consigliato)</option>
+                  <option value="gpt-4o">gpt-4o (migliore qualit&#224;)</option>
+                </select>
+              </div>
+            </div>
+            <div class="info-note mt-2">&#128273; <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">Ottieni API key OpenAI</a></div>
           </div>
 
 
@@ -546,7 +568,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.56</span>
+<span id="app-version">v2026.03.20.57</span>
 </footer>
 
 <script>
@@ -2477,7 +2499,8 @@ REGOLE ASSOLUTE:
 }
 
 async function callAI(prompt) {
-  if      (currentProvider === 'mistral') return await callMistral(prompt);
+  if      (currentProvider === 'openai')   return await callOpenAI(prompt);
+  if      (currentProvider === 'openai' && !!document.getElementById('openai-key')?.value?.trim()) || (currentProvider === 'mistral') return await callMistral(prompt);
   else if (currentProvider === 'groq')    return await callGroq(prompt);
   else if (currentProvider === 'gemini')  return await callGemini(prompt);
   else if (currentProvider === 'ollama')   return await callOllama(prompt);
@@ -2512,6 +2535,23 @@ function cleanTTL(text) {
   return ttlLines.join('\n').trim();
 }
 
+
+async function callOpenAI(prompt) {
+  const key = document.getElementById('openai-key')?.value?.trim();
+  if (!key) throw new Error('Inserisci la API key OpenAI.');
+  const model = document.getElementById('openai-model')?.value || 'gpt-4o-mini';
+  const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json','Authorization':'Bearer '+key},
+    body: JSON.stringify({model, messages:[{role:'user',content:prompt}], temperature:0.1, max_tokens:4000})
+  });
+  if (!resp.ok) {
+    const e = await resp.json().catch(()=>({error:{message:resp.statusText}}));
+    throw new Error('OpenAI: ' + (e.error?.message || resp.statusText));
+  }
+  const d = await resp.json();
+  return d.choices?.[0]?.message?.content || '';
+}
 
 async function callMistral(prompt) {
   const key   = document.getElementById('mistral-key').value.trim();
@@ -2840,7 +2880,7 @@ async function validateTTL() {
   // ── 11. CLASSE INCOERENTE CON TIPO URI ────────────────────────────────
   for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/event\/[^\/\s>]+)>\s+a\s+([^;.\n]+)/g)) {
     const cls = m[2].trim();
-    if (!cls.includes('EventOrSituation') && !cls.startsWith('clv:') && !cls.startsWith('poi:') && !cls.startsWith('l0:'))
+    if (!cls.includes('EventOrSituation') && !cls.startsWith('clv:') && !cls.startsWith('poi:') && !cls.startsWith('l0:') && !cls.startsWith('qb:') && !cls.startsWith('cpsv:') && !cls.startsWith('cis:'))
       warnings.push(`URI /event/ ma classe "${cls.slice(0,50)}" — atteso l0:EventOrSituation`);
   }
   for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/cultural-institute\/[^\/\s>]+)>\s+a\s+([^;.\n]+)/g)) {

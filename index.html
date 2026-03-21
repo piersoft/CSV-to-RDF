@@ -546,7 +546,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.55</span>
+<span id="app-version">v2026.03.20.56</span>
 </footer>
 
 <script>
@@ -656,6 +656,10 @@ Rispondi SOLO con una lista JSON dei prefissi ontologici più appropriati tra qu
 CLV, COV, CPV, L0, POI, SM, RO, TI, ADMS, ACCO, PARK, GTFS, Cultural-ON, CPSV-AP, QB, SKOS
 
 REGOLE IMPORTANTI:
+- QB: includi SOLO se ci sono colonne con valori numerici aggregati (conteggi, importi, percentuali, misurazioni). QB serve per statistiche, non per dati anagrafici generici.
+- SKOS: includi SOLO se ci sono colonne con codici/categorie testuali espliciti (es. "tipologia", "codice_categoria", "classificazione", "tipo_ente") che rappresentano un vocabolario controllato. NON includere SKOS solo perché i dati sono demografici o sanitari.
+- L0: includi sempre quando includi QB o SKOS come ontologia di supporto.
+- Se il CSV ha solo colonne Anno/Anno-Mese + valori numerici: suggerisci QB e L0, NON SKOS.
 - Se le colonne o i valori contengono "CulturalInstituteOrSite", "beniculturali", "mibact", "museo", "biblioteca", "monumento", "patrimonio" → includi SEMPRE "Cultural-ON"
 - Se il CSV ha colonna "subject" con URI di istituti culturali → includi "Cultural-ON"
 

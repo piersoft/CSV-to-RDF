@@ -538,7 +538,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.35</span>
+<span id="app-version">v2026.03.20.36</span>
 </footer>
 
 <script>
@@ -1184,17 +1184,17 @@ S003,Stazione Centrale,44.5058,11.3452,2,R001,1,3,08:12:00,08:12:00,3`
   };
   const csv = esempi[tipo] || esempi['poi'];
   document.getElementById('csv-input').value = csv;
-  // Attiva le pill ontologie corrette per il tipo selezionato
+  parseAndPreviewCSV();
+  // Attiva le pill DOPO che il corpus matcher ha aggiornato le pill (150ms delay)
   const ontoMap = {
-    poi:   ['CLV','POI','L0'],
-    smapit:['CLV','L0','SMAPIT'],
+    poi:   ['CLV','POI','L0','TI'],
+    smapit:['CLV','L0','SMAPIT','TI'],
     iot:   ['QB','IoT','L0','TI'],
     acco:  ['CLV','POI','ACCO','L0'],
     cpsv:  ['CLV','COV','CPSV-AP','L0'],
-    gtfs:  ['CLV','GTFS','L0']
+    gtfs:  ['CLV','GTFS','L0','TI']
   };
-  if (typeof setExampleOntos === 'function') setExampleOntos(ontoMap[tipo] || ontoMap['poi']);
-  parseAndPreviewCSV();
+  setTimeout(function(){ if (typeof setExampleOntos === 'function') setExampleOntos(ontoMap[tipo] || ontoMap['poi']); }, 150);
 }
 
 function clearAll() {

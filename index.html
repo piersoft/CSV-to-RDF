@@ -546,7 +546,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.54</span>
+<span id="app-version">v2026.03.20.55</span>
 </footer>
 
 <script>
@@ -2068,9 +2068,10 @@ Cultural-ON selezionata → Museo=cis:Museum, Biblioteca=cis:Library, Teatro=cis
   ADMS selezionata      → adms:SemanticAsset per brevetti, licenze, asset digitali, documenti
   RO selezionata        → ro:Role per ruoli e incarichi (usato insieme a cpv:Person o cov:Organization)
   TI selezionata        → ti:TimeInterval per intervalli temporali, ti:TimeInstant per istanti
-  QB selezionata        → qb:Observation per osservazioni statistiche, qb:DataSet per il dataset
+  QB selezionata        → qb:Observation per ogni riga di dati (OBBLIGATORIO). Aggiungi qb:DataSet come risorsa contenitore. Se L0 attiva: usa l0:Collection come superclasse del DataSet. Se SKOS attiva: usa skos:Concept per codici/categorie (es. fasce eta, tipologie). Le Observation devono avere sdmx-dimension:refPeriod o sdmx-dimension:timePeriod per l'anno, e sdmx-measure:obsValue per i valori numerici
   POI selezionata       → poi:PointOfInterest SOLO se nessuna classe più specifica è disponibile
-  L0 selezionata        → l0:Agent per persone/organizzazioni generiche, l0:Object per oggetti fisici generici
+  L0 selezionata        → l0:Agent per persone/organizzazioni generiche, l0:Object per oggetti fisici generici. Con QB: usa l0:Collection per il DataSet contenitore
+  SKOS selezionata      → skos:Concept per codici, categorie, classificazioni (es. fasce d'eta, tipologie, categorie ATECO). skos:ConceptScheme per il vocabolario controllato. NON usare SKOS per dati numerici
   CLV: clv:Address, clv:Feature, clv:Geometry, clv:AdminUnit, clv:Road, clv:StreetNumber
   COV: cov:Organization, cov:PublicOrganization, cov:Company, cov:ActivityType, cov:ContactPoint
   CPV: cpv:Person, cpv:Adult, cpv:Minor, cpv:Senior (CPV=Persone, NON per brevetti/documenti)

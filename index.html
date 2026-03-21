@@ -537,7 +537,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.33</span>
+<span id="app-version">v2026.03.20.34</span>
 </footer>
 
 <script>
@@ -1228,6 +1228,7 @@ function buildTTLHeader(paname, ipa) {
 @prefix sdmx-dimension: <http://purl.org/linked-data/sdmx/2009/dimension#> .
 @prefix sdmx-measure:   <http://purl.org/linked-data/sdmx/2009/measure#> .
 @prefix sdmx-attribute: <http://purl.org/linked-data/sdmx/2009/attribute#> .
+@prefix smapit: <https://w3id.org/italia/onto/SMAPIT/> .
 
 # Titolare del dato
 <${ipaURI}>
@@ -1265,6 +1266,10 @@ const ONTO_CLASSES = {
   'TI': {
     classes: ['ti:TimeInterval (Intervallo temporale)', 'ti:TimeInstant (Istante)'],
     props:   ['ti:startTime', 'ti:endTime', 'ti:hasTimeInterval', 'ti:hasInstant']
+  },
+  'SMAPIT': {
+    classes: ['smapit:School (Scuola di qualsiasi ordine)', 'smapit:HighSchool (Scuola secondaria)', 'smapit:PrimarySchool (Scuola primaria)', 'smapit:KindergartenSchool (Scuola infanzia)'],
+    props:   ['smapit:schoolCode', 'smapit:schoolType', 'dct:identifier', 'rdfs:label', 'geo:lat', 'geo:long', 'clv:hasAddress']
   },
   'SM': {
     classes: ['sm:Email (Email)', 'sm:Telephone (Telefono)', 'sm:WebSite (Sito web)', 'sm:SocialNetworkAccount (Account social)'],
@@ -1964,7 +1969,8 @@ REGOLE:
   ACCO selezionata      → acco:AccommodationFacility per strutture ricettive (hotel, B&B, ostelli...)
   PARK selezionata      → park:ParkingFacility per parcheggi e aree di sosta
   GTFS selezionata      → gtfs:Stop per fermate, gtfs:Route per linee, gtfs:Agency per aziende di trasporto
-  Cultural-ON selezionata → cultural-on:CulturalInstituteOrSite per musei, biblioteche, archivi, teatri
+  SMAPIT selezionata    → smapit:School per scuole di qualsiasi ordine e grado (NON usare cultural-on per le scuole)
+Cultural-ON selezionata → cultural-on:CulturalInstituteOrSite per musei, biblioteche, archivi, teatri (NON scuole)
   CPSV-AP selezionata   → cpsv:PublicService per servizi pubblici erogati dalla PA
   COV selezionata       → cov:PublicOrganization per enti pubblici, cov:Company per imprese private
   CPV selezionata       → cpv:Person per persone fisiche (NON per brevetti o documenti)
@@ -2003,6 +2009,7 @@ const PROP_WHITELIST = {
   'poi':  ['hasPointOfInterest'],
   'ro':   ['withRole','hasRole','isRoleOf'],
   'ti':   ['startTime','endTime','hasTimeInterval','hasInstant'],
+  'smapit':['schoolCode','schoolType','schoolName','hasAddress'],
   'sm':   ['hasTelephone','hasEmail','hasWebSite','hasSocialNetworkAccount'],
   'l0':   ['name','identifier','hasDescription','isPartOf','hasLocation'],
   'adms': ['status','identifier','schemaAgency'],
@@ -2631,7 +2638,7 @@ async function validateTTL() {
     'sdmx-measure':'http://purl.org/linked-data/sdmx/2009/measure#',
     'sdmx-attribute':'http://purl.org/linked-data/sdmx/2009/attribute#',
     'muapit':'https://w3id.org/italia/onto/MU/','iot':'https://w3id.org/italia/onto/IoT-AP_IT/',
-    'smapit':'https://w3id.org/italia/onto/SM/','dcatapit':'http://dati.gov.it/onto/dcatapit#'
+    'smapit':'https://w3id.org/italia/onto/SM/','smapit':'https://w3id.org/italia/onto/SMAPIT/','dcatapit':'http://dati.gov.it/onto/dcatapit#'
   };
   Object.assign(prefixMap, KNOWN_PREFIXES);
   if (prefixLines.length === 0) errors.push('Nessun @prefix dichiarato');
@@ -2811,7 +2818,7 @@ async function validateTTL() {
   // ── 18. ONTOLOGIE INATTESE ────────────────────────────────────────────
   const KNOWN = ['owl','clv','cov','cpv','l0','cultural-on','poi','ro','ti','sm',
                  'dcat','dct','foaf','geo','xsd','rdfs','vcard','skos','schema',
-                 'adms','qb','sdmx-dimension','sdmx-measure','sdmx-attribute'];
+                 'adms','qb','sdmx-dimension','sdmx-measure','sdmx-attribute','smapit'];
   for (const p of prefixesUsed) {
     if (!KNOWN.includes(p.toLowerCase()))
       warnings.push(`Prefisso inatteso: "${p}:" — ontologia non standard PA italiana`);

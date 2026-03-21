@@ -568,7 +568,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.61</span>
+<span id="app-version">v2026.03.20.62</span>
 </footer>
 
 <script>
@@ -2082,7 +2082,16 @@ REGOLE:
 - NON usare mai il prefisso ":" (prefisso vuoto) — usa sempre URI completi tra <> o prefissi dichiarati
 - USA SOLO le classi elencate qui sotto per ogni ontologia — NON inventare classi:
 - REGOLA CLASSE PRINCIPALE: usa la classe più specifica disponibile tra le ontologie selezionate.
+  ATTENZIONE: quando sono attive PIU' ontologie, usa SEMPRE la classe più specifica. L0 e' sempre l'ULTIMA scelta, mai la prima. Esempio: se ACCO e' attiva usa acco:Accommodation, NON l0:Object.
   La classe principale va scelta in questo ordine di priorità (dalla più specifica alla più generica):
+  STOP — SE UNA ONTOLOGIA SPECIFICA E' ATTIVA, USA LA SUA CLASSE PRINCIPALE, MAI l0:Object:
+  ACCO attiva = acco:Accommodation (NON l0:Object)
+  COV attiva = cov:PublicOrganization (NON l0:Object)
+  CPV attiva = cpv:Person (NON l0:Object)
+  POI attiva = poi:PointOfInterest (NON l0:Object)
+  Cultural-ON attiva = cis:Museum/cis:Library/cis:CulturalInstituteOrSite (NON l0:Object)
+  CPSV-AP attiva = cpsv:PublicService (NON l0:Object)
+
   ACCO selezionata      → acco:Accommodation OBBLIGATORIO per strutture ricettive. NON usare l0:Object, NON usare sdmx-measure:obsValue (non e' QB). I campi numerici come totale_letti vanno come dct:description o proprieta' acco: specifiche.
   PARK selezionata      → park:ParkingFacility per parcheggi e aree di sosta
   GTFS selezionata      → gtfs:Stop per fermate, gtfs:Route per linee, gtfs:Agency per aziende di trasporto
@@ -2097,7 +2106,7 @@ Cultural-ON selezionata → Museo=cis:Museum, Biblioteca=cis:Library, Teatro=cis
   TI selezionata        → ti:TimeInterval per intervalli temporali, ti:TimeInstant per istanti
   QB selezionata        → qb:Observation per ogni riga di dati (OBBLIGATORIO). Aggiungi qb:DataSet come risorsa contenitore. Se L0 attiva: usa l0:Collection come superclasse del DataSet. Se SKOS attiva: usa skos:Concept per codici/categorie (es. fasce eta, tipologie). Le Observation devono avere sdmx-dimension:refPeriod o sdmx-dimension:timePeriod per l'anno, e sdmx-measure:obsValue per i valori numerici
   POI selezionata       → poi:PointOfInterest SOLO se nessuna classe più specifica è disponibile
-  L0 selezionata        → l0:Agent per persone/organizzazioni generiche, l0:Object per oggetti fisici generici. Con QB: usa l0:Collection per il DataSet contenitore
+  L0 selezionata        → l0:Agent per persone/organizzazioni generiche, l0:Object SOLO se nessun'altra ontologia specifica e' disponibile (es. ACCO, POI, CPSV, COV, CPV non sono attive). Se ACCO e' attiva usa acco:Accommodation non l0:Object. Con QB: usa l0:Collection per il DataSet contenitore
   SKOS selezionata      → skos:Concept per codici, categorie, classificazioni (es. fasce d'eta, tipologie, categorie ATECO). skos:ConceptScheme per il vocabolario controllato. NON usare SKOS per dati numerici
   CLV: clv:Address, clv:Feature, clv:Geometry, clv:AdminUnit, clv:Road, clv:StreetNumber
   COV: cov:Organization, cov:PublicOrganization, cov:Company, cov:ActivityType, cov:ContactPoint

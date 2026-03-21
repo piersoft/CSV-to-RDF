@@ -546,7 +546,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.48</span>
+<span id="app-version">v2026.03.20.49</span>
 </footer>
 
 <script>
@@ -1408,7 +1408,7 @@ async function fetchOntologyClasses(detectedOntos) {
   }
 
   if (sections.length === 0) return '';
-  return `\nCLASSI E PROPRIETÀ VERIFICATE — usa SOLO queste, NON inventarne altre:\n${sections.join('\n')}`;
+  return `\nCLASSI E PROPRIETÀ VERIFICATE \u2014 usa SOLO queste, NON inventarne altre:\n${sections.join('\n')}`;
 }
 
 // ── VOCABOLARI CONTROLLATI DA dati-semantic-assets ───────────────────────────
@@ -1999,11 +1999,11 @@ function buildPromptChunk(cols, rows, ontos, chunkIndex, totalChunks, vocabSecti
   const csvChunk = [ambigCols.join(','), ...rows.map(r => ambigCols.map(h=>r[h]).join(','))].join('\n');
   return `Sei un esperto RDF per la PA italiana. Trasforma le righe CSV in Turtle (TTL) compatto.
 
-URI BASE OBBLIGATORIA: tutte le entità DEVONO usare ESCLUSIVAMENTE questo pattern: <https://w3id.org/italia/data/${ipa}/{tipo}/{id}> — NON usare mai domini come dati.comune.*, http://dati.*, o qualsiasi altro dominio inventato.
+URI BASE OBBLIGATORIA: tutte le entità DEVONO usare ESCLUSIVAMENTE questo pattern: <https://w3id.org/italia/data/${ipa}/{tipo}/{id}> \u2014 NON usare mai domini come dati.comune.*, http://dati.*, o qualsiasi altro dominio inventato.
 
 I @prefix sono già stati emessi. NON aggiungerli.
 Ontologie da usare: ${ontos.join(', ')}
-Chunk ${chunkIndex+1}/${totalChunks} — Colonne: ${cols.join(', ')}
+Chunk ${chunkIndex+1}/${totalChunks} \u2014 Colonne: ${cols.join(', ')}
 Base URI entità: https://w3id.org/italia/data/${ipa || 'ipa'}/${getEntityTypeSegment(ontos)}/ (es. <https://w3id.org/italia/data/${ipa || 'ipa'}/${getEntityTypeSegment(ontos)}/ID_RIGA>)
 
 CSV:
@@ -2029,32 +2029,32 @@ REGOLE:
     l0:EventOrSituation          → event
     l0:Object                    → object
     l0:Agent                     → agent
-  NON usare domini inventati — usa SEMPRE w3id.org/italia/data/
-  NON usare nomi di persone come {id} — usa sempre l'ID numerico o codice della riga
+  NON usare domini inventati \u2014 usa SEMPRE w3id.org/italia/data/
+  NON usare nomi di persone come {id} \u2014 usa sempre l'ID numerico o codice della riga
 - Mappa ogni colonna alla proprietà ontologica corretta
 - Se il dataset contiene colonne finanziarie (importo, cumulato, movimento, entrata, spesa, BDAP) usa SEMPRE qb:Observation come classe principale, sdmx-measure:obsValue per gli importi numerici, sdmx-dimension:timePeriod per il periodo, sdmx-dimension:refArea per il territorio
 - Se il dataset QB contiene colonne numeriche di conteggio (incidenti, feriti, morti, decessi, numero_dipendenti, count, totale) usa SEMPRE sdmx-measure:obsValue per OGNI colonna numerica - NON usare URI personalizzati come <.../measure/nomeColonna>
 - Per coordinate usa geo:lat e geo:long. Per campi booleani (si/no, true/false, 1/0) usa poi:hasAccessCondition con valore letterale. Per marca/modello usa rdfs:label o dct:description. Per numero serie usa dct:identifier. Per scadenza/manutenzione usa dct:valid. Se il valore è vuoto o mancante NON generare la tripla (omettila completamente). Per telefono sm:hasTelephone. Per email sm:hasEmail. Per indirizzo clv:hasAddress. Per data dct:date o ti:startTime/ti:endTime
-- REGOLA CRITICA: usa SOLO proprietà che esistono nelle ontologie dichiarate nei @prefix. NON inventare proprietà con nomi come clv:hasStreetName, clv:hasPostalCode, clv:hasName, clv:hasFeature, sm:hasValue o simili — queste NON esistono.
+- REGOLA CRITICA: usa SOLO proprietà che esistono nelle ontologie dichiarate nei @prefix. NON inventare proprietà con nomi come clv:hasStreetName, clv:hasPostalCode, clv:hasName, clv:hasFeature, sm:hasValue o simili \u2014 queste NON esistono.
 - Per i nomi usa rdfs:label o l0:name, NON clv:hasName (clv:hasName NON ESISTE)
 - Per i valori di contatto usa sm:hasTelephone, sm:hasEmail, sm:hasWebSite, NON sm:hasValue
-- Per sm:hasWebSite usa SEMPRE l'URL originale come URI: sm:hasWebSite <http://www.esempio.it> — NON costruire URI w3id inventati con l'URL incorporato
+- Per sm:hasWebSite usa SEMPRE l'URL originale come URI: sm:hasWebSite <http://www.esempio.it> \u2014 NON costruire URI w3id inventati con l'URL incorporato
 - Per giorni della settimana e orari usa dct:description "valore"@it, NON ti:hasDayOfWeek
 - Se non conosci la proprietà esatta, usa dct:description "valore"@it
 - rdfs:label con il nome principale in italiano
 - Usa SOLO questi prefissi: owl, clv, cov, cpv, l0, poi, ro, ti, sm, dcat, dct, foaf, geo, xsd, rdfs, vcard, skos, schema, adms, qb, sdmx-dimension, sdmx-measure
 - Per eventi/spettacoli/manifestazioni usa SEMPRE l0:EventOrSituation come classe, mai l0:Object
-- Per ogni risorsa includi SEMPRE dct:publisher con il nome dell'organizzatore — non ometterlo mai
+- Per ogni risorsa includi SEMPRE dct:publisher con il nome dell'organizzatore \u2014 non ometterlo mai
 - La colonna numero_righe/numero_record indica il conteggio delle righe, NON la dimensione in byte: usa dct:extent, MAI dcat:byteSize
-- dcat:byteSize si usa SOLO per la dimensione del file in byte — se non hai quel dato, ometti la proprietà
-- dct:publisher NON va su dcat:Distribution (non previsto da DCAT-AP) — va sul Dataset o sull'Agent titolare con il nome dell'organizzatore — non ometterlo mai
+- dcat:byteSize si usa SOLO per la dimensione del file in byte \u2014 se non hai quel dato, ometti la proprietà
+- dct:publisher NON va su dcat:Distribution (non previsto da DCAT-AP) \u2014 va sul Dataset o sull'Agent titolare con il nome dell'organizzatore \u2014 non ometterlo mai
 - Usa dct:type per il tipo di relazione (Coorganizzazione/Patrocinio/Pagamento), dct:publisher per l'organizzatore, MAI usare dct:description per entrambi
 - Output COMPATTO: niente righe vuote, niente commenti, niente @prefix, niente markdown
 - Colonne il cui nome inizia con un numero seguito da trattino (es. "1-LISTA", "9-+EUROPA") sono intestazioni di risultati elettorali: usa sdmx-measure:obsValue con rdfs:label del nome colonna
 - Colonne con pattern F_ANNO / M_ANNO (es. F_2012, M_2016) indicano femmine/maschi per anno: usa sdmx-measure:obsValue con sdmx-dimension:timePeriod per l'anno e sdmx-attribute:sex per il sesso (es. "1-LISTA", "9-+EUROPA") sono intestazioni di risultati elettorali: usa sdmx-measure:obsValue con rdfs:label del nome colonna
-- NON usare mai il prefisso ":" (prefisso vuoto) — usa sempre URI completi tra <> o prefissi dichiarati
-- USA SOLO le classi elencate qui sotto per ogni ontologia — NON inventare classi:
-- CRITICO — CLASSI OBBLIGATORIE PER ONTOLOGIA:
+- NON usare mai il prefisso ":" (prefisso vuoto) \u2014 usa sempre URI completi tra <> o prefissi dichiarati
+- USA SOLO le classi elencate qui sotto per ogni ontologia \u2014 NON inventare classi:
+- CRITICO \u2014 CLASSI OBBLIGATORIE PER ONTOLOGIA:
   Se l'ontologia X è selezionata, DEVI usare la sua classe principale. NON è accettabile usare classi di altre ontologie come sostituto.
   Esempi di errori da NON fare:
   - ACCO attiva → usare l0:Object invece di acco:Accommodation ❌
@@ -2098,11 +2098,11 @@ Cultural-ON selezionata → usa SEMPRE il namespace http://dati.beniculturali.it
   TI: ti:TimeInterval, ti:TimeInstant (per intervalli e istanti temporali)
   SM: sm:Email, sm:Telephone, sm:WebSite, sm:SocialNetworkAccount
   L0: l0:Agent, l0:Object, l0:EventOrSituation, l0:Collection, l0:Location, l0:Characteristic
-  ADMS: adms:SemanticAsset (per brevetti, licenze, asset digitali — NON cpv:Patent che non esiste)
+  ADMS: adms:SemanticAsset (per brevetti, licenze, asset digitali \u2014 NON cpv:Patent che non esiste)
   COV per enti pubblici: cov:PublicOrganization (ENEA, ministeri, comuni)
 - Genera TUTTE le ${rows.length} righe senza fermarti
 
-VOCABOLARI CONTROLLATI — USA SOLO URI IN QUESTA LISTA, altrimenti usa rdfs:label con stringa letterale:
+VOCABOLARI CONTROLLATI \u2014 USA SOLO URI IN QUESTA LISTA, altrimenti usa rdfs:label con stringa letterale:
 - Ruoli (publications.europa.eu/resource/authority/role/): CHAIR, EDITOR, MEMBER, MAYOR, MINISTER, DIRECTOR, PUBLISHER, COMPILER, CONTRIB, TRANSL, SIGN, REPR, OBSERVER, AUTHORI, AUT, JUDGE, AMBASSADOR, REGISTRAR, TREASURER, MEDIATOR, COLLECTOR, OPERATOR
 - Lingue (publications.europa.eu/resource/authority/language/): ITA, ENG, FRA, DEU, SPA, POR
 - Frequenze (publications.europa.eu/resource/authority/frequency/): ANNUAL, BIANNUAL, QUARTERLY, MONTHLY, WEEKLY, DAILY, IRREG, NEVER, UPDATE_CONT
@@ -2454,21 +2454,21 @@ async function callAnthropic(prompt) {
   const systemPrompt = `Sei un convertitore CSV→RDF/TTL per la PA italiana. Rispondi SOLO con triple Turtle valide.
 REGOLE ASSOLUTE:
 1. ZERO markdown, ZERO backtick, ZERO commenti in prosa, ZERO blocchi triple-backtick turtle
-2. I @prefix sono già stati emessi — NON aggiungerli
+2. I @prefix sono già stati emessi \u2014 NON aggiungerli
 3. Se il CSV contiene colonne finanziarie (importo, cumulato, movimento, entrata, spesa, BDAP, gestionale) usa OBBLIGATORIAMENTE:
    - Classe: qb:Observation
    - Importi numerici: sdmx-measure:obsValue "valore"^^xsd:decimal
    - Periodo: sdmx-dimension:timePeriod "valore"^^xsd:string
    - Territorio: sdmx-dimension:refArea <URI>
    - Tipo risorsa nell'URI: observation/
-4. NON ripetere la stessa entità organizzativa per ogni riga — usa URI distinti per ogni osservazione
-5. Usa SOLO classi e proprietà delle ontologie dichiarate — mai prefissi non autorizzati
+4. NON ripetere la stessa entità organizzativa per ogni riga \u2014 usa URI distinti per ogni osservazione
+5. Usa SOLO classi e proprietà delle ontologie dichiarate \u2014 mai prefissi non autorizzati
 6. Se il valore è vuoto ometti la tripla completamente
 7. Per eventi/spettacoli usa SEMPRE l0:EventOrSituation come classe, mai l0:Object
-8. Includi dct:publisher per OGNI risorsa generata — non omettere mai questa proprietà
+8. Includi dct:publisher per OGNI risorsa generata \u2014 non omettere mai questa proprietà
 9. Usa dct:type per il tipo di relazione (Coorganizzazione/Patrocinio/Pagamento), dct:publisher per l'organizzatore
 10. numero_righe/numero_record indica righe CSV → usa dct:extent, MAI dcat:byteSize (riservato alla dimensione in byte)
-11. dct:publisher NON va su dcat:Distribution (non previsto da DCAT-AP) — va sul dcat:Dataset o foaf:Agent titolare`;
+11. dct:publisher NON va su dcat:Distribution (non previsto da DCAT-AP) \u2014 va sul dcat:Dataset o foaf:Agent titolare`;
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -2754,7 +2754,7 @@ async function validateTTL() {
   if (prefixLines.length === 0) errors.push('Nessun @prefix dichiarato');
 
   // ── 2. BACKTICK / MARKDOWN ───────────────────────────────────────────
-  if (ttl.includes('```')) errors.push('Presenti backtick (```) — output non valido');
+  if (ttl.includes('```')) errors.push('Presenti backtick (```) \u2014 output non valido');
 
   // ── 3. PREFISSI NON DICHIARATI ────────────────────────────────────────
   const prefixesUsed = new Set();
@@ -2792,10 +2792,10 @@ async function validateTTL() {
   }
 
   // ── 6. dct:publisher MANCANTE (solo su risorse non-Distribution) e ERRATO su Distribution
-  // dct:publisher NON è previsto su dcat:Distribution per DCAT-AP — va su dcat:Dataset/Agent
+  // dct:publisher NON è previsto su dcat:Distribution per DCAT-AP \u2014 va su dcat:Dataset/Agent
   const wrongPublisherOnDistrib = ttl.split('\n').filter(l => /a\s+dcat:Distribution/.test(l) && /dct:publisher/.test(l)).length
   if (wrongPublisherOnDistrib > 0)
-    warnings.push(`dct:publisher su dcat:Distribution non previsto da DCAT-AP (${wrongPublisherOnDistrib}×) — va su dcat:Dataset`);
+    warnings.push(`dct:publisher su dcat:Distribution non previsto da DCAT-AP (${wrongPublisherOnDistrib}×) \u2014 va su dcat:Dataset`);
 
   // ── 6b. dct:publisher MANCANTE (solo su risorse non-Distribution) ─────
   let missingPublisher = 0;
@@ -2811,29 +2811,29 @@ async function validateTTL() {
     totalPrincipal++;
     if (!blk.includes('dct:publisher')) missingPublisher++;
   }
-  // Segnala solo se il publisher manca su TUTTE le risorse (non parzialmente — può essere stile LLM)
+  // Segnala solo se il publisher manca su TUTTE le risorse (non parzialmente \u2014 può essere stile LLM)
   if (missingPublisher > 0 && missingPublisher === totalPrincipal)
     if (isDCATContext) warnings.push(`dct:publisher assente su tutte le ${missingPublisher} risorse principali`);
   else if (missingPublisher > 0 && missingPublisher > totalPrincipal * 0.5)
-    if (isDCATContext) warnings.push(`dct:publisher mancante su ${missingPublisher}/${totalPrincipal} risorse — il LLM lo ha omesso sulle righe successive`);
+    if (isDCATContext) warnings.push(`dct:publisher mancante su ${missingPublisher}/${totalPrincipal} risorse \u2014 il LLM lo ha omesso sulle righe successive`);
 
   // ── 7. dct:description "voice" ────────────────────────────────────────
   if (/dct:description\s+"voice"/.test(ttl))
-    errors.push('dct:description "voice" inventato dal LLM — da rimuovere');
+    errors.push('dct:description "voice" inventato dal LLM \u2014 da rimuovere');
 
   // ── 7b. dct:publisher come literal (dovrebbe essere URI) ───────────────
   const pubLiterals = (ttl.match(/dct:publisher\s+"[^"]+"/g) || []).length;
   if (pubLiterals > 0)
-    if (isDCATContext) warnings.push(`dct:publisher con valore literal (${pubLiterals}×) — dovrebbe essere URI <...>`);
+    if (isDCATContext) warnings.push(`dct:publisher con valore literal (${pubLiterals}×) \u2014 dovrebbe essere URI <...>`);
 
   // ── 7c. dct:date usato al posto di dct:issued ────────────────────────
   if (/\bdct:date\b/.test(ttl) && /xsd:date/.test(ttl))
-    warnings.push('dct:date con xsd:date — probabilmente intendi dct:issued');
+    warnings.push('dct:date con xsd:date \u2014 probabilmente intendi dct:issued');
 
   // ── 8. rdfs:label NUMERICO → dovrebbe essere dct:extent ───────────────
   const numLabels = (ttl.match(/rdfs:label\s+"[\d]+"(\^\^xsd:\w+)?/g) || []).length;
   if (numLabels > 0)
-    warnings.push(`rdfs:label con valore numerico puro (${numLabels}×) — usa dct:extent`);
+    warnings.push(`rdfs:label con valore numerico puro (${numLabels}×) \u2014 usa dct:extent`);
 
   // ── 9. dcat:byteSize con numero di righe ──────────────────────────────
   // Se tutti i valori byteSize sono < 100M ma il dataset è un catalogo CSV
@@ -2842,34 +2842,34 @@ async function validateTTL() {
     const allSmall = byteSizes.every(n => n < 10000000);
     const hasFormat = /dct:format\s+"(csv|json|ttl)"/.test(ttl);
     if (hasFormat && allSmall && byteSizes.length > 3)
-      warnings.push(`dcat:byteSize sembra contenere numero di righe, non byte — usa dct:extent`);
+      warnings.push(`dcat:byteSize sembra contenere numero di righe, non byte \u2014 usa dct:extent`);
   }
 
   // ── 10. sm:hasWebSite con URI w3id inventato ──────────────────────────
   const fakeWeb = (ttl.match(/sm:hasWebSite\s+<https?:\/\/w3id\.org\/italia\/data\/[^>]+>/g) || [])
     .filter(u => !/(distribution|asset|catalog)/.test(u));
   if (fakeWeb.length > 0)
-    warnings.push(`sm:hasWebSite con URI w3id inventato (${fakeWeb.length}×) — dovrebbe essere URL reale`);
+    warnings.push(`sm:hasWebSite con URI w3id inventato (${fakeWeb.length}×) \u2014 dovrebbe essere URL reale`);
 
   // ── 11. CLASSE INCOERENTE CON TIPO URI ────────────────────────────────
   for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/event\/[^>]*)>\s+a\s+([^;.\n]+)/g)) {
     const cls = m[2].trim();
     if (!cls.includes('EventOrSituation'))
-      warnings.push(`URI /event/ ma classe "${cls.slice(0,50)}" — atteso l0:EventOrSituation`);
+      warnings.push(`URI /event/ ma classe "${cls.slice(0,50)}" \u2014 atteso l0:EventOrSituation`);
   }
   for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/cultural-institute\/[^>]*)>\s+a\s+([^;.\n]+)/g)) {
     const cls = m[2].trim();
     if (!cls.includes('CulturalInstituteOrSite') && !cls.includes('cis:Museum') && !cls.includes('cis:Library') && !cls.includes('cis:Theatre') && !cls.includes('cis:Cinema') && !cls.includes('cis:'))
-      warnings.push(`URI /cultural-institute/ ma classe "${cls.slice(0,50)}" — atteso cis:CulturalInstituteOrSite o una sua sottoclasse (cis:Museum, cis:Library, ecc.)`);
+      warnings.push(`URI /cultural-institute/ ma classe "${cls.slice(0,50)}" \u2014 atteso cis:CulturalInstituteOrSite o una sua sottoclasse (cis:Museum, cis:Library, ecc.)`);
   for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/observation\/[^>]*)>\s+a\s+([^;.\n]+)/g)) {
     const cls = m[2].trim();
     if (!cls.includes('qb:Observation'))
-      warnings.push(`URI /observation/ ma classe "${cls.slice(0,50)}" — atteso qb:Observation`);
+      warnings.push(`URI /observation/ ma classe "${cls.slice(0,50)}" \u2014 atteso qb:Observation`);
   }
   for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/point-of-interest\/[^>]*)>\s+a\s+([^;.\n]+)/g)) {
     const cls = m[2].trim();
     if (!cls.includes('poi:PointOfInterest'))
-      warnings.push(`URI /point-of-interest/ ma classe "${cls.slice(0,50)}" — atteso poi:PointOfInterest`);
+      warnings.push(`URI /point-of-interest/ ma classe "${cls.slice(0,50)}" \u2014 atteso poi:PointOfInterest`);
   }
 
   // ── 12. l0:Object usato dove ci sono date → probabilmente evento ───────
@@ -2877,7 +2877,7 @@ async function validateTTL() {
   const hasDate = /\bdct:date\b/.test(ttl);
   const hasEventURI = /\/event\//.test(ttl);
   if (hasL0Object && hasDate && !hasEventURI)
-    warnings.push('l0:Object con dct:date presente — verifica se dovrebbe essere l0:EventOrSituation');
+    warnings.push('l0:Object con dct:date presente \u2014 verifica se dovrebbe essere l0:EventOrSituation');
 
   // ── 13. PREDICATI DUPLICATI SINGLE-VALUE ──────────────────────────────
   const SINGLE_VAL = ['dct:identifier','dct:type','geo:lat','geo:long','dct:date','dcat:mediaType'];
@@ -2896,7 +2896,7 @@ async function validateTTL() {
   // ── 14. dct:description con solo CAP (4-5 cifre isolate) ──────────────
   const capDesc = (ttl.match(/dct:description\s+"[\d]{4,5}"\s*[;.]/g) || []).length;
   if (capDesc > 0)
-    warnings.push(`dct:description con solo CAP numerico (${capDesc}×) — usa skos:notation`);
+    warnings.push(`dct:description con solo CAP numerico (${capDesc}×) \u2014 usa skos:notation`);
 
   // ── 15. COORDINATE FUORI ITALIA ───────────────────────────────────────
   for (const m of ttl.matchAll(/geo:lat\s+"([^"]+)"/g)) {
@@ -2916,7 +2916,7 @@ async function validateTTL() {
     const re = new RegExp(`\\b${prop.replace(':','\\:')}\\s+"[^"@]+"(?!@)(?!\\^\\^)`, 'g');
     const hits = (ttl.match(re) || []).length;
     if (hits > 0)
-      warnings.push(`${prop} senza @lang tag (${hits}×) — aggiungi @it`);
+      warnings.push(`${prop} senza @lang tag (${hits}×) \u2014 aggiungi @it`);
   }
 
   // ── 17. QB: sdmx-measure:obsValue senza xsd:decimal ──────────────────
@@ -2930,7 +2930,7 @@ async function validateTTL() {
                  'adms','qb','sdmx-dimension','sdmx-measure','sdmx-attribute','smapit','iot'];
   for (const p of prefixesUsed) {
     if (!KNOWN.includes(p.toLowerCase()))
-      warnings.push(`Prefisso inatteso: "${p}:" — ontologia non standard PA italiana`);
+      warnings.push(`Prefisso inatteso: "${p}:" \u2014 ontologia non standard PA italiana`);
   }
 
   // ── 19. SUMMARY ──────────────────────────────────────────────────────
@@ -3046,7 +3046,7 @@ function ttlToRDFXML(ttl) {
         if (quad) {
           quads.push(quad);
         } else {
-          // Fine parsing — costruisco RDF/XML manualmente
+          // Fine parsing \u2014 costruisco RDF/XML manualmente
           // N3.js non supporta output RDF/XML nativo, uso serializzazione manuale
           const prefixDecls = Object.entries(prefixes||{})
             .map(([p,u]) => `xmlns:${p}="${u}"`)
@@ -3115,8 +3115,8 @@ function copyTTL() {
   navigator.clipboard.writeText(ttl).then(() => showStatus('✓ Copiato negli appunti!', 'success'));
 }
 
-// ── validateSPARQL — verifica classi su schema.gov.it ─────────────────────
-// Classi OntoPiA ufficiali non ancora in schema.gov.it — non generare falsi avvisi
+// ── validateSPARQL \u2014 verifica classi su schema.gov.it ─────────────────────
+// Classi OntoPiA ufficiali non ancora in schema.gov.it \u2014 non generare falsi avvisi
 const SCHEMA_GOV_WHITELIST = new Set([
   'cov:Company','cov:ActivityType','cov:ContactPoint',
   'clv:AdminUnit','clv:Road','clv:StreetNumber','clv:Geometry','clv:Feature',
@@ -3147,7 +3147,7 @@ function validateSPARQL(terms, prefixMap) {
   sparqlDiv.innerHTML = '🔍 Verifica classi su schema.gov.it...';
 
   // Risolvi i termini in URI completi usando prefixMap
-  // Mappa alias noti — alcune ontologie PA usano nomi abbreviati
+  // Mappa alias noti \u2014 alcune ontologie PA usano nomi abbreviati
   var ALIAS_MAP = {
     'ti:TimeInstant': 'ti:TimeInstant',
     'ti:TimeInterval': 'ti:TimeInterval'

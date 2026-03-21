@@ -568,7 +568,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.59</span>
+<span id="app-version">v2026.03.20.60</span>
 </footer>
 
 <script>
@@ -2068,6 +2068,7 @@ REGOLE:
 - Per giorni della settimana e orari usa dct:description "valore"@it, NON ti:hasDayOfWeek
 - Se non conosci la proprietà esatta, usa dct:description "valore"@it
 - rdfs:label con il nome principale in italiano
+- sdmx-measure:obsValue e sdmx-dimension:* sono VIETATI se QB non e' tra le ontologie selezionate. Usali SOLO con qb:Observation.
 - Usa SOLO questi prefissi: owl, clv, cov, cpv, l0, poi, ro, ti, sm, dcat, dct, foaf, geo, xsd, rdfs, vcard, skos, schema, adms, qb, sdmx-dimension, sdmx-measure
 - Per eventi/spettacoli/manifestazioni usa SEMPRE l0:EventOrSituation come classe, mai l0:Object
 - Per ogni risorsa includi SEMPRE dct:publisher con il nome dell'organizzatore — non ometterlo mai
@@ -2082,7 +2083,7 @@ REGOLE:
 - USA SOLO le classi elencate qui sotto per ogni ontologia — NON inventare classi:
 - REGOLA CLASSE PRINCIPALE: usa la classe più specifica disponibile tra le ontologie selezionate.
   La classe principale va scelta in questo ordine di priorità (dalla più specifica alla più generica):
-  ACCO selezionata      → acco:Accommodation OBBLIGATORIO. NON usare l0:Object o poi:PointOfInterest come classe principale
+  ACCO selezionata      → acco:Accommodation OBBLIGATORIO per strutture ricettive. NON usare l0:Object, NON usare sdmx-measure:obsValue (non e' QB). I campi numerici come totale_letti vanno come dct:description o proprieta' acco: specifiche.
   PARK selezionata      → park:ParkingFacility per parcheggi e aree di sosta
   GTFS selezionata      → gtfs:Stop per fermate, gtfs:Route per linee, gtfs:Agency per aziende di trasporto
   IoT selezionata       → iot:Sensor per sensori, iot:Observation per osservazioni (NON usare qb:Observation per IoT)

@@ -537,7 +537,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.30</span>
+<span id="app-version">v2026.03.20.31</span>
 </footer>
 
 <script>
@@ -3000,6 +3000,23 @@ function copyTTL() {
 }
 
 // ── validateSPARQL — verifica classi su schema.gov.it ─────────────────────
+// Classi OntoPiA ufficiali non ancora in schema.gov.it — non generare falsi avvisi
+const SCHEMA_GOV_WHITELIST = new Set([
+  'cov:Company','cov:ActivityType','cov:ContactPoint',
+  'clv:AdminUnit','clv:Road','clv:StreetNumber','clv:Geometry','clv:Feature',
+  'ro:Role','ro:TimeIndexedRole',
+  'ti:TimeInstant',
+  'l0:Location','l0:Characteristic','l0:Quality',
+  'poi:POICategory',
+  'sm:OnlineContactPoint',
+  'gtfs:Stop','gtfs:Route','gtfs:Trip','gtfs:Agency','gtfs:StopTime',
+  'acco:AccommodationFacility',
+  'cultural-on:CulturalEvent',
+  'cpv:Adult','cpv:Minor','cpv:Senior',
+  'adms:SemanticAsset','adms:AssetDistribution',
+  'qb:DataSet','qb:DataStructureDefinition','qb:ComponentSpecification',
+  'sdmx-dimension:timePeriod','sdmx-measure:obsValue'
+]);
 function validateSPARQL(terms, prefixMap) {
   // Trova o crea il div di status nel report
   var sparqlDiv = document.getElementById('validation-sparql');
@@ -3045,6 +3062,8 @@ function validateSPARQL(terms, prefixMap) {
         sparqlDiv.style.color = '#0a0';
       } else {
         var names = missing.map(function(u) { return u.split('/').pop().replace('>',''); }).join(', ');
+        missing = missing.filter(function(c){ return !SCHEMA_GOV_WHITELIST.has(c); });
+        if (missing.length === 0) { sparqlDiv.innerHTML = '✅ Tutte le classi verificate su schema.gov.it'; return; }
         sparqlDiv.innerHTML = '⚠ ' + missing.length + '/' + total + ' class' + (missing.length>1?'i':'e') + ' non in schema.gov.it: ' + names;
         sparqlDiv.style.color = '#c80';
       }

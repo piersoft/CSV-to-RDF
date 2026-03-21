@@ -537,7 +537,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.29</span>
+<span id="app-version">v2026.03.20.30</span>
 </footer>
 
 <script>
@@ -2013,7 +2013,7 @@ const PROP_WHITELIST = {
   'sdmx-measure':   ['obsValue'],
   'gtfs': ['agency','route','stop','trip','departureTime','arrivalTime','stopSequence'],
 };
-const SAFE_PREFIXES = new Set(['rdf','rdfs','owl','xsd','dct','dcat','foaf','geo','skos','vcard','schema']);
+const SAFE_PREFIXES = new Set(['rdf','rdfs','owl','xsd','dct','dcat','foaf','geo','skos','vcard','schema','qb','sdmx-dimension','sdmx-measure','sdmx-attribute','clv','cov','cpv','l0','poi','ro','ti','sm','cultural-on','acco','gtfs','park','cpsv','adms','muapit','iot','smapit','dcatapit']);
 
 // Whitelist classi approvate per prefisso
 const CLASS_WHITELIST = {
@@ -2610,6 +2610,30 @@ async function validateTTL() {
     const m = line.match(/@prefix\s+(\S+):\s+<([^>]+)>/);
     if (m) prefixMap[m[1].replace(':','')] = m[2];
   }
+
+  // Prefissi standard sempre validi (anche se l'AI non li ridichiarava)
+  const KNOWN_PREFIXES = {
+    'owl':'http://www.w3.org/2002/07/owl#','rdf':'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+    'rdfs':'http://www.w3.org/2000/01/rdf-schema#','xsd':'http://www.w3.org/2001/XMLSchema#',
+    'clv':'https://w3id.org/italia/onto/CLV/','cov':'https://w3id.org/italia/onto/COV/',
+    'cpv':'https://w3id.org/italia/onto/CPV/','l0':'https://w3id.org/italia/onto/l0/',
+    'poi':'https://w3id.org/italia/onto/POI/','ro':'https://w3id.org/italia/onto/RO/',
+    'ti':'https://w3id.org/italia/onto/TI/','sm':'https://w3id.org/italia/onto/SM/',
+    'cultural-on':'https://w3id.org/italia/onto/Cultural-ON/',
+    'acco':'https://w3id.org/italia/onto/ACCO/',
+    'gtfs':'http://vocab.gtfs.org/terms#','park':'https://w3id.org/italia/onto/PARK/',
+    'cpsv':'http://purl.org/vocab/cpsv#','adms':'http://www.w3.org/ns/adms#',
+    'dcat':'http://www.w3.org/ns/dcat#','dct':'http://purl.org/dc/terms/',
+    'foaf':'http://xmlns.com/foaf/0.1/','geo':'http://www.w3.org/2003/01/geo/wgs84_pos#',
+    'vcard':'http://www.w3.org/2006/vcard/ns#','skos':'http://www.w3.org/2004/02/skos/core#',
+    'schema':'https://schema.org/','qb':'http://purl.org/linked-data/cube#',
+    'sdmx-dimension':'http://purl.org/linked-data/sdmx/2009/dimension#',
+    'sdmx-measure':'http://purl.org/linked-data/sdmx/2009/measure#',
+    'sdmx-attribute':'http://purl.org/linked-data/sdmx/2009/attribute#',
+    'muapit':'https://w3id.org/italia/onto/MU/','iot':'https://w3id.org/italia/onto/IoT-AP_IT/',
+    'smapit':'https://w3id.org/italia/onto/SM/','dcatapit':'http://dati.gov.it/onto/dcatapit#'
+  };
+  Object.assign(prefixMap, KNOWN_PREFIXES);
   if (prefixLines.length === 0) errors.push('Nessun @prefix dichiarato');
 
   // ── 2. BACKTICK / MARKDOWN ───────────────────────────────────────────

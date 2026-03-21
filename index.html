@@ -2500,7 +2500,7 @@ REGOLE ASSOLUTE:
 
 async function callAI(prompt) {
   if      (currentProvider === 'openai')   return await callOpenAI(prompt);
-  if      (currentProvider === 'openai' && !!document.getElementById('openai-key')?.value?.trim()) || (currentProvider === 'mistral') return await callMistral(prompt);
+  if      (currentProvider === 'mistral') return await callMistral(prompt);
   else if (currentProvider === 'groq')    return await callGroq(prompt);
   else if (currentProvider === 'gemini')  return await callGemini(prompt);
   else if (currentProvider === 'ollama')   return await callOllama(prompt);

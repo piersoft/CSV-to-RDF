@@ -240,6 +240,14 @@
   <option value="acco">ACCO — Strutture ricettive</option>
   <option value="cpsv">CPSV — Appalti/CIG</option>
   <option value="gtfs">GTFS — Fermate TPL</option>
+  <option value="qb">QB — Statistiche popolazione</option>
+  <option value="clv">CLV — Stradario civici</option>
+  <option value="cov">COV — Organizzazioni PA</option>
+  <option value="cpv">CPV — Persone (anagrafe)</option>
+  <option value="cultural">Cultural-ON — Musei/biblioteche</option>
+  <option value="ro">RO — Incarichi e ruoli</option>
+  <option value="ti">TI — Eventi temporali</option>
+  <option value="adms">ADMS — Asset digitali</option>
 </select><button class="btn-sec" onclick="loadExample(document.getElementById('esempio-tipo').value)">📋 Carica esempio</button>
             <button class="btn-sec" onclick="clearAll()">✕ Svuota</button>
           </div>
@@ -538,7 +546,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.37</span>
+<span id="app-version">v2026.03.20.38</span>
 </footer>
 
 <script>
@@ -1188,17 +1196,60 @@ Z9F8E7D6C5,Manutenzione verde pubblico,120000.00,Comune di Firenze,09876543210,V
     gtfs: `stop_id,stop_name,stop_lat,stop_lon,zone_id,route_id,route_short_name,route_type,arrival_time,departure_time,stop_sequence
 S001,Piazza Maggiore,44.4938,11.3430,1,R001,1,3,08:00:00,08:00:00,1
 S002,Porta San Vitale,44.4881,11.3521,1,R001,1,3,08:05:00,08:05:00,2
-S003,Stazione Centrale,44.5058,11.3452,2,R001,1,3,08:12:00,08:12:00,3`
+S003,Stazione Centrale,44.5058,11.3452,2,R001,1,3,08:12:00,08:12:00,3`,
+    qb: `anno,comune,codice_istat,fascia_eta,sesso,numero_residenti
+2023,Milano,015146,0-14,M,45821
+2023,Milano,015146,0-14,F,43210
+2023,Milano,015146,15-64,M,412300
+2023,Milano,015146,15-64,F,438900
+2023,Milano,015146,65+,M,98500
+2023,Milano,015146,65+,F,121400`,
+    clv: `id,via,tipo_via,numero_civico,cap,comune,codice_istat,provincia,lat,lon
+1,Roma,Via,1,20121,Milano,015146,MI,45.4641,9.1919
+2,Dante,Via,10,20121,Milano,015146,MI,45.4659,9.1860
+3,Garibaldi,Piazza,3,20129,Milano,015146,MI,45.4711,9.1940
+4,Rossini,Corso,22,10121,Torino,001272,TO,45.0703,7.6869`,
+    cov: `id,denominazione,tipo,codice_fiscale,codice_ipa,indirizzo,comune,provincia,cap,telefono,email,web,lat,lon
+1,Comune di Milano,Comune,01199250154,c_f205,Piazza della Scala 2,Milano,MI,20121,0288441,comune.milano@pec.comune.milano.it,https://www.comune.milano.it,45.4654,9.1859
+2,Regione Lombardia,Regione,80050050154,r_lomb,Piazza Città di Lombardia 1,Milano,MI,20124,800318318,regione.lombardia@pec.regione.lombardia.it,https://www.regione.lombardia.it,45.4844,9.1965
+3,ASL Città di Milano,Azienda Sanitaria,04376350158,asl_mi,Via Ricordi 1,Milano,MI,20121,02855511,aslmi@pec.aslmi.it,https://www.aslmi.it,45.4710,9.1867`,
+    cpv: `id,nome,cognome,codice_fiscale,data_nascita,comune_nascita,sesso,stato_civile,comune_residenza,indirizzo_residenza,cap_residenza
+1,Mario,Rossi,RSSMRA80A01H501Z,1980-01-01,Roma,M,coniugato/a,Milano,Via Roma 1,20121
+2,Lucia,Bianchi,BNCLCU85M41F839P,1985-08-01,Napoli,F,celibe/nubile,Torino,Corso Italia 5,10121
+3,Giuseppe,Verdi,VRDGPP70C15L219X,1970-03-15,Torino,M,divorziato/a,Roma,Via Nazionale 10,00184`,
+    cultural: `id,denominazione,tipo,indirizzo,comune,provincia,cap,lat,lon,telefono,email,web,orari,ingresso
+1,Museo Nazionale del Risorgimento,Museo,Via Accademia delle Scienze 5,Torino,TO,10123,45.0680,7.6830,0115621147,info@museorisorgimento.it,https://www.museorisorgimento.it,"mar-dom 10:00-18:00",Intero 10 euro
+2,Biblioteca Nazionale Braidense,Biblioteca,Via Brera 28,Milano,MI,20121,45.4719,9.1878,0286460907,bn-mi@cultura.gov.it,https://braidense.it,"lun-ven 8:30-18:15",Gratuito
+3,Archivio di Stato di Firenze,Archivio,Viale Giovine Italia 6,Firenze,FI,50122,43.7728,11.2694,0552340782,as-fi@cultura.gov.it,https://www.archiviodistato.firenze.it,"lun-ven 8:15-18:00",Gratuito`,
+    ro: `id,nome,cognome,codice_fiscale,ruolo,ente,codice_ipa,data_inizio,data_fine,tipo_nomina
+1,Marco,Ferrari,FRRMRC65A01F205Z,Sindaco,Comune di Milano,c_f205,2021-06-15,,Elezione diretta
+2,Anna,Conte,CNTNNNA70B41L219T,Assessore ai Lavori Pubblici,Comune di Milano,c_f205,2021-07-01,,Nomina sindacale
+3,Luigi,Marini,MRNLGU58C01H501P,Dirigente Settore Urbanistica,Comune di Milano,c_f205,2019-01-01,,Concorso pubblico`,
+    ti: `id,titolo,tipo,data_inizio,data_fine,orario_inizio,orario_fine,luogo,comune,provincia,indirizzo,descrizione,url
+1,Festival della Scienza,Evento culturale,2024-10-25,2024-11-03,09:00,20:00,Porto Antico,Genova,GE,Calata Cattaneo,Manifestazione scientifica aperta al pubblico,https://www.festivalscienza.it
+2,Salone del Libro,Fiera,2024-05-09,2024-05-13,10:00,20:00,Lingotto Fiere,Torino,TO,Via Nizza 294,Salone internazionale del libro,https://www.salonelibro.it
+3,Maratona di Roma,Evento sportivo,2024-03-17,2024-03-17,09:00,18:00,Foro Italico,Roma,RM,Viale del Foro Italico,42esima edizione della maratona,https://www.maratonadiroma.it`,
+    adms: `id,titolo,tipo,versione,stato,licenza,formato,url,publisher,data_rilascio,data_modifica,descrizione,temi,parole_chiave
+1,Ontologia CLV,Ontologia,2.0,Stabile,CC BY 4.0,OWL/RDF,https://w3id.org/italia/onto/CLV,AgID,2017-01-01,2023-06-01,Ontologia per indirizzi e luoghi,luoghi,indirizzi luoghi civici
+2,Vocabolario Tipi Ente,Vocabolario controllato,1.1,Stabile,CC BY 4.0,SKOS/RDF,https://w3id.org/italia/controlled-vocabulary/tipi-ente,AgID,2018-03-15,2023-01-10,Tipi di enti pubblici italiani,organizzazioni,enti pubblici amministrazione`
   };
   const csv = esempi[tipo] || esempi['poi'];
   document.getElementById('csv-input').value = csv;
   const ontoMap = {
-    poi:   ['CLV','POI','L0','TI'],
-    smapit:['CLV','L0','SMAPIT'],
-    iot:   ['QB','IoT','L0','TI'],
-    acco:  ['CLV','POI','ACCO','L0'],
-    cpsv:  ['CLV','COV','CPSV-AP','L0'],
-    gtfs:  ['CLV','GTFS','L0']
+    poi:     ['CLV','POI','L0','TI'],
+    smapit:  ['CLV','L0','SMAPIT'],
+    iot:     ['QB','IoT','L0','TI'],
+    acco:    ['CLV','POI','ACCO','L0'],
+    cpsv:    ['CLV','COV','CPSV-AP','L0'],
+    gtfs:    ['CLV','GTFS','L0'],
+    qb:      ['QB','CLV','L0'],
+    clv:     ['CLV','L0'],
+    cov:     ['COV','CLV','L0'],
+    cpv:     ['CPV','CLV','L0'],
+    cultural:['Cultural-ON','CLV','L0','TI'],
+    ro:      ['RO','CPV','COV','L0'],
+    ti:      ['TI','CLV','L0','POI'],
+    adms:    ['ADMS','L0']
   };
   window._exampleLocked = true;
   setExampleOntos(ontoMap[tipo] || ontoMap['poi']);

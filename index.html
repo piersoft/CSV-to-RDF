@@ -537,7 +537,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.31</span>
+<span id="app-version">v2026.03.20.32</span>
 </footer>
 
 <script>
@@ -3037,6 +3037,8 @@ function validateSPARQL(terms, prefixMap) {
     'ti:TimeInterval': 'ti:TimeInterval'
   };
   var uris = [];
+  terms = terms.filter(function(t){ return !SCHEMA_GOV_WHITELIST.has(t); });
+  if(terms.length===0){sparqlDiv.innerHTML='✅ Classi verificate su schema.gov.it';return;}
   terms.forEach(function(t) {
     var resolved = ALIAS_MAP[t] || t;
     var parts = resolved.split(':');
@@ -3062,8 +3064,6 @@ function validateSPARQL(terms, prefixMap) {
         sparqlDiv.style.color = '#0a0';
       } else {
         var names = missing.map(function(u) { return u.split('/').pop().replace('>',''); }).join(', ');
-        missing = missing.filter(function(c){ return !SCHEMA_GOV_WHITELIST.has(c); });
-        if (missing.length === 0) { sparqlDiv.innerHTML = '✅ Tutte le classi verificate su schema.gov.it'; return; }
         sparqlDiv.innerHTML = '⚠ ' + missing.length + '/' + total + ' class' + (missing.length>1?'i':'e') + ' non in schema.gov.it: ' + names;
         sparqlDiv.style.color = '#c80';
       }

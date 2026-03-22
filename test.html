@@ -68,14 +68,61 @@ var re=new RegExp("(<"+esc+"[^>]+>)\\s+a\\s+([\\w:]+)","g");
 return ttl.replace(re,function(m,u,c){if(KP.some(function(k){return c.indexOf(k)===0;}))return m;return u+" a "+mc;});}
 function lg(m){var e=document.getElementById("logbox");e.style.display="block";e.innerHTML+=m+"<br>";e.scrollTop=e.scrollHeight;}
 function clearAll(){document.getElementById("res").innerHTML="";document.getElementById("sum").style.display="none";document.getElementById("logbox").style.display="none";document.getElementById("logbox").innerHTML="";}
-async function cai(pr,pv,kv){
-var h={"Content-Type":"application/json"};var r,d;
-if(pv==="mistral"){r=await fetch("https://api.mistral.ai/v1/chat/completions",{method:"POST",headers:Object.assign({},h,{"Authorization":"Bearer "+kv}),body:JSON.stringify({model:"mistral-small-latest",messages:[{role:"user",content:pr}],temperature:0.1,max_tokens:3000})});d=await r.json();return d.choices?.[0]?.message?.content||"";}
-if(pv==="openai"){r=await fetch("https://api.openai.com/v1/chat/completions",{method:"POST",headers:Object.assign({},h,{"Authorization":"Bearer "+kv}),body:JSON.stringify({model:"gpt-4o-mini",messages:[{role:"user",content:pr}],temperature:0.1,max_tokens:3000})});d=await r.json();return d.choices?.[0]?.message?.content||"";}
-if(pv==="groq"){r=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:Object.assign({},h,{"Authorization":"Bearer "+kv}),body:JSON.stringify({model:"llama-3.3-70b-versatile",messages:[{role:"user",content:pr}],temperature:0.1,max_tokens:3000})});d=await r.json();return d.choices?.[0]?.message?.content||"";}
-if(pv==="anthropic"){throw new Error("Anthropic non supporta chiamate dirette dal browser (CORS). Usa l'app principale per testare Anthropic.");}
-]}]})});d=await r.json();return d.candidates?.[0]?.content?.parts?.[0]?.text||"";}
-return "";}
+async function cai(pr, pv, kv){
+  var h = {"Content-Type":"application/json"};
+  var r, d;
+
+  if(pv==="mistral"){
+    r = await fetch("https://api.mistral.ai/v1/chat/completions", {
+      method:"POST",
+      headers: {...h, "Authorization":"Bearer "+kv},
+      body: JSON.stringify({
+        model:"mistral-small-latest",
+        messages:[{role:"user",content:pr}],
+        temperature:0.1,
+        max_tokens:3000
+      })
+    });
+    d = await r.json();
+    return d.choices?.[0]?.message?.content || "";
+  }
+
+  if(pv==="openai"){
+    r = await fetch("https://api.openai.com/v1/chat/completions", {
+      method:"POST",
+      headers: {...h, "Authorization":"Bearer "+kv},
+      body: JSON.stringify({
+        model:"gpt-4o-mini",
+        messages:[{role:"user",content:pr}],
+        temperature:0.1,
+        max_tokens:3000
+      })
+    });
+    d = await r.json();
+    return d.choices?.[0]?.message?.content || "";
+  }
+
+  if(pv==="groq"){
+    r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method:"POST",
+      headers: {...h, "Authorization":"Bearer "+kv},
+      body: JSON.stringify({
+        model:"llama-3.3-70b-versatile",
+        messages:[{role:"user",content:pr}],
+        temperature:0.1,
+        max_tokens:3000
+      })
+    });
+    d = await r.json();
+    return d.choices?.[0]?.message?.content || "";
+  }
+
+  if(pv==="anthropic"){
+    throw new Error("Anthropic non supporta chiamate dirette dal browser (CORS).");
+  }
+
+  return "";
+}
 async function runAll(){
 clearAll();
 var pv=document.getElementById("prov").value,kv=document.getElementById("apikey").value.trim();

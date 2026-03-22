@@ -567,7 +567,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.87</span>
+<span id="app-version">v2026.03.20.88</span>
 </footer>
 
 <script>
@@ -2536,6 +2536,17 @@ function cleanTTL(text) {
 }
 
 
+function safeJSON(obj) {
+  return JSON.stringify(obj, function(key, val) {
+    if (typeof val === "string") {
+      return val.replace(/[\u0080-\uFFFF]/g, function(c) {
+        return "\\u" + ("0000" + c.charCodeAt(0).toString(16)).slice(-4);
+      });
+    }
+    return val;
+  });
+}
+
 async function callOpenAI(prompt) {
   const key = document.getElementById('openai-key')?.value?.trim();
   if (!key) throw new Error('Inserisci la API key OpenAI.');
@@ -2698,6 +2709,7 @@ async function startConversion() {
     document.getElementById('btn-validate').disabled = false;
     document.getElementById('btn-validate').disabled = false;
     document.getElementById('btn-validate').disabled = false;
+    ttl = forceMainClassInTTL(ttl, ontos, entityBase);
     updateStats(ttl);
     showStatus(`✓ Completato! ${allRows.length} righe trasformate in ${chunks.length} chunk.`, 'success');
 
@@ -2710,7 +2722,14 @@ async function startConversion() {
 
 // ── DEDUPLICA PREFISSI ─────────────────────────────
 
-function deduplicatePrefixes(ttl) {
+
+function forceMainClassInTTL(ttl, ontos, entityBase) {
+  var mc = getMainClass(ontos); if(!mc||mc==="l0:Object") return ttl;
+  var KEEP=["foaf:","clv:","skos:","dct:","dcat:","rdfs:","owl:","geo:","sm:","vcard:","schema:"];
+  if(entityBase){var esc=entityBase.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");var re1=new RegExp("(<"+esc+"[^>]+>)\\s+a\\s+([\\w:]+)","g");ttl=ttl.replace(re1,function(m,uri,cls){if(KEEP.some(function(k){return cls.indexOf(k)===0;}))return m;return uri+" a "+mc;});}
+  if(ttl.indexOf(mc)<0){var re2=/(<https?:\/\/[^>]+>)\s+a\s+([\w:]+)/g;ttl=ttl.replace(re2,function(m,uri,cls){if(cls==="foaf:Agent")return m;if(KEEP.some(function(k){return cls.indexOf(k)===0;}))return m;return uri+" a "+mc;});}
+  return ttl;
+}function deduplicatePrefixes(ttl) {
   const seen = new Set();
   return ttl.split('\n').filter(line => {
     if (!line.trim().startsWith('@prefix')) return true;

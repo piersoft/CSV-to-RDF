@@ -224,7 +224,6 @@
         <div class="card-body-pa">
           <label class="lbl">Contenuto CSV (con intestazioni)</label>
           <p style="font-size:.78rem;color:var(--dg-muted);margin:.2rem 0 .4rem;">Non hai un CSV? Usa <strong>Carica esempio</strong> per vedere i formati per ontologia e usali come schema.</p>
-          <p style="font-size:.78rem;color:var(--dg-muted);margin:.2rem 0 .4rem;">Non hai un CSV? Usa <strong>Carica esempio</strong> per vedere i formati per ontologia.</p>
           <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;align-items:center">
             <button class="btn-sec" style="font-size:0.8rem;padding:0.35rem 0.8rem" onclick="document.getElementById('file-input').click()">📂 Carica file CSV</button>
             <input type="file" accept=".csv,.tsv,.txt" id="file-input" style="display:none">
@@ -1389,6 +1388,7 @@ function parseAndPreviewCSV() {
     var _autoOntos = detectOntologiesDeterministic(parsed.headers, parsed.rows);
     if (_autoOntos && _autoOntos.length > 0) {
       setExampleOntos(_autoOntos);
+      if(typeof showPanel==="function")showPanel(parsed.headers);
       showStatus('\u2705 ' + parsed.headers.length + ' colonne \u2022 ' + parsed.rows.length + ' righe \u2022 Ontologie: ' + _autoOntos.join(', '), 'success');
     }
   } catch(e) {

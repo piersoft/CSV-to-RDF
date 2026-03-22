@@ -567,7 +567,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.99</span>
+<span id="app-version">v2026.03.20.100</span>
 </footer>
 
 <script>
@@ -3089,6 +3089,16 @@ function showValidationReport({ errors, warnings, infos, terms, prefixMap }) {
 
 
 function updateStats(ttl) {
+  // Forza la classe principale corretta in base alle ontologie selezionate
+  const _ontos = Array.from(document.querySelectorAll('.pill.active')).map(p=>p.dataset.onto).filter(Boolean);
+  const _mc = getMainClass(_ontos);
+  if (_mc && _mc !== 'l0:Object') {
+    ttl = forceMainClassInTTL(ttl, _ontos, null);
+    const _out = document.getElementById('ttl-output');
+    if (_out && _out.value && _out.value.includes(_mc) === false) {
+      _out.value = forceMainClassInTTL(_out.value, _ontos, null);
+    }
+  }
   const lines = ttl.split('\n');
   document.getElementById('stat-triples').textContent  =
     lines.filter(l => l.trim() && !l.trim().startsWith('#') && !l.trim().startsWith('@')).length;

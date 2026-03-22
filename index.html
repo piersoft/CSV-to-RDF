@@ -582,7 +582,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.113</span>
+<span id="app-version">v2026.03.20.114</span>
 </footer>
 
 <script>
@@ -670,11 +670,119 @@ const ONTO_RULES = [
   { keys: ['trasparenza','obbligo','pubblicazione'],                       ontos: ['Transparency'] },
 ];
 
+function detectOntologiesDeterministic(headers, rows) {
+  var norm = headers.map(function(h){
+    return h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');
+  });
+  var vals = (rows||[]).slice(0,5).map(function(r){
+    return Object.values(r).join(' ').toLowerCase();
+  }).join(' ');
+  var allText = norm.join(' ') + ' ' + vals;
+  var has = function(cols) {
+    if(typeof cols === 'string') return allText.includes(cols);
+    return cols.some(function(c){ return allText.includes(c); });
+  };
+
+  var result = new Set();
+
+  // CLV — sempre se indirizzo/lat/lon
+  if(has(['lat','lon','indirizzo','via','civico','comune','cap','latitudine','longitudine','stop_lat','stop_lon']))
+    result.add('CLV');
+
+  // GTFS
+  if(has(['stop_id','stop_name','route_id','trip_id','agency_id','stop_lat','stop_lon']))
+    result.add('GTFS');
+
+  // SMAPIT
+  if(has(['codice_scuola','codicescuola','denominazione_scuola','tipo_scuola','codice_istituto','ciclo','grado']))
+    result.add('SMAPIT');
+
+  // ACCO
+  if(has(['albergo','hotel','b&b','stelle','posti_letto','numero_posti_letto','struttura_ricettiva',
+          'tipo_struttura','agriturismo','ostello','accommodation','camere','letti']))
+    result.add('ACCO');
+
+  // IOT
+  if(has(['sensore','sensor','id_sensore','idsensore','nome_sensore','misura',
+          'valore_medio','data_ricezione','tipo_misura','proprieta_osservata','avgspeed','transiti']))
+    result.add('IoT');
+
+  // POI — se lat/lon con luoghi fisici
+  if(has(['tipo_poi','dae','defibrillatore','punto_di_interesse','punto_interesse',
+          'point_of_interest','poi','park'])) {
+    result.add('POI');
+  } else if(result.has('CLV') && has(['lat','lon']) &&
+    !result.has('ACCO') && !result.has('GTFS') && !result.has('SMAPIT') && !result.has('IoT')) {
+    if(has(['nome','denominazione','tipo','categoria'])) result.add('POI');
+  }
+
+  // COV — organizzazioni, NON strutture ricettive
+  if(!result.has('ACCO') && has(['codice_fiscale','codice_ente','amministrazione','ente',
+      'pubblica_amministrazione','organizzazione','comparto','inquadramento',
+      'codice_istituzione','codice_ente_bdap','cov'])) {
+    result.add('COV');
+  }
+
+  // CPV — persone fisiche
+  if(has(['nome','cognome']) || has(['codice_fiscale','data_nascita','sesso','cittadinanza',
+      'nato','nata','maschi','femmine','genere']))
+    result.add('CPV');
+
+  // RO — ruoli
+  if(has(['ruolo','incarico','mandato','consigliere','assessore','sindaco','dirigente',
+          'id_consigliere','legislatura','voti_validi']))
+    result.add('RO');
+
+  // QB — dati statistici aggregati
+  if(has(['anno','mese','occorrenze','totale','numero','valore','indice',
+          'popolazione_residente','numero_famiglie']) &&
+     !result.has('ACCO') && !result.has('GTFS') && !result.has('IOT'))
+    result.add('QB');
+
+  // TI — eventi con date
+  if(has(['inizio','termine','data_inizio','data_fine','quando','titolo','tipo_evento',
+          'manifestazione','evento','orario','durata']))
+    result.add('TI');
+
+  // CulturalON
+  if(has(['museo','musei','biblioteca','biblioteche','teatro','teatri','archivio',
+          'beniculturali','mibact','mibac','tipo_bene','datazione','numero_inventario',
+          'cultural','cis:','luoghicultura']))
+    result.add('CulturalON');
+
+  // CPSV — servizi pubblici / appalti
+  if(has(['cig','cup','aggiudicatario','appalto','gara','oggetto_appalto',
+          'servizio_pubblico','cpsv']))
+    result.add('CPSV');
+
+  // ADMS — cataloghi / asset semantici
+  if(has(['slug','version','versione','creation_date','last_edit_date','api_url',
+          'distribution_url','asset','ontologia','vocabolario']))
+    result.add('ADMS');
+
+  // L0 — sempre aggiunto come base
+  result.add('L0');
+
+  return Array.from(result);
+}
+
 async function autoDetectOntoAI() {
   const text = document.getElementById('csv-input').value.trim();
   if (!text) return;
   const parsed = parseCSV(text);
-  if (!parsed) return;
+    if (!parsed) return;
+  
+    // SE nessuna API key: usa rilevamento deterministico (no AI)
+    if (!hasApiKey()) {
+      var detOntos = detectOntologiesDeterministic(
+        parsed.headers,
+        parsed.rows
+      );
+      showStatus('Ontologie rilevate (deterministico): ' + detOntos.join(', '));
+      setExampleOntos(detOntos);
+      return;
+    }
+  
 
   // Costruisci campione: header + prime 5 righe
   const sample = [

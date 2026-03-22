@@ -2435,8 +2435,8 @@ async function startDeterministicConversion() {
   if(_btnC){_btnC.dataset.origText=_btnC.textContent;_btnC.textContent='⏳ Generazione...';_btnC.disabled=true;}
   // Animazione progressiva durante generazione deterministica
   var _nr2=0;try{var _pp=window._lastParsed||detParseCSV(csvText);_nr2=_pp?_pp.length:0;}catch(e){}
-  var _nRows = _parsed2 ? _parsed2.rows.length : 0;
-  var _nCols = _parsed2 ? _parsed2.headers.length : 0;
+  var _nRows = _pp ? _pp.length : 0;
+  var _nCols = _pp && _pp[0] ? Object.keys(_pp[0]).length : 0;
   var _detStep = 0;
   var _detMsgs = [
     '⏳ Analisi struttura CSV (' + _nCols + ' colonne, ' + _nRows + ' righe)...',

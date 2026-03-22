@@ -559,7 +559,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.109</span>
+<span id="app-version">v2026.03.20.110</span>
 </footer>
 
 <script>
@@ -1169,6 +1169,7 @@ function parseCSV(text) {
 }
 
 function parseAndPreviewCSV() {
+  window._parsedRows = null;
   const text = document.getElementById('csv-input').value.trim();
   if (!text) return showStatus('Incolla prima il CSV.', 'error');
   const parsed = parseCSV(text);
@@ -2029,6 +2030,60 @@ function getEntityType(ontos) {
   if (o.includes('ADMS'))        return 'asset';
   if (o.includes('POI'))         return 'poi';
   return 'resource';
+}
+
+function fillMissingConnectedResources(ttl,ontos,rows,ipa){
+  if(!ttl||!rows||!rows.length)return ttl;
+  var nl="\n",sp="    ";
+  var up=ontos.map(function(x){return x.toUpperCase();});
+  var hasClv=up.indexOf("CLV")>=0,hasTi=up.indexOf("TI")>=0;
+  if(!hasClv&&!hasTi)return ttl;
+  var base="https://w3id.org/italia/data/"+(ipa||"ipa")+"/";
+  var seg=getEntityTypeSegment(ontos);
+  var keys=rows[0]?Object.keys(rows[0]):[];
+  var idCol=keys.find(function(k){return /^(id|codice|cod|code|identifier|stop_id|codice_scuola)$/i.test(k.trim());})||keys[0];
+  rows.forEach(function(row){
+    var id=String(row[idCol]||"").trim().replace(/[^a-zA-Z0-9_-]/g,"-");
+    if(!id)return;
+    var su="<"+base+seg+"/"+id+">";
+    if(hasClv){
+      var au=base+"address/"+id;
+      if(!ttl.includes(au)){
+        var st=row.indirizzo||row.via||row.address||row.stop_name||"";
+        var ct=row.comune||row.city||"";
+        var pv=row.provincia||row.province||"";
+        var cp=row.cap||row.postcode||"";
+        var la=row.lat||row.stop_lat||"";
+        var lo=row.lon||row.stop_lon||row.lng||"";
+        if(st||ct||la){
+          var be=ttl.indexOf(" ."+nl,ttl.indexOf(su));
+          if(be>=0)ttl=ttl.slice(0,be)+" ;"+nl+sp+"clv:hasAddress <"+au+">"+ttl.slice(be);
+          var dq=String.fromCharCode(34);
+          var ad="<"+au+"> a clv:Address";
+          if(st)ad+=" ;"+nl+sp+"clv:hasStreet "+dq+st.replace(/"/g,"'")+dq+"@it";
+          if(ct)ad+=" ;"+nl+sp+"clv:hasCity "+dq+ct.replace(/"/g,"'")+dq+"@it";
+          if(pv)ad+=" ;"+nl+sp+"clv:hasProvince "+dq+pv+dq+"@it";
+          if(cp)ad+=" ;"+nl+sp+"clv:hasPostalCode "+dq+cp+dq+"@it";
+          if(la)ad+=" ;"+nl+sp+"geo:lat "+dq+la+dq+"^^xsd:decimal";
+          if(lo)ad+=" ;"+nl+sp+"geo:long "+dq+lo+dq+"^^xsd:decimal";
+          ttl+=nl+ad+" ."+nl;
+        }
+      }
+    }
+    if(hasTi){
+      var tu=base+"time/"+id;
+      if(!ttl.includes(tu)){
+        var dq2=String.fromCharCode(34);
+        var dv=row.data_inizio||row.data||row.date||row.timestamp||row.data_rilascio||"";
+        if(dv){
+          var be2=ttl.indexOf(" ."+nl,ttl.indexOf(su));
+          if(be2>=0)ttl=ttl.slice(0,be2)+" ;"+nl+sp+"ti:atTime <"+tu+">"+ttl.slice(be2);
+          ttl+=nl+"<"+tu+"> a ti:TimeInstant ;"+nl+sp+"ti:inDateTime "+dq2+dv+dq2+"^^xsd:dateTime ."+nl;
+        }
+      }
+    }
+  });
+  return ttl;
 }
 
 function buildPromptChunk(cols, rows, ontos, chunkIndex, totalChunks, vocabSection='', ontoSection='', skipCols=new Set(), ipa='', mainClass='') {
@@ -3097,6 +3152,21 @@ function updateStats(ttl) {
     const _outClean = document.getElementById('ttl-output');
     if (_outClean && _outClean.value) {
       _outClean.value = cleanTTL(_outClean.value);
+      var _fi=(document.getElementById('meta-ipa')||{value:'ipa'}).value.trim()||'ipa';
+      var _csvEl=document.getElementById('csv-input');
+      var _rows_fill=[];
+      if(_csvEl&&_csvEl.value.trim()){
+        var _csvLines=_csvEl.value.trim().split('\n');
+        var _csvHdr=_csvLines[0].split(',').map(function(h){return h.trim();});
+        for(var _ri=1;_ri<_csvLines.length;_ri++){
+          var _csvCells=_csvLines[_ri].split(',');
+          var _csvRow={};
+          _csvHdr.forEach(function(h,i){_csvRow[h]=(_csvCells[i]||'').trim();});
+          if(Object.values(_csvRow).some(function(v){return v!=='';}))
+            _rows_fill.push(_csvRow);
+        }
+      }
+      if(_rows_fill.length>0)_outClean.value=fillMissingConnectedResources(_outClean.value,_ontos,_rows_fill,_fi);
       ttl = _outClean.value;
     }
   }

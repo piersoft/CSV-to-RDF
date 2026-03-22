@@ -2401,7 +2401,7 @@ async function startDeterministicConversion() {
   var ente = (document.getElementById('meta-ente')||{value:''}).value.trim()||ipa;
   var ontos = Array.from(document.querySelectorAll('.pill.active')).map(function(p){return p.dataset.onto;}).filter(Boolean);
   if(!csvText){showStatus('Nessun CSV caricato.');return;}
-  if(!ipa){showStatus('Inserisci il codice IPA dell\'ente titolare del dato (STEP 2).');return;}
+  if(!ipa){showStatus('? Inserisci il Codice IPA dell\'ente titolare (STEP 2).', 'error');return;}
   if(!ontos.length){showStatus('Seleziona almeno una ontologia.');return;}
   showStatus('Generazione TTL deterministica in corso...');
   document.getElementById('btn-convert').disabled = true;
@@ -3033,7 +3033,7 @@ async function callGemini(prompt) {
 const CHUNK_SIZE = 25;
 
 async function startConversion() {
-  var _ipaCheck=(document.getElementById('meta-ipa')||{value:''}).value.trim();if(!_ipaCheck){showStatus('Inserisci il codice IPA dell\'ente titolare del dato (STEP 2).');return;}
+  var _ipaCheck=(document.getElementById('meta-ipa')||{value:''}).value.trim();if(!_ipaCheck){showStatus('? Inserisci il Codice IPA dell\'ente titolare (STEP 2).', 'error');return;}
   if (!hasApiKey()) { startDeterministicConversion(); return; }
   const csvText = document.getElementById('csv-input').value.trim();
   const paname  = document.getElementById('meta-paname').value.trim();

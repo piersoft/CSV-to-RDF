@@ -567,7 +567,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.90</span>
+<span id="app-version">v2026.03.20.91</span>
 </footer>
 
 <script>
@@ -3003,6 +3003,27 @@ async function validateTTL() {
   if (allTerms.length > 0) setTimeout(function(){ validateSPARQL([...new Set(allTerms)], prefixMap); }, 0);
 }
 
+
+function buildSkeletonTTL(rows, ontos, ipa) {
+  var mc = getMainClass(ontos);
+  var seg = getEntityTypeSegment(ontos);
+  var base = 'https://w3id.org/italia/data/' + (ipa||'ipa') + '/' + seg + '/';
+  if (!mc || mc === 'l0:Object') return '';
+  var idCols = ['id','codice','cod','code','identifier','stop_id','codice_scuola'];
+  var idCol = null;
+  if (rows.length > 0) {
+    var keys = Object.keys(rows[0]);
+    for (var k=0;k<idCols.length;k++) { if (keys.some(function(h){return h.toLowerCase()===idCols[k];})) { idCol=keys.find(function(h){return h.toLowerCase()===idCols[k];}); break; } }
+    if (!idCol) idCol = keys[0];
+  }
+  if (!idCol) return '';
+  var lines = rows.map(function(row) {
+    var id = String(row[idCol]||'').trim().replace(/[^a-zA-Z0-9_-]/g,'-');
+    if (!id) return '';
+    return '<'+base+id+'> a '+mc+' .';
+  }).filter(Boolean);
+  return lines.length ? '# TIPI OBBLIGATORI - NON cambiare:\n'+lines.join('\n') : '';
+}
 
 function showValidationReport({ errors, warnings, infos, terms, prefixMap }) {
   const div = document.getElementById('validation-report');

@@ -568,7 +568,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.64</span>
+<span id="app-version">v2026.03.20.65</span>
 </footer>
 
 <script>
@@ -2023,12 +2023,43 @@ function getEntityType(ontos) {
   return 'resource';
 }
 
+
+// ── Genera il blocco deterministico di tipo per ogni riga ──────────
+// Questo viene PREPOSTO al prompt come "TTL già scritto"
+// L'AI deve solo aggiungere proprietà, non cambiare i tipi
+function buildDeterministicTypeBlock(rows, ontos, ipa) {
+  const mainClass = getMainClass(ontos);
+  const typeSegment = getEntityTypeSegment(ontos);
+  const baseURI = 'https://w3id.org/italia/data/' + (ipa || 'ipa') + '/' + typeSegment + '/';
+  
+  // Trova la colonna ID
+  const idCol = rows[0] ? Object.keys(rows[0]).find(k => 
+    /^(id|codice|cod|code|identifier|_id)$/i.test(k.trim())
+  ) || Object.keys(rows[0])[0] : null;
+  
+  if (!idCol || !mainClass || mainClass === 'l0:Object') return '';
+  
+  const lines = rows.map(row => {
+    const id = String(row[idCol] || '').trim().replace(/[^a-zA-Z0-9_\-]/g, '-');
+    if (!id) return '';
+    return '<' + baseURI + id + '> a ' + mainClass + ' .';
+  }).filter(Boolean);
+  
+  return lines.length ? 
+    '# TIPI OBBLIGATORI — NON modificare o sostituire:\n' + lines.join('\n') + '\n' 
+    : '';
+}
+
 function buildPromptChunk(cols, rows, ontos, chunkIndex, totalChunks, vocabSection='', ontoSection='', skipCols=new Set(), ipa='', mainClass='') {
   // Escludi colonne già mappate deterministicamente
   const ambigCols = cols.filter(c => !skipCols.has(c));
   if (ambigCols.length === 0) return null; // tutto già mappato
   const csvChunk = [ambigCols.join(','), ...rows.map(r => ambigCols.map(h=>r[h]).join(','))].join('\n');
-  return `Sei un esperto RDF per la PA italiana. Trasforma le righe CSV in Turtle (TTL) compatto.
+  return `# STRUTTURA OBBLIGATORIA PRE-GENERATA — NON ALTERARE I TIPI:
+${buildDeterministicTypeBlock(rows, ontos, ipa)}
+# Aggiungi SOLO le proprietà mancanti a questi soggetti. NON cambiare "a MainClass".
+
+Sei un esperto RDF per la PA italiana. Trasforma le righe CSV in Turtle (TTL) compatto.
 
 URI BASE OBBLIGATORIA: tutte le entità DEVONO usare ESCLUSIVAMENTE questo pattern: <https://w3id.org/italia/data/${ipa}/{tipo}/{id}> — NON usare mai domini come dati.comune.*, http://dati.*, o qualsiasi altro dominio inventato.
 

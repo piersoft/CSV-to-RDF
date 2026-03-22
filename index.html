@@ -566,7 +566,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.122</span>
+<span id="app-version">v2026.03.20.123</span>
 </footer>
 
 <script>
@@ -2419,7 +2419,25 @@ async function startDeterministicConversion() {
   if(!csvText){showStatus('Nessun CSV caricato.');return;}
   if(!ipa){showStatus('? Inserisci il Codice IPA dell\'ente titolare (STEP 2).', 'error');return;}
   if(!ontos.length){showStatus('Seleziona almeno una ontologia.');return;}
-  showStatus('Generazione TTL deterministica in corso...');
+  var _btnC=document.getElementById('btn-convert');
+  if(_btnC){_btnC.dataset.origText=_btnC.textContent;_btnC.textContent='⏳ Generazione...';_btnC.disabled=true;}
+  // Animazione progressiva durante generazione deterministica
+  var _parsed2 = window._lastParsed || parseCSVText(csvText);
+  var _nRows = _parsed2 ? _parsed2.rows.length : 0;
+  var _nCols = _parsed2 ? _parsed2.headers.length : 0;
+  var _detStep = 0;
+  var _detMsgs = [
+    '⏳ Analisi struttura CSV (' + _nCols + ' colonne, ' + _nRows + ' righe)...',
+    '⚙️ Mappatura colonne sulle ontologie ' + ontos.join(', ') + '...',
+    '🔗 Generazione URI con base IPA: ' + ipa + '...',
+    '📝 Scrittura triple RDF per ' + _nRows + ' soggetti...',
+    '✅ Completamento e validazione prefissi...'
+  ];
+  showStatus(_detMsgs[0]);
+  var _detInterval = setInterval(function(){
+    _detStep = Math.min(_detStep+1, _detMsgs.length-1);
+    showStatus(_detMsgs[_detStep]);
+  }, Math.max(300, Math.round(_nRows/20)*100));
   document.getElementById('btn-convert').disabled = true;
   try {
     var ttl = buildDeterministicTTL(csvText, ontos, ipa, ente);
@@ -2428,11 +2446,15 @@ async function startDeterministicConversion() {
     if(out) out.value = ttl;
     window._detTTL = ttl; // rende il TTL disponibile a download/valida
     updateStats(ttl);
-    showStatus('TTL generato in modo deterministico (nessuna API key rilevata).');
+    var _tripleCount = (ttl.match(/\./g)||[]).length;
+    showStatus('✅ TTL generato: ' + _nRows + ' soggetti, ~' + _tripleCount + ' triple (' + ontos.join(', ') + ')');
   } catch(e) {
     showStatus('Errore deterministico: '+e.message);
   } finally {
+    clearInterval(_detInterval);
     document.getElementById('btn-convert').disabled = false;
+    var _btnConv = document.getElementById('btn-convert');
+    if(_btnConv) _btnConv.textContent = _btnConv.dataset.origText || _btnConv.textContent;
     // Abilita bottoni output dopo generazione deterministica
     ['btn-download-ttl','btn-download-rdf','btn-validate'].forEach(function(id){
       var el = document.getElementById(id);

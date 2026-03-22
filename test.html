@@ -138,7 +138,12 @@ var t=TESTS[i],row=document.getElementById("r"+i),els=row.querySelectorAll("span
 els[2].textContent="...";els[2].className="st run";
 try{
 var ttl="";
-if(pv!=="deter"&&kv){var raw=await cai(bprompt(t),pv,kv);ttl=raw.replace(/```[\w]*\n?/g,"").replace(/\n?```/g,"").trim();}
+if(pv!=="deter"&&kv){var raw = "";
+try {
+  raw = await cai(...)
+} catch(e) {
+  lg("⚠️ API error: " + e.message);
+}}
 var sg=gsg(t.ontos);ttl=fcls(ttl,t.ontos,sg);
 var found=excls(ttl);
 els[1].textContent=found.length?found.join(", "):"(nessuna)";

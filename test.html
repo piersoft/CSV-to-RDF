@@ -1,12 +1,8 @@
 <!DOCTYPE html>
-<html lang="it">
-<head>
-<meta charset="UTF-8">
-<title>CSV-to-RDF Test Suite</title>
+<html lang="it"><head><meta charset="UTF-8"><title>CSV-to-RDF Test Suite</title>
 <style>
 body{font-family:monospace;background:#0d1117;color:#c9d1d9;margin:0;padding:20px}
-h1{color:#58a6ff}
-.section{margin:20px 0;border:1px solid #30363d;border-radius:8px;padding:16px}
+h1{color:#58a6ff}.section{margin:20px 0;border:1px solid #30363d;border-radius:8px;padding:16px}
 .row{display:grid;grid-template-columns:220px 1fr 70px 70px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid #21262d}
 .lbl{color:#8b949e;font-size:.85em}.cls{font-size:.8em}.st{font-size:.85em;font-weight:bold;text-align:center}
 .ok{color:#3fb950}.fail{color:#f85149}.skip{color:#8b949e}.run{color:#d29922}.sc{text-align:center;font-size:.85em}
@@ -16,26 +12,28 @@ h1{color:#58a6ff}
 .inp{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:8px;color:#c9d1d9;font-family:monospace}
 .sum{background:#161b22;padding:12px;border-radius:6px;margin:12px 0;font-size:.9em}
 .logbox{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:12px;max-height:200px;overflow-y:auto;font-size:.8em;margin-top:12px}
+.note{color:#8b949e;font-size:.8em;margin-top:4px}
 </style></head><body>
 <h1>🧪 CSV-to-RDF Test Suite</h1>
 <p style="color:#8b949e">Verifica le classi RDF per ogni esempio sacro con il provider selezionato.</p>
 <div class="ctrl">
-<select id="prov" class="inp">
-<option value="deter">Solo deterministico (no AI)</option>
-<option value="mistral">Mistral</option>
-<option value="groq">Groq</option>
-
-<option value="openai">OpenAI</option>
-<option value="anthropic">Anthropic (solo app principale)</option>
-</select>
-<input id="apikey" type="password" class="inp" placeholder="API Key" style="width:280px">
-<button class="btn go" onclick="runAll()">▶ Esegui tutti</button>
-<button class="btn cl" onclick="clearAll()">✕ Pulisci</button>
+  <select id="prov" class="inp" onchange="showNote()">
+    <option value="deter">Solo deterministico (no AI)</option>
+    <option value="mistral">Mistral</option>
+    <option value="groq">Groq</option>
+    <option value="openai">OpenAI</option>
+    <option value="anthropic">Anthropic (solo app principale)</option>
+  </select>
+  <input id="apikey" type="password" class="inp" placeholder="API Key" style="width:260px">
+  <button class="btn go" onclick="runAll()">▶ Esegui tutti</button>
+  <button class="btn cl" onclick="clearAll()">✕ Pulisci</button>
 </div>
+<div id="note" class="note" style="display:none">⚠️ Anthropic non supporta chiamate dirette dal browser. Testa Anthropic dall'app principale.</div>
 <div id="sum" class="sum" style="display:none"></div>
 <div id="res"></div>
 <div id="logbox" class="logbox" style="display:none"></div>
 <script>
+function showNote(){document.getElementById("note").style.display=document.getElementById("prov").value==="anthropic"?"block":"none";}
 var TESTS=[
   {name:"POI",ontos:["CLV","POI","L0","TI"],exp:["poi:PointOfInterest"],csv:"id,nome,lat,lon\n1,Defibrillatore,40.604,17.231\n2,Fontana,40.476,17.229"},
   {name:"ACCO",ontos:["CLV","POI","ACCO","L0"],exp:["acco:Accommodation"],csv:"id,denominazione,tipologia,lat,lon,totale_letti,email\n1,Hotel Roma,Albergo,43.1122,12.3888,80,info@h.it\n2,BB Girasole,BB,43.07,12.61,12,bb@g.com"},
@@ -45,119 +43,89 @@ var TESTS=[
   {name:"Cultural-ON",ontos:["Cultural-ON","CLV","L0"],exp:["cis:CulturalInstituteOrSite"],csv:"id,nome,tipo,comune,lat,lon\n1,Museo Naz,museo,Roma,41.902,12.496\n2,Biblioteca,biblioteca,Milano,45.464,9.190"},
   {name:"CPSV-AP",ontos:["CPSV-AP","CLV","L0"],exp:["cpsv:PublicService"],csv:"id,nome_servizio,descrizione,comune\n1,Carta identita,Rilascio CIE,Roma\n2,TARI,Tributo rifiuti,Milano"},
   {name:"IoT",ontos:["IoT","L0"],exp:["iot:Sensor"],csv:"id,nome_sensore,tipo,valore,unita,lat,lon\n1,PM10,qualita_aria,23.5,ug/m3,41.9,12.5\n2,Rumore,acustico,65.2,dB,41.9,12.5"},
-  {name:"TI-Eventi",ontos:["TI","CLV","L0","POI"],exp:["l0:EventOrSituation"],csv:"id,nome,data_inizio,data_fine,comune,lat,lon\n1,Festival Jazz,2024-07-01,2024-07-07,Roma,41.899,12.473\n2,Sagra,2024-08-10,2024-08-15,Bolsena,42.644,11.989"},
+  {name:"TI-Eventi",ontos:["TI","L0"],exp:["l0:EventOrSituation"],csv:"id,nome,data_inizio,data_fine\n1,Festival Jazz,2024-07-01,2024-07-07\n2,Sagra,2024-08-10,2024-08-15"},
   {name:"SMAPIT",ontos:["SMAPIT","CLV","L0"],exp:["smapit:School"],csv:"codice_scuola,denominazione,comune,lat,lon\nRMIS001,Liceo Fermi,Roma,41.902,12.496\nMIIS002,ITC Cattaneo,Milano,45.464,9.190"},
   {name:"ADMS",ontos:["ADMS","L0"],exp:["adms:SemanticAsset"],csv:"id,titolo,descrizione,versione\n1,Onto CLV,Ontologia indirizzi,1.0\n2,Vocab Enti,Vocabolario enti,2.1"},
   {name:"GTFS",ontos:["GTFS","CLV","L0"],exp:["gtfs:Stop"],csv:"stop_id,stop_name,stop_lat,stop_lon\n1,Stazione,45.464,9.190\n2,Piazza Duomo,45.465,9.191"}
 ];
-var PR=["ACCO","PARK","GTFS","CULTURAL-ON","CPSV-AP","QB","IOT","CPV","COV","SMAPIT","POI","TI","CLV","ADMS","L0"];
-var MC={"ACCO":"acco:Accommodation","PARK":"park:ParkingFacility","GTFS":"gtfs:Stop","CULTURAL-ON":"cis:CulturalInstituteOrSite","CPSV-AP":"cpsv:PublicService","QB":"qb:Observation","IOT":"iot:Sensor","CPV":"cpv:Person","COV":"cov:PublicOrganization","SMAPIT":"smapit:School","POI":"poi:PointOfInterest","TI":"l0:EventOrSituation","CLV":"clv:Feature","L0":"l0:Object","ADMS":"adms:SemanticAsset"};
-var SG={"ACCO":"accommodation-facility","GTFS":"stop","CULTURAL-ON":"cultural-institute","CPSV-AP":"public-service","QB":"observation","IOT":"sensor","CPV":"person","COV":"public-organization","SMAPIT":"school","POI":"point-of-interest","TI":"event","CLV":"address","L0":"resource","ADMS":"asset","PARK":"parking-facility"};
+var PR=["ACCO","PARK","GTFS","CULTURAL-ON","CPSV-AP","QB","IOT","CPV","COV","TI","SMAPIT","POI","CLV","ADMS","L0"];
+var MC={"ACCO":"acco:Accommodation","PARK":"park:ParkingFacility","GTFS":"gtfs:Stop","CULTURAL-ON":"cis:CulturalInstituteOrSite","CPSV-AP":"cpsv:PublicService","QB":"qb:Observation","IOT":"iot:Sensor","CPV":"cpv:Person","COV":"cov:PublicOrganization","TI":"l0:EventOrSituation","SMAPIT":"smapit:School","POI":"poi:PointOfInterest","CLV":"clv:Feature","L0":"l0:Object","ADMS":"adms:SemanticAsset"};
+var SG={"ACCO":"accommodation-facility","GTFS":"stop","CULTURAL-ON":"cultural-institute","CPSV-AP":"public-service","QB":"observation","IOT":"sensor","CPV":"person","COV":"public-organization","TI":"event","SMAPIT":"school","POI":"point-of-interest","CLV":"address","L0":"resource","ADMS":"asset","PARK":"parking-facility"};
 function gmc(o){var u=o.map(function(x){return x.toUpperCase();});for(var i=0;i<PR.length;i++)if(u.indexOf(PR[i])>=0)return MC[PR[i]]||"l0:Object";return"l0:Object";}
 function gsg(o){var u=o.map(function(x){return x.toUpperCase();});for(var i=0;i<PR.length;i++)if(u.indexOf(PR[i])>=0)return SG[PR[i]]||"resource";return"resource";}
 function pcsv(csv){var ls=csv.trim().split("\n"),h=ls[0].split(",").map(function(x){return x.trim();});var rs=ls.slice(1).map(function(l){var v=l.split(","),r={};h.forEach(function(x,i){r[x]=(v[i]||"").trim();});return r;});return{h:h,r:rs};}
-function bprompt(t){var p=pcsv(t.csv),mc=gmc(t.ontos),sg=gsg(t.ontos),base="https://w3id.org/italia/data/test/"+sg+"/";
-var ic=p.h.filter(function(x){return /^(id|codice|cod|stop_id|codice_scuola)$/i.test(x);})[0]||p.h[0];
-var sk=p.r.map(function(r){var id=String(r[ic]||"").trim().replace(/[^a-zA-Z0-9_-]/g,"-");return "<"+base+id+"> a "+mc+" ;\n  # proprieta\n  .";}).join("\n");
-return "Genera TTL. Ontologie: "+t.ontos.join(", ")+".\nNON aggiungere @prefix.\nEstendi (NON cambiare tipi):\n"+sk+"\n\nCSV:\n"+t.csv+"\n\nClasse principale DEVE essere "+mc+".";}
+function bpr(t){var p=pcsv(t.csv),mc=gmc(t.ontos),sg=gsg(t.ontos),base="https://w3id.org/italia/data/test/"+sg+"/";
+  var ic=p.h.filter(function(x){return /^(id|codice|cod|stop_id|codice_scuola)$/i.test(x);})[0]||p.h[0];
+  var sk=p.r.map(function(r){var id=String(r[ic]||"").trim().replace(/[^a-zA-Z0-9_-]/g,"-");return "<"+base+id+"> a "+mc+" ;\n  # proprieta\n  .";}).join("\n");
+  return "Genera TTL. Ontologie: "+t.ontos.join(", ")+".\nNON aggiungere @prefix.\nEstendi (NON cambiare tipi):\n"+sk+"\n\nCSV:\n"+t.csv+"\n\nClasse principale DEVE essere "+mc+".";
+}
 function excls(ttl){var c=[],re=/>\s+a\s+([\w:]+)/g,m;while((m=re.exec(ttl))!==null)if(c.indexOf(m[1])<0)c.push(m[1]);return c;}
-function fcls(ttl,o,sg){var mc=gmc(o);if(mc==="l0:Object")return ttl;
-var KP=["foaf:","clv:","skos:","dct:","dcat:","rdfs:","owl:","geo:","poi:","iot:","cov:","cpv:","cis:","ro:","ti:"];
-var base="https://w3id.org/italia/data/test/"+sg+"/",esc=base.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
-var re=new RegExp("(<"+esc+"[^>]+>)\\s+a\\s+([\\w:]+)","g");
-return ttl.replace(re,function(m,u,c){if(KP.some(function(k){return c.indexOf(k)===0;}))return m;return u+" a "+mc;});}
+function fcls(ttl,o,sg){
+  var mc=gmc(o);if(mc==="l0:Object")return ttl;
+  var KEEP=["foaf:","clv:","skos:","dct:","dcat:","rdfs:","owl:","geo:","sm:","vcard:"];
+  var base="https://w3id.org/italia/data/test/"+sg+"/",esc=base.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+  var re1=new RegExp("(<"+esc+"[^>]+>)\\s+a\\s+([\\w:]+)","g");
+  ttl=ttl.replace(re1,function(m,u,c){if(KEEP.some(function(k){return c.indexOf(k)===0;}))return m;return u+" a "+mc;});
+  if(ttl.indexOf(mc)<0){
+    var re2=new RegExp("(<https?:\\/\\/[^>]+>)\\s+a\\s+([\\w:]+)","g");
+    ttl=ttl.replace(re2,function(m,u,c){if(c==="foaf:Agent")return m;if(KEEP.some(function(k){return c.indexOf(k)===0;}))return m;return u+" a "+mc;});
+  }
+  return ttl;
+}
 function lg(m){var e=document.getElementById("logbox");e.style.display="block";e.innerHTML+=m+"<br>";e.scrollTop=e.scrollHeight;}
 function clearAll(){document.getElementById("res").innerHTML="";document.getElementById("sum").style.display="none";document.getElementById("logbox").style.display="none";document.getElementById("logbox").innerHTML="";}
-async function cai(pr, pv, kv){
-  var h = {"Content-Type":"application/json"};
-  var r, d;
-
+async function callAI(pr,pv,kv){
+  var h={"Content-Type":"application/json"};var r,d;
   if(pv==="mistral"){
-    r = await fetch("https://api.mistral.ai/v1/chat/completions", {
-      method:"POST",
-      headers: {...h, "Authorization":"Bearer "+kv},
-      body: JSON.stringify({
-        model:"mistral-small-latest",
-        messages:[{role:"user",content:pr}],
-        temperature:0.1,
-        max_tokens:3000
-      })
-    });
-    d = await r.json();
-    return d.choices?.[0]?.message?.content || "";
+    r=await fetch("https://api.mistral.ai/v1/chat/completions",{method:"POST",headers:Object.assign({},h,{"Authorization":"Bearer "+kv}),body:JSON.stringify({model:"mistral-small-latest",messages:[{role:"user",content:pr}],temperature:0.1,max_tokens:3000})});
+    d=await r.json();return d.choices&&d.choices[0]?d.choices[0].message.content:"";
   }
-
   if(pv==="openai"){
-    r = await fetch("https://api.openai.com/v1/chat/completions", {
-      method:"POST",
-      headers: {...h, "Authorization":"Bearer "+kv},
-      body: JSON.stringify({
-        model:"gpt-4o-mini",
-        messages:[{role:"user",content:pr}],
-        temperature:0.1,
-        max_tokens:3000
-      })
-    });
-    d = await r.json();
-    return d.choices?.[0]?.message?.content || "";
+    r=await fetch("https://api.openai.com/v1/chat/completions",{method:"POST",headers:Object.assign({},h,{"Authorization":"Bearer "+kv}),body:JSON.stringify({model:"gpt-4o-mini",messages:[{role:"user",content:pr}],temperature:0.1,max_tokens:3000})});
+    d=await r.json();return d.choices&&d.choices[0]?d.choices[0].message.content:"";
   }
-
   if(pv==="groq"){
-    r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method:"POST",
-      headers: {...h, "Authorization":"Bearer "+kv},
-      body: JSON.stringify({
-        model:"llama-3.3-70b-versatile",
-        messages:[{role:"user",content:pr}],
-        temperature:0.1,
-        max_tokens:3000
-      })
-    });
-    d = await r.json();
-    return d.choices?.[0]?.message?.content || "";
+    r=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:Object.assign({},h,{"Authorization":"Bearer "+kv}),body:JSON.stringify({model:"llama-3.3-70b-versatile",messages:[{role:"user",content:pr}],temperature:0.1,max_tokens:3000})});
+    d=await r.json();return d.choices&&d.choices[0]?d.choices[0].message.content:"";
   }
-
-  if(pv==="anthropic"){
-    throw new Error("Anthropic non supporta chiamate dirette dal browser (CORS).");
-  }
-
+  if(pv==="anthropic"){throw new Error("Anthropic non supporta chiamate browser. Usa l'app principale.");}
   return "";
 }
 async function runAll(){
-clearAll();
-var pv=document.getElementById("prov").value,kv=document.getElementById("apikey").value.trim();
-if(pv!=="deter"&&!kv){alert("Inserisci la API key");return;}
-var html='<div class="section"><div style="font-weight:bold;margin-bottom:10px">Provider: '+pv.toUpperCase()+'</div>'
-  +'<div class="row" style="font-weight:bold;color:#8b949e"><span>Test</span><span>Classi trovate</span><span>Stato</span><span>Match</span></div>';
-for(var i=0;i<TESTS.length;i++) html+='<div class="row" id="r'+i+'"><span class="lbl">'+TESTS[i].name+'</span><span class="cls" style="color:#8b949e">...</span><span class="st skip">-</span><span class="sc">-</span></div>';
-html+='</div>';
-document.getElementById("res").innerHTML=html;
-var ok=0;
-for(var i=0;i<TESTS.length;i++){
-var t=TESTS[i],row=document.getElementById("r"+i),els=row.querySelectorAll("span");
-els[2].textContent="...";els[2].className="st run";
-try{
-var ttl="";
-if(pv!=="deter"&&kv){var raw = "";
-try {
-  raw = await cai(...)
-} catch(e) {
-  lg("⚠️ API error: " + e.message);
-}}
-var sg=gsg(t.ontos);ttl=fcls(ttl,t.ontos,sg);
-var found=excls(ttl);
-els[1].textContent=found.length?found.join(", "):"(nessuna)";
-var pass=t.exp.every(function(ec){return found.some(function(fc){return fc===ec;});});
-var mn=t.exp.filter(function(ec){return found.some(function(fc){return fc===ec;});}).length;
-els[2].textContent=pass?"OK":"FAIL";els[2].className="st "+(pass?"ok":"fail");
-els[3].textContent=mn+"/"+t.exp.length;els[3].className="sc "+(pass?"ok":"fail");
-if(pass)ok++;
-lg((pass?"✅":"❌")+" "+t.name+" → "+found.join(", "));
-}catch(e){els[1].textContent="err";els[2].textContent="ERR";els[2].className="st fail";els[3].textContent="-";lg("💥 "+t.name+": "+e.message);}
-await new Promise(function(r){setTimeout(r,700);});
-}
-var s=document.getElementById("sum");s.style.display="block";
-s.innerHTML="<b>"+ok+"/"+TESTS.length+" test passati</b> con "+pv.toUpperCase()+(ok===TESTS.length?" 🎉 Tutti OK!":" ⚠️ "+(TESTS.length-ok)+" falliti");
+  clearAll();
+  var pv=document.getElementById("prov").value,kv=document.getElementById("apikey").value.trim();
+  if(pv==="anthropic"){alert("Anthropic non supporta chiamate dirette dal browser. Testa Anthropic dall'app principale.");return;}
+  if(pv!=="deter"&&!kv){alert("Inserisci la API key");return;}
+  var html='<div class="section"><div style="font-weight:bold;margin-bottom:10px">Provider: '+pv.toUpperCase()+'</div>'
+    +'<div class="row" style="font-weight:bold;color:#8b949e"><span>Test</span><span>Classi trovate</span><span>Stato</span><span>Match</span></div>';
+  for(var i=0;i<TESTS.length;i++)html+='<div class="row" id="r'+i+'"><span class="lbl">'+TESTS[i].name+'</span><span class="cls" style="color:#8b949e">...</span><span class="st skip">-</span><span class="sc">-</span></div>';
+  html+='</div>';
+  document.getElementById("res").innerHTML=html;
+  var ok=0;
+  for(var i=0;i<TESTS.length;i++){
+    var t=TESTS[i],row=document.getElementById("r"+i),els=row.querySelectorAll("span");
+    els[2].textContent="...";els[2].className="st run";
+    try{
+      var ttl="",raw="";
+      if(pv!=="deter"&&kv){
+        try{raw=await callAI(bpr(t),pv,kv);}catch(e){lg("💥 API error: "+e.message);}
+      }
+      if(raw)ttl=raw.replace(/```[\w]*\n?/g,"").replace(/\n?```/g,"").trim();
+      var sg=gsg(t.ontos);
+      ttl=fcls(ttl,t.ontos,sg);
+      var found=excls(ttl);
+      els[1].textContent=found.length?found.join(", "):"(nessuna)";
+      var pass=t.exp.every(function(ec){return found.some(function(fc){return fc===ec;});});
+      var mn=t.exp.filter(function(ec){return found.some(function(fc){return fc===ec;});}).length;
+      els[2].textContent=pass?"OK":"FAIL";els[2].className="st "+(pass?"ok":"fail");
+      els[3].textContent=mn+"/"+t.exp.length;els[3].className="sc "+(pass?"ok":"fail");
+      if(pass)ok++;
+      lg((pass?"✅":"❌")+" "+t.name+" → "+found.join(", "));
+    }catch(e){els[1].textContent="err";els[2].textContent="ERR";els[2].className="st fail";els[3].textContent="-";lg("💥 "+t.name+": "+e.message);}
+    await new Promise(function(r){setTimeout(r,700);});
+  }
+  var s=document.getElementById("sum");s.style.display="block";
+  s.innerHTML="<b>"+ok+"/"+TESTS.length+" test passati</b> con "+pv.toUpperCase()+(ok===TESTS.length?" 🎉 Tutti OK!":" ⚠️ "+(TESTS.length-ok)+" falliti");
 }
 </script>
 </body></html>

@@ -559,7 +559,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.111</span>
+<span id="app-version">v2026.03.20.112</span>
 </footer>
 
 <script>
@@ -2086,6 +2086,160 @@ function fillMissingConnectedResources(ttl,ontos,rows,ipa){
   return ttl;
 }
 
+
+// ═══ MOTORE TTL DETERMINISTICO (basato su fixtures_v7.json - 274 dataset reali) ═══
+var DET_COL_NORM={latitudine:'lat',lat_wgs84:'lat',coordy:'lat',geo_lat:'lat',longitudine:'lon',lon_wgs84:'lon',coordx:'lon',geo_lon:'lon',lng:'lon',stop_lat:'lat',stop_lon:'lon',denominazionescuola:'denominazione',denominazione_scuola:'denominazione',nome_dataset:'denominazione',label:'denominazione',titolo:'denominazione',stop_name:'denominazione',nome_sensore:'denominazione',denominazioneistitutoriferimento:'denominazione',istituzione_scolastica:'denominazione',amministrazione:'denominazione',indirizzoscuola:'indirizzo',indirizzo_scuola:'indirizzo',ubicazione:'indirizzo',localizzazione:'indirizzo',address:'indirizzo',descrizionecomune:'comune',citta:'comune',city:'comune',capscuola:'cap',cap_scuola:'cap',postcode:'cap',codicescuola:'id',codice_scuola:'id',slug:'id',cig:'id',fid:'id',codiceistitutoriferimento:'id',codice_istituzione:'id',codice_ente_bdap:'id',id_consigliere:'id',id_sensore:'id',idsensore:'id',node_id:'id',remoteid:'id',pec:'email',mail:'email',sito_web:'sitoweb',website:'sitoweb',web:'sitoweb',url:'sitoweb',data_inizio:'inizio',quando:'inizio',published:'inizio',creation_date:'inizio',issued:'inizio',data_fine:'termine',fine:'termine',last_edit_date:'modified',ultimamodifica:'modified',occorrenze:'valore',numero:'valore',totale:'valore',popolazione_residente:'valore',importo:'valore',tipologia:'tipo',tipo_bene:'tipo',tipo_evento:'tipo',tipo_struttura:'tipo',tipo_scuola:'tipo',descrizionetipologiagradoistruzione:'tipo',informazioni:'descrizione',note:'descrizione',oggetto:'descrizione',tel:'telefono',phone:'telefono',anno_rilevazione:'anno',annoscolastico:'anno',anno_scolastico:'anno'};
+var DET_URI_SEG={ACCO:'accommodation-facility',GTFS:'stop',POI:'point-of-interest','IoT':'sensor',COV:'public-organization',CPV:'person',RO:'role',SMAPIT:'school',QB:'observation',CLV:'address',TI:'event',CulturalON:'cultural-institute',ADMS:'asset',CPSV:'service'};
+var DET_CLASS={ACCO:'acco:Accommodation',GTFS:'gtfs:Stop',POI:'poi:PointOfInterest','IoT':'iot:Sensor',COV:'cov:PublicOrganization',CPV:'cpv:Person',RO:'ro:Role',SMAPIT:'smapit:School',QB:'qb:Observation',CLV:'clv:Address',TI:'l0:EventOrSituation',CulturalON:'cis:CulturalInstituteOrSite',ADMS:'adms:SemanticAsset',CPSV:'cpsv:PublicService'};
+var DET_PREFIXES={'rdf':'http://www.w3.org/1999/02/22-rdf-syntax-ns#','rdfs':'http://www.w3.org/2000/01/rdf-schema#','xsd':'http://www.w3.org/2001/XMLSchema#','dct':'http://purl.org/dc/terms/','dcat':'http://www.w3.org/ns/dcat#','foaf':'http://xmlns.com/foaf/0.1/','skos':'http://www.w3.org/2004/02/skos/core#','geo':'http://www.w3.org/2003/01/geo/wgs84_pos#','vcard':'http://www.w3.org/2006/vcard/ns#','schema':'https://schema.org/','l0':'https://w3id.org/italia/onto/l0/','clv':'https://w3id.org/italia/onto/CLV/','sm':'https://w3id.org/italia/onto/SM/','ti':'https://w3id.org/italia/onto/TI/','acco':'https://w3id.org/italia/onto/ACCO/','poi':'https://w3id.org/italia/onto/POI/','iot':'https://w3id.org/italia/onto/IoT/','cov':'https://w3id.org/italia/onto/COV/','cpv':'https://w3id.org/italia/onto/CPV/','ro':'https://w3id.org/italia/onto/RO/','smapit':'https://w3id.org/italia/onto/SMAPIT/','gtfs':'http://vocab.gtfs.org/terms#','cis':'https://w3id.org/italia/onto/Cultural-ON/','adms':'http://www.w3.org/ns/adms#','cpsv':'http://purl.org/vocab/cpsv#','qb':'http://purl.org/linked-data/cube#','sdmx-dimension':'http://purl.org/linked-data/sdmx/2009/dimension#','sdmx-measure':'http://purl.org/linked-data/sdmx/2009/measure#','sdmx-attribute':'http://purl.org/linked-data/sdmx/2009/attribute#'};
+var DET_COL_RULES={denominazione:{pred:'rdfs:label',type:'langlit',lang:'it'},nome:{pred:'rdfs:label',type:'langlit',lang:'it'},descrizione:{pred:'dct:description',type:'langlit',lang:'it'},tipo:{pred:'dct:type',type:'langlit',lang:'it'},categoria:{pred:'dct:type',type:'langlit',lang:'it'},email:{pred:'sm:hasEmail',type:'mailto'},sitoweb:{pred:'sm:hasWebSite',type:'url'},telefono:{pred:'sm:hasTelephone',type:'literal'},fax:{pred:'sm:hasFax',type:'literal'},lat:{pred:'geo:lat',type:'typed',xsd:'xsd:decimal'},lon:{pred:'geo:long',type:'typed',xsd:'xsd:decimal'},modified:{pred:'dct:modified',type:'typed',xsd:'xsd:date'},numero_posti_letto:{pred:'acco:numberOfRooms',type:'typed',xsd:'xsd:integer',onto:'ACCO'},posti_letto:{pred:'acco:numberOfRooms',type:'typed',xsd:'xsd:integer',onto:'ACCO'},letti:{pred:'acco:numberOfBeds',type:'typed',xsd:'xsd:integer',onto:'ACCO'},camere:{pred:'acco:numberOfRooms',type:'typed',xsd:'xsd:integer',onto:'ACCO'},stelle:{pred:'acco:starRating',type:'typed',xsd:'xsd:integer',onto:'ACCO'},stop_id:{pred:'dct:identifier',type:'literal',onto:'GTFS'},stop_code:{pred:'gtfs:code',type:'literal',onto:'GTFS'},zone_id:{pred:'gtfs:zone',type:'literal',onto:'GTFS'},location_type:{pred:'gtfs:locationType',type:'typed',xsd:'xsd:integer',onto:'GTFS'},parent_station:{pred:'gtfs:parentStation',type:'literal',onto:'GTFS'},route_id:{pred:'dct:identifier',type:'literal',onto:'GTFS'},route_short_name:{pred:'gtfs:shortName',type:'literal',onto:'GTFS'},route_long_name:{pred:'gtfs:longName',type:'langlit',lang:'it',onto:'GTFS'},route_type:{pred:'gtfs:routeType',type:'typed',xsd:'xsd:integer',onto:'GTFS'},agency_id:{pred:'gtfs:agency',type:'literal',onto:'GTFS'},arrival_time:{pred:'gtfs:arrivalTime',type:'literal',onto:'GTFS'},departure_time:{pred:'gtfs:departureTime',type:'literal',onto:'GTFS'},stop_sequence:{pred:'gtfs:stopSequence',type:'typed',xsd:'xsd:integer',onto:'GTFS'},valore:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},valore_medio:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},unita:{pred:'iot:hasUnitOfMeasure',type:'literal',onto:'IoT'},avgspeed:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},anno:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},mese:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},periodo:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},comparto:{pred:'cov:hasSector',type:'langlit',lang:'it',onto:'COV'},inquadramento:{pred:'cov:hasLegalForm',type:'langlit',lang:'it',onto:'COV'},cognome:{pred:'cpv:familyName',type:'langlit',lang:'it',onto:'CPV'},sesso:{pred:'cpv:sex',type:'literal',onto:'CPV'},cittadinanza:{pred:'cpv:citizenship',type:'langlit',lang:'it',onto:'CPV'},data_nascita:{pred:'cpv:dateOfBirth',type:'typed',xsd:'xsd:date',onto:'CPV'},ruolo:{pred:'rdfs:label',type:'langlit',lang:'it',onto:'RO'},legislatura:{pred:'dct:description',type:'langlit',lang:'it',onto:'RO'},voti_validi:{pred:'ro:votesObtained',type:'typed',xsd:'xsd:integer',onto:'RO'},gestore:{pred:'smapit:hasManager',type:'langlit',lang:'it',onto:'SMAPIT'},inizio:{pred:'ti:startDate',type:'typed',xsd:'xsd:dateTime',onto:'TI'},termine:{pred:'ti:endDate',type:'typed',xsd:'xsd:dateTime',onto:'TI'},durata:{pred:'ti:duration',type:'literal',onto:'TI'},dove:{pred:'l0:hasLocation',type:'langlit',lang:'it',onto:'TI'},autore:{pred:'dct:creator',type:'langlit',lang:'it',onto:'CulturalON'},datazione:{pred:'dct:date',type:'literal',onto:'CulturalON'},numero_inventario:{pred:'dct:identifier',type:'literal',onto:'CulturalON'},version:{pred:'adms:version',type:'literal',onto:'ADMS'},versione:{pred:'adms:version',type:'literal',onto:'ADMS'},stato:{pred:'adms:status',type:'literal',onto:'ADMS'},formato:{pred:'dct:format',type:'literal',onto:'ADMS'},publisher:{pred:'dct:publisher',type:'langlit',lang:'it',onto:'ADMS'},aggiudicatario:{pred:'cpsv:hasParticipant',type:'langlit',lang:'it',onto:'CPSV'},cup:{pred:'dct:identifier',type:'literal',onto:'CPSV'},ufficio:{pred:'cpsv:isGroupedUnder',type:'langlit',lang:'it',onto:'CPSV'}};
+
+function detNormH(h){var n=h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');return DET_COL_NORM[n]||n;}
+function detGetMainOnto(ontos){var priority=['GTFS','SMAPIT','ACCO','IoT','CulturalON','CPSV','QB','RO','CPV','COV','POI','TI','CLV','ADMS','L0'];for(var i=0;i<priority.length;i++){if(ontos.indexOf(priority[i])>=0)return priority[i];}return ontos[0]||'L0';}
+function detFindColIdx(nh,cands){for(var i=0;i<cands.length;i++){var x=nh.indexOf(cands[i]);if(x>=0)return x;}return-1;}
+function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat','lon'].some(function(c){return nh.indexOf(c)>=0;});}
+function detHasTime(nh,ontos){return ontos.indexOf('TI')>=0&&['inizio','termine','data','quando'].some(function(c){return nh.indexOf(c)>=0;});}
+function detFormatLit(rule,val){if(!val)return null;var v=val.replace(/\\/g,'\\\\').replace(/"/g,'\\"');if(rule.type==='langlit')return'"'+v+'"@'+(rule.lang||'it');if(rule.type==='typed')return'"'+v+'"^^'+(rule.xsd||'xsd:string');if(rule.type==='mailto')return'<mailto:'+val.replace(/^mailto:/,'')+'>'; if(rule.type==='url'){var u=val.replace(/^<|>$/g,'');if(!u.startsWith('http'))u='https://'+u;return'<'+u+'>';}return'"'+v+'"';}
+function detFindRule(normH,ontos){if(ontos.indexOf('CPV')>=0&&normH==='nome')return{pred:'cpv:givenName',type:'langlit',lang:'it',onto:'CPV'};var rule=DET_COL_RULES[normH];if(!rule)return null;if(rule.onto&&ontos.indexOf(rule.onto)<0)return null;return rule;}
+function detGetTimeVal(nh,row){var tc=['inizio','data','quando','published','data_inizio'];for(var i=0;i<tc.length;i++){var x=nh.indexOf(tc[i]);if(x>=0&&row[x]&&row[x].trim())return row[x].trim();}return null;}
+function detParseCSV(text){return text.trim().split(/\r?\n/).map(function(line){var res=[],cur='',inQ=false;for(var i=0;i<line.length;i++){var c=line[i];if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){res.push(cur.trim());cur='';}else cur+=c;}res.push(cur.trim());return res;});}
+function detAddPrefix(onto,set){var m={ACCO:'acco',GTFS:'gtfs',POI:'poi','IoT':'iot',COV:'cov',CPV:'cpv',RO:'ro',SMAPIT:'smapit',QB:'qb',CLV:'clv',TI:'ti',CulturalON:'cis',ADMS:'adms',CPSV:'cpsv',L0:'l0'};if(m[onto])set.add(m[onto]);}
+
+function buildDeterministicTTL(csvText,ontos,ipa,ente){
+  if(!csvText||!csvText.trim())return'';
+  if(!ontos||!ontos.length)return'';
+  var nl='\n',sp='    ',dq='"';
+  var rows=detParseCSV(csvText);
+  if(!rows||rows.length<2)return'';
+  var headers=rows[0];
+  var dataRows=rows.slice(1).filter(function(r){return r.some(function(v){return v&&v.trim();});});
+  if(!dataRows.length)return'';
+  var nh=headers.map(detNormH);
+  var mainOnto=detGetMainOnto(ontos);
+  var seg=DET_URI_SEG[mainOnto]||'resource';
+  var mainClass=DET_CLASS[mainOnto]||'l0:Object';
+  var base='https://w3id.org/italia/data/'+(ipa||'ipa')+'/';
+  var idIdx=detFindColIdx(nh,['id','codice','codicescuola','stop_id','codice_scuola','cig','slug','remoteid','identifier','codice_fiscale']);
+  if(idIdx<0)idIdx=0;
+  var used=new Set(['rdfs','dct','foaf','xsd','l0','geo','sm']);
+  ontos.forEach(function(o){detAddPrefix(o,used);});
+  if(detHasAddr(nh))used.add('clv');
+  if(detHasTime(nh,ontos))used.add('ti');
+  var ttl='';
+  used.forEach(function(p){if(DET_PREFIXES[p])ttl+='@prefix '+p+': <'+DET_PREFIXES[p]+'> .'+nl;});
+  ttl+=nl;
+  var orgIpa=ipa||'ipa';
+  var orgName=ente||ipa||'Ente';
+  ttl+='<https://w3id.org/italia/data/'+orgIpa+'/ds> a foaf:Agent ;'+nl;
+  ttl+=sp+'foaf:name '+dq+orgName+dq+'@it ;'+nl;
+  ttl+=sp+'dct:identifier '+dq+orgIpa+dq+' .'+nl+nl;
+  var dsUri=base+'dataset/ds-'+orgIpa;
+  if(ontos.indexOf('QB')>=0){
+    ttl+='<'+dsUri+'> a qb:DataSet ;'+nl;
+    ttl+=sp+'rdfs:label '+dq+'Dataset '+orgName+dq+'@it ;'+nl;
+    ttl+=sp+'dct:publisher <https://w3id.org/italia/data/'+orgIpa+'/ds> .'+nl+nl;
+    used.add('qb');used.add('sdmx-dimension');used.add('sdmx-measure');
+  }
+  dataRows.forEach(function(row){
+    var idVal=(row[idIdx]||'').trim().replace(/[^a-zA-Z0-9_\-]/g,'-');
+    if(!idVal)idVal='r'+(dataRows.indexOf(row)+1);
+    var subURI=base+seg+'/'+idVal;
+    var triples=[{pred:'a',val:mainClass,raw:true}];
+    if(ontos.indexOf('QB')>=0)triples.push({pred:'qb:dataSet',val:'<'+dsUri+'>',raw:true});
+    headers.forEach(function(origH,i){
+      var normH=nh[i];
+      var val=(row[i]||'').trim();
+      if(!val||normH==='id')return;
+      var rule=detFindRule(normH,ontos);
+      if(!rule){if(val)triples.push({pred:'rdfs:comment',val:origH+': '+val,type:'langlit',lang:'it',unmapped:true});return;}
+      var litVal=detFormatLit(rule,val);
+      if(litVal)triples.push({pred:rule.pred,val:litVal,raw:true});
+    });
+    var addrURI=base+'address/'+idVal;
+    if(detHasAddr(nh)&&ontos.indexOf('CLV')>=0)triples.push({pred:'clv:hasAddress',val:'<'+addrURI+'>',raw:true});
+    var timeVal=detGetTimeVal(nh,row);
+    var timeURI=base+'time/'+idVal;
+    if(timeVal&&ontos.indexOf('TI')>=0)triples.push({pred:'ti:atTime',val:'<'+timeURI+'>',raw:true});
+    if(triples.length>0){
+      ttl+='<'+subURI+'>';
+      triples.forEach(function(t,ti){
+        var sep=ti===triples.length-1?' .':' ;';
+        ttl+=nl+sp+t.pred+' '+t.val+sep;
+      });
+      ttl+=nl+nl;
+    }
+    if(detHasAddr(nh)&&ontos.indexOf('CLV')>=0){
+      var addrTriples=[];
+      var addrMap={indirizzo:'clv:hasStreet',via:'clv:hasStreet',strada:'clv:hasStreet',comune:'clv:hasCity',cap:'clv:hasPostalCode',provincia:'clv:hasProvince',regione:'clv:hasRegion',civico:'clv:hasNumber',numerocivico:'clv:hasNumber'};
+      Object.keys(addrMap).forEach(function(col){
+        var xi=nh.indexOf(col);
+        if(xi>=0&&row[xi]&&row[xi].trim()){var v=row[xi].trim().replace(/"/g,"'");addrTriples.push({pred:addrMap[col],val:dq+v+dq+'@it'});}
+      });
+      var latI=nh.indexOf('lat'),lonI=nh.indexOf('lon');
+      if(latI>=0&&row[latI])addrTriples.push({pred:'geo:lat',val:dq+row[latI].trim()+dq+'^^xsd:decimal'});
+      if(lonI>=0&&row[lonI])addrTriples.push({pred:'geo:long',val:dq+row[lonI].trim()+dq+'^^xsd:decimal'});
+      if(addrTriples.length>0){
+        ttl+='<'+addrURI+'> a clv:Address';
+        addrTriples.forEach(function(t,ti){var sep=ti===addrTriples.length-1?' .':' ;';ttl+=nl+sp+t.pred+' '+t.val+sep;});
+        ttl+=nl+nl;
+      }
+    }
+    if(timeVal&&ontos.indexOf('TI')>=0){
+      ttl+='<'+timeURI+'> a ti:TimeInstant ;'+nl;
+      ttl+=sp+'ti:inDateTime '+dq+timeVal+dq+'^^xsd:dateTime .'+nl+nl;
+    }
+    if(ontos.indexOf('RO')>=0){
+      var nomeI=nh.indexOf('nome'),cognomeI=nh.indexOf('cognome'),ammI=nh.indexOf('denominazione');
+      if(ammI<0)ammI=nh.indexOf('amministrazione');
+      var nomeV=nomeI>=0?(row[nomeI]||'').trim():'',cognomeV=cognomeI>=0?(row[cognomeI]||'').trim():'';
+      var personLabel=[nomeV,cognomeV].filter(Boolean).join(' ');
+      if(personLabel){
+        var personURI=base+'person/'+idVal;
+        ttl+='<'+personURI+'> a cpv:Person ;'+nl+sp+'rdfs:label '+dq+personLabel+dq+'@it .'+nl+nl;
+      }
+      if(ammI>=0&&row[ammI]){
+        var ammV=row[ammI].trim();
+        var orgId2=ammV.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
+        var orgURI2=base+'organization/'+orgId2;
+        if(!ttl.includes('<'+orgURI2+'>')){
+          ttl+='<'+orgURI2+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+dq+ammV+dq+'@it .'+nl+nl;
+        }
+      }
+    }
+  });
+  return ttl.trim();
+}
+// ═══ FINE MOTORE DETERMINISTICO ═══
+
+function hasApiKey() {
+  var ids = ['mistral-key','groq-key','anthropic-key','openai-key','ollama-key','gemini-key'];
+  return ids.some(function(id) {
+    var el = document.getElementById(id);
+    return el && el.value && el.value.trim().length > 10;
+  });
+}
+async function startDeterministicConversion() {
+  var csvText = (document.getElementById('csv-input')||{value:''}).value.trim();
+  var ipa = (document.getElementById('meta-ipa')||{value:'ipa'}).value.trim()||'ipa';
+  var ente = (document.getElementById('meta-ente')||{value:''}).value.trim()||ipa;
+  var ontos = Array.from(document.querySelectorAll('.pill.active')).map(function(p){return p.dataset.onto;}).filter(Boolean);
+  if(!csvText){showStatus('Nessun CSV caricato.');return;}
+  if(!ontos.length){showStatus('Seleziona almeno una ontologia.');return;}
+  showStatus('Generazione TTL deterministica in corso...');
+  document.getElementById('btn-convert').disabled = true;
+  try {
+    var ttl = buildDeterministicTTL(csvText, ontos, ipa, ente);
+    if(!ttl){showStatus('Errore: TTL vuoto.');return;}
+    var out = document.getElementById('ttl-output');
+    if(out) out.value = ttl;
+    updateStats(ttl);
+    showStatus('TTL generato in modo deterministico (nessuna API key rilevata).');
+  } catch(e) {
+    showStatus('Errore deterministico: '+e.message);
+  } finally {
+    document.getElementById('btn-convert').disabled = false;
+  }
+}
 function buildPromptChunk(cols, rows, ontos, chunkIndex, totalChunks, vocabSection='', ontoSection='', skipCols=new Set(), ipa='', mainClass='') {
   // Escludi colonne già mappate deterministicamente
   const ambigCols = cols.filter(c => !skipCols.has(c));
@@ -2690,6 +2844,7 @@ async function callGemini(prompt) {
 const CHUNK_SIZE = 25;
 
 async function startConversion() {
+  if (!hasApiKey()) { startDeterministicConversion(); return; }
   const csvText = document.getElementById('csv-input').value.trim();
   const paname  = document.getElementById('meta-paname').value.trim();
   const ipa     = document.getElementById('meta-ipa').value.trim();

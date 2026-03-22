@@ -567,7 +567,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.95</span>
+<span id="app-version">v2026.03.20.96</span>
 </footer>
 
 <script>
@@ -1639,7 +1639,7 @@ const ONTO_MAIN_CLASS = {
 };
 
 function getMainClass(ontos) {
-  const priority = ['GTFS','SMAPIT','ACCO','IOT','CULTURAL-ON','CPSV-AP','QB','CPV','COV','TI','POI','RO','CLV','ADMS','L0'];
+  const priority = ['GTFS','SMAPIT','ACCO','IOT','CULTURAL-ON','CPSV-AP','QB','RO','CPV','COV','POI','TI','CLV','ADMS','L0'];
   for (const onto of priority) {
     if (ontos.map(o => o.toUpperCase()).includes(onto)) {
       return ONTO_MAIN_CLASS[onto] || 'l0:Object';

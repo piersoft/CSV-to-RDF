@@ -568,7 +568,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.67</span>
+<span id="app-version">v2026.03.20.68</span>
 </footer>
 
 <script>
@@ -2563,6 +2563,14 @@ async function callAI(prompt) {
   else if (currentProvider === 'anthropic') return await callAnthropic(prompt);
 }
 
+function forceMainClassInTTL(ttl, ontos, entityBase) {
+  const mainClass = getMainClass(ontos);
+  if (!mainClass || mainClass === "l0:Object" || !entityBase) return ttl;
+  const esc = entityBase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re = new RegExp("(<" + esc + "[^>]+>)\\s+a\\s+([\\w:]+)", "g");
+  return ttl.replace(re, function(m, uri) { return uri + " a " + mainClass; });
+}
+
 function cleanTTL(text) {
   // Rimuove backtick e markdown
   text = text
@@ -2754,6 +2762,7 @@ async function startConversion() {
     }
 
     let ttl = deduplicatePrefixes(parts.join('\n\n'));
+    ttl = forceMainClassInTTL(ttl, ontos, entityBase);
     // Fix: se il TTL usa il prefisso ":" non dichiarato, aggiungilo
     if (ttl.includes(' :') || ttl.match(/^:/m)) {
       const baseUri = `https://w3id.org/italia/data/${ipa}/`;

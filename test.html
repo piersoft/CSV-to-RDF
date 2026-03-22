@@ -17,13 +17,11 @@ h1{color:#58a6ff}.section{margin:20px 0;border:1px solid #30363d;border-radius:8
 <h1>🧪 CSV-to-RDF Test Suite</h1>
 <p style="color:#8b949e">Verifica le classi RDF per ogni esempio sacro con il provider selezionato.</p>
 <div class="ctrl">
-  <select id="prov" class="inp" onchange="showNote()">
-    <option value="deter">Solo deterministico (no AI)</option>
-    <option value="mistral">Mistral</option>
+  <select id="prov" class="inp">
+        <option value="mistral">Mistral</option>
     <option value="groq">Groq</option>
     <option value="openai">OpenAI</option>
-    <option value="anthropic">Anthropic (solo app principale)</option>
-  </select>
+      </select>
   <input id="apikey" type="password" class="inp" placeholder="API Key" style="width:260px">
   <button class="btn go" onclick="runAll()">▶ Esegui tutti</button>
   <button class="btn cl" onclick="clearAll()">✕ Pulisci</button>
@@ -33,7 +31,6 @@ h1{color:#58a6ff}.section{margin:20px 0;border:1px solid #30363d;border-radius:8
 <div id="res"></div>
 <div id="logbox" class="logbox" style="display:none"></div>
 <script>
-function showNote(){document.getElementById("note").style.display=document.getElementById("prov").value==="anthropic"?"block":"none";}
 var TESTS=[
   {name:"POI",ontos:["CLV","POI","L0"],exp:["poi:PointOfInterest"],csv:"id,nome,lat,lon\n1,Defibrillatore,40.604,17.231\n2,Fontana,40.476,17.229"},
   {name:"ACCO",ontos:["CLV","POI","ACCO","L0"],exp:["acco:Accommodation"],csv:"id,denominazione,tipologia,lat,lon,totale_letti,email\n1,Hotel Roma,Albergo,43.1122,12.3888,80,info@h.it\n2,BB Girasole,BB,43.07,12.61,12,bb@g.com"},

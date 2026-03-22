@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.20.134 -->
+  <!-- build:v2026.03.20.135 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -567,7 +567,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.134</span>
+<span id="app-version">v2026.03.20.135</span>
 </footer>
 
 <script>
@@ -1043,10 +1043,12 @@ if (!window._exampleLocked) {
   if (
     colsLower.some(c => /anno|year|periodo|trimestre|semestre|mese|calendario/.test(c)) &&
     colsLower.some(c => /importo|valore|cumulato|misura|totale|count|numero(?!_righe|_record|_gara|_lotto)|quantita|amount|obs.?value|entrate?|uscite?|saldo|competenza|residui|stanziamento|retribuzione/.test(c))
+    && !suggested.has('COV') && !suggested.has('CPV') && !suggested.has('SMAPIT')
+    && !suggested.has('RO') && !suggested.has('CulturalON') && !suggested.has('ADMS')
   ) suggested.add('QB');
   // QB anche da soli se colonne BDAP caratteristiche
   if (colsLower.some(c => /bdap|codice.?gestionale|tipologia.?del.?movimento|codice.?titolo/.test(c)))
-    suggested.add('QB');
+    suggested.add('QB');  // BDAP sempre QB
   // QB: serie storica mensile PA (ANNO + mesi MAIUSCOLI)
   const hasMesi = ['gennaio','febbraio','marzo','aprile','maggio','giugno',
     'luglio','agosto','settembre','ottobre','novembre','dicembre']
@@ -2292,14 +2294,14 @@ var DET_PREFIXES={'rdf':'http://www.w3.org/1999/02/22-rdf-syntax-ns#','rdfs':'ht
 var DET_COL_RULES={denominazione:{pred:'rdfs:label',type:'langlit',lang:'it'},nome:{pred:'rdfs:label',type:'langlit',lang:'it'},descrizione:{pred:'dct:description',type:'langlit',lang:'it'},tipo:{pred:'dct:type',type:'langlit',lang:'it'},categoria:{pred:'dct:type',type:'langlit',lang:'it'},email:{pred:'sm:hasEmail',type:'mailto'},sitoweb:{pred:'sm:hasWebSite',type:'url'},telefono:{pred:'sm:hasTelephone',type:'literal'},fax:{pred:'sm:hasFax',type:'literal'},lat:{pred:'geo:lat',type:'typed',xsd:'xsd:decimal'},lon:{pred:'geo:long',type:'typed',xsd:'xsd:decimal'},modified:{pred:'dct:modified',type:'typed',xsd:'xsd:date'},numero_posti_letto:{pred:'acco:numberOfRooms',type:'typed',xsd:'xsd:integer',onto:'ACCO'},posti_letto:{pred:'acco:numberOfRooms',type:'typed',xsd:'xsd:integer',onto:'ACCO'},letti:{pred:'acco:numberOfBeds',type:'typed',xsd:'xsd:integer',onto:'ACCO'},camere:{pred:'acco:numberOfRooms',type:'typed',xsd:'xsd:integer',onto:'ACCO'},stelle:{pred:'acco:starRating',type:'typed',xsd:'xsd:integer',onto:'ACCO'},stop_id:{pred:'dct:identifier',type:'literal',onto:'GTFS'},stop_code:{pred:'gtfs:code',type:'literal',onto:'GTFS'},zone_id:{pred:'gtfs:zone',type:'literal',onto:'GTFS'},location_type:{pred:'gtfs:locationType',type:'typed',xsd:'xsd:integer',onto:'GTFS'},parent_station:{pred:'gtfs:parentStation',type:'literal',onto:'GTFS'},route_id:{pred:'dct:identifier',type:'literal',onto:'GTFS'},route_short_name:{pred:'gtfs:shortName',type:'literal',onto:'GTFS'},route_long_name:{pred:'gtfs:longName',type:'langlit',lang:'it',onto:'GTFS'},route_type:{pred:'gtfs:routeType',type:'typed',xsd:'xsd:integer',onto:'GTFS'},agency_id:{pred:'gtfs:agency',type:'literal',onto:'GTFS'},arrival_time:{pred:'gtfs:arrivalTime',type:'literal',onto:'GTFS'},departure_time:{pred:'gtfs:departureTime',type:'literal',onto:'GTFS'},stop_sequence:{pred:'gtfs:stopSequence',type:'typed',xsd:'xsd:integer',onto:'GTFS'},valore:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},valore_medio:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},unita:{pred:'iot:hasUnitOfMeasure',type:'literal',onto:'IoT'},avgspeed:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},anno:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},mese:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},periodo:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},comparto:{pred:'cov:hasSector',type:'langlit',lang:'it',onto:'COV'},inquadramento:{pred:'cov:hasLegalForm',type:'langlit',lang:'it',onto:'COV'},cognome:{pred:'cpv:familyName',type:'langlit',lang:'it',onto:'CPV'},sesso:{pred:'cpv:sex',type:'literal',onto:'CPV'},cittadinanza:{pred:'cpv:citizenship',type:'langlit',lang:'it',onto:'CPV'},data_nascita:{pred:'cpv:dateOfBirth',type:'typed',xsd:'xsd:date',onto:'CPV'},ruolo:{pred:'rdfs:label',type:'langlit',lang:'it',onto:'RO'},legislatura:{pred:'dct:description',type:'langlit',lang:'it',onto:'RO'},voti_validi:{pred:'ro:votesObtained',type:'typed',xsd:'xsd:integer',onto:'RO'},gestore:{pred:'smapit:hasManager',type:'langlit',lang:'it',onto:'SMAPIT'},inizio:{pred:'ti:startDate',type:'typed',xsd:'xsd:dateTime',onto:'TI'},termine:{pred:'ti:endDate',type:'typed',xsd:'xsd:dateTime',onto:'TI'},durata:{pred:'ti:duration',type:'literal',onto:'TI'},dove:{pred:'l0:hasLocation',type:'langlit',lang:'it',onto:'TI'},accessibile:{pred:'poi:hasAccessCondition',type:'literal',onto:'POI'},distr:{pred:'_skip',type:'skip'},location:{pred:'_skip',type:'skip'},s_comune_montano:{pred:'_skip',type:'skip'},organico_autonomia:{pred:'_skip',type:'skip'},organico_sede:{pred:'_skip',type:'skip'},accessibile:{pred:'poi:hasAccessCondition',type:'literal',onto:'POI'},autore:{pred:'dct:creator',type:'langlit',lang:'it',onto:'CulturalON'},datazione:{pred:'dct:date',type:'literal',onto:'CulturalON'},numero_inventario:{pred:'dct:identifier',type:'literal',onto:'CulturalON'},version:{pred:'adms:version',type:'literal',onto:'ADMS'},versione:{pred:'adms:version',type:'literal',onto:'ADMS'},stato:{pred:'adms:status',type:'literal',onto:'ADMS'},formato:{pred:'dct:format',type:'literal',onto:'ADMS'},publisher:{pred:'dct:publisher',type:'langlit',lang:'it',onto:'ADMS'},aggiudicatario:{pred:'cpsv:hasParticipant',type:'langlit',lang:'it',onto:'CPSV'},cup:{pred:'dct:identifier',type:'literal',onto:'CPSV'},ufficio:{pred:'cpsv:isGroupedUnder',type:'langlit',lang:'it',onto:'CPSV'},indirizzo:{pred:'_skip',type:'skip'},comune:{pred:'_skip',type:'skip'},cap:{pred:'_skip',type:'skip'},provincia:{pred:'_skip',type:'skip'},civico:{pred:'_skip',type:'skip'},numerocivico:{pred:'_skip',type:'skip'},regione:{pred:'_skip',type:'skip'},via:{pred:'_skip',type:'skip'},strada:{pred:'_skip',type:'skip'}};
 
 function detNormH(h){var n=h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');return DET_COL_NORM[n]||n;}
-function detGetMainOnto(ontos){var priority=['GTFS','SMAPIT','ACCO','IoT','CulturalON','CPSV-AP','RO','ADMS','TI','POI','CPV','COV','QB','CLV','L0'];for(var i=0;i<priority.length;i++){if(ontos.indexOf(priority[i])>=0)return priority[i];}return ontos[0]||'L0';}
+function detGetMainOnto(ontos){var priority=['GTFS','SMAPIT','ACCO','IoT','CulturalON','CPSV-AP','RO','ADMS','TI','CPV','COV','POI','QB','CLV','L0'];for(var i=0;i<priority.length;i++){if(ontos.indexOf(priority[i])>=0)return priority[i];}return ontos[0]||'L0';}
 function detFindColIdx(nh,cands){for(var i=0;i<cands.length;i++){var x=nh.indexOf(cands[i]);if(x>=0)return x;}return-1;}
 function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat','lon'].some(function(c){return nh.indexOf(c)>=0;});}
 function detHasTime(nh,ontos){return ontos.indexOf('TI')>=0&&['inizio','termine','data','quando'].some(function(c){return nh.indexOf(c)>=0;});}
 function detFindRule(normH,ontos){if(ontos.indexOf('CPV')>=0&&normH==='nome')return{pred:'cpv:givenName',type:'langlit',lang:'it',onto:'CPV'};if(ontos.indexOf('QB')>=0&&normH==='sesso')return{pred:'sdmx-dimension:sex',type:'literal'};if(ontos.indexOf('QB')>=0&&normH==='cittadinanza')return{pred:'sdmx-attribute:obsStatus',type:'literal'};var rule=DET_COL_RULES[normH];if(!rule)return null;if(rule.onto&&ontos.indexOf(rule.onto)<0)return null;return rule;}
 function detGetTimeVal(nh,row){var tc=['inizio','data','quando','published','data_inizio'];for(var i=0;i<tc.length;i++){var x=nh.indexOf(tc[i]);if(x>=0&&row[x]&&row[x].trim())return row[x].trim();}return null;}
 function detParseCSV(text){return text.trim().split(/\r?\n/).map(function(line){var res=[],cur='',inQ=false;for(var i=0;i<line.length;i++){var c=line[i];if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){res.push(cur.trim());cur='';}else cur+=c;}res.push(cur.trim());return res;});}
-function detAddPrefix(onto,set){var m={ACCO:'acco',GTFS:'gtfs',POI:'poi','IoT':'iot',COV:'cov',CPV:'cpv',RO:'ro',SMAPIT:'smapit',QB:'qb',CLV:'clv',TI:'ti',CulturalON:'cis',ADMS:'adms',CPSV:'cpsv',L0:'l0'};if(m[onto])set.add(m[onto]);if(onto==='RO'){set.add('cov');set.add('cpv');}if(onto==='CPSV-AP'||onto==='CPSV'){set.add('cpsv');}}
+function detAddPrefix(onto,set){var m={ACCO:'acco',GTFS:'gtfs',POI:'poi','IoT':'iot',COV:'cov',CPV:'cpv',RO:'ro',SMAPIT:'smapit',QB:'qb',CLV:'clv',TI:'ti',CulturalON:'cis',ADMS:'adms',CPSV:'cpsv',L0:'l0'};if(m[onto])set.add(m[onto]);if(onto==='RO'){set.add('cov');set.add('cpv');}if(onto==='CPSV-AP'||onto==='CPSV'){set.add('cpsv');}if(onto==='QB'){set.add('sdmx-dimension');set.add('sdmx-measure');set.add('sdmx-attribute');}}
 
 function sanitizeEmailValue(v){
   if(!v)return v;

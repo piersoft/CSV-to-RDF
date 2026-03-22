@@ -567,7 +567,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.98</span>
+<span id="app-version">v2026.03.20.99</span>
 </footer>
 
 <script>
@@ -2109,6 +2109,8 @@ REGOLE:
   GTFS selezionata      → gtfs:Stop per fermate, gtfs:Route per linee, gtfs:Agency per aziende di trasporto
   IoT selezionata       → iot:Sensor per sensori, iot:Observation per osservazioni (NON usare qb:Observation per IoT)
 SMAPIT selezionata    → smapit:School per scuole di qualsiasi ordine e grado (NON usare cultural-on per le scuole)
+  IoT selezionata       - iot:Sensor OBBLIGATORIO per sensori/dispositivi IoT. NON usare l0:Object o l0:EventOrSituation.
+  GTFS selezionata      - gtfs:Stop OBBLIGATORIO per fermate. NON usare l0:Object.
 Cultural-ON selezionata → Museo=cis:Museum, Biblioteca=cis:Library, Teatro=cis:Theatre OBBLIGATORI (http://dati.beniculturali.it/cis/). NON usare dcat:Dataset o qb:DataSet
   CPSV-AP selezionata   → cpsv:PublicService OBBLIGATORIO (https://w3id.org/italia/onto/CPSV/). NON usare qb:Observation o l0:Object
   COV selezionata       → cov:PublicOrganization per enti pubblici, cov:Company per imprese private

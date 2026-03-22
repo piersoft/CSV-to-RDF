@@ -582,7 +582,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.112</span>
+<span id="app-version">v2026.03.20.113</span>
 </footer>
 
 <script>
@@ -2255,6 +2255,7 @@ async function startDeterministicConversion() {
     if(!ttl){showStatus('Errore: TTL vuoto.');return;}
     var out = document.getElementById('ttl-output');
     if(out) out.value = ttl;
+    window._detTTL = ttl; // rende il TTL disponibile a download/valida
     updateStats(ttl);
     showStatus('TTL generato in modo deterministico (nessuna API key rilevata).');
   } catch(e) {
@@ -3008,7 +3009,7 @@ function forceMainClassInTTL(ttl, ontos, entityBase) {
 
 // ── VALIDAZIONE SU SCHEMA.GOV.IT ─────────────────────────────────────────────
 async function validateTTL() {
-  const ttl = document.getElementById('ttl-output').value;
+  const ttl = (document.getElementById('ttl-output')?.value || window._detTTL || '').trim();
   if (!ttl.trim()) { showStatus('⚠ Nessun TTL da validare.', 'error'); return; }
 
   // Determina se il TTL e' un contesto DCAT (dcat:Distribution/Dataset)
@@ -3373,7 +3374,7 @@ function downloadTTL() {
 }
 
 async function downloadRDF() {
-  const ttl = document.getElementById('ttl-output').value;
+  const ttl = (document.getElementById('ttl-output')?.value || window._detTTL || '').trim();
   if (!ttl) return;
   const ipa = document.getElementById('meta-ipa').value || 'dataset';
   showStatus('⏳ Conversione TTL → RDF/XML in corso...', 'info');
@@ -3464,7 +3465,7 @@ function escXML(str) {
 }
 
 function copyTTL() {
-  const ttl = document.getElementById('ttl-output').value;
+  const ttl = (document.getElementById('ttl-output')?.value || window._detTTL || '').trim();
   if (!ttl) return showStatus('Nessun contenuto da copiare.', 'error');
   navigator.clipboard.writeText(ttl).then(() => showStatus('✓ Copiato negli appunti!', 'success'));
 }

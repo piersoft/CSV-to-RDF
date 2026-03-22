@@ -202,11 +202,11 @@
     
     <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1rem;">
       <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 1</div><div style="font-size:.9rem;">Incolla il <strong>CSV</strong></div></div>
-      <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 2</div><div style="font-size:.9rem;">Inserisci <strong>codice IPA</strong></div></div>
-      <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 3</div><div style="font-size:.9rem;">Clicca <strong>AI-Detect</strong></div></div>
+      <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 2</div><div style="font-size:.9rem;">Inserisci <strong>codice IPA</strong> e nome ente</div></div>
+      <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 3</div><div style="font-size:.9rem;">Clicca <strong>AI-Detect</strong> <em style="opacity:.7">(opzionale)</em></div></div>
       <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 4</div><div style="font-size:.9rem;">Clicca <strong>Genera TTL</strong></div></div>
     </div>
-    <p style="margin-top:.5rem;font-size:.8rem;opacity:.75;">Senza API key: generazione <strong>istantanea</strong> con motore deterministico.</p>
+    <p style="margin-top:.5rem;font-size:.8rem;opacity:.75;">Senza API key: generazione <strong>istantanea</strong> con motore deterministico. L'AI (STEP 3) e' opzionale.</p>
   </div>
 </div>
 
@@ -565,7 +565,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.119</span>
+<span id="app-version">v2026.03.20.120</span>
 </footer>
 
 <script>
@@ -800,7 +800,7 @@ function detectOntologiesDeterministic(headers, rows) {
   // Arricchisci con il corpus se disponibile
   if(window._corpusIndex) {
     var _corpusOntos = detectFromCorpus(headers);
-    _corpusOntos.forEach(function(o){ result.add(o); });
+    _corpusOntos.forEach(function(o){ if(o==='CulturalON'&&result.has('SMAPIT'))return; result.add(o); });
   }
   // L0 — sempre aggiunto come base
   result.add('L0');
@@ -2272,7 +2272,7 @@ function detGetMainOnto(ontos){var priority=['GTFS','SMAPIT','ACCO','IoT','Cultu
 function detFindColIdx(nh,cands){for(var i=0;i<cands.length;i++){var x=nh.indexOf(cands[i]);if(x>=0)return x;}return-1;}
 function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat','lon'].some(function(c){return nh.indexOf(c)>=0;});}
 function detHasTime(nh,ontos){return ontos.indexOf('TI')>=0&&['inizio','termine','data','quando'].some(function(c){return nh.indexOf(c)>=0;});}
-function detFormatLit(rule,val){if(!val)return null;var v=val.replace(/\\/g,'\\\\').replace(/"/g,'\\"');if(rule.type==='langlit')return'"'+v+'"@'+(rule.lang||'it');if(rule.type==='typed')return'"'+v+'"^^'+(rule.xsd||'xsd:string');if(rule.type==='mailto')return'<mailto:'+val.replace(/^mailto:/,'')+'>'; if(rule.type==='url'){var u=val.replace(/^<|>$/g,'');if(!u.startsWith('http'))u='https://'+u;return'<'+u+'>';}return'"'+v+'"';}
+function detFormatLit(rule,val){if(!val)return null;var v=val.replace(/\\/g,'\\\\').replace(/"/g,'\\"');if(rule.type==='langlit')return'"'+v+'"@'+(rule.lang||'it');if(rule.type==='typed')return'"'+v+'"^^'+(rule.xsd||'xsd:string');if(rule.type==='mailto'){var _e=val.replace(/^mailto:/,'').trim();if(!_e||_e.indexOf('@')<0||/[\s<>]/.test(_e))return null;return'<mailto:'+_e+'>';}if(rule.type==='url'){var u=val.replace(/^<|>$/g,'').trim();if(!u||/[\s()<>"{}|\\^`]/.test(u))return null;if(!u.startsWith('http')&&!u.startsWith('ftp'))u='https://'+u;return'<'+u+'>';}return'"'+v+'"';}
 function detFindRule(normH,ontos){if(ontos.indexOf('CPV')>=0&&normH==='nome')return{pred:'cpv:givenName',type:'langlit',lang:'it',onto:'CPV'};if(ontos.indexOf('QB')>=0&&normH==='sesso')return{pred:'sdmx-dimension:sex',type:'literal'};if(ontos.indexOf('QB')>=0&&normH==='cittadinanza')return{pred:'sdmx-attribute:obsStatus',type:'literal'};var rule=DET_COL_RULES[normH];if(!rule)return null;if(rule.onto&&ontos.indexOf(rule.onto)<0)return null;return rule;}
 function detGetTimeVal(nh,row){var tc=['inizio','data','quando','published','data_inizio'];for(var i=0;i<tc.length;i++){var x=nh.indexOf(tc[i]);if(x>=0&&row[x]&&row[x].trim())return row[x].trim();}return null;}
 function detParseCSV(text){return text.trim().split(/\r?\n/).map(function(line){var res=[],cur='',inQ=false;for(var i=0;i<line.length;i++){var c=line[i];if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){res.push(cur.trim());cur='';}else cur+=c;}res.push(cur.trim());return res;});}
@@ -2394,10 +2394,11 @@ function hasApiKey() {
 }
 async function startDeterministicConversion() {
   var csvText = (document.getElementById('csv-input')||{value:''}).value.trim();
-  var ipa = (document.getElementById('meta-ipa')||{value:'ipa'}).value.trim()||'ipa';
+  var ipa = (document.getElementById('meta-ipa')||{value:''}).value.trim();
   var ente = (document.getElementById('meta-ente')||{value:''}).value.trim()||ipa;
   var ontos = Array.from(document.querySelectorAll('.pill.active')).map(function(p){return p.dataset.onto;}).filter(Boolean);
   if(!csvText){showStatus('Nessun CSV caricato.');return;}
+  if(!ipa){showStatus('Inserisci il codice IPA dell\'ente titolare del dato (STEP 2).');return;}
   if(!ontos.length){showStatus('Seleziona almeno una ontologia.');return;}
   showStatus('Generazione TTL deterministica in corso...');
   document.getElementById('btn-convert').disabled = true;
@@ -2920,6 +2921,11 @@ async function callAI(prompt) {
 }
 
 function cleanTTL(text) {
+  // Fix 0: rimuovi valori non validi come URI (location con spazi/parentesi)
+  text = text.replace(/<[^>]*(\s|\(|\))[^>]*>/g, function(m){
+    if(/^<mailto:[^\s<>]+>$/.test(m)||/^<https?:\/\/[^\s<>]+>$/.test(m)||/^<[^\s<>]+>$/.test(m)) return m;
+    return '"'+m.slice(1,-1).replace(/"/g,"'")+'"+"@it"';
+  });
     // Fix 1: rimuovi predicati duplicati sullo stesso soggetto
     text = removeDuplicatePredicates(text);
     // Fix 2: label con valore numerico puro -> dct:extent
@@ -3024,6 +3030,7 @@ async function callGemini(prompt) {
 const CHUNK_SIZE = 25;
 
 async function startConversion() {
+  var _ipaCheck=(document.getElementById('meta-ipa')||{value:''}).value.trim();if(!_ipaCheck){showStatus('Inserisci il codice IPA dell\'ente titolare del dato (STEP 2).');return;}
   if (!hasApiKey()) { startDeterministicConversion(); return; }
   const csvText = document.getElementById('csv-input').value.trim();
   const paname  = document.getElementById('meta-paname').value.trim();

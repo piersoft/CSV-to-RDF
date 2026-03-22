@@ -35,7 +35,7 @@ h1{color:#58a6ff}.section{margin:20px 0;border:1px solid #30363d;border-radius:8
 <script>
 function showNote(){document.getElementById("note").style.display=document.getElementById("prov").value==="anthropic"?"block":"none";}
 var TESTS=[
-  {name:"POI",ontos:["CLV","POI","L0","TI"],exp:["poi:PointOfInterest"],csv:"id,nome,lat,lon\n1,Defibrillatore,40.604,17.231\n2,Fontana,40.476,17.229"},
+  {name:"POI",ontos:["CLV","POI","L0"],exp:["poi:PointOfInterest"],csv:"id,nome,lat,lon\n1,Defibrillatore,40.604,17.231\n2,Fontana,40.476,17.229"},
   {name:"ACCO",ontos:["CLV","POI","ACCO","L0"],exp:["acco:Accommodation"],csv:"id,denominazione,tipologia,lat,lon,totale_letti,email\n1,Hotel Roma,Albergo,43.1122,12.3888,80,info@h.it\n2,BB Girasole,BB,43.07,12.61,12,bb@g.com"},
   {name:"COV",ontos:["COV","CLV","L0"],exp:["cov:PublicOrganization"],csv:"id,denominazione,tipo,comune,email\n1,Comune Roma,Comune,Roma,info@comune.roma.it\n2,Regione Lazio,Regione,Roma,urp@lazio.it"},
   {name:"CPV",ontos:["CPV","CLV","L0"],exp:["cpv:Person"],csv:"id,nome,cognome,data_nascita\n1,Mario,Rossi,1980-05-15\n2,Anna,Bianchi,1975-11-20"},

@@ -82,9 +82,11 @@ Il motore deterministico e l'AI-detect sono stati sviluppati e validati su **274
 
 ## Providers AI (opzionali)
 
-L'AI e' opzionale — il motore deterministico funziona senza API key.
+> **Lo strumento funziona completamente senza API key.** Il motore deterministico gestisce AI-Detect, generazione TTL, download e validazione.
+>
+> L'AI serve solo per CSV con colonne non standard o nomi molto diversi dal corpus di riferimento.
 
-Se vuoi usare l'AI per CSV con colonne non standard:
+Per attivare l'AI, inserisci una API key nel **STEP 2** dell'interfaccia:
 
 | Provider | Note |
 |----------|------|
@@ -109,7 +111,7 @@ Se vuoi usare l'AI per CSV con colonne non standard:
 
 ## Versione
 
-**v2026.03.20.112** — Motore TTL deterministico integrato (13/13 test PASS)
+**v2026.03.20.115** — Motore TTL deterministico integrato (13/13 test PASS)
 
 ## Licenza
 

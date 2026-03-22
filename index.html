@@ -568,7 +568,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.72</span>
+<span id="app-version">v2026.03.20.73</span>
 </footer>
 
 <script>
@@ -2756,15 +2756,17 @@ async function startConversion() {
       let llmTriples = prompt ? fixURIs(sanitizeTTL(cleanTTL(await callAI(prompt))), ipa) : '';
       // Merge: inietta le triple deterministiche dentro le risorse LLM
       let chunk;
-      // Strategia: LLM ha priorità assoluta quando produce output.
-      // Il deterministico è solo fallback quando non c'è LLM (no API key).
+      // Strategia: DETERMINISTICO ha priorita assoluta su classe e proprieta mappate.
+      // AI integra solo le proprieta non ancora coperte dal deterministico.
       if (llmTriples && llmTriples.trim().length > 20) {
-        chunk = removeDuplicatePredicates(removeEmptyTriples(sanitizeTTL(llmTriples, ontos)));
+        // Merge: deterministico sovrascrive AI su conflitti
+        chunk = removeDuplicatePredicates(removeEmptyTriples(
+          mergeDeterIntoLLM(sanitizeTTL(llmTriples, ontos), sanitizeTTL(deterTriples, ontos), entityBase, typeSegment)
+        ));
       } else {
         chunk = removeEmptyTriples(sanitizeTTL(deterTriples, ontos));
       }
-      chunk = chunk.replace(/@prefix\s+\S+:\s*<[^>]+>\s*\.\n?/g, '').trim();
-      parts.push(chunk);
+            parts.push(chunk);
     }
 
     let ttl = deduplicatePrefixes(parts.join('\n\n'));

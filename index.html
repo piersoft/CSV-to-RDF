@@ -567,7 +567,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.91</span>
+<span id="app-version">v2026.03.20.94</span>
 </footer>
 
 <script>
@@ -685,6 +685,8 @@ REGOLE IMPORTANTI:
 - ACCO: includi se i dati riguardano strutture ricettive (hotel, albergo, B&B, ostello, stelle). COV NON va usato per strutture ricettive.
 - COV: includi SOLO per enti/organizzazioni pubbliche o private. NON per strutture ricettive o luoghi fisici.
 - Se i valori contengono "albergo", "hotel", "B&B", "stelle", "letti": usa ACCO + CLV + L0, NON COV.
+- POI: includi SEMPRE se ci sono colonne lat/lon con luoghi fisici (dae, defibrillatore, tipo_poi). COV NON va usato per luoghi fisici con coordinate.
+- Se colonne "tipo_poi","dae","defibrillatore" presenti: usa POI + CLV + L0, NON COV.
 - Se il CSV ha colonna "subject" con URI di istituti culturali → includi "Cultural-ON"
 
 Esempio di risposta valida: ["ACCO", "CLV", "L0"]
@@ -1204,62 +1206,64 @@ function parseAndPreviewCSV() {
 
 function loadExample(tipo) {
   const esempi = {
-    poi: `nome,indirizzo,comune,lat,lon,tipo_struttura,codice_identificativo
-Defibrillatore Piazza Duomo,Piazza Duomo 1,Milano,45.4642,9.1900,DAE,MI-001
-Defibrillatore Stazione Centrale,Piazza Duca d'Aosta,Milano,45.4859,9.2044,DAE,MI-002
-Defibrillatore Ospedale Niguarda,P.za Ospedale Maggiore 3,Milano,45.5189,9.1974,DAE,MI-003`,
-    smapit: `codice_scuola,denominazione,tipologia,indirizzo,comune,provincia,cap,lat,lon,anno_scolastico
-MIIC8FJ00T,IC Milano 1,Istituto Comprensivo,Via Dante 10,Milano,MI,20121,45.4654,9.1860,2024-2025
-MIEE8F902L,Primaria Collodi,Istituto Istruzione Primario,Via Giotto 28,Limbiate,MB,20812,45.6014,9.1264,2024-2025
-MBIC84900E,IC Monza 1,Istituto Comprensivo,Via Roma 10,Monza,MB,20900,45.5845,9.2744,2024-2025`,
-    iot: `id_sensore,nome_sensore,tipo_sensore,proprieta_osservata,valore_osservazione,unita_misura,tempo_risultato,lat,lon,comune,piattaforma
-S001,Sensore-Meteo-001,iot:Sensor,Temperatura,18.5,gradi_C,2024-03-21T12:00:00,44.4940,11.3421,Bologna,Stazione-Meteo-PA-001
-S002,Sensore-Meteo-002,iot:Sensor,Umidita,62.3,percent,2024-03-21T12:00:00,44.5008,11.3394,Bologna,Stazione-Meteo-PA-001`,
-    acco: `id,denominazione,tipologia,categoria,indirizzo,comune,provincia,cap,lat,lon,totale_letti,email,web
-1,Hotel Roma,Albergo,3 stelle,Via Roma 1,Perugia,PG,06121,43.1122,12.3888,80,info@hotelroma.it,www.hotelroma.it
-2,B&B Il Girasole,Bed and Breakfast,,Via Verde 5,Assisi,PG,06081,43.0707,12.6194,12,bb.girasole@gmail.com,`,
-    cpsv: `cig,oggetto,importo_aggiudicazione,stazione_appaltante,cf_aggiudicatario,ragione_sociale,data_aggiudicazione,comune,provincia
-Z1A2B3C4D5,Fornitura arredi ufficio,45000.00,Comune di Bologna,01234567890,Forniture SpA,2024-01-15,Bologna,BO
-Z9F8E7D6C5,Manutenzione verde pubblico,120000.00,Comune di Firenze,09876543210,Verde Srl,2024-02-20,Firenze,FI`,
-    gtfs: `stop_id,stop_name,stop_lat,stop_lon,zone_id,route_id,route_short_name,route_type,arrival_time,departure_time,stop_sequence
-S001,Piazza Maggiore,44.4938,11.3430,1,R001,1,3,08:00:00,08:00:00,1
-S002,Porta San Vitale,44.4881,11.3521,1,R001,1,3,08:05:00,08:05:00,2
-S003,Stazione Centrale,44.5058,11.3452,2,R001,1,3,08:12:00,08:12:00,3`,
-    qb: `anno,comune,codice_istat,fascia_eta,sesso,numero_residenti
-2023,Milano,015146,0-14,M,45821
-2023,Milano,015146,0-14,F,43210
-2023,Milano,015146,15-64,M,412300
-2023,Milano,015146,15-64,F,438900
-2023,Milano,015146,65+,M,98500
-2023,Milano,015146,65+,F,121400`,
-    clv: `id,via,tipo_via,numero_civico,cap,comune,codice_istat,provincia,lat,lon
-1,Roma,Via,1,20121,Milano,015146,MI,45.4641,9.1919
-2,Dante,Via,10,20121,Milano,015146,MI,45.4659,9.1860
-3,Garibaldi,Piazza,3,20129,Milano,015146,MI,45.4711,9.1940
-4,Rossini,Corso,22,10121,Torino,001272,TO,45.0703,7.6869`,
-    cov: `id,denominazione,tipo,codice_fiscale,codice_ipa,indirizzo,comune,provincia,cap,telefono,email,web,lat,lon
-1,Comune di Milano,Comune,01199250154,c_f205,Piazza della Scala 2,Milano,MI,20121,0288441,comune.milano@pec.comune.milano.it,https://www.comune.milano.it,45.4654,9.1859
-2,Regione Lombardia,Regione,80050050154,r_lomb,Piazza Città di Lombardia 1,Milano,MI,20124,800318318,regione.lombardia@pec.regione.lombardia.it,https://www.regione.lombardia.it,45.4844,9.1965
-3,ASL Città di Milano,Azienda Sanitaria,04376350158,asl_mi,Via Ricordi 1,Milano,MI,20121,02855511,aslmi@pec.aslmi.it,https://www.aslmi.it,45.4710,9.1867`,
-    cpv: `id,nome,cognome,codice_fiscale,data_nascita,comune_nascita,sesso,stato_civile,comune_residenza,indirizzo_residenza,cap_residenza
-1,Mario,Rossi,RSSMRA80A01H501Z,1980-01-01,Roma,M,coniugato/a,Milano,Via Roma 1,20121
-2,Lucia,Bianchi,BNCLCU85M41F839P,1985-08-01,Napoli,F,celibe/nubile,Torino,Corso Italia 5,10121
-3,Giuseppe,Verdi,VRDGPP70C15L219X,1970-03-15,Torino,M,divorziato/a,Roma,Via Nazionale 10,00184`,
-    cultural: `id,denominazione,tipo,indirizzo,comune,provincia,cap,lat,lon,telefono,email,web,orari,ingresso
-1,Museo Nazionale del Risorgimento,Museo,Via Accademia delle Scienze 5,Torino,TO,10123,45.0680,7.6830,0115621147,info@museorisorgimento.it,https://www.museorisorgimento.it,"mar-dom 10:00-18:00",Intero 10 euro
-2,Biblioteca Nazionale Braidense,Biblioteca,Via Brera 28,Milano,MI,20121,45.4719,9.1878,0286460907,bn-mi@cultura.gov.it,https://braidense.it,"lun-ven 8:30-18:15",Gratuito
-3,Archivio di Stato di Firenze,Archivio,Viale Giovine Italia 6,Firenze,FI,50122,43.7728,11.2694,0552340782,as-fi@cultura.gov.it,https://www.archiviodistato.firenze.it,"lun-ven 8:15-18:00",Gratuito`,
+    poi: `id,nome_poi,tipo_poi,lat,lon,indirizzo,comune,accessibile_h24,email
+1,Defibrillatore Piazza Repubblica,DAE,41.9028,12.4964,Piazza della Repubblica,Roma,si,dae@comune.roma.it
+2,Defibrillatore Stazione Termini,DAE,41.9009,12.5018,Piazza dei Cinquecento,Roma,si,
+3,Defibrillatore Parco Borghese,DAE,41.9135,12.4820,Viale del Museo Borghese,Roma,no,`,
+    smapit: `id,codice_scuola,denominazione,tipo_scuola,indirizzo,comune,provincia,cap,lat,lon,email
+1,RMIS00100G,Liceo Scientifico Fermi,Liceo Scientifico,Via Roma 1,Roma,RM,00100,41.8902,12.4922,segreteria@fermi.it
+2,MIIC8FJ00T,IC Milano Centro,Istituto Comprensivo,Via Dante 10,Milano,MI,20121,45.4654,9.1860,segreteria@icmilano.it
+3,FIIS00200B,IIS Leonardo da Vinci,Ist. Istruzione Superiore,Via Cavour 5,Firenze,FI,50129,43.7696,11.2558,info@iis-davinci.fi.it`,
+    iot: `id,id_sensore,tipo_sensore,proprieta_osservata,valore,unita_misura,timestamp,lat,lon,comune
+1,SENS-BO-001,iot:Sensor,PM10,18.5,ug/m3,2024-03-21T10:00:00,44.4940,11.3421,Bologna
+2,SENS-BO-002,iot:Sensor,Temperatura,12.3,celsius,2024-03-21T10:00:00,44.4938,11.3430,Bologna
+3,SENS-BO-003,iot:Sensor,Umidita relativa,68.2,percent,2024-03-21T10:00:00,44.4945,11.3445,Bologna`,
+    acco: `id,denominazione,tipo_struttura,categoria,indirizzo,comune,provincia,cap,lat,lon,posti_letto,email,sito_web
+1,Hotel Centrale Roma,Albergo,4 stelle,Via Nazionale 22,Roma,RM,00184,41.8982,12.4879,120,info@hotelcentrale.it,www.hotelcentrale.it
+2,B&B Trastevere,Bed and Breakfast,,Vicolo del Cedro 10,Roma,RM,00153,41.8893,12.4711,12,info@bbtrastevere.it,
+3,Agriturismo Colle Verde,Agriturismo,,Strada Prov 12,Montefalco,PG,06036,42.8872,12.6504,20,info@colleverde.it,www.colleverde.it`,
+    cpsv: `id,cig,oggetto,importo_aggiudicazione,stazione_appaltante,codice_fiscale_sa,data_aggiudicazione,comune
+1,Z1A2B3C4D5,Fornitura arredi uffici comunali,45000.00,Comune di Bologna,01232710374,2024-01-15,Bologna
+2,Z9F8E7D6C5,Manutenzione verde pubblico,120000.00,Comune di Firenze,01307110484,2024-02-20,Firenze
+3,ZAB1CD2EF3,Servizi informatici sportello,85000.00,Comune di Milano,01199250154,2024-03-10,Milano`,
+    gtfs: `stop_id,stop_name,stop_lat,stop_lon,zone_id,location_type,wheelchair_boarding
+S001,Piazza Maggiore,44.4938,11.3430,1,0,1
+S002,Stazione Centrale Bologna,44.5058,11.3452,1,1,1
+S003,Porta San Vitale,44.4881,11.3521,2,0,2`,
+    qb: `anno,trimestre,comune,codice_istat,fascia_eta,sesso,numero_residenti
+2023,Q4,Milano,015146,0-14,M,45821
+2023,Q4,Milano,015146,0-14,F,43210
+2023,Q4,Milano,015146,15-64,M,412300
+2023,Q4,Milano,015146,65+,F,121400`,
+    clv: `id,tipo_via,nome_via,numero_civico,cap,comune,codice_istat,provincia,lat,lon
+1,Via,Roma,1,20121,Milano,015146,MI,45.4641,9.1919
+2,Piazza,del Duomo,1,20122,Milano,015146,MI,45.4641,9.1919
+3,Corso,Buenos Aires,10,20124,Milano,015146,MI,45.4711,9.2040
+4,Via,Dante,10,20121,Milano,015146,MI,45.4659,9.1860`,
+    cov: `id,denominazione,tipo_ente,codice_fiscale,codice_ipa,indirizzo,comune,provincia,cap,email,sito_web,lat,lon
+1,Comune di Milano,Comune,01199250154,c_f205,Piazza della Scala 2,Milano,MI,20121,comune.milano@pec.comune.milano.it,https://www.comune.milano.it,45.4654,9.1859
+2,Regione Lombardia,Regione,80050050154,r_lomb,Piazza Citta di Lombardia 1,Milano,MI,20124,regione.lombardia@pec.regione.lombardia.it,https://www.regione.lombardia.it,45.4844,9.1965
+3,ASL Milano,Azienda Sanitaria Locale,04376350158,asl_mi,Via Ricordi 1,Milano,MI,20121,aslmi@pec.aslmi.it,https://www.aslmi.it,45.4710,9.1867`,
+    cpv: `id,nome,cognome,codice_fiscale,data_nascita,comune_nascita,provincia_nascita,sesso,comune_residenza
+1,Mario,Rossi,RSSMRA80A01H501Z,1980-01-01,Roma,RM,M,Milano
+2,Lucia,Bianchi,BNCLCU85M41F839P,1985-08-01,Napoli,NA,F,Torino
+3,Giuseppe,Verdi,VRDGPP70C15L219X,1970-03-15,Torino,TO,M,Roma`,
+    cultural: `id,denominazione,tipo_istituto,disciplina,indirizzo,comune,provincia,lat,lon,telefono,email
+1,Museo Nazionale del Risorgimento,Museo,storia,Via Accademia delle Scienze 5,Torino,TO,45.0680,7.6830,0115621147,info@museorisorgimento.it
+2,Biblioteca Nazionale Braidense,Biblioteca,letteratura,Via Brera 28,Milano,MI,45.4719,9.1878,0286460907,bn-mi@cultura.gov.it
+3,Archivio di Stato di Firenze,Archivio,storia,Viale Giovine Italia 6,Firenze,FI,43.7728,11.2694,0552340782,as-fi@cultura.gov.it`,
     ro: `id,nome,cognome,codice_fiscale,ruolo,ente,codice_ipa,data_inizio,data_fine,tipo_nomina
 1,Marco,Ferrari,FRRMRC65A01F205Z,Sindaco,Comune di Milano,c_f205,2021-06-15,,Elezione diretta
-2,Anna,Conte,CNTNNNA70B41L219T,Assessore ai Lavori Pubblici,Comune di Milano,c_f205,2021-07-01,,Nomina sindacale
-3,Luigi,Marini,MRNLGU58C01H501P,Dirigente Settore Urbanistica,Comune di Milano,c_f205,2019-01-01,,Concorso pubblico`,
-    ti: `id,titolo,tipo,data_inizio,data_fine,orario_inizio,orario_fine,luogo,comune,provincia,indirizzo,descrizione,url
-1,Festival della Scienza,Evento culturale,2024-10-25,2024-11-03,09:00,20:00,Porto Antico,Genova,GE,Calata Cattaneo,Manifestazione scientifica aperta al pubblico,https://www.festivalscienza.it
-2,Salone del Libro,Fiera,2024-05-09,2024-05-13,10:00,20:00,Lingotto Fiere,Torino,TO,Via Nizza 294,Salone internazionale del libro,https://www.salonelibro.it
-3,Maratona di Roma,Evento sportivo,2024-03-17,2024-03-17,09:00,18:00,Foro Italico,Roma,RM,Viale del Foro Italico,42esima edizione della maratona,https://www.maratonadiroma.it`,
-    adms: `id,titolo,tipo,versione,stato,licenza,formato,url,publisher,data_rilascio,data_modifica,descrizione,temi,parole_chiave
-1,Ontologia CLV,Ontologia,2.0,Stabile,CC BY 4.0,OWL/RDF,https://w3id.org/italia/onto/CLV,AgID,2017-01-01,2023-06-01,Ontologia per indirizzi e luoghi,luoghi,indirizzi luoghi civici
-2,Vocabolario Tipi Ente,Vocabolario controllato,1.1,Stabile,CC BY 4.0,SKOS/RDF,https://w3id.org/italia/controlled-vocabulary/tipi-ente,AgID,2018-03-15,2023-01-10,Tipi di enti pubblici italiani,organizzazioni,enti pubblici amministrazione`
+2,Anna,Conte,CNTNNNA70B41L219T,Assessore Lavori Pubblici,Comune di Milano,c_f205,2021-07-01,,Nomina sindacale
+3,Luigi,Marini,MRNLGU58C01H501P,Dirigente Urbanistica,Comune di Milano,c_f205,2019-01-01,,Concorso pubblico`,
+    ti: `id,titolo,tipo_evento,data_inizio,data_fine,orario_inizio,orario_fine,luogo,comune,provincia
+1,Festival della Scienza,Evento culturale,2024-10-25,2024-11-03,09:00,20:00,Porto Antico,Genova,GE
+2,Salone del Libro,Fiera,2024-05-09,2024-05-13,10:00,20:00,Lingotto Fiere,Torino,TO
+3,Maratona di Roma,Evento sportivo,2024-03-17,2024-03-17,09:00,18:00,Foro Italico,Roma,RM`,
+    adms: `id,titolo,tipo_asset,versione,stato,licenza,formato,url,editore,data_rilascio
+1,Ontologia CLV,Ontologia,2.0,Stabile,CC BY 4.0,OWL/RDF,https://w3id.org/italia/onto/CLV,AgID,2017-01-01
+2,Vocabolario Tipi Ente,Vocabolario controllato,1.1,Stabile,CC BY 4.0,SKOS/RDF,https://w3id.org/italia/controlled-vocabulary/tipi-ente,AgID,2018-03-15
+3,Schema DCAT-AP_IT,Profilo applicativo,2.1,Stabile,CC BY 4.0,JSON-LD,https://w3id.org/italia/onto/DCAT,AgID,2019-05-01`
   };
   const csv = esempi[tipo] || esempi['poi'];
   document.getElementById('csv-input').value = csv;
@@ -2512,6 +2516,11 @@ async function callAI(prompt) {
 }
 
 function cleanTTL(text) {
+  // Auto-fix: aggiunge @it a label/description senza language tag
+  text = text.replace(/\brdfs:label "([^"@\n^]+)"(?!@)(?!\^\^)([\s]*[;.])/g, 'rdfs:label "$1"@it$2');
+  text = text.replace(/\bdct:title "([^"@\n^]+)"(?!@)(?!\^\^)([\s]*[;.])/g, 'dct:title "$1"@it$2');
+  text = text.replace(/\bdct:description "([^"@\n^]+)"(?!@)(?!\^\^)([\s]*[;.])/g, 'dct:description "$1"@it$2');
+  text = text.replace(/\bl0:name "([^"@\n^]+)"(?!@)(?!\^\^)([\s]*[;.])/g, 'l0:name "$1"@it$2');
   // Rimuove backtick e markdown
   text = text
     .replace(/\bl0:name\s+"([^"@\n]+)"\s*([.;])/g, 'l0:name "$1"@it $2')

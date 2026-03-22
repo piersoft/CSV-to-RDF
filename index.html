@@ -283,7 +283,7 @@
 
       <!-- PROVIDER AI (STEP 2) -->
       <div class="card-pa">
-        <div class="card-head dark">⚙ STEP 2 — Provider AI</div>
+        <div class="card-head dark">⚙ STEP 2 — Provider AI <span style="font-weight:400;font-size:.8em;opacity:.7;">(opzionale)</span></div>
         <div class="card-body-pa">
           <div class="provider-tabs">
             <button class="provider-tab active" data-provider="mistral"   onclick="switchProvider('mistral')">🟠 Mistral</button>
@@ -582,7 +582,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.114</span>
+<span id="app-version">v2026.03.20.115</span>
 </footer>
 
 <script>
@@ -2370,6 +2370,11 @@ async function startDeterministicConversion() {
     showStatus('Errore deterministico: '+e.message);
   } finally {
     document.getElementById('btn-convert').disabled = false;
+    // Abilita bottoni output dopo generazione deterministica
+    ['btn-download-ttl','btn-download-rdf','btn-validate'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.disabled = false;
+    });
   }
 }
 function buildPromptChunk(cols, rows, ontos, chunkIndex, totalChunks, vocabSection='', ontoSection='', skipCols=new Set(), ipa='', mainClass='') {

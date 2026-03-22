@@ -567,7 +567,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.89</span>
+<span id="app-version">v2026.03.20.90</span>
 </footer>
 
 <script>
@@ -682,6 +682,9 @@ REGOLE IMPORTANTI:
 - L0: includi sempre quando includi QB o SKOS come ontologia di supporto.
 - Se il CSV ha solo colonne Anno/Anno-Mese + valori numerici: suggerisci QB e L0, NON SKOS.
 - Se le colonne o i valori contengono "CulturalInstituteOrSite", "beniculturali", "mibact", "museo", "biblioteca", "monumento", "patrimonio" → includi SEMPRE "Cultural-ON"
+- ACCO: includi se i dati riguardano strutture ricettive (hotel, albergo, B&B, ostello, stelle). COV NON va usato per strutture ricettive.
+- COV: includi SOLO per enti/organizzazioni pubbliche o private. NON per strutture ricettive o luoghi fisici.
+- Se i valori contengono "albergo", "hotel", "B&B", "stelle", "letti": usa ACCO + CLV + L0, NON COV.
 - Se il CSV ha colonna "subject" con URI di istituti culturali → includi "Cultural-ON"
 
 Esempio di risposta valida: ["ACCO", "CLV", "L0"]
@@ -1618,7 +1621,7 @@ const ONTO_MAIN_CLASS = {
 };
 
 function getMainClass(ontos) {
-  const priority = ['ACCO','PARK','GTFS','CULTURAL-ON','CPSV-AP','QB','CPV','COV','POI','CLV','TI','ADMS','L0'];
+  const priority = ['ACCO','PARK','GTFS','CULTURAL-ON','CPSV-AP','QB','CPV','COV','TI','POI','CLV','ADMS','L0'];
   for (const onto of priority) {
     if (ontos.map(o => o.toUpperCase()).includes(onto)) {
       return ONTO_MAIN_CLASS[onto] || 'l0:Object';
@@ -1630,7 +1633,7 @@ function getMainClass(ontos) {
 // Determina il tipo-risorsa URI in base alle ontologie selezionate
 function getEntityTypeSegment(ontos) {
   // Priorità: ontologie specializzate prima di quelle generiche
-  const priority = ['ACCO','PARK','GTFS','Cultural-ON','CPSV-AP','QB','CPV','COV','POI','CLV','TI','ADMS','L0'];
+  const priority = ['ACCO','PARK','GTFS','Cultural-ON','CPSV-AP','QB','CPV','COV','TI','POI','CLV','ADMS','L0'];
   for (const onto of priority) {
     if (ontos.map(o => o.toUpperCase()).includes(onto.toUpperCase())) {
       return ONTO_URI_TYPE[onto] || 'resource';
@@ -2068,6 +2071,7 @@ REGOLE:
 - Per giorni della settimana e orari usa dct:description "valore"@it, NON ti:hasDayOfWeek
 - Se non conosci la proprietà esatta, usa dct:description "valore"@it
 - rdfs:label con il nome principale in italiano
+- sdmx-measure:obsValue e sdmx-dimension:* sono VIETATI se QB non e' tra le ontologie selezionate. Usali SOLO con qb:Observation.
 - Usa SOLO questi prefissi: owl, clv, cov, cpv, l0, poi, ro, ti, sm, dcat, dct, foaf, geo, xsd, rdfs, vcard, skos, schema, adms, qb, sdmx-dimension, sdmx-measure
 - Per eventi/spettacoli/manifestazioni usa SEMPRE l0:EventOrSituation come classe, mai l0:Object
 - Per ogni risorsa includi SEMPRE dct:publisher con il nome dell'organizzatore — non ometterlo mai
@@ -2894,7 +2898,7 @@ async function validateTTL() {
   // ── 11. CLASSE INCOERENTE CON TIPO URI ────────────────────────────────
   for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/event\/[^\/\s>]+)>\s+a\s+([^;.\n]+)/g)) {
     const cls = m[2].trim();
-    if (!cls.includes('EventOrSituation') && !cls.startsWith('clv:') && !cls.startsWith('poi:') && !cls.startsWith('l0:'))
+    if (!cls.includes('EventOrSituation') && !cls.startsWith('clv:') && !cls.startsWith('poi:') && !cls.startsWith('l0:') && !cls.startsWith('qb:') && !cls.startsWith('cpsv:') && !cls.startsWith('cis:'))
       warnings.push(`URI /event/ ma classe "${cls.slice(0,50)}" — atteso l0:EventOrSituation`);
   }
   for (const m of ttl.matchAll(/<(https?:\/\/[^>]*\/cultural-institute\/[^\/\s>]+)>\s+a\s+([^;.\n]+)/g)) {
@@ -2968,7 +2972,8 @@ async function validateTTL() {
   // ── 18. ONTOLOGIE INATTESE ────────────────────────────────────────────
   const KNOWN = ['owl','clv','cov','cpv','l0','cultural-on','poi','ro','ti','sm',
                  'dcat','dct','foaf','geo','xsd','rdfs','vcard','skos','schema',
-                 'adms','qb','sdmx-dimension','sdmx-measure','sdmx-attribute','cis','smapit','iot'];
+                 'adms','qb','sdmx-dimension','sdmx-measure','sdmx-attribute','cis','smapit','iot',
+                 'acco','park','gtfs','cpsv','route','lang','ac','transparency'];
   for (const p of prefixesUsed) {
     if (!KNOWN.includes(p.toLowerCase()))
       warnings.push(`Prefisso inatteso: "${p}:" — ontologia non standard PA italiana`);

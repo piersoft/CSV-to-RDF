@@ -2293,7 +2293,6 @@ function detGetMainOnto(ontos){var priority=['GTFS','SMAPIT','ACCO','IoT','Cultu
 function detFindColIdx(nh,cands){for(var i=0;i<cands.length;i++){var x=nh.indexOf(cands[i]);if(x>=0)return x;}return-1;}
 function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat','lon'].some(function(c){return nh.indexOf(c)>=0;});}
 function detHasTime(nh,ontos){return ontos.indexOf('TI')>=0&&['inizio','termine','data','quando'].some(function(c){return nh.indexOf(c)>=0;});}
-        if(rule.type==='mailto'){var _em2=sanitizeEmailValue(val);if(!_em2)return null;return '"'+_em2+'"^^xsd:string';}
 function detFindRule(normH,ontos){if(ontos.indexOf('CPV')>=0&&normH==='nome')return{pred:'cpv:givenName',type:'langlit',lang:'it',onto:'CPV'};if(ontos.indexOf('QB')>=0&&normH==='sesso')return{pred:'sdmx-dimension:sex',type:'literal'};if(ontos.indexOf('QB')>=0&&normH==='cittadinanza')return{pred:'sdmx-attribute:obsStatus',type:'literal'};var rule=DET_COL_RULES[normH];if(!rule)return null;if(rule.onto&&ontos.indexOf(rule.onto)<0)return null;return rule;}
 function detGetTimeVal(nh,row){var tc=['inizio','data','quando','published','data_inizio'];for(var i=0;i<tc.length;i++){var x=nh.indexOf(tc[i]);if(x>=0&&row[x]&&row[x].trim())return row[x].trim();}return null;}
 function detParseCSV(text){return text.trim().split(/\r?\n/).map(function(line){var res=[],cur='',inQ=false;for(var i=0;i<line.length;i++){var c=line[i];if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){res.push(cur.trim());cur='';}else cur+=c;}res.push(cur.trim());return res;});}

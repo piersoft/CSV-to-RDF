@@ -542,7 +542,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.81</span>
+<span id="app-version">v2026.03.20.82</span>
 </footer>
 
 <script>
@@ -1167,9 +1167,7 @@ function parseAndPreviewCSV() {
   // Lancia AI-detect automaticamente se c'è una API key configurata
   const hasKey = (
     document.getElementById('mistral-key')?.value.trim() ||
-    document.getElementById('groq-key')?.value.trim() ||
-
-    document.getElementById('anthropic-key')?.value.trim() ||
+    document.getElementById('groq-key')?.value.trim() ||    document.getElementById('anthropic-key')?.value.trim() ||
     document.getElementById('ollama-key')?.value.trim()
   );
   if (hasKey) {
@@ -2517,7 +2515,7 @@ REGOLE ASSOLUTE:
       'anthropic-version': '2023-06-01',
       'anthropic-dangerous-direct-browser-access': 'true'
     },
-    body: JSON.stringify({
+    body: safeJSON({
       model,
       max_tokens: 8000,
       system: systemPrompt,
@@ -2530,14 +2528,74 @@ REGOLE ASSOLUTE:
 }
 
 async function callAI(prompt) {
-  const currentProvider = document.querySelector('.provider-tab.active')?.dataset?.provider || 'mistral';
-  if (currentProvider === 'openai')    return await callOpenAI(prompt);
-  if (currentProvider === 'mistral')   return await callMistral(prompt);
-  if (currentProvider === 'groq')      return await callGroq(prompt);
-  if (currentProvider === 'ollama')    return await callOllama(prompt);
-  if (currentProvider === 'anthropic') return await callAnthropic(prompt);
-  throw new Error('Provider non supportato: ' + currentProvider);
+  if      (currentProvider === 'openai')   return await callOpenAI(prompt);
+  if      (currentProvider === 'mistral') return await callMistral(prompt);
+  else if (currentProvider === 'groq')    return await callGroq(prompt);
+  else if (currentProvider === 'gemini')  return await callGemini(prompt);
+  else if (currentProvider === 'ollama')   return await callOllama(prompt);
+  else if (currentProvider === 'anthropic') return await callAnthropic(prompt);
 }
+
+function forceMainClassInTTL(ttl, ontos, entityBase) {
+  const mainClass = getMainClass(ontos);
+  if (!mainClass || mainClass === "l0:Object") return ttl;
+  const KEEP = ["foaf:","clv:","skos:","dct:","dcat:","rdfs:","owl:","geo:","sm:","vcard:","schema:"];
+  if (entityBase) {
+    const esc = entityBase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const re1 = new RegExp("(<" + esc + "[^>]+>)\\s+a\\s+([\\w:]+)", "g");
+    ttl = ttl.replace(re1, function(m, uri, cls) {
+      if (KEEP.some(function(k){ return cls.indexOf(k) === 0; })) return m;
+      return uri + " a " + mainClass;
+    });
+  }
+  const hasMain = ttl.indexOf(mainClass) >= 0;
+  if (!hasMain) {
+    const re2 = /(<https?:\/\/[^>]+>)\s+a\s+([\w:]+)/g;
+    ttl = ttl.replace(re2, function(m, uri, cls) {
+      if (cls === "foaf:Agent") return m;
+      if (KEEP.some(function(k){ return cls.indexOf(k) === 0; })) return m;
+      return uri + " a " + mainClass;
+    });
+  }
+  return ttl;
+}
+function cleanTTL(text) {
+  // Rimuove backtick e markdown
+  text = text
+    .replace(/\bl0:name\s+"([^"@\n]+)"\s*([.;])/g, 'l0:name "$1"@it $2')
+    .replace(/^```\w*\s*\n?/gim, '')
+    .replace(/\n?```\s*$/gim, '')
+    .replace(/```/g, '');
+  // Rimuove righe di testo in prosa prima delle triple Turtle
+  // Una riga TTL valida inizia con @prefix, <, #, spazio/tab, o è vuota
+  const lines = text.split('\n');
+  const ttlLines = [];
+  let foundFirstTriple = false;
+  for (const line of lines) {
+    const t = line.trim();
+    if (!foundFirstTriple) {
+      // Cerca la prima riga TTL valida
+      if (t.startsWith('@prefix') || t.startsWith('<') || t.startsWith('#') || t === '') {
+        foundFirstTriple = true;
+        ttlLines.push(line);
+      }
+      // Salta righe di prosa (testo normale non TTL)
+    } else {
+      ttlLines.push(line);
+    }
+  }
+  return ttlLines.join('\n').trim();
+}
+
+
+
+// Helper: JSON.stringify con escape Unicode >127 per compatibilità fetch/ISO-8859-1
+function safeJSON(obj) {
+  return JSON.stringify(obj).replace(/[\u0080-\uFFFF]/g, function(c) {
+    return '\\u' + ('0000' + c.charCodeAt(0).toString(16)).slice(-4);
+  });
+}
+
 async function callOpenAI(prompt) {
   const key = document.getElementById('openai-key')?.value?.trim();
   if (!key) throw new Error('Inserisci la API key OpenAI.');
@@ -2545,7 +2603,7 @@ async function callOpenAI(prompt) {
   const resp = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {'Content-Type':'application/json','Authorization':'Bearer '+key},
-    body: JSON.stringify({model, messages:[{role:'user',content:prompt}], temperature:0.1, max_tokens:4000})
+    body: safeJSON({model, messages:[{role:'user',content:prompt}], temperature:0.1, max_tokens:4000})
   });
   if (!resp.ok) {
     const e = await resp.json().catch(()=>({error:{message:resp.statusText}}));
@@ -2562,7 +2620,7 @@ async function callMistral(prompt) {
   const res = await fetch('https://api.mistral.ai/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-    body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], temperature: 0.1, max_tokens: 32000 })
+    body: safeJSON({ model, messages: [{ role: 'user', content: prompt }], temperature: 0.1, max_tokens: 32000 })
   });
   if (!res.ok) { const e = await res.json(); throw new Error(e.message || `Mistral error ${res.status}`); }
   return (await res.json()).choices[0].message.content;
@@ -2575,7 +2633,7 @@ async function callGroq(prompt) {
   const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-    body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], temperature: 0.1, max_tokens: 32000 })
+    body: safeJSON({ model, messages: [{ role: 'user', content: prompt }], temperature: 0.1, max_tokens: 32000 })
   });
   if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || `Groq error ${res.status}`); }
   return (await res.json()).choices[0].message.content;
@@ -3280,25 +3338,6 @@ document.addEventListener("DOMContentLoaded",function(){
 window.corpusMatch=function(h){return matchCorpus(h);};
 })();
 </script>
-
-
-<!-- ===== FINE CORPUS MATCHER v7 ====
-<!-- ===== CORPUS MATCHER v7 ===== -->
-<style>
-#corpus-panel{display:none;margin:1em 0;padding:1em;border:2px solid #4a90d9;border-radius:8px;background:#f0f7ff;font-family:sans-serif}
-#corpus-panel h3{margin:0 0 .5em;color:#2c5f8a;font-size:1em}
-.corpus-badge{display:inline-block;padding:.2em .55em;border-radius:4px;color:#fff;font-size:.8em;font-weight:700;margin:.15em}
-.corpus-ex{margin:.3em 0;padding:.4em;background:#fff;border-radius:4px;border-left:3px solid #4a90d9;font-size:.83em}
-.corpus-ex strong{display:block}
-.corpus-ex code{color:#555;font-size:.78em}
-</style>
-<div id="corpus-panel">
-  <h3>Ontologie suggerite dal corpus PA (v11)</h3>
-  <div id="corpus-temi"></div>
-  <details style="margin-top:.6em">
-    <summary style="cursor:pointer;color:#2c5f8a;font-size:.88em">Dataset simili nel corpus (<span id="corpus-count">0</span>)</summary>
-    <div id="corpus-examples" style="margin-top:.4em"></div>
-  </details>
 
 
 <!-- ===== FINE CORPUS MATCHER v7 ===== -->

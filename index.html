@@ -542,7 +542,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.78</span>
+<span id="app-version">v2026.03.20.79</span>
 </footer>
 
 <script>
@@ -3226,7 +3226,6 @@ window.validateSPARQL = validateSPARQL;
   </details>
 </div>
 <script>
-<script>
 (function(){
 var COLORI={"TI":"#c0392b","Cultural-ON":"#6c3483","GTFS":"#1e8449","QB":"#1a5276","POI":"#0e6655","ADMS":"#784212","CLV":"#626567","ACCO":"#922b21","CPV":"#515a5a","CPSV":"#1b4f72"};
 function norm(s){return String(s).toLowerCase().replace(/[^a-z0-9]/g," ").trim();}
@@ -3285,8 +3284,9 @@ window.corpusMatch=function(h){return matchCorpus(h);};
 
 <!-- ===== FINE CORPUS MATCHER v7 ===== -->
 
-</body>
-</html>function forceMainClassInTTL(ttl, ontos, entityBase) {
+
+<script>
+function forceMainClassInTTL(ttl, ontos, entityBase) {
   const mainClass = getMainClass(ontos);
   if (!mainClass || mainClass === "l0:Object") return ttl;
   const KEEP = ["foaf:","clv:","skos:","dct:","dcat:","rdfs:","owl:","geo:","sm:","vcard:","schema:"];

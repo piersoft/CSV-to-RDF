@@ -1650,11 +1650,11 @@ function getMainClass(ontos) {
 
 // Determina il tipo-risorsa URI in base alle ontologie selezionate
 function getEntityTypeSegment(ontos) {
-  // Priorità: ontologie specializzate prima di quelle generiche
-  const priority = ['ACCO','PARK','GTFS','Cultural-ON','CPSV-AP','QB','CPV','COV','TI','POI','CLV','ADMS','L0'];
+  const priority = ['GTFS','SMAPIT','IOT','ACCO','PARK','CULTURAL-ON','CPSV-AP','QB','CPV','COV','RO','TI','POI','CLV','ADMS','L0'];
+  const up = ontos.map(o => o.toUpperCase());
   for (const onto of priority) {
-    if (ontos.map(o => o.toUpperCase()).includes(onto.toUpperCase())) {
-      return ONTO_URI_TYPE[onto] || 'resource';
+    if (up.includes(onto)) {
+      return ONTO_URI_TYPE[onto] || ONTO_URI_TYPE[ontos.find(o=>o.toUpperCase()===onto)] || 'resource';
     }
   }
   return 'resource';

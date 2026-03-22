@@ -566,7 +566,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.121</span>
+<span id="app-version">v2026.03.20.122</span>
 </footer>
 
 <script>
@@ -616,12 +616,18 @@ function detectFromCorpus(headers) {
   // Normalizza i nomi ontologia
   var ontoMap = {'IOT-AP_IT':'IoT','COV-AP_IT':'COV','RO-AP_IT':'RO',
     'CULTURAL-ON':'CulturalON','CPSV-AP':'CPSV','CPVAPIT':'CPV'};
-  var result = Object.keys(scores)
-    .filter(function(o){ return scores[o] >= 3; }) // soglia minima
-    .map(function(o){ return ontoMap[o] || o; })
-    .filter(function(o){ return ['QB','POI','CPV','CLV','CPSV','TI','ACCO',
-      'Cultural-ON','CulturalON','ADMS','RO','COV','GTFS','IoT','SMAPIT','L0'].indexOf(o) >= 0; });
-  return [...new Set(result)];
+  // Prende le ontologie con score più alto — top 3 + CLV se presente
+  var sorted = Object.keys(scores).sort(function(a,b){return scores[b]-scores[a];});
+  var top = sorted.slice(0,5).filter(function(o){return scores[o]>=5;});
+  var result = top.map(function(o){return ontoMap[o]||o;}).filter(function(o){
+    return ['QB','POI','CPV','CLV','CPSV','TI','ACCO',
+      'CulturalON','ADMS','RO','COV','GTFS','IoT','SMAPIT'].indexOf(o)>=0;
+  });
+  // Limita a top 2 + CLV (se rilevato) per evitare rumore
+  var clvScore = scores['CLV']||0;
+  var mainResult = result.filter(function(o){return o!=='CLV';}).slice(0,2);
+  if(clvScore>=5) mainResult.push('CLV');
+  return [...new Set(mainResult)];
 }
 
 // ── ESEMPIO ──────────────────────────────────────────────────
@@ -1376,6 +1382,16 @@ function parseAndPreviewCSV() {
     setTimeout(() => autoDetectOntoAI(), 300); // piccolo delay per non sovrapporre i messaggi
   }
   showStatus(`✓ ${parsed.headers.length} colonne · ${parsed.rows.length} righe`, 'success');
+  // Auto-detect ontologie dopo il parsing CSV (senza bisogno di API key)
+  try {
+    var _autoOntos = detectOntologiesDeterministic(parsed.headers, parsed.rows);
+    if (_autoOntos && _autoOntos.length > 0) {
+      setExampleOntos(_autoOntos);
+      showStatus('\u2705 ' + parsed.headers.length + ' colonne \u2022 ' + parsed.rows.length + ' righe \u2022 Ontologie: ' + _autoOntos.join(', '), 'success');
+    }
+  } catch(e) {
+    // detect fallito silenziosamente
+  }
 }
 
 function loadExample(tipo) {

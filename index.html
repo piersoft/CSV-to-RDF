@@ -200,15 +200,7 @@
       arricchendo i dati con le ontologie ufficiali di
       <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a>.
     </p>
-    <p style="margin-top:10px;font-size:0.88rem;color:#94a3b8;">
-      💡 <strong style="color:#e2e8f0;">Prima di iniziare</strong> — consulta il
-      <a href="https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html"
-         target="_blank" rel="noopener noreferrer"
-         style="color:#00d4ff;text-decoration:none;border-bottom:1px dotted #00d4ff;">
-        Catalogo Dataset Ottimali per PA
-      </a>
-      per verificare se il tuo CSV ha le colonne chiave necessarie per una mappatura RDF di qualità.
-    </p>
+    
   </div>
 </div>
 
@@ -567,7 +559,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.108</span>
+<span id="app-version">v2026.03.20.109</span>
 </footer>
 
 <script>
@@ -2057,7 +2049,11 @@ CSV:
 ${csvChunk}
 
 REGOLE:
-- Per ogni riga genera una risorsa RDF. La classe principale da usare: ${getMainClass(ontos)} - OBBLIGATORIO, NON usare l0:Object
+- REGOLA CRITICA - TUTTI I RECORD: genera struttura IDENTICA per OGNI riga del CSV.
+  NON abbreviare. NON scrivere "simile al precedente". OGNI record deve avere:
+  a) la classe principale: ${getMainClass(ontos)} - OBBLIGATORIO
+  b) TUTTE le risorse collegate previste dalle ontologie selezionate (clv:Address, ti:TimeInstant ecc)
+  c) TUTTE le proprieta mappabili dalle colonne CSV
 - REGOLA ASSOLUTA: usa SOLO classi e proprietà delle ontologie elencate in "Ontologie da usare". NON usare mai prefissi di ontologie non in lista (es. se acco: non è in lista, non usare MAI acco:Accommodation)
 - Gli URI delle entità DEVONO seguire esattamente questo schema: <https://w3id.org/italia/data/${ipa}/{tipo-risorsa}/{id}>
   dove {ipa} è il codice IPA del titolare, {id} è il valore della colonna ID/codice della riga (NON il nome di una persona)
@@ -2105,6 +2101,8 @@ REGOLE:
 - REGOLA CLASSE PRINCIPALE: usa la classe più specifica disponibile tra le ontologie selezionate.
   La classe principale va scelta in questo ordine di priorità (dalla più specifica alla più generica):
   ACCO selezionata      → acco:Accommodation OBBLIGATORIO. NON usare l0:Object o poi:PointOfInterest come classe principale
+  CLV selezionata: genera nodo clv:Address per OGNI record con indirizzo/lat/lon. Collega con clv:hasAddress.
+  TI selezionata: genera nodo ti:TimeInstant/TimeInterval per OGNI record con data/ora. Collega con ti:atTime.
   PARK selezionata      → park:ParkingFacility per parcheggi e aree di sosta
   GTFS selezionata      → gtfs:Stop per fermate, gtfs:Route per linee, gtfs:Agency per aziende di trasporto
   IoT selezionata       → iot:Sensor per sensori, iot:Observation per osservazioni (NON usare qb:Observation per IoT)
@@ -2118,6 +2116,7 @@ Cultural-ON selezionata → Museo=cis:Museum, Biblioteca=cis:Library, Teatro=cis
   ADMS selezionata      → adms:SemanticAsset per brevetti, licenze, asset digitali, documenti
   RO selezionata        → ro:Role per ruoli e incarichi (usato insieme a cpv:Person o cov:Organization)
   TI selezionata        → ti:TimeInterval per intervalli temporali, ti:TimeInstant per istanti
+  OGNI soggetto con data/ora deve avere un nodo ti:TimeInstant o ti:TimeInterval collegato.
   QB selezionata        → qb:Observation per ogni riga di dati (OBBLIGATORIO). Aggiungi qb:DataSet come risorsa contenitore. Se L0 attiva: usa l0:Collection come superclasse del DataSet. Se SKOS attiva: usa skos:Concept per codici/categorie (es. fasce eta, tipologie). Le Observation devono avere sdmx-dimension:refPeriod o sdmx-dimension:timePeriod per l'anno, e sdmx-measure:obsValue per i valori numerici
   POI selezionata       → poi:PointOfInterest SOLO se nessuna classe più specifica è disponibile
   L0 selezionata        → l0:Agent per persone/organizzazioni generiche, l0:Object per oggetti fisici generici. Con QB: usa l0:Collection per il DataSet contenitore

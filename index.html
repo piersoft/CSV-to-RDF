@@ -275,6 +275,7 @@
             <button class="provider-tab"        data-provider="groq"      onclick="switchProvider('groq')">⚡ Groq</button>
             <button class="provider-tab"        data-provider="gemini"    onclick="switchProvider('gemini')">✨ Gemini</button>
             <button class="provider-tab"        data-provider="ollama"    onclick="switchProvider('ollama')">🦙 Ollama Cloud</button>
+              <button class="provider-tab" data-provider="openai" onclick="switchProvider('openai')">&#x1F7E2; OpenAI</button>
             <button class="provider-tab"        data-provider="anthropic" onclick="switchProvider('anthropic')">🔴 Anthropic</button>
           </div>
 
@@ -397,6 +398,26 @@
               </div>
             </div>
             <div class="info-note mt-2">🔴 <a href="https://console.anthropic.com/" target="_blank" rel="noopener noreferrer">console.anthropic.com</a> — <strong>claude-haiku</strong> consigliato per AI-detect, <strong>claude-sonnet</strong> per la generazione TTL.</div>
+          </div>
+          <!-- OPENAI -->
+          <div class="provider-panel" id="panel-openai">
+            <div class="row g-2">
+              <div class="col-12">
+                <label class="lbl">API Key OpenAI</label>
+                <div class="apikey-wrap">
+                  <input type="password" class="inp" id="openai-key" oninput="onApiKeyChange()" onpaste="setTimeout(onApiKeyChange,100)" onchange="onApiKeyChange()" placeholder="Incolla la tua API key OpenAI (sk-...)"/>
+                  <button class="apikey-toggle" onclick="toggleKey('openai-key')">&#128065;</button>
+                </div>
+              </div>
+              <div class="col-12">
+                <label class="lbl">Modello</label>
+                <select class="inp" id="openai-model">
+                  <option value="gpt-4o-mini">gpt-4o-mini (economico, consigliato)</option>
+                  <option value="gpt-4o">gpt-4o (migliore qualita)</option>
+                </select>
+              </div>
+            </div>
+            <div class="info-note mt-2">&#128273; <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">platform.openai.com</a></div>
           </div>
 
 
@@ -546,7 +567,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.86</span>
+<span id="app-version">v2026.03.20.87</span>
 </footer>
 
 <script>
@@ -565,7 +586,7 @@ function switchProvider(p) {
   document.querySelectorAll('.provider-tab').forEach(t =>
     t.classList.toggle('active', t.dataset.provider === p)
   );
-  ['mistral','groq','gemini','ollama','anthropic'].forEach(id => {
+  ['mistral','groq','gemini','ollama','anthropic','openai'].forEach(id => {
     const el = document.getElementById('panel-' + id);
     if (el) el.classList.toggle('active', id === p);
   });
@@ -1167,6 +1188,7 @@ function parseAndPreviewCSV() {
   const hasKey = (
     document.getElementById('mistral-key')?.value.trim() ||
     document.getElementById('groq-key')?.value.trim() ||
+    document.getElementById('openai-key')?.value.trim() ||
     document.getElementById('gemini-key')?.value.trim() ||
     document.getElementById('anthropic-key')?.value.trim() ||
     document.getElementById('ollama-key')?.value.trim()
@@ -2477,6 +2499,7 @@ REGOLE ASSOLUTE:
 }
 
 async function callAI(prompt) {
+  if      (currentProvider === 'openai')   return await callOpenAI(prompt);
   if      (currentProvider === 'mistral') return await callMistral(prompt);
   else if (currentProvider === 'groq')    return await callGroq(prompt);
   else if (currentProvider === 'gemini')  return await callGemini(prompt);
@@ -2513,6 +2536,18 @@ function cleanTTL(text) {
 }
 
 
+async function callOpenAI(prompt) {
+  const key = document.getElementById('openai-key')?.value?.trim();
+  if (!key) throw new Error('Inserisci la API key OpenAI.');
+  const model = document.getElementById('openai-model')?.value || 'gpt-4o-mini';
+  const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json','Authorization':'Bearer '+key},
+    body: JSON.stringify({model, messages:[{role:'user',content:prompt}], temperature:0.1, max_tokens:4000})
+  });
+  if (!resp.ok) { const e = await resp.json().catch(()=>({})); throw new Error('OpenAI: '+(e.error?.message||resp.statusText)); }
+  return (await resp.json()).choices?.[0]?.message?.content || '';
+}
 async function callMistral(prompt) {
   const key   = document.getElementById('mistral-key').value.trim();
   const model = document.getElementById('mistral-model').value;

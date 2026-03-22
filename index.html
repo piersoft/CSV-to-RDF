@@ -567,7 +567,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.104</span>
+<span id="app-version">v2026.03.20.105</span>
 </footer>
 
 <script>
@@ -2087,7 +2087,13 @@ CSV:
 ${csvChunk}
 
 REGOLE:
-- Per ogni riga genera una risorsa RDF. La classe principale da usare: ${getMainClass(ontos)} - OBBLIGATORIO, NON usare l0:Object
+- REGOLA CRITICA: genera la STESSA struttura completa per OGNI riga del CSV senza eccezioni.
+  Il primo record NON e' speciale - tutti i record hanno identica struttura.
+- Classe principale: ${getMainClass(ontos)} - OBBLIGATORIO per ogni soggetto, NON usare l0:Object
+- Se CLV selezionata: OGNI soggetto deve avere <baseURI/address/ID> a clv:Address con clv:hasAddress.
+- Se TI selezionata: OGNI soggetto deve avere risorsa ti:TimeInstant o ti:TimeInterval collegata.
+- Se CPV selezionata con RO: OGNI ruolo deve collegare cpv:Person e cov:PublicOrganization.
+- Risorse collegate (clv:Address, ti:TimeInstant, cpv:Person ecc.): generate per OGNI record, non solo il primo
 - REGOLA ASSOLUTA: usa SOLO classi e proprietà delle ontologie elencate in "Ontologie da usare". NON usare mai prefissi di ontologie non in lista (es. se acco: non è in lista, non usare MAI acco:Accommodation)
 - Gli URI delle entità DEVONO seguire esattamente questo schema: <https://w3id.org/italia/data/${ipa}/{tipo-risorsa}/{id}>
   dove {ipa} è il codice IPA del titolare, {id} è il valore della colonna ID/codice della riga (NON il nome di una persona)

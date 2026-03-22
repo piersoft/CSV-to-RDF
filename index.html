@@ -568,7 +568,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.65</span>
+<span id="app-version">v2026.03.20.66</span>
 </footer>
 
 <script>
@@ -2055,11 +2055,7 @@ function buildPromptChunk(cols, rows, ontos, chunkIndex, totalChunks, vocabSecti
   const ambigCols = cols.filter(c => !skipCols.has(c));
   if (ambigCols.length === 0) return null; // tutto già mappato
   const csvChunk = [ambigCols.join(','), ...rows.map(r => ambigCols.map(h=>r[h]).join(','))].join('\n');
-  return `# STRUTTURA OBBLIGATORIA PRE-GENERATA — NON ALTERARE I TIPI:
-${buildDeterministicTypeBlock(rows, ontos, ipa)}
-# Aggiungi SOLO le proprietà mancanti a questi soggetti. NON cambiare "a MainClass".
-
-Sei un esperto RDF per la PA italiana. Trasforma le righe CSV in Turtle (TTL) compatto.
+  return `Sei un esperto RDF per la PA italiana. Trasforma le righe CSV in Turtle (TTL) compatto.
 
 URI BASE OBBLIGATORIA: tutte le entità DEVONO usare ESCLUSIVAMENTE questo pattern: <https://w3id.org/italia/data/${ipa}/{tipo}/{id}> — NON usare mai domini come dati.comune.*, http://dati.*, o qualsiasi altro dominio inventato.
 
@@ -2070,6 +2066,10 @@ Base URI entità: https://w3id.org/italia/data/${ipa || 'ipa'}/${getEntityTypeSe
 
 CSV:
 ${csvChunk}
+
+# TIPI RDF OBBLIGATORI (generati deterministicamente — NON modificare):
+${buildDeterministicTypeBlock(rows, ontos, ipa || 'ipa')}
+# Aggiungi SOLO le proprieta mancanti ai soggetti sopra. NON ridefinire "a Classe".
 
 REGOLE:
 - Per ogni riga genera una risorsa RDF. La classe principale da usare \u00e8: ${getMainClass(ontos)} \u2014 OBBLIGATORIO, NON usare l0:Object se questa classe \u00e8 disponibile

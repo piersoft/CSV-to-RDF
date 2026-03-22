@@ -2039,6 +2039,36 @@ function getEntityType(ontos) {
   return 'resource';
 }
 
+function getSacredExample(ontos) {
+  var up = ontos.map(function(x){return x.toUpperCase();});
+  var tipo = null;
+  if(up.indexOf('GTFS')>=0) tipo='gtfs';
+  else if(up.indexOf('SMAPIT')>=0) tipo='smapit';
+  else if(up.indexOf('ACCO')>=0) tipo='acco';
+  else if(up.indexOf('IOT')>=0) tipo='iot';
+  else if(up.indexOf('CULTURAL-ON')>=0) tipo='cultural';
+  else if(up.indexOf('CPSV-AP')>=0) tipo='cpsv';
+  else if(up.indexOf('QB')>=0) tipo='qb';
+  else if(up.indexOf('RO')>=0) tipo='ro';
+  else if(up.indexOf('CPV')>=0) tipo='cpv';
+  else if(up.indexOf('COV')>=0) tipo='cov';
+  else if(up.indexOf('POI')>=0) tipo='poi';
+  else if(up.indexOf('TI')>=0) tipo='ti';
+  else if(up.indexOf('CLV')>=0) tipo='clv';
+  else if(up.indexOf('ADMS')>=0) tipo='adms';
+  if(!tipo || !sacredTTL[tipo]) return '';
+  return sacredTTL[tipo]
+    .split('\n')
+    .filter(function(l){
+      return !l.startsWith('@prefix') &&
+             l.trim() !== '' &&
+             !l.includes('foaf:Agent') &&
+             !l.includes('foaf:name');
+    })
+    .join('\n')
+    .trim();
+}
+
 function buildPromptChunk(cols, rows, ontos, chunkIndex, totalChunks, vocabSection='', ontoSection='', skipCols=new Set(), ipa='', mainClass='') {
   // Escludi colonne già mappate deterministicamente
   const ambigCols = cols.filter(c => !skipCols.has(c));
@@ -2081,7 +2111,7 @@ REGOLE:
 - Mappa ogni colonna alla proprietà ontologica corretta
 - Se il dataset contiene colonne finanziarie (importo, cumulato, movimento, entrata, spesa, BDAP) usa SEMPRE qb:Observation come classe principale, sdmx-measure:obsValue per gli importi numerici, sdmx-dimension:timePeriod per il periodo, sdmx-dimension:refArea per il territorio
 - Se il dataset QB contiene colonne numeriche di conteggio (incidenti, feriti, morti, decessi, numero_dipendenti, count, totale) usa SEMPRE sdmx-measure:obsValue per OGNI colonna numerica - NON usare URI personalizzati come <.../measure/nomeColonna>
-- Per coordinate usa geo:lat e geo:long. Per campi booleani (si/no, true/false, 1/0) usa xsd:boolean come tipo dato
+- Per coordinate usa geo:lat e geo:long. Per campi booleani (si/no, true/false, 1/0) usa poi:hasAccessCondition con valore letterale. Per marca/modello usa rdfs:label o dct:description. Per numero serie usa dct:identifier. Per scadenza/manutenzione usa dct:valid. Se il valore è vuoto o mancante NON generare la tripla (omettila completamente). Per telefono sm:hasTelephone. Per email sm:hasEmail. Per indirizzo clv:hasAddress. Per data dct:date o ti:startTime/ti:endTime
 - REGOLA CRITICA: usa SOLO proprietà che esistono nelle ontologie dichiarate nei @prefix. NON inventare proprietà con nomi come clv:hasStreetName, clv:hasPostalCode, clv:hasName, clv:hasFeature, sm:hasValue o simili — queste NON esistono.
 - Per i nomi usa rdfs:label o l0:name, NON clv:hasName (clv:hasName NON ESISTE)
 - Per i valori di contatto usa sm:hasTelephone, sm:hasEmail, sm:hasWebSite, NON sm:hasValue
@@ -2092,12 +2122,11 @@ REGOLE:
 - sdmx-measure:obsValue e sdmx-dimension:* sono VIETATI se QB non e' tra le ontologie selezionate. Usali SOLO con qb:Observation.
 - Usa SOLO questi prefissi: owl, clv, cov, cpv, l0, poi, ro, ti, sm, dcat, dct, foaf, geo, xsd, rdfs, vcard, skos, schema, adms, qb, sdmx-dimension, sdmx-measure
 - Per eventi/spettacoli/manifestazioni usa SEMPRE l0:EventOrSituation come classe, mai l0:Object
-- dct:publisher va SOLO sul Dataset o sull'Agent titolare, NON su ogni singola risorsa
+- Per ogni risorsa includi SEMPRE dct:publisher con il nome dell'organizzatore — non ometterlo mai
 - La colonna numero_righe/numero_record indica il conteggio delle righe, NON la dimensione in byte: usa dct:extent, MAI dcat:byteSize
 - dcat:byteSize si usa SOLO per la dimensione del file in byte — se non hai quel dato, ometti la proprietà
 - dct:publisher NON va su dcat:Distribution (non previsto da DCAT-AP) — va sul Dataset o sull'Agent titolare con il nome dell'organizzatore — non ometterlo mai
 - Usa dct:type per il tipo di relazione (Coorganizzazione/Patrocinio/Pagamento), dct:publisher per l'organizzatore, MAI usare dct:description per entrambi
-- IMPORTANTE: genera le stesse propriet? per OGNI riga CSV. NON abbreviare i record successivi al primo. Ogni risorsa deve avere tutte le propriet? mappabili dalle sue colonne.
 - Output COMPATTO: niente righe vuote, niente commenti, niente @prefix, niente markdown
 - Colonne il cui nome inizia con un numero seguito da trattino (es. "1-LISTA", "9-+EUROPA") sono intestazioni di risultati elettorali: usa sdmx-measure:obsValue con rdfs:label del nome colonna
 - Colonne con pattern F_ANNO / M_ANNO (es. F_2012, M_2016) indicano femmine/maschi per anno: usa sdmx-measure:obsValue con sdmx-dimension:timePeriod per l'anno e sdmx-attribute:sex per il sesso (es. "1-LISTA", "9-+EUROPA") sono intestazioni di risultati elettorali: usa sdmx-measure:obsValue con rdfs:label del nome colonna
@@ -2695,6 +2724,7 @@ async function startConversion() {
       fetchVocabularies(ontos),
       fetchOntologyClasses(ontos)
     ]);
+    ontoSection += '\n\nSTRUTTURA TTL ATTESA PER LE ONTOLOGIE SELEZIONATE:\n' + getSacredExample(ontos);
 
     // Analisi deterministica colonne
     const deterMappings = detectDeterministicMappings(cols, allRows);

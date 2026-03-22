@@ -406,7 +406,7 @@
               <div class="col-12">
                 <label class="lbl">API Key OpenAI</label>
                 <div style="display:flex;gap:6px">
-                  <div style="display:flex;gap:6px"><input type="password" class="inp" id="openai-key" oninput="onApiKeyChange()" placeholder="Incolla la tua API key OpenAI (sk-...)" style="flex:1"/><button class="apikey-toggle" onclick="toggleKey('openai-key')">&#128065;</button></div>
+                  <div class="apikey-wrap"><input type="password" class="inp" id="openai-key" oninput="onApiKeyChange()" placeholder="Incolla la tua API key OpenAI (sk-...)"/><button class="apikey-toggle" onclick="toggleKey('openai-key')">&#128065;</button></div>
                   <button class="apikey-toggle" onclick="toggleKey('openai-key')">&#128065;</button>
                 </div>
               </div>
@@ -568,7 +568,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.71</span>
+<span id="app-version">v2026.03.20.72</span>
 </footer>
 
 <script>
@@ -2155,6 +2155,7 @@ Cultural-ON selezionata → Museo=cis:Museum, Biblioteca=cis:Library, Teatro=cis
   L0 selezionata        → l0:Agent per persone/organizzazioni generiche, l0:Object SOLO se nessun'altra ontologia specifica e' disponibile (es. ACCO, POI, CPSV, COV, CPV non sono attive). Se ACCO e' attiva usa acco:Accommodation non l0:Object. Con QB: usa l0:Collection per il DataSet contenitore
   SKOS selezionata      → skos:Concept per codici, categorie, classificazioni (es. fasce d'eta, tipologie, categorie ATECO). skos:ConceptScheme per il vocabolario controllato. NON usare SKOS per dati numerici
   CLV: clv:Address, clv:Feature, clv:Geometry, clv:AdminUnit, clv:Road, clv:StreetNumber
+  IMPORTANTE: Se CLV e ACCO sono entrambe attive, genera una risorsa clv:Address separata per ogni indirizzo e collegala con clv:hasAddress. Se POI e ACCO sono entrambe attive, il soggetto principale acco:Accommodation PUO' avere anche geo:lat/geo:long diretti.
   COV: cov:Organization, cov:PublicOrganization, cov:Company, cov:ActivityType, cov:ContactPoint
   CPV: cpv:Person, cpv:Adult, cpv:Minor, cpv:Senior (CPV=Persone, NON per brevetti/documenti)
   POI: poi:PointOfInterest (classe generica per luoghi fisici)

@@ -567,7 +567,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.100</span>
+<span id="app-version">v2026.03.20.101</span>
 </footer>
 
 <script>
@@ -3009,7 +3009,11 @@ async function validateTTL() {
   const tripleCount  = (ttl.match(/^\s+\S+\s+[^\n]+[;.]/gm) || []).length;
   const classesUsed  = [...new Set([...ttl.matchAll(/\ba\s+(\w[\w-]*:\w+)/g)].map(m=>m[1]))];
   infos.push(`${subjectCount} soggetti, ~${tripleCount} triple`);
-  infos.push(`Classi: ${classesUsed.filter(c => c !== 'foaf:Agent').join(', ')}`);
+  const _supportClasses = new Set(['foaf:Agent','clv:Address','clv:Feature','clv:Geometry',
+      'clv:AdminUnit','clv:City','clv:Country','clv:Province',
+      'adms:SemanticAssetDistribution','skos:ConceptScheme']);
+  const _mainClasses = classesUsed.filter(c => !_supportClasses.has(c));
+  infos.push(`Classi: ${_mainClasses.length ? _mainClasses.join(', ') : classesUsed.join(', ')}`);
 
   // ── 20. SCORE ─────────────────────────────────────────────────────────
   const totalIssues = errors.length * 3 + warnings.length;
@@ -3092,12 +3096,18 @@ function updateStats(ttl) {
   // Forza la classe principale corretta in base alle ontologie selezionate
   const _ontos = Array.from(document.querySelectorAll('.pill.active')).map(p=>p.dataset.onto).filter(Boolean);
   const _mc = getMainClass(_ontos);
-  if (_mc && _mc !== 'l0:Object') {
-    ttl = forceMainClassInTTL(ttl, _ontos, null);
-    const _out = document.getElementById('ttl-output');
-    if (_out && _out.value && _out.value.includes(_mc) === false) {
-      _out.value = forceMainClassInTTL(_out.value, _ontos, null);
+  const _out = document.getElementById('ttl-output');
+  if (_mc && _mc !== 'l0:Object' && _out && _out.value) {
+    // Calcola entityBase dall'IPA e dal tipo di risorsa
+    const _ipa = document.getElementById('meta-ipa')?.value?.trim() || 'ipa';
+    const _seg = getEntityTypeSegment(_ontos);
+    const _base = 'https://w3id.org/italia/data/' + _ipa + '/' + _seg + '/';
+    // Corregge il textarea se la classe principale manca
+    if (!_out.value.includes(_mc)) {
+      _out.value = forceMainClassInTTL(_out.value, _ontos, _base);
     }
+    // Aggiorna anche il ttl locale usato per le statistiche
+    ttl = _out.value;
   }
   const lines = ttl.split('\n');
   document.getElementById('stat-triples').textContent  =

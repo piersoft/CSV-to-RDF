@@ -568,7 +568,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.66</span>
+<span id="app-version">v2026.03.20.67</span>
 </footer>
 
 <script>
@@ -2067,9 +2067,19 @@ Base URI entità: https://w3id.org/italia/data/${ipa || 'ipa'}/${getEntityTypeSe
 CSV:
 ${csvChunk}
 
-# TIPI RDF OBBLIGATORI (generati deterministicamente — NON modificare):
-${buildDeterministicTypeBlock(rows, ontos, ipa || 'ipa')}
-# Aggiungi SOLO le proprieta mancanti ai soggetti sopra. NON ridefinire "a Classe".
+GENERA TTL CHE ESTENDE QUESTO SCHELETRO GIA' SCRITTO (aggiungi proprieta', NON cambiare i tipi):
+${(()=>{
+  const mc = getMainClass(ontos);
+  const seg = getEntityTypeSegment(ontos);
+  const base = 'https://w3id.org/italia/data/' + (ipa||'ipa') + '/' + seg + '/';
+  const idCol = cols.find(c=>/^(id|codice|cod|code|_id)$/i.test(c.trim())) || cols[0];
+  if (!mc || mc==='l0:Object') return '(nessuno scheletro - usa l0:Object solo se appropriato)';
+  return rows.map(r=>{
+    const id = String(r[idCol]||'').trim().replace(/[^a-zA-Z0-9_\-]/g,'-');
+    return '<'+base+id+'> a '+mc+' ;\n  # aggiungi qui le proprieta\n  .';
+  }).join('\n');
+})()}
+
 
 REGOLE:
 - Per ogni riga genera una risorsa RDF. La classe principale da usare \u00e8: ${getMainClass(ontos)} \u2014 OBBLIGATORIO, NON usare l0:Object se questa classe \u00e8 disponibile

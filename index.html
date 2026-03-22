@@ -542,7 +542,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.82</span>
+<span id="app-version">v2026.03.20.84</span>
 </footer>
 
 <script>
@@ -1167,7 +1167,8 @@ function parseAndPreviewCSV() {
   // Lancia AI-detect automaticamente se c'è una API key configurata
   const hasKey = (
     document.getElementById('mistral-key')?.value.trim() ||
-    document.getElementById('groq-key')?.value.trim() ||    document.getElementById('anthropic-key')?.value.trim() ||
+    document.getElementById('groq-key')?.value.trim() ||
+    document.getElementById('anthropic-key')?.value.trim() ||
     document.getElementById('ollama-key')?.value.trim()
   );
   if (hasKey) {
@@ -2121,7 +2122,7 @@ Cultural-ON selezionata → Museo=cis:Museum, Biblioteca=cis:Library, Teatro=cis
   CPV selezionata       → cpv:Person per persone fisiche (NON per brevetti o documenti)
   ADMS selezionata      → adms:SemanticAsset per brevetti, licenze, asset digitali, documenti
   RO selezionata        → ro:Role per ruoli e incarichi (usato insieme a cpv:Person o cov:Organization)
-  TI selezionata        → l0:EventOrSituation per eventi e situazioni temporali. NON usare poi:PointOfInterest (anche se ci sono coordinate). Le coordinate vanno come geo:lat/geo:long sul soggetto evento.
+  TI selezionata        → ti:TimeInterval per intervalli temporali, ti:TimeInstant per istanti
   QB selezionata        → qb:Observation per ogni riga di dati (OBBLIGATORIO). Aggiungi qb:DataSet come risorsa contenitore. Se L0 attiva: usa l0:Collection come superclasse del DataSet. Se SKOS attiva: usa skos:Concept per codici/categorie (es. fasce eta, tipologie). Le Observation devono avere sdmx-dimension:refPeriod o sdmx-dimension:timePeriod per l'anno, e sdmx-measure:obsValue per i valori numerici
   POI selezionata       → poi:PointOfInterest SOLO se nessuna classe più specifica è disponibile
   L0 selezionata        → l0:Agent per persone/organizzazioni generiche, l0:Object SOLO se nessun'altra ontologia specifica e' disponibile (es. ACCO, POI, CPSV, COV, CPV non sono attive). Se ACCO e' attiva usa acco:Accommodation non l0:Object. Con QB: usa l0:Collection per il DataSet contenitore
@@ -2550,7 +2551,7 @@ function forceMainClassInTTL(ttl, ontos, entityBase) {
   }
   const hasMain = ttl.indexOf(mainClass) >= 0;
   if (!hasMain) {
-    const re2 = /(<https?:\/\/[^>]+>)\s+a\s+([\w:]+)/g;
+    var re2 = /(<https?:\/\/[^>]+>)\s+a\s+([\w:]+)/g;
     ttl = ttl.replace(re2, function(m, uri, cls) {
       if (cls === "foaf:Agent") return m;
       if (KEEP.some(function(k){ return cls.indexOf(k) === 0; })) return m;
@@ -2721,17 +2722,15 @@ async function startConversion() {
       let llmTriples = prompt ? fixURIs(sanitizeTTL(cleanTTL(await callAI(prompt))), ipa) : '';
       // Merge: inietta le triple deterministiche dentro le risorse LLM
       let chunk;
-      // Strategia: LLM genera il TTL, deterministico aggiunge/corregge proprieta mappate.
-      // forceMainClassInTTL (applicato dopo) garantisce le classi corrette.
+      // Strategia: LLM ha priorità assoluta quando produce output.
+      // Il deterministico è solo fallback quando non c'è LLM (no API key).
       if (llmTriples && llmTriples.trim().length > 20) {
-        // Merge: LLM base + deterministico arricchisce con proprieta certe
-        chunk = removeDuplicatePredicates(removeEmptyTriples(
-          mergeDeterIntoLLM(sanitizeTTL(llmTriples, ontos), sanitizeTTL(deterTriples, ontos), entityBase, typeSegment)
-        ));
+        chunk = removeDuplicatePredicates(removeEmptyTriples(sanitizeTTL(llmTriples, ontos)));
       } else {
         chunk = removeEmptyTriples(sanitizeTTL(deterTriples, ontos));
       }
-            parts.push(chunk);
+      chunk = chunk.replace(/@prefix\s+\S+:\s*<[^>]+>\s*\.\n?/g, '').trim();
+      parts.push(chunk);
     }
 
     let ttl = deduplicatePrefixes(parts.join('\n\n'));

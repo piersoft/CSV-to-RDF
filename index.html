@@ -568,7 +568,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.73</span>
+<span id="app-version">v2026.03.20.74</span>
 </footer>
 
 <script>
@@ -2149,7 +2149,7 @@ Cultural-ON selezionata → Museo=cis:Museum, Biblioteca=cis:Library, Teatro=cis
   CPV selezionata       → cpv:Person per persone fisiche (NON per brevetti o documenti)
   ADMS selezionata      → adms:SemanticAsset per brevetti, licenze, asset digitali, documenti
   RO selezionata        → ro:Role per ruoli e incarichi (usato insieme a cpv:Person o cov:Organization)
-  TI selezionata        → ti:TimeInterval per intervalli temporali, ti:TimeInstant per istanti
+  TI selezionata        → l0:EventOrSituation per eventi e situazioni temporali. NON usare poi:PointOfInterest (anche se ci sono coordinate). Le coordinate vanno come geo:lat/geo:long sul soggetto evento.
   QB selezionata        → qb:Observation per ogni riga di dati (OBBLIGATORIO). Aggiungi qb:DataSet come risorsa contenitore. Se L0 attiva: usa l0:Collection come superclasse del DataSet. Se SKOS attiva: usa skos:Concept per codici/categorie (es. fasce eta, tipologie). Le Observation devono avere sdmx-dimension:refPeriod o sdmx-dimension:timePeriod per l'anno, e sdmx-measure:obsValue per i valori numerici
   POI selezionata       → poi:PointOfInterest SOLO se nessuna classe più specifica è disponibile
   L0 selezionata        → l0:Agent per persone/organizzazioni generiche, l0:Object SOLO se nessun'altra ontologia specifica e' disponibile (es. ACCO, POI, CPSV, COV, CPV non sono attive). Se ACCO e' attiva usa acco:Accommodation non l0:Object. Con QB: usa l0:Collection per il DataSet contenitore
@@ -2756,10 +2756,10 @@ async function startConversion() {
       let llmTriples = prompt ? fixURIs(sanitizeTTL(cleanTTL(await callAI(prompt))), ipa) : '';
       // Merge: inietta le triple deterministiche dentro le risorse LLM
       let chunk;
-      // Strategia: DETERMINISTICO ha priorita assoluta su classe e proprieta mappate.
-      // AI integra solo le proprieta non ancora coperte dal deterministico.
+      // Strategia: LLM genera il TTL, deterministico aggiunge/corregge proprieta mappate.
+      // forceMainClassInTTL (applicato dopo) garantisce le classi corrette.
       if (llmTriples && llmTriples.trim().length > 20) {
-        // Merge: deterministico sovrascrive AI su conflitti
+        // Merge: LLM base + deterministico arricchisce con proprieta certe
         chunk = removeDuplicatePredicates(removeEmptyTriples(
           mergeDeterIntoLLM(sanitizeTTL(llmTriples, ontos), sanitizeTTL(deterTriples, ontos), entityBase, typeSegment)
         ));

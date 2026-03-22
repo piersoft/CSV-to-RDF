@@ -567,7 +567,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.94</span>
+<span id="app-version">v2026.03.20.95</span>
 </footer>
 
 <script>
@@ -687,6 +687,11 @@ REGOLE IMPORTANTI:
 - Se i valori contengono "albergo", "hotel", "B&B", "stelle", "letti": usa ACCO + CLV + L0, NON COV.
 - POI: includi SEMPRE se ci sono colonne lat/lon con luoghi fisici (dae, defibrillatore, tipo_poi). COV NON va usato per luoghi fisici con coordinate.
 - Se colonne "tipo_poi","dae","defibrillatore" presenti: usa POI + CLV + L0, NON COV.
+- CPV: includi se ci sono colonne nome/cognome/codice_fiscale/data_nascita che riguardano persone fisiche. NON usare COV per persone fisiche.
+- GTFS: includi se ci sono colonne stop_id/stop_name/stop_lat/stop_lon/zone_id/route_id/trip_id che riguardano trasporto pubblico.
+- IoT: includi se ci sono colonne sensore/sensor/misura/valore/timestamp/proprieta_osservata che riguardano dati da sensori o dispositivi.
+- SMAPIT: includi se ci sono colonne codice_scuola/denominazione_istituto/tipo_scuola/ciclo_scolastico.
+- CLV: includi SEMPRE se ci sono colonne indirizzo/lat/lon/cap/comune/via/civico.
 - Se il CSV ha colonna "subject" con URI di istituti culturali → includi "Cultural-ON"
 
 Esempio di risposta valida: ["ACCO", "CLV", "L0"]
@@ -1605,6 +1610,11 @@ const ONTO_URI_TYPE = {
   'POI':         'point-of-interest',
   'CLV':         'place',
   'L0':          'resource',
+  'SMAPIT':      'school',
+  'IOT':         'sensor',
+  'RO':          'role',
+  'QB':          'observation',
+  'SM':          'organization',
 };
 
 // Mappa ontologia → classe RDF principale
@@ -1613,6 +1623,7 @@ const ONTO_MAIN_CLASS = {
   'PARK':        'park:ParkingFacility',
   'GTFS':        'gtfs:Stop',
   'CULTURAL-ON': 'cis:CulturalInstituteOrSite',
+  'Cultural-ON': 'cis:CulturalInstituteOrSite',
   'CPSV-AP':     'cpsv:PublicService',
   'COV':         'cov:PublicOrganization',
   'CPV':         'cpv:Person',
@@ -1622,10 +1633,13 @@ const ONTO_MAIN_CLASS = {
   'TI':          'l0:EventOrSituation',
   'QB':          'qb:Observation',
   'L0':          'l0:Object',
+  'SMAPIT':      'smapit:School',
+  'IOT':         'iot:Sensor',
+  'RO':          'ro:Role',
 };
 
 function getMainClass(ontos) {
-  const priority = ['ACCO','PARK','GTFS','CULTURAL-ON','CPSV-AP','QB','CPV','COV','TI','POI','CLV','ADMS','L0'];
+  const priority = ['GTFS','SMAPIT','ACCO','IOT','CULTURAL-ON','CPSV-AP','QB','CPV','COV','TI','POI','RO','CLV','ADMS','L0'];
   for (const onto of priority) {
     if (ontos.map(o => o.toUpperCase()).includes(onto)) {
       return ONTO_MAIN_CLASS[onto] || 'l0:Object';
@@ -2993,7 +3007,7 @@ async function validateTTL() {
   const tripleCount  = (ttl.match(/^\s+\S+\s+[^\n]+[;.]/gm) || []).length;
   const classesUsed  = [...new Set([...ttl.matchAll(/\ba\s+(\w[\w-]*:\w+)/g)].map(m=>m[1]))];
   infos.push(`${subjectCount} soggetti, ~${tripleCount} triple`);
-  infos.push(`Classi: ${classesUsed.join(', ')}`);
+  infos.push(`Classi: ${classesUsed.filter(c => c !== 'foaf:Agent').join(', ')}`);
 
   // ── 20. SCORE ─────────────────────────────────────────────────────────
   const totalIssues = errors.length * 3 + warnings.length;

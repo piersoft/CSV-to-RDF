@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.20.128 -->
+  <!-- build:v2026.03.20.129 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -567,7 +567,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.128</span>
+<span id="app-version">v2026.03.20.129</span>
 </footer>
 
 <script>
@@ -2450,6 +2450,11 @@ async function startDeterministicConversion() {
   if(!ontos.length){showStatus('Seleziona almeno una ontologia.');return;}
   var _btnC=document.getElementById('btn-convert');
   if(_btnC){_btnC.dataset.origText=_btnC.textContent;_btnC.textContent='⏳ Generazione...';_btnC.disabled=true;}
+  var _parsed3=detParseCSV(csvText);
+  var _nRows=_parsed3?_parsed3.length:0;
+  var _nCols=(_parsed3&&_parsed3[0])?Object.keys(_parsed3[0]).length:0;
+  var _btnC2=document.getElementById('btn-convert');
+  if(_btnC2){_btnC2.dataset.origText=_btnC2.textContent;_btnC2.textContent='Generazione...';_btnC2.disabled=true;}
   // Animazione progressiva — await per cedere thread al browser ad ogni step
   var _yield=function(msg){return new Promise(function(res){showStatus(msg);setTimeout(res,30);});};
   await _yield('Analisi struttura CSV ('+_nCols+' colonne, '+_nRows+' righe)...');

@@ -568,7 +568,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.74</span>
+<span id="app-version">v2026.03.20.75</span>
 </footer>
 
 <script>
@@ -1623,7 +1623,7 @@ const ONTO_MAIN_CLASS = {
 };
 
 function getMainClass(ontos) {
-  const priority = ['ACCO','PARK','GTFS','CULTURAL-ON','CPSV-AP','QB','CPV','COV','POI','CLV','TI','ADMS','L0'];
+  const priority = ['ACCO','PARK','GTFS','CULTURAL-ON','CPSV-AP','QB','CPV','COV','TI','POI','CLV','ADMS','L0'];
   for (const onto of priority) {
     if (ontos.map(o => o.toUpperCase()).includes(onto)) {
       return ONTO_MAIN_CLASS[onto] || 'l0:Object';
@@ -1635,7 +1635,7 @@ function getMainClass(ontos) {
 // Determina il tipo-risorsa URI in base alle ontologie selezionate
 function getEntityTypeSegment(ontos) {
   // Priorità: ontologie specializzate prima di quelle generiche
-  const priority = ['ACCO','PARK','GTFS','Cultural-ON','CPSV-AP','QB','CPV','COV','POI','CLV','TI','ADMS','L0'];
+  const priority = ['ACCO','PARK','GTFS','Cultural-ON','CPSV-AP','QB','CPV','COV','TI','POI','CLV','ADMS','L0'];
   for (const onto of priority) {
     if (ontos.map(o => o.toUpperCase()).includes(onto.toUpperCase())) {
       return ONTO_URI_TYPE[onto] || 'resource';
@@ -2568,7 +2568,8 @@ function forceMainClassInTTL(ttl, ontos, entityBase) {
   const mainClass = getMainClass(ontos);
   if (!mainClass || mainClass === "l0:Object" || !entityBase) return ttl;
   // Non sovrascrivere classi collegate (titolare, indirizzi, vocabolari)
-  const KEEP = ["foaf:","clv:","skos:","dct:","dcat:","rdfs:","owl:","geo:","poi:","iot:","cov:","cpv:","cis:","ro:","ti:"];
+  // KEEP: solo classi strutturalmente collegate, mai classi principali di ontologie
+  const KEEP = ["foaf:","clv:","skos:","dct:","dcat:","rdfs:","owl:","geo:","sm:","vcard:","schema:"];
   const esc = entityBase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const re = new RegExp("(<" + esc + "[^>]+>)\\s+a\\s+([\\w:]+)", "g");
   return ttl.replace(re, function(m, uri, cls) {

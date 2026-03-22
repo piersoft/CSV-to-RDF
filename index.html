@@ -559,7 +559,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.110</span>
+<span id="app-version">v2026.03.20.111</span>
 </footer>
 
 <script>
@@ -3147,46 +3147,33 @@ function showValidationReport({ errors, warnings, infos, terms, prefixMap }) {
 
 
 function updateStats(ttl) {
-  // Fix: rimuovi duplicati e label numeriche dall'output finale
-  {
-    const _outClean = document.getElementById('ttl-output');
-    if (_outClean && _outClean.value) {
-      _outClean.value = cleanTTL(_outClean.value);
-      var _fi=(document.getElementById('meta-ipa')||{value:'ipa'}).value.trim()||'ipa';
-      var _csvEl=document.getElementById('csv-input');
-      var _rows_fill=[];
-      if(_csvEl&&_csvEl.value.trim()){
-        var _csvLines=_csvEl.value.trim().split('\n');
-        var _csvHdr=_csvLines[0].split(',').map(function(h){return h.trim();});
-        for(var _ri=1;_ri<_csvLines.length;_ri++){
-          var _csvCells=_csvLines[_ri].split(',');
-          var _csvRow={};
-          _csvHdr.forEach(function(h,i){_csvRow[h]=(_csvCells[i]||'').trim();});
-          if(Object.values(_csvRow).some(function(v){return v!=='';}))
-            _rows_fill.push(_csvRow);
-        }
-      }
-      if(_rows_fill.length>0)_outClean.value=fillMissingConnectedResources(_outClean.value,_ontos,_rows_fill,_fi);
-      ttl = _outClean.value;
-    }
-  }
-  // Forza la classe principale corretta in base alle ontologie selezionate
-  const _ontos = Array.from(document.querySelectorAll('.pill.active')).map(p=>p.dataset.onto).filter(Boolean);
-  const _mc = getMainClass(_ontos);
-  const _out = document.getElementById('ttl-output');
-  if (_mc && _mc !== 'l0:Object' && _out && _out.value) {
-    // Calcola entityBase dall'IPA e dal tipo di risorsa
-    const _ipa = document.getElementById('meta-ipa')?.value?.trim() || 'ipa';
-    const _seg = getEntityTypeSegment(_ontos);
-    const _base = 'https://w3id.org/italia/data/' + _ipa + '/' + _seg + '/';
-    // Corregge il textarea se la classe principale manca
-    if (!_out.value.includes(_mc)) {
-      _out.value = forceMainClassInTTL(_out.value, _ontos, _base);
-    }
-    // Aggiorna anche il ttl locale usato per le statistiche
+  var _ontos = Array.from(document.querySelectorAll('.pill.active')).map(function(p){return p.dataset.onto;}).filter(Boolean);
+  var _mc = getMainClass(_ontos);
+  var _out = document.getElementById('ttl-output');
+  var _ipa = (document.getElementById('meta-ipa')||{value:'ipa'}).value.trim()||'ipa';
+  if (_out && _out.value) {
+    _out.value = cleanTTL(_out.value);
     ttl = _out.value;
+    if (_mc && _mc !== 'l0:Object' && !_out.value.includes(_mc)) {
+      var _seg = getEntityTypeSegment(_ontos);
+      var _base = 'https://w3id.org/italia/data/' + _ipa + '/' + _seg + '/';
+      _out.value = forceMainClassInTTL(_out.value, _ontos, _base);
+      ttl = _out.value;
+    }
+    var _csvEl = document.getElementById('csv-input');
+    var _rows = [];
+    if (_csvEl && _csvEl.value.trim()) {
+      var _lines = _csvEl.value.trim().split('\n');
+      var _hdr = _lines[0].split(',').map(function(h){return h.trim();});
+      for (var _i=1;_i<_lines.length;_i++){
+        var _cells=_lines[_i].split(',');
+        var _row={};
+        _hdr.forEach(function(h,i){_row[h]=(_cells[i]||'').trim();});
+        if(Object.values(_row).some(function(v){return v!=='';}))_rows.push(_row);
+      }
+    }
+    if(_rows.length>0){_out.value=fillMissingConnectedResources(_out.value,_ontos,_rows,_ipa);ttl=_out.value;}
   }
-  const lines = ttl.split('\n');
   document.getElementById('stat-triples').textContent  =
     lines.filter(l => l.trim() && !l.trim().startsWith('#') && !l.trim().startsWith('@')).length;
   document.getElementById('stat-prefixes').textContent =

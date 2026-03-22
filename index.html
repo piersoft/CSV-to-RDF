@@ -566,7 +566,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.123</span>
+<span id="app-version">v2026.03.20.124</span>
 </footer>
 
 <script>
@@ -2291,12 +2291,26 @@ function detGetMainOnto(ontos){var priority=['GTFS','SMAPIT','ACCO','IoT','Cultu
 function detFindColIdx(nh,cands){for(var i=0;i<cands.length;i++){var x=nh.indexOf(cands[i]);if(x>=0)return x;}return-1;}
 function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat','lon'].some(function(c){return nh.indexOf(c)>=0;});}
 function detHasTime(nh,ontos){return ontos.indexOf('TI')>=0&&['inizio','termine','data','quando'].some(function(c){return nh.indexOf(c)>=0;});}
-function detFormatLit(rule,val){if(!val)return null;var v=val.replace(/\\/g,'\\\\').replace(/"/g,'\\"');if(rule.type==='langlit')return'"'+v+'"@'+(rule.lang||'it');if(rule.type==='typed')return'"'+v+'"^^'+(rule.xsd||'xsd:string');if(rule.type==='mailto'){var _e=val.replace(/^mailto:/,'').trim();if(!_e||_e.indexOf('@')<0||/[\s<>]/.test(_e))return null;return'<mailto:'+_e+'>';}if(rule.type==='url'){var u=val.replace(/^<|>$/g,'').trim();if(!u||/[\s()<>"{}|\\^`]/.test(u))return null;if(u.indexOf('@')>=0)return null;if(!u.startsWith('http')&&!u.startsWith('ftp'))u='https://'+u;return'<'+u+'>';}return'"'+v+'"';}
+        if(rule.type==='mailto'){val=sanitizeEmailValue(val)||'';if(!val)return;
+          var _em=val.replace(/^mailto:/,'').trim().split(/[;\s]/)[0].replace(/,/g,'.');
+          if(!_em||_em.indexOf('@')<0||_em.split('@').length!==2)return null;
+          var _dom=_em.split('@')[1];if(!_dom||_dom.indexOf('.')<0||_dom.length<4)return null;
+          return '<mailto:'+_em+'>';
+        }
 function detFindRule(normH,ontos){if(ontos.indexOf('CPV')>=0&&normH==='nome')return{pred:'cpv:givenName',type:'langlit',lang:'it',onto:'CPV'};if(ontos.indexOf('QB')>=0&&normH==='sesso')return{pred:'sdmx-dimension:sex',type:'literal'};if(ontos.indexOf('QB')>=0&&normH==='cittadinanza')return{pred:'sdmx-attribute:obsStatus',type:'literal'};var rule=DET_COL_RULES[normH];if(!rule)return null;if(rule.onto&&ontos.indexOf(rule.onto)<0)return null;return rule;}
 function detGetTimeVal(nh,row){var tc=['inizio','data','quando','published','data_inizio'];for(var i=0;i<tc.length;i++){var x=nh.indexOf(tc[i]);if(x>=0&&row[x]&&row[x].trim())return row[x].trim();}return null;}
 function detParseCSV(text){return text.trim().split(/\r?\n/).map(function(line){var res=[],cur='',inQ=false;for(var i=0;i<line.length;i++){var c=line[i];if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){res.push(cur.trim());cur='';}else cur+=c;}res.push(cur.trim());return res;});}
 function detAddPrefix(onto,set){var m={ACCO:'acco',GTFS:'gtfs',POI:'poi','IoT':'iot',COV:'cov',CPV:'cpv',RO:'ro',SMAPIT:'smapit',QB:'qb',CLV:'clv',TI:'ti',CulturalON:'cis',ADMS:'adms',CPSV:'cpsv',L0:'l0'};if(m[onto])set.add(m[onto]);}
 
+function sanitizeEmailValue(v){
+  if(!v)return v;
+  v=v.trim().split(/[;\s]/)[0]; // prende solo prima email
+  v=v.replace(/,/g,"."); // virgola→punto (errore comune nei CSV PA)
+  if(v.indexOf("@")<0)return ""; // non è un email
+  var parts=v.split("@");
+  if(parts.length!==2||parts[1].indexOf(".")<0)return ""; // dominio malformato
+  return v;
+}
 function buildDeterministicTTL(csvText,ontos,ipa,ente){
   if(!csvText||!csvText.trim())return'';
   if(!ontos||!ontos.length)return'';
@@ -2966,6 +2980,12 @@ function cleanTTL(text) {
   text = text.replace(/<[^>]*(\s|\(|\))[^>]*>/g, function(m){
     if(/^<mailto:[^\s<>]+>$/.test(m)||/^<https?:\/\/[^\s<>]+>$/.test(m)||/^<[^\s<>]+>$/.test(m)) return m;
     return '"'+m.slice(1,-1).replace(/"/g,"'")+'"+"@it"';
+  });
+  // Fix 0c: converti oggetti "prefisso-non-dichiarato:localname" in literal
+  var _kpArr=['rdf','rdfs','owl','xsd','dct','dcat','foaf','skos','geo','vcard','schema','l0','clv','sm','ti','acco','poi','iot','cov','cpv','ro','smapit','gtfs','cis','adms','cpsv','qb','sdmx-dimension','sdmx-measure','sdmx-attribute'];
+  text=text.replace(/([^<"\n])(\b([a-z][a-z0-9-]*):(\S+?))(\s*[;.])/g,function(m,pre,full,pfx,loc,end){
+    if(_kpArr.indexOf(pfx)>=0)return m;
+    return pre+'"'+full+'"@it'+end;
   });
   // Fix 0b: rimuovi triple con prefissi non standard
   var _kpfx=/^(rdf|rdfs|owl|xsd|dct|dcat|foaf|skos|geo|vcard|schema|l0|clv|sm|ti|acco|poi|iot|cov|cpv|ro|smapit|gtfs|cis|adms|cpsv|qb|sdmx-dimension|sdmx-measure|sdmx-attribute):/;

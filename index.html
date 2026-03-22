@@ -1,27 +1,3 @@
-<p>
-          La PA ha gia' pubblicato il suo dataset su dati.gov.it o sul portale opendata locale. Questo strumento genera la
-          <strong>distribuzione TTL</strong> da aggiungere al catalogo, arricchendo i dati con le ontologie ufficiali di
-          <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener">dati-semantic-assets</a>.
-        </p>
-        <div style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:1rem;">
-          <div style="background:rgba(255,255,255,0.12);border-radius:8px;padding:.75rem 1rem;min-width:160px;">
-            <div style="font-weight:700;font-size:.85rem;letter-spacing:.05em;opacity:.7;margin-bottom:.3rem;">STEP 1</div>
-            <div style="font-size:.95rem;">Incolla il <strong>CSV</strong> con le intestazioni</div>
-          </div>
-          <div style="background:rgba(255,255,255,0.12);border-radius:8px;padding:.75rem 1rem;min-width:160px;">
-            <div style="font-weight:700;font-size:.85rem;letter-spacing:.05em;opacity:.7;margin-bottom:.3rem;">STEP 2</div>
-            <div style="font-size:.95rem;">Inserisci <strong>codice IPA</strong> e nome ente</div>
-          </div>
-          <div style="background:rgba(255,255,255,0.12);border-radius:8px;padding:.75rem 1rem;min-width:160px;">
-            <div style="font-weight:700;font-size:.85rem;letter-spacing:.05em;opacity:.7;margin-bottom:.3rem;">STEP 3</div>
-            <div style="font-size:.95rem;">Clicca <strong>AI-Detect</strong> o scegli le ontologie</div>
-          </div>
-          <div style="background:rgba(255,255,255,0.12);border-radius:8px;padding:.75rem 1rem;min-width:160px;">
-            <div style="font-weight:700;font-size:.85rem;letter-spacing:.05em;opacity:.7;margin-bottom:.3rem;">STEP 4</div>
-            <div style="font-size:.95rem;">Clicca <strong>Genera TTL</strong> e scarica</div>
-          </div>
-        </div>
-        <p style="margin-top:.75rem;font-size:.85rem;opacity:.8;">Senza API key: generazione <strong>istantanea</strong> con motore deterministico. Con API key: usa l'AI per CSV con colonne non standard.</p><!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
@@ -589,10 +565,64 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.118</span>
+<span id="app-version">v2026.03.20.119</span>
 </footer>
 
 <script>
+// Carica il corpus fixtures_v7.json per il rilevamento ontologie basato su dati reali
+window._corpus = null;
+fetch('https://raw.githubusercontent.com/piersoft/CSV-to-RDF/main/fixtures_v7.json')
+  .then(function(r){return r.json();})
+  .then(function(data){
+    window._corpus = data;
+    // Costruisce l'indice colonne→ontologie dal corpus reale
+    window._corpusIndex = buildCorpusIndex(data);
+  })
+  .catch(function(){
+    // Corpus non disponibile — usa solo il motore deterministico base
+    window._corpus = null;
+  });
+
+function buildCorpusIndex(data) {
+  var idx = {}; // colonna_normalizzata → {onto: count}
+  (data.corpus||[]).forEach(function(item){
+    var ontos = item.tema_onto || [];
+    var headers = item.headers || [];
+    headers.forEach(function(h){
+      if(!h) return;
+      var n = h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');
+      if(!idx[n]) idx[n] = {};
+      ontos.forEach(function(o){
+        idx[n][o] = (idx[n][o]||0) + 1;
+      });
+    });
+  });
+  return idx;
+}
+
+// Arricchisce il detect con i dati del corpus
+function detectFromCorpus(headers) {
+  if(!window._corpusIndex) return [];
+  var scores = {};
+  headers.forEach(function(h){
+    var n = h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');
+    var colOntos = window._corpusIndex[n];
+    if(!colOntos) return;
+    Object.keys(colOntos).forEach(function(onto){
+      scores[onto] = (scores[onto]||0) + colOntos[onto];
+    });
+  });
+  // Normalizza i nomi ontologia
+  var ontoMap = {'IOT-AP_IT':'IoT','COV-AP_IT':'COV','RO-AP_IT':'RO',
+    'CULTURAL-ON':'CulturalON','CPSV-AP':'CPSV','CPVAPIT':'CPV'};
+  var result = Object.keys(scores)
+    .filter(function(o){ return scores[o] >= 3; }) // soglia minima
+    .map(function(o){ return ontoMap[o] || o; })
+    .filter(function(o){ return ['QB','POI','CPV','CLV','CPSV','TI','ACCO',
+      'Cultural-ON','CulturalON','ADMS','RO','COV','GTFS','IoT','SMAPIT','L0'].indexOf(o) >= 0; });
+  return [...new Set(result)];
+}
+
 // ── ESEMPIO ──────────────────────────────────────────────────
 const EXAMPLE_CSV = `id,denominazione,indirizzo,comune,provincia,latitudine,longitudine,telefono,email,accessibile_h24
 1,DAE Stazione Centrale,Piazza Aldo Moro 1,Bari,BA,41.1180,16.8717,0805772500,dae@comune.bari.it,si
@@ -767,6 +797,11 @@ function detectOntologiesDeterministic(headers, rows) {
           'distribution_url','asset','ontologia','vocabolario']))
     result.add('ADMS');
 
+  // Arricchisci con il corpus se disponibile
+  if(window._corpusIndex) {
+    var _corpusOntos = detectFromCorpus(headers);
+    _corpusOntos.forEach(function(o){ result.add(o); });
+  }
   // L0 — sempre aggiunto come base
   result.add('L0');
 

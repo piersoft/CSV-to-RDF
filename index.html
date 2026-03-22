@@ -406,7 +406,7 @@
               <div class="col-12">
                 <label class="lbl">API Key OpenAI</label>
                 <div style="display:flex;gap:6px">
-                  <input type="password" class="inp" id="openai-key" oninput="onApiKeyChange()" placeholder="Incolla la tua API key OpenAI (sk-...)"/>
+                  <div style="display:flex;gap:6px"><input type="password" class="inp" id="openai-key" oninput="onApiKeyChange()" placeholder="Incolla la tua API key OpenAI (sk-...)" style="flex:1"/><button class="apikey-toggle" onclick="toggleKey('openai-key')">&#128065;</button></div>
                   <button class="apikey-toggle" onclick="toggleKey('openai-key')">&#128065;</button>
                 </div>
               </div>
@@ -568,7 +568,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.69</span>
+<span id="app-version">v2026.03.20.71</span>
 </footer>
 
 <script>
@@ -2566,9 +2566,14 @@ async function callAI(prompt) {
 function forceMainClassInTTL(ttl, ontos, entityBase) {
   const mainClass = getMainClass(ontos);
   if (!mainClass || mainClass === "l0:Object" || !entityBase) return ttl;
+  // Non sovrascrivere classi collegate (titolare, indirizzi, vocabolari)
+  const KEEP = ["foaf:","clv:","skos:","dct:","dcat:","rdfs:","owl:","geo:","poi:","iot:","cov:","cpv:","cis:","ro:","ti:"];
   const esc = entityBase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const re = new RegExp("(<" + esc + "[^>]+>)\\s+a\\s+([\\w:]+)", "g");
-  return ttl.replace(re, function(m, uri) { return uri + " a " + mainClass; });
+  return ttl.replace(re, function(m, uri, cls) {
+    if (KEEP.some(function(k){ return cls.indexOf(k) === 0; })) return m;
+    return uri + " a " + mainClass;
+  });
 }
 
 function cleanTTL(text) {

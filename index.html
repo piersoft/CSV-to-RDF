@@ -542,7 +542,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.80</span>
+<span id="app-version">v2026.03.20.81</span>
 </footer>
 
 <script>
@@ -2517,7 +2517,7 @@ REGOLE ASSOLUTE:
       'anthropic-version': '2023-06-01',
       'anthropic-dangerous-direct-browser-access': 'true'
     },
-    body: safeJSON({
+    body: JSON.stringify({
       model,
       max_tokens: 8000,
       system: systemPrompt,
@@ -2545,7 +2545,7 @@ async function callOpenAI(prompt) {
   const resp = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {'Content-Type':'application/json','Authorization':'Bearer '+key},
-    body: safeJSON({model, messages:[{role:'user',content:prompt}], temperature:0.1, max_tokens:4000})
+    body: JSON.stringify({model, messages:[{role:'user',content:prompt}], temperature:0.1, max_tokens:4000})
   });
   if (!resp.ok) {
     const e = await resp.json().catch(()=>({error:{message:resp.statusText}}));
@@ -2562,7 +2562,7 @@ async function callMistral(prompt) {
   const res = await fetch('https://api.mistral.ai/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-    body: safeJSON({ model, messages: [{ role: 'user', content: prompt }], temperature: 0.1, max_tokens: 32000 })
+    body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], temperature: 0.1, max_tokens: 32000 })
   });
   if (!res.ok) { const e = await res.json(); throw new Error(e.message || `Mistral error ${res.status}`); }
   return (await res.json()).choices[0].message.content;
@@ -2575,7 +2575,7 @@ async function callGroq(prompt) {
   const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-    body: safeJSON({ model, messages: [{ role: 'user', content: prompt }], temperature: 0.1, max_tokens: 32000 })
+    body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], temperature: 0.1, max_tokens: 32000 })
   });
   if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || `Groq error ${res.status}`); }
   return (await res.json()).choices[0].message.content;

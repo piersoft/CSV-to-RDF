@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.20.120 -->
+  <!-- build:v2026.03.20.125 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -220,9 +220,11 @@
 
       <!-- CSV -->
       <div class="card-pa">
-        <div class="card-head blue">📄 STEP 1 — Incolla il CSV</div>
+        <div class="card-head blue">📄 STEP 1 — Incolla o carica un CSV</div>
         <div class="card-body-pa">
           <label class="lbl">Contenuto CSV (con intestazioni)</label>
+          <p style="font-size:.78rem;color:var(--dg-muted);margin:.2rem 0 .4rem;">Non hai un CSV? Usa <strong>Carica esempio</strong> per vedere i formati per ontologia e usali come schema.</p>
+          <p style="font-size:.78rem;color:var(--dg-muted);margin:.2rem 0 .4rem;">Non hai un CSV? Usa <strong>Carica esempio</strong> per vedere i formati per ontologia.</p>
           <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;align-items:center">
             <button class="btn-sec" style="font-size:0.8rem;padding:0.35rem 0.8rem" onclick="document.getElementById('file-input').click()">📂 Carica file CSV</button>
             <input type="file" accept=".csv,.tsv,.txt" id="file-input" style="display:none">
@@ -2295,7 +2297,7 @@ function detHasTime(nh,ontos){return ontos.indexOf('TI')>=0&&['inizio','termine'
           var _em=val.replace(/^mailto:/,'').trim().split(/[;\s]/)[0].replace(/,/g,'.');
           if(!_em||_em.indexOf('@')<0||_em.split('@').length!==2)return null;
           var _dom=_em.split('@')[1];if(!_dom||_dom.indexOf('.')<0||_dom.length<4)return null;
-          return '<mailto:'+_em+'>';
+          return '"'+_em+'"^^xsd:string';
         }
 function detFindRule(normH,ontos){if(ontos.indexOf('CPV')>=0&&normH==='nome')return{pred:'cpv:givenName',type:'langlit',lang:'it',onto:'CPV'};if(ontos.indexOf('QB')>=0&&normH==='sesso')return{pred:'sdmx-dimension:sex',type:'literal'};if(ontos.indexOf('QB')>=0&&normH==='cittadinanza')return{pred:'sdmx-attribute:obsStatus',type:'literal'};var rule=DET_COL_RULES[normH];if(!rule)return null;if(rule.onto&&ontos.indexOf(rule.onto)<0)return null;return rule;}
 function detGetTimeVal(nh,row){var tc=['inizio','data','quando','published','data_inizio'];for(var i=0;i<tc.length;i++){var x=nh.indexOf(tc[i]);if(x>=0&&row[x]&&row[x].trim())return row[x].trim();}return null;}
@@ -2432,6 +2434,8 @@ async function startDeterministicConversion() {
   var ontos = Array.from(document.querySelectorAll('.pill.active')).map(function(p){return p.dataset.onto;}).filter(Boolean);
   if(!csvText){showStatus('Nessun CSV caricato.');return;}
   if(!ipa){showStatus('? Inserisci il Codice IPA dell\'ente titolare (STEP 2).', 'error');return;}
+  var _ipav=(document.getElementById('meta-ipa')||{value:''}).value.trim();
+  if(!_ipav){showStatus('⚠️ Inserisci il codice IPA nel STEP 2.','error');return;}
   if(!ontos.length){showStatus('Seleziona almeno una ontologia.');return;}
   var _btnC=document.getElementById('btn-convert');
   if(_btnC){_btnC.dataset.origText=_btnC.textContent;_btnC.textContent='⏳ Generazione...';_btnC.disabled=true;}

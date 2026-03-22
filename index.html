@@ -273,7 +273,7 @@
           <div class="provider-tabs">
             <button class="provider-tab active" data-provider="mistral"   onclick="switchProvider('mistral')">🟠 Mistral</button>
             <button class="provider-tab"        data-provider="groq"      onclick="switchProvider('groq')">⚡ Groq</button>
-            <button class="provider-tab"        data-provider="gemini"    onclick="switchProvider('gemini')">✨ Gemini</button>
+            
             <button class="provider-tab"        data-provider="ollama"    onclick="switchProvider('ollama')">🦙 Ollama Cloud</button>
               <button class="provider-tab" data-provider="openai" onclick="switchProvider('openai')">&#x1F7E2; OpenAI</button>
             <button class="provider-tab"        data-provider="anthropic" onclick="switchProvider('anthropic')">🔴 Anthropic</button>
@@ -322,32 +322,6 @@
             <div class="info-note mt-2">⚡ <a href="https://console.groq.com" target="_blank" rel="noopener noreferrer">console.groq.com</a> — veloce, rate limit sul piano free.</div>
           </div>
 
-          <div class="provider-panel" id="panel-gemini">
-            <div class="row g-2">
-              <div class="col-12">
-                <label class="lbl">API Key</label>
-                <div class="apikey-wrap">
-                  <input type="password" class="inp" id="gemini-key" oninput="onApiKeyChange()" onpaste="setTimeout(onApiKeyChange,100)" onchange="onApiKeyChange()" placeholder="Incolla la tua API key Google AI Studio..."/>
-                  <button class="apikey-toggle" onclick="toggleKey('gemini-key')">👁</button>
-                </div>
-              </div>
-              <div class="col-12">
-                <label class="lbl">Modello</label>
-                <select class="inp" id="gemini-model">
-                  <option value="gemini-2.0-flash">gemini-2.0-flash (consigliato)</option>
-                  <option value="gemini-2.0-flash-lite">gemini-2.0-flash-lite</option>
-                  <option value="gemini-1.5-flash">gemini-1.5-flash</option>
-                  <option value="gemini-1.5-pro">gemini-1.5-pro</option>
-                </select>
-              </div>
-            </div>
-            <div class="info-note mt-2">✨ <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a> — piano free: 1500 req/giorno, 1M token/min.</div>
-          </div>
-
-
-
-
-          <!-- OLLAMA CLOUD -->
           <div class="provider-panel" id="panel-ollama">
             <div class="row g-2">
               <div class="col-12">
@@ -568,7 +542,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.75</span>
+<span id="app-version">v2026.03.20.76</span>
 </footer>
 
 <script>
@@ -587,7 +561,7 @@ function switchProvider(p) {
   document.querySelectorAll('.provider-tab').forEach(t =>
     t.classList.toggle('active', t.dataset.provider === p)
   );
-  ['mistral','groq','gemini','ollama','anthropic','openai'].forEach(id => {
+  ['mistral','groq','ollama','anthropic','openai'].forEach(id => {
     const el = document.getElementById('panel-' + id);
     if (el) el.classList.toggle('active', id === p);
   });
@@ -1194,7 +1168,7 @@ function parseAndPreviewCSV() {
   const hasKey = (
     document.getElementById('mistral-key')?.value.trim() ||
     document.getElementById('groq-key')?.value.trim() ||
-    document.getElementById('gemini-key')?.value.trim() ||
+
     document.getElementById('anthropic-key')?.value.trim() ||
     document.getElementById('ollama-key')?.value.trim()
   );
@@ -2556,65 +2530,14 @@ REGOLE ASSOLUTE:
 }
 
 async function callAI(prompt) {
-  if      (currentProvider === 'openai')   return await callOpenAI(prompt);
-  if      (currentProvider === 'mistral') return await callMistral(prompt);
-  else if (currentProvider === 'groq')    return await callGroq(prompt);
-  else if (currentProvider === 'gemini')  return await callGemini(prompt);
-  else if (currentProvider === 'ollama')   return await callOllama(prompt);
-  else if (currentProvider === 'anthropic') return await callAnthropic(prompt);
+  const currentProvider = document.querySelector('.provider-tab.active')?.dataset?.provider || 'mistral';
+  if (currentProvider === 'openai')    return await callOpenAI(prompt);
+  if (currentProvider === 'mistral')   return await callMistral(prompt);
+  if (currentProvider === 'groq')      return await callGroq(prompt);
+  if (currentProvider === 'ollama')    return await callOllama(prompt);
+  if (currentProvider === 'anthropic') return await callAnthropic(prompt);
+  throw new Error('Provider non supportato: ' + currentProvider);
 }
-
-function forceMainClassInTTL(ttl, ontos, entityBase) {
-  const mainClass = getMainClass(ontos);
-  if (!mainClass || mainClass === "l0:Object" || !entityBase) return ttl;
-  // Non sovrascrivere classi collegate (titolare, indirizzi, vocabolari)
-  // KEEP: solo classi strutturalmente collegate, mai classi principali di ontologie
-  const KEEP = ["foaf:","clv:","skos:","dct:","dcat:","rdfs:","owl:","geo:","sm:","vcard:","schema:"];
-  const esc = entityBase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const re = new RegExp("(<" + esc + "[^>]+>)\\s+a\\s+([\\w:]+)", "g");
-  return ttl.replace(re, function(m, uri, cls) {
-    if (KEEP.some(function(k){ return cls.indexOf(k) === 0; })) return m;
-    return uri + " a " + mainClass;
-  });
-}
-
-function cleanTTL(text) {
-  // Rimuove backtick e markdown
-  text = text
-    .replace(/\bl0:name\s+"([^"@\n]+)"\s*([.;])/g, 'l0:name "$1"@it $2')
-    .replace(/^```\w*\s*\n?/gim, '')
-    .replace(/\n?```\s*$/gim, '')
-    .replace(/```/g, '');
-  // Rimuove righe di testo in prosa prima delle triple Turtle
-  // Una riga TTL valida inizia con @prefix, <, #, spazio/tab, o è vuota
-  const lines = text.split('\n');
-  const ttlLines = [];
-  let foundFirstTriple = false;
-  for (const line of lines) {
-    const t = line.trim();
-    if (!foundFirstTriple) {
-      // Cerca la prima riga TTL valida
-      if (t.startsWith('@prefix') || t.startsWith('<') || t.startsWith('#') || t === '') {
-        foundFirstTriple = true;
-        ttlLines.push(line);
-      }
-      // Salta righe di prosa (testo normale non TTL)
-    } else {
-      ttlLines.push(line);
-    }
-  }
-  return ttlLines.join('\n').trim();
-}
-
-
-
-// Helper: JSON.stringify con escape Unicode >127 per compatibilità fetch/ISO-8859-1
-function safeJSON(obj) {
-  return JSON.stringify(obj).replace(/[\u0080-\uFFFF]/g, function(c) {
-    return '\\u' + ('0000' + c.charCodeAt(0).toString(16)).slice(-4);
-  });
-}
-
 async function callOpenAI(prompt) {
   const key = document.getElementById('openai-key')?.value?.trim();
   if (!key) throw new Error('Inserisci la API key OpenAI.');
@@ -2657,23 +2580,6 @@ async function callGroq(prompt) {
   if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || `Groq error ${res.status}`); }
   return (await res.json()).choices[0].message.content;
 }
-
-async function callGemini(prompt) {
-  const key   = document.getElementById('gemini-key').value.trim();
-  const model = document.getElementById('gemini-model').value;
-  if (!key) throw new Error('Inserisci la API key Gemini.');
-  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: safeJSON({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.1, maxOutputTokens: 32000 } })
-  });
-  if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || `Gemini error ${res.status}`); }
-  return (await res.json()).candidates?.[0]?.content?.parts?.[0]?.text || '';
-}
-
-
-// ── CONVERSIONE ───────────────────────────────────────────────
-const CHUNK_SIZE = 25;
 
 async function startConversion() {
   const csvText = document.getElementById('csv-input').value.trim();

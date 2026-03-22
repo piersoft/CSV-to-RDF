@@ -16,13 +16,16 @@ Lo strumento usa un **motore deterministico** basato su 274 dataset reali di dat
 Incolla il contenuto del tuo CSV (con intestazioni nella prima riga) oppure carica un file .csv.
 Per risultati ottimali, usa i nomi colonna standard (vedi tabella sotto).
 
-**STEP 2 — Compila i metadati**
+
+**STEP 2 (OPZIONALE) — Seleziona le ontologie**
+Clicca "AI-Detect" per rilevare automaticamente le ontologie adatte al tuo CSV,
+oppure attiva/disattiva manualmente le pillole delle ontologie.
+
+
+**STEP 3 — Compila i metadati**
 Inserisci il codice IPA del tuo ente e il nome dell'ente titolare del dato.
 Questi vengono usati per costruire gli URI delle risorse RDF.
 
-**STEP 3 — Seleziona le ontologie**
-Clicca "AI-Detect" per rilevare automaticamente le ontologie adatte al tuo CSV,
-oppure attiva/disattiva manualmente le pillole delle ontologie.
 
 **STEP 4 — Genera il TTL**
 Clicca "Genera TTL":

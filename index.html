@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.198 -->
+  <!-- build:v2026.03.23.200 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -238,6 +238,7 @@
             <span id="file-name" style="font-size:0.75rem;color:var(--dg-muted);font-family:var(--mono)"></span>
           </div>
           <textarea class="inp csv-area" id="csv-input" aria-label="Incolla qui il contenuto del file CSV"
+            oninput="window._exampleLocked = false; clearTimeout(window._csvDebounce); window._csvDebounce = setTimeout(function(){ if(document.getElementById('csv-input').value.trim()) parseAndPreviewCSV(); }, 400);"
             placeholder="Incolla qui il contenuto del tuo file CSV...&#10;&#10;id,nome,indirizzo,latitudine,longitudine&#10;1,Teatro Comunale,Piazza Garibaldi,40.604,17.231"></textarea>
           <div class="d-flex gap-2 mt-2 flex-wrap">
             <button class="btn-sec" onclick="parseAndPreviewCSV()">👁 Anteprima</button>
@@ -654,7 +655,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.198</span>
+<span id="app-version">v2026.03.23.200</span>
 </footer>
 
 <script>
@@ -2796,6 +2797,23 @@ var DET_COL_NORM={'osm_id':'id','osm_type':'_skip','osm_url':'sitoweb','indoor':
 var DET_URI_SEG={ACCO:'accommodation-facility',GTFS:'stop',POI:'point-of-interest','IoT':'sensor',COV:'public-organization',CPV:'person',RO:'role',SMAPIT:'school',QB:'observation',CLV:'address',TI:'event',CulturalON:'cultural-institute',ADMS:'asset',CPSV:'service',PARK:'parking-facility',PublicContract:'public-contract',Route:'route',RPO:'role-in-organization',Learning:'course',Transparency:'transparency-obligation',Indicator:'indicator',POT:'price-specification',CPEV:'public-event',AccessCondition:'access-condition',AtlasOfPaths:'path',CulturalHeritage:'cultural-heritage',Project:'project',MU:'measurement',NDC:'data-service'};
 var DET_CLASS={ACCO:'acco:Accommodation',GTFS:'gtfs:Stop',POI:'poi:PointOfInterest','IoT':'iot:Sensor',COV:'cov:PublicOrganization',CPV:'cpv:Person',RO:'ro:Role',SMAPIT:'smapit:School',QB:'qb:Observation',CLV:'clv:Address',TI:'l0:EventOrSituation',CulturalON:'cis:CulturalInstituteOrSite','Cultural-ON':'cis:CulturalInstituteOrSite',ADMS:'adms:SemanticAsset',CPSV:'cpsv:PublicService','CPSV-AP':'cpsv:PublicService',PARK:'park:ParkingFacility',PublicContract:'pc:Contract',Route:'route:Route',RPO:'rpo:RoleInOrganization',Learning:'learn:Course',Transparency:'tr:TransparencyObligation',Indicator:'indicator:Indicator',POT:'pot:PriceSpecification',CPEV:'cpev:PublicEvent',AccessCondition:'ac:AccessCondition',AtlasOfPaths:'aop:Path',CulturalHeritage:'ch:CulturalHeritage',Project:'prj:PublicInvestmentProject',MU:'mu:Value',NDC:'ndc:DataService'};
 function detGetMainOnto(ontos){var priority=['GTFS','SMAPIT','ACCO','IoT','CulturalON','Cultural-ON','CulturalHeritage','PublicContract','RPO','Route','AtlasOfPaths','Learning','Transparency','Indicator','PARK','POT','CPEV','AccessCondition','Project','MU','NDC','CPSV-AP','RO','ADMS','TI','CPV','COV','POI','QB','CLV','L0'];for(var i=0;i<priority.length;i++){if(ontos.indexOf(priority[i])>=0)return priority[i];}return ontos[0]||'L0';}
+function detFormatLit(rule,val){
+  if(!val&&val!==0)return null;
+  val=String(val).trim();if(!val)return null;
+  var BQ='\\"'; // backslash + virgoletta per Turtle
+  if(rule.type==='skip')return null;
+  if(rule.type==='langlit')return'"'+val.replace(/"/g,BQ)+'"@'+(rule.lang||'it');
+  if(rule.type==='literal')return'"'+val.replace(/"/g,BQ)+'"^^xsd:string';
+  if(rule.type==='decimal'){var n=parseFloat(val);return isNaN(n)?null:'"'+n+'"^^xsd:decimal';}
+  if(rule.type==='integer'){var n2=parseInt(val);return isNaN(n2)?null:'"'+n2+'"^^xsd:integer';}
+  if(rule.type==='boolean'){var b=val.toLowerCase();return(b==='si'||b==='true'||b==='1'||b==='yes')?'"true"^^xsd:boolean':'"false"^^xsd:boolean';}
+  if(rule.type==='date'){var d=val.replace(/\//g,'-');return'"'+d+'"^^xsd:date';}
+  if(rule.type==='datetime')return'"'+val+'"^^xsd:dateTime';
+  if(rule.type==='mailto'){var em=sanitizeEmailValue(val);if(!em)return null;return'"'+em+'"^^xsd:string';}
+  if(rule.type==='url'){var u=val.replace(/^<|>$/g,'').trim();if(!u||/[\s()<>"@]/.test(u)||/^\(/.test(u))return null;if(!u.startsWith('http')&&!u.startsWith('ftp'))u='https://'+u;return'<'+u+'>';}
+  if(rule.type==='phone')return'"'+val+'"^^xsd:string';
+  return'"'+val.replace(/"/g,'\\"')+'"@it';
+}
 function buildDeterministicTTL(csvText,ontos,ipa,ente){
   if(!csvText||!csvText.trim())return'';
   if(!ontos||!ontos.length)return'';
@@ -2851,23 +2869,6 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       var rule=detFindRule(normH,ontos);
       if(!rule){var _n=detNormH(origH);if(_n==='_skip'||_n.startsWith('_'))return;if(val)triples.push({pred:'rdfs:comment',val:origH+': '+val,type:'langlit',lang:'it',unmapped:true});return;}
       if(rule.type==='skip')return;
-function detFormatLit(rule,val){
-  if(!val&&val!==0)return null;
-  val=String(val).trim();if(!val)return null;
-  var BQ='\\"'; // backslash + virgoletta per Turtle
-  if(rule.type==='skip')return null;
-  if(rule.type==='langlit')return'"'+val.replace(/"/g,BQ)+'"@'+(rule.lang||'it');
-  if(rule.type==='literal')return'"'+val.replace(/"/g,BQ)+'"^^xsd:string';
-  if(rule.type==='decimal'){var n=parseFloat(val);return isNaN(n)?null:'"'+n+'"^^xsd:decimal';}
-  if(rule.type==='integer'){var n2=parseInt(val);return isNaN(n2)?null:'"'+n2+'"^^xsd:integer';}
-  if(rule.type==='boolean'){var b=val.toLowerCase();return(b==='si'||b==='true'||b==='1'||b==='yes')?'"true"^^xsd:boolean':'"false"^^xsd:boolean';}
-  if(rule.type==='date'){var d=val.replace(/\//g,'-');return'"'+d+'"^^xsd:date';}
-  if(rule.type==='datetime')return'"'+val+'"^^xsd:dateTime';
-  if(rule.type==='mailto'){var em=sanitizeEmailValue(val);if(!em)return null;return'"'+em+'"^^xsd:string';}
-  if(rule.type==='url'){var u=val.replace(/^<|>$/g,'').trim();if(!u||/[\s()<>"@]/.test(u)||/^\(/.test(u))return null;if(!u.startsWith('http')&&!u.startsWith('ftp'))u='https://'+u;return'<'+u+'>';}
-  if(rule.type==='phone')return'"'+val+'"^^xsd:string';
-  return'"'+val.replace(/"/g,'\"')+'"@it';
-}
 
       var litVal=detFormatLit(rule,val);
       if(litVal)triples.push({pred:rule.pred,val:litVal,raw:true});

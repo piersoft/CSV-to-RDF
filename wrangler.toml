@@ -1,0 +1,14 @@
+name = "csv2rdf"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+[build]
+# Il worker è un singolo file JS, nessun build step necessario
+
+# Per deployare:
+#   npm install -g wrangler
+#   wrangler login
+#   wrangler deploy
+#
+# L'endpoint sarà: https://csv2rdf.{tuo-account}.workers.dev
+# oppure con dominio custom: https://csv2rdf.piersoft.workers.dev

@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.20.149 -->
+  <!-- build:v2026.03.20.150 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -575,7 +575,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.149</span>
+<span id="app-version">v2026.03.20.150</span>
 </footer>
 
 <script>
@@ -738,8 +738,14 @@ function detectOntologiesDeterministic(headers, rows) {
 
   var result = new Set();
 
-  // CLV — sempre se indirizzo/lat/lon
-  if(has(['lat','lon','indirizzo','via','civico','comune','cap','latitudine','longitudine','stop_lat','stop_lon']))
+  // Funzione separata solo-header per ontologie che non devono fare match sui valori
+  var hasH = function(cols) {
+    return cols.some(function(c){ return norm.indexOf(c)>=0; });
+  };
+
+  // CLV — SOLO se nelle intestazioni ci sono campi indirizzo/coordinate strutturati
+  if(hasH(['lat','lon','indirizzo','via','civico','comune','cap','latitudine','longitudine','stop_lat','stop_lon',
+            'lat_wgs84','lon_wgs84','coord_lat','coord_lon','georef_lat','georef_lon']))
     result.add('CLV');
 
   // GTFS

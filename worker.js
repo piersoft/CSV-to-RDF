@@ -516,8 +516,10 @@ function detectOntologiesDeterministic(headers, rows) {
   var _hasPOIcoord = hasH(['lat','lon','latitudine','longitudine','utmx','utmy',
                             'x_wgs84','y_wgs84','coord_x','coord_y','longitude','latitude',
                             'coordx','coordy','x_coord','y_coord']);
+  // OSM schema: osm_id + lat/lon → POI forte (defibrillatori, punti interesse OSM)
+  var _hasOSMschema = has(['osm_id','osm_type']) && _hasPOIcoord;
   if(has(['tipo_poi','dae','defibrillatore','punto_di_interesse','punto_interesse',
-          'point_of_interest','idelem','id_elem'])) {
+          'point_of_interest','idelem','id_elem']) || _hasOSMschema) {
     result.add('POI');
   } else if(_hasPOIcoord && !result.has('GTFS') &&  // B1: ACCO+lat/lon = anche POI
             !result.has('SMAPIT') && !result.has('IoT') && !result.has('QB') &&

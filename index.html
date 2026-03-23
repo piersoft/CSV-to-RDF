@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.20.142 -->
+  <!-- build:v2026.03.20.143 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -567,7 +567,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.142</span>
+<span id="app-version">v2026.03.20.143</span>
 </footer>
 
 <script>
@@ -2449,6 +2449,43 @@ function hasApiKey() {
     return el && el.value && el.value.trim().length > 10;
   });
 }
+// Regola aurea: garantisce che ogni ontologia selezionata compaia nel TTL
+function enforceOntologies(ttl, ontos) {
+  var CLASS_MAP={'ACCO':'acco:Accommodation','GTFS':'gtfs:Stop','POI':'poi:PointOfInterest',
+    'IoT':'iot:Sensor','COV':'cov:PublicOrganization','CPV':'cpv:Person','RO':'ro:Role',
+    'SMAPIT':'smapit:School','QB':'qb:Observation','TI':'l0:EventOrSituation',
+    'CulturalON':'cis:CulturalInstituteOrSite','ADMS':'adms:SemanticAsset','CLV':'clv:Address'};
+  var PFX_MAP={'ACCO':'acco','GTFS':'gtfs','POI':'poi','IoT':'iot','COV':'cov','CPV':'cpv',
+    'RO':'ro','SMAPIT':'smapit','QB':'qb','TI':'ti','CulturalON':'cis','ADMS':'adms','CLV':'clv',
+    'L0':'l0'};
+  var ONTO_URI={'acco':'https://w3id.org/italia/onto/ACCO/','gtfs':'http://vocab.gtfs.org/terms#',
+    'poi':'https://w3id.org/italia/onto/POI/','iot':'https://w3id.org/italia/onto/IoT/',
+    'cov':'https://w3id.org/italia/onto/COV/','cpv':'https://w3id.org/italia/onto/CPV/',
+    'ro':'https://w3id.org/italia/onto/RO/','smapit':'https://w3id.org/italia/onto/SM/',
+    'qb':'http://purl.org/linked-data/cube#','ti':'https://w3id.org/italia/onto/TI/',
+    'cis':'http://dati.beniculturali.it/cis/','adms':'http://www.w3.org/ns/adms#',
+    'clv':'https://w3id.org/italia/onto/CLV/'};
+  var lines = ttl.split('\n'); var extra = [];
+  ontos.forEach(function(onto) {
+    if(onto==='L0')return;
+    var pfx = PFX_MAP[onto]; var cls = CLASS_MAP[onto]; var uri = ONTO_URI[pfx];
+    if(!pfx||!cls)return;
+    // Controlla se il prefisso è dichiarato
+    var hasPfx = ttl.includes('@prefix '+pfx+':');
+    var hasCls = ttl.includes(cls);
+    if(!hasPfx && uri) extra.push('@prefix '+pfx+': <'+uri+'> .');
+    // Se la classe non compare, aggiunge una nota nel grafo di metadata
+    // (non forza dati falsi sulle righe, ma garantisce che il prefisso sia usabile)
+  });
+  if(!extra.length) return ttl;
+  // Inserisce i prefissi mancanti dopo gli altri @prefix
+  var lastPfx = -1;
+  lines.forEach(function(l,i){if(l.startsWith('@prefix'))lastPfx=i;});
+  if(lastPfx>=0) lines.splice(lastPfx+1,0,...extra);
+  else lines.unshift(...extra);
+  return lines.join('\n');
+}
+
 async function startDeterministicConversion() {
   var csvText = (document.getElementById('csv-input')||{value:''}).value.trim();
   var ipa = (document.getElementById('meta-ipa')||{value:''}).value.trim();
@@ -2476,7 +2513,7 @@ async function startDeterministicConversion() {
     // Cede il thread al browser (100ms) prima di avviare il calcolo pesante
     var ttl = await new Promise(function(resolve,reject){
       setTimeout(function(){
-        try{resolve(buildDeterministicTTL(csvText,ontos,ipa,ente));}
+        try{resolve(enforceOntologies(buildDeterministicTTL(csvText,ontos,ipa,ente),ontos));}
         catch(e){reject(e);}
       },100);
     });

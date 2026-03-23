@@ -529,11 +529,12 @@ function detectOntologiesDeterministic(headers, rows) {
       result.add('POI');
   }
 
-  // OSM schema puro: rimuovi TI spurio se nessuna colonna evento reale
-  if(_hasOSMschema && result.has('TI') &&
-     !has(['data_inizio','data_fine','data_evento','quando','inizio','termine',
-            'tipo_evento','nome_evento','titolo_evento','manifestazione'])) {
-    result.delete('TI');
+  // OSM schema puro: rimuovi ontologie sbagliate triggerate da valori nel campo name
+  if(_hasOSMschema) {
+    result.delete('SMAPIT');
+    result.delete('Cultural-ON');
+    result.delete('ACCO');
+    if(result.has('TI') && !has(['data_inizio','data_fine','data_evento','quando','inizio','termine','tipo_evento','nome_evento','titolo_evento','manifestazione'])) result.delete('TI');
   }
 
   // COV — organizzazioni: FIX1 esclude codice_ipa quando accompagnato da colonne di altri domini

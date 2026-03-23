@@ -343,11 +343,20 @@ function parseCSV(text) {
 function detNormH(h){var n=h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');return DET_COL_NORM[n]||n;}
 
 function detParseCSV(text){
-  // Normalizza fine riga: \r\n → \n, poi \r isolato → \n (vecchi CSV Mac/dati.gov.it)
+  // Normalizza fine riga
   text=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
   return text.trim().split('\n').map(function(line){
     var res=[],cur='',inQ=false;
-    for(var i=0;i<line.length;i++){var c=line[i];if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){res.push(cur.trim());cur='';}else cur+=c;}
+    for(var i=0;i<line.length;i++){
+      var ch=line[i];
+      if(ch==='"'&&!inQ&&cur.trim()===''){inQ=true;}
+      else if(ch==='"'&&inQ){
+        // controlla se è una doppia virgoletta escaped ("")
+        if(i+1<line.length&&line[i+1]==='"'){cur+='"';i++;}
+        else{inQ=false;}
+      }else if(ch===','&&!inQ){res.push(cur.trim());cur='';}
+      else{cur+=ch;}
+    }
     res.push(cur.trim());return res;
   });
 }
@@ -1033,6 +1042,31 @@ function detFormatLit(rule,val){
       }
     }
   });
+
+  // Auto-correzione lat/lon invertite: se geo:long ha valore nel range lat-Italia (35-48)
+  // scambia geo:lat e geo:long su quella riga/soggetto
+  ttl = ttl.split('\n').map(function(line) {
+    // Sostituisce geo:long "40.xx" con il valore corretto se è nel range latitudine
+    var mLon = line.match(/geo:long\s+"([\d.]+)"/);
+    if (mLon) {
+      var lonVal = parseFloat(mLon[1]);
+      if (lonVal >= 35 && lonVal <= 48) {
+        // Questo valore sembra una latitudine — cerca la riga geo:lat vicina
+        // Non possiamo fare swap riga per riga, segniamo per post-swap
+        line = line.replace('geo:long', 'GEO_LONG_SWAP');
+      }
+    }
+    var mLat = line.match(/geo:lat\s+"([\d.]+)"/);
+    if (mLat) {
+      var latVal = parseFloat(mLat[1]);
+      if (latVal >= 6 && latVal <= 19) {
+        line = line.replace('geo:lat', 'GEO_LAT_SWAP');
+      }
+    }
+    return line;
+  }).join('\n');
+  // Esegui lo swap effettivo
+  ttl = ttl.replace(/GEO_LONG_SWAP/g, 'geo:lat').replace(/GEO_LAT_SWAP/g, 'geo:long');
   return ttl.trim();
 }
 

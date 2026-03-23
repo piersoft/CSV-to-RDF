@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.197 -->
+  <!-- build:v2026.03.23.198 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -654,7 +654,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.197</span>
+<span id="app-version">v2026.03.23.198</span>
 </footer>
 
 <script>
@@ -4512,7 +4512,24 @@ const SCHEMA_GOV_WHITELIST = new Set([
   'cpv:Adult','cpv:Minor','cpv:Senior',
   'adms:SemanticAsset','adms:SemanticAssetDistribution',
   'qb:DataSet','qb:DataStructureDefinition','qb:ComponentSpecification',
-  'sdmx-dimension:timePeriod','sdmx-measure:obsValue'
+  'sdmx-dimension:timePeriod','sdmx-measure:obsValue',
+  // Nuove ontologie dati-semantic-assets — valide ma non ancora in schema.gov.it
+  'cpev:PublicEvent',
+  'ac:AccessCondition',
+  'aop:Path','aop:PathStage',
+  'ch:CulturalHeritage',
+  'prj:PublicInvestmentProject','prj:Programme','prj:WorkPackage',
+  'mu:Value','mu:MeasurementUnit','mu:MeasureType',
+  'ndc:DataService',
+  // Classi di ontologie standard già valide
+  'park:ParkingFacility',
+  'pc:Contract',
+  'route:Route',
+  'rpo:RoleInOrganization',
+  'learn:Course',
+  'tr:TransparencyObligation',
+  'indicator:Indicator',
+  'pot:PriceSpecification'
 ]);
 function validateSPARQL(terms, prefixMap) {
   // Trova o crea il div di status nel report

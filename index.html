@@ -3141,10 +3141,11 @@ function enforceOntologies(ttl, ontos) {
 }
 
 async function startDeterministicConversion() {
+  window._exampleLocked = false; // reset: la generazione manuale non è un esempio
   var csvText = (document.getElementById('csv-input')||{value:''}).value.trim();
   var ipa = (document.getElementById('meta-ipa')||{value:''}).value.trim();
   var ente = (document.getElementById('meta-ente')||{value:''}).value.trim()||ipa;
-  var ontos = Array.from(document.querySelectorAll('.pill.active')).map(function(p){return p.dataset.onto;}).filter(Boolean);
+  var ontos = Array.from(document.querySelectorAll('#onto-selector .pill.active, #onto-selector-adv .pill.active')).map(function(p){return p.dataset.onto;}).filter(Boolean);
   if(!csvText){showStatus('Nessun CSV caricato.');return;}
   if(!ipa){showStatus('? Inserisci il Codice IPA dell\'ente titolare (STEP 3).', 'error');return;}
   var _ipav=(document.getElementById('meta-ipa')||{value:''}).value.trim();

@@ -828,6 +828,11 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
   var headers=rows[0];
   var dataRows=rows.slice(1).filter(function(r){return r.some(function(v){return v&&v.trim();});});
   if(!dataRows.length)return'';
+  // Auto-correzione shift: se i dati hanno una colonna in più degli header,
+  // probabilmente è una colonna _id implicita (numero di riga) → aggiungila all'header
+  if(dataRows.length>0 && dataRows[0].length===headers.length+1){
+    headers=['_id'].concat(headers);
+  }
   var nh=headers.map(detNormH);
   var mainOnto=detGetMainOnto(ontos);
   var seg=DET_URI_SEG[mainOnto]||'resource';

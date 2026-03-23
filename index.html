@@ -1787,7 +1787,7 @@ S003,Porta San Vitale,44.4881,11.3521,2,0,2`,
 }
 
 // ── ENDPOINT API DINAMICO ────────────────────────────
-const WORKER_BASE = 'https://csv2rdf.piersoft.workers.dev';
+const WORKER_BASE = 'https://csv2rdf.datigovit.workers.dev';
 
 function updateApiEndpoint() {
   const csvUrl = document.getElementById('api-csv-url').value.trim();
@@ -1804,7 +1804,7 @@ function updateApiEndpoint() {
 
 function copyApiEndpoint() {
   const urlEl = document.getElementById('api-endpoint-url');
-  if (!urlEl.textContent) { showStatus('Inserisci prima l'URL del tuo CSV', 'error'); return; }
+  if (!urlEl.textContent) { showStatus("Inserisci prima l'URL del tuo CSV", 'error'); return; }
   navigator.clipboard.writeText(urlEl.textContent)
     .then(() => showStatus('✅ Endpoint copiato negli appunti!', 'success'))
     .catch(() => showStatus('Copia manuale: ' + urlEl.textContent, 'info'));

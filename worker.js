@@ -1001,8 +1001,8 @@ export default {
         ontos = detectOntologiesDeterministic(parsed.headers, parsed.rows);
       }
 
-      // 4. Generazione TTL
-      const ttl = buildDeterministicTTL(parsed.headers, parsed.rows, ontos, ipa, paName);
+      // 4. Generazione TTL (buildDeterministicTTL accetta csvText grezzo)
+      const ttl = buildDeterministicTTL(csvText, ontos, ipa, paName);
 
       // 5. Output
       const meta = {
@@ -1010,7 +1010,7 @@ export default {
         ipa,
         pa: paName,
         ontologie: ontos,
-        righe: parsed.rows.length,
+        righe: parsed ? parsed.rows.length : 0,
         colonne: parsed.headers,
         generato: new Date().toISOString(),
         versione: 'v2026.03.20.168'

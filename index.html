@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.180 -->
+  <!-- build:v2026.03.23.181 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -636,7 +636,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.180</span>
+<span id="app-version">v2026.03.23.181</span>
 </footer>
 
 <script>
@@ -4073,8 +4073,13 @@ async function validateTTL() {
   }
   for (const m of ttl.matchAll(/geo:long\s+"([^"]+)"/g)) {
     const lon = parseFloat(m[1]);
-    if (!isNaN(lon) && (lon < 6 || lon > 19))
-      warnings.push(`geo:long="${m[1]}" fuori dal range Italia (6-19)`);
+    if (!isNaN(lon) && (lon < 6 || lon > 19)) {
+      // Se il valore è nel range lat Italia (35-48), probabilmente lat e lon sono invertite nel CSV sorgente
+      const msg = (lon >= 35 && lon <= 48)
+        ? `geo:long="${m[1]}" sembra una latitudine (35-48) — lat/lon potrebbero essere invertite nel CSV sorgente`
+        : `geo:long="${m[1]}" fuori dal range Italia (6-19)`;
+      warnings.push(msg);
+    }
   }
 
   // ── 16. LITERAL SENZA LANGUAGE TAG su proprietà multilingua ──────────

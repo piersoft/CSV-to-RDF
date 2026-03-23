@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.20.150 -->
+  <!-- build:v2026.03.20.152 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -570,12 +570,24 @@
   </div>
 </div>
 
+<!-- ===== CORPUS PANEL — posizionato dopo il container, prima del footer ===== -->
+<div class="container mt-3 mb-4" id="corpus-panel-wrap" style="display:none">
+  <div style="border:2px solid #4a90d9;border-radius:8px;background:#f0f7ff;padding:1rem">
+    <h3 style="margin:0 0 .5em;color:#2c5f8a;font-size:1em;font-family:var(--sans)">📚 Ontologie suggerite dal corpus PA (v11)</h3>
+    <div id="corpus-temi" style="margin-bottom:.5em"></div>
+    <details style="margin-top:.6em">
+      <summary style="cursor:pointer;color:#2c5f8a;font-size:.88em;font-family:var(--sans)">Dataset simili nel corpus (<span id="corpus-count">0</span>)</summary>
+      <div id="corpus-examples" style="margin-top:.4em"></div>
+    </details>
+  </div>
+</div>
+
 <footer>
 Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.150</span>
+<span id="app-version">v2026.03.20.152</span>
 </footer>
 
 <script>
@@ -1077,8 +1089,12 @@ if (!window._exampleLocked) {
   if (cols.some(c => /nome|name|denominazione|titolo|label|descrizione/.test(c)))
     suggested.add('L0');
 
-  // Applica le regole
+  // Applica le regole — CLV SOLO su match esatto di colonna, non substring sui valori
+  const CLV_HEADER_KEYS = new Set(['lat','lon','lng','latitudine','longitudine','coord','indirizzo','address','via','strada','civico','cap','comune','stop_lat','stop_lon','lat_wgs84','lon_wgs84']);
+  if (cols.some(c => CLV_HEADER_KEYS.has(c.toLowerCase().trim()))) suggested.add('CLV');
+
   ONTO_RULES.forEach(rule => {
+    if (rule.ontos.includes('CLV')) return; // CLV già gestito sopra con match esatto
     if (rule.keys.some(k => cols.some(c => c.toLowerCase().includes(k.toLowerCase()))))
       rule.ontos.forEach(o => suggested.add(o));
   });
@@ -1360,8 +1376,8 @@ function parseCSV(text) {
         if (inQuotes && raw[i+1] === '"') { current += '"'; i++; }
         else inQuotes = !inQuotes;
         current += ch;
-      } else if ((ch === '\n' || (ch === '\r' && raw[i+1] === '\n')) && !inQuotes) {
-        if (ch === '\r') i++; // salta \r di \r\n
+      } else if ((ch === '\n' || ch === '\r') && !inQuotes) {
+        if (ch === '\r' && raw[i+1] === '\n') i++; // salta \n di \r\n
         if (current.trim()) logical.push(current);
         current = '';
       } else {
@@ -4123,29 +4139,29 @@ window.validateSPARQL = validateSPARQL;
 </script>
 <!-- ===== CORPUS MATCHER v7 ===== -->
 <style>
-#corpus-panel{display:none;margin:1em 0;padding:1em;border:2px solid #4a90d9;border-radius:8px;background:#f0f7ff;font-family:sans-serif}
-#corpus-panel h3{margin:0 0 .5em;color:#2c5f8a;font-size:1em}
 .corpus-badge{display:inline-block;padding:.2em .55em;border-radius:4px;color:#fff;font-size:.8em;font-weight:700;margin:.15em}
 .corpus-ex{margin:.3em 0;padding:.4em;background:#fff;border-radius:4px;border-left:3px solid #4a90d9;font-size:.83em}
 .corpus-ex strong{display:block}
 .corpus-ex code{color:#555;font-size:.78em}
 </style>
-<div id="corpus-panel">
-  <h3>Ontologie suggerite dal corpus PA (v11)</h3>
-  <div id="corpus-temi"></div>
-  <details style="margin-top:.6em">
-    <summary style="cursor:pointer;color:#2c5f8a;font-size:.88em">Dataset simili nel corpus (<span id="corpus-count">0</span>)</summary>
-    <div id="corpus-examples" style="margin-top:.4em"></div>
-  </details>
-</div>
 <script>
 (function(){
-var COLORI={"TI":"#c0392b","Cultural-ON":"#6c3483","GTFS":"#1e8449","QB":"#1a5276","POI":"#0e6655","ADMS":"#784212","CLV":"#626567","ACCO":"#922b21","CPV":"#515a5a","CPSV":"#1b4f72"};
+var COLORI={"TI":"#c0392b","Cultural-ON":"#6c3483","GTFS":"#1e8449","QB":"#1a5276","POI":"#0e6655","ADMS":"#784212","CLV":"#626567","ACCO":"#922b21","CPV":"#515a5a","CPSV":"#1b4f72","PARK":"#17a589","PublicContract":"#1a5276","Route":"#6e2f8a","RPO":"#784212","Learning":"#1e8449","Transparency":"#922b21","Indicator":"#0e6655","POT":"#c0392b"};
 function norm(s){return String(s).toLowerCase().replace(/[^a-z0-9]/g," ").trim();}
 function jaccard(a,b){var sa=new Set(a.map(norm).filter(function(x){return x;})),sb=new Set(b.map(norm).filter(function(x){return x;}));if(!sa.size||!sb.size)return 0;var n=0;sa.forEach(function(x){if(sb.has(x))n++;});return n/(sa.size+sb.size-n);}
 function overlap(q,f){var qn=q.map(norm).filter(function(x){return x.length>2;}),fs=f.map(norm).join(" ");return qn.length?qn.filter(function(w){return fs.indexOf(w)>=0;}).length/qn.length:0;}
 var fixtures=[],ready=false;
-fetch("https://raw.githubusercontent.com/piersoft/CSV-to-RDF/main/fixtures_v7.json").then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json();}).then(function(d){fixtures=d.corpus||d;ready=true;console.log("[Corpus] "+fixtures.length+" fixture caricate");}).catch(function(e){console.warn("[Corpus] errore:",e.message);});
+fetch("https://raw.githubusercontent.com/piersoft/CSV-to-RDF/main/fixtures_v7.json")
+  .then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json();})
+  .then(function(d){
+    fixtures=d.corpus||d;
+    ready=true;
+    console.log("[Corpus] "+fixtures.length+" fixture caricate");
+    // Se c'erano header in attesa, mostra il pannello ora
+    if(window._pendingCorpusHeaders) showPanel(window._pendingCorpusHeaders);
+  })
+  .catch(function(e){console.warn("[Corpus] errore:",e.message);});
+
 function matchCorpus(headers,topN){
   topN=topN||5;
   if(!ready)return{temi:[],confidence:{},examples:[]};
@@ -4157,44 +4173,67 @@ function matchCorpus(headers,topN){
   var examples=scored.map(function(f){return{title:f.title,org:f.ente||f.org,temi:f.confirmed_temi||f.tema_onto||[],score:Math.round(100*f._s),headers:(f.headers||[]).slice(0,6),id:f.id};});
   return{temi:temi,confidence:conf,examples:examples};
 }
+
 function showPanel(headers){
-  if(!headers || headers.length < 2){ document.getElementById('corpus-panel').style.display='none'; return; }
-  var r=matchCorpus(headers),panel=document.getElementById("corpus-panel");
-  if(!panel||!r.temi.length){if(panel)panel.style.display="none";return;}
-  document.getElementById("corpus-temi").innerHTML=r.temi.map(function(t){var c=r.confidence[t]||0,col=COLORI[t]||"#555";return"<span class=\"corpus-badge\" style=\"background:"+col+"\">"+t+" <span style=\"opacity:.75\">"+c+"%</span></span>";}).join("");
+  var wrap=document.getElementById('corpus-panel-wrap');
+  if(!headers||headers.length<2){if(wrap)wrap.style.display='none';return;}
+  // Se i fixture non sono ancora pronti, salva gli header e riprova dopo
+  if(!ready){window._pendingCorpusHeaders=headers;return;}
+  window._pendingCorpusHeaders=null;
+  var r=matchCorpus(headers);
+  if(!wrap||!r.temi.length){if(wrap)wrap.style.display='none';return;}
+  document.getElementById("corpus-temi").innerHTML=r.temi.map(function(t){
+    var c=r.confidence[t]||0,col=COLORI[t]||"#555";
+    return"<span class=\"corpus-badge\" style=\"background:"+col+"\">"+t+" <span style=\"opacity:.75\">"+c+"%</span></span>";
+  }).join("");
   document.getElementById("corpus-count").textContent=r.examples.length;
-  document.getElementById("corpus-examples").innerHTML=r.examples.map(function(ex){var tstr=(ex.temi||[]).join(" - "),link=ex.id?"<a href=\"https://www.dati.gov.it/view-dataset/dataset?id="+ex.id+"\" target=\"_blank\" style=\"color:#2c5f8a\">link</a>":"";return"<div class=\"corpus-ex\"><strong>"+ex.title+" "+link+"</strong><span style=\"color:#555\">"+ex.org+"</span> &nbsp;<span style=\"color:#888;font-size:.8em\">"+tstr+"</span><br><code>"+ex.headers.join(" | ")+"</code><span style=\"float:right;color:#999;font-size:.75em\">sim:"+ex.score+"%</span></div>";}).join("");
-  panel.style.display="block";
+  document.getElementById("corpus-examples").innerHTML=r.examples.map(function(ex){
+    var tstr=(ex.temi||[]).join(" - ");
+    var link=ex.id?"<a href=\"https://www.dati.gov.it/view-dataset/dataset?id="+ex.id+"\" target=\"_blank\" style=\"color:#2c5f8a\">link</a>":"";
+    return"<div class=\"corpus-ex\"><strong>"+ex.title+" "+link+"</strong><span style=\"color:#555\">"+ex.org+"</span> &nbsp;<span style=\"color:#888;font-size:.8em\">"+tstr+"</span><br><code>"+ex.headers.join(" | ")+"</code><span style=\"float:right;color:#999;font-size:.75em\">sim:"+ex.score+"%</span></div>";
+  }).join("");
+  wrap.style.display='block';
 }
+
 document.addEventListener("DOMContentLoaded",function(){
-  // Corpus matcher: file input upload
+  // Fix \r nei CSV letti da FileReader (stessa logica di parseCSV)
+  function normalizeText(txt){return txt.replace(/\r\n/g,'\n').replace(/\r/g,'\n');}
+
+  // Trigger 1: file input upload
   var fi=document.querySelector("input[type=\"file\"]");
   if(fi){
     fi.addEventListener("change",function(){
       var f=fi.files[0];if(!f)return;
       var rd=new FileReader();
-      rd.onload=function(e){var txt=e.target.result,line=txt.split("\n")[0],sep=line.indexOf(";")>=0?";":",";;var hdrs=line.split(sep).map(function(h){return h.replace(/^\uFEFF/,"").replace(/^["\x27]|["\x27]$/g,"").trim();});showPanel(hdrs);};
+      rd.onload=function(e){
+        var txt=normalizeText(e.target.result);
+        var line=txt.split('\n')[0];
+        var sep=line.indexOf(';')>=0?';':',';
+        var hdrs=line.split(sep).map(function(h){return h.replace(/^\uFEFF/,'').replace(/^["']|["']$/g,'').trim();});
+        showPanel(hdrs);
+      };
       rd.readAsText(f);
     });
   }
-  // Corpus matcher: pulsante Anteprima (parse del textarea csv-input)
-  var btnPreview = Array.from(document.querySelectorAll("button")).find(function(b){return b.textContent.includes("Anteprima");});
-  if(btnPreview){
-    btnPreview.addEventListener("click",function(){
-      var textarea=document.getElementById("csv-input");
-      if(!textarea||!textarea.value.trim())return;
-      var line=textarea.value.split("\n")[0];
-      var sep=line.indexOf(";")>=0?";":",";;
-      var hdrs=line.split(sep).map(function(h){return h.replace(/^\uFEFF/,"").replace(/^["\x27]|["\x27]$/g,"").trim();});
-      showPanel(hdrs);
+
+  // Trigger 2: qualsiasi incolla/modifica nel textarea CSV
+  var textarea=document.getElementById('csv-input');
+  if(textarea){
+    textarea.addEventListener('input',function(){
+      var txt=normalizeText(textarea.value);
+      if(!txt.trim())return;
+      var line=txt.split('\n')[0];
+      var sep=line.indexOf(';')>=0?';':',';
+      var hdrs=line.split(sep).map(function(h){return h.replace(/^\uFEFF/,'').replace(/^["']|["']$/g,'').trim();});
+      if(hdrs.length>1)showPanel(hdrs);
     });
   }
 });
+
+window.showPanel=showPanel;
 window.corpusMatch=function(h){return matchCorpus(h);};
 })();
 </script>
-
-
 <!-- ===== FINE CORPUS MATCHER v7 ===== -->
 
 </body>

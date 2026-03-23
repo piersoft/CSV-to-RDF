@@ -52,7 +52,7 @@ curl "https://csv2rdf.datigovit.workers.dev/" \
 
 ## 🔧 Come funziona
 
-1. **Carica** il CSV (upload, incolla, URL, o scegli dal corpus di 289 dataset reali)
+1. **Carica** il CSV — incolla il testo o carica un file `.csv`, oppure scegli uno dei 29 modelli di esempio per ontologia
 2. **Rilevamento automatico** delle ontologie dai nomi delle colonne e valori campione
 3. **Generazione TTL** deterministico con prefissi, URI, triple e tipi XSD corretti
 4. **Validazione** inline: prefissi, lat/lon, @lang, valori tipizzati

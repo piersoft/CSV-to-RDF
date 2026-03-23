@@ -1,109 +1,227 @@
-# CSV→RDF API — Endpoint Dinamico
+# CSV→RDF API — Documentazione Worker
 
-Converte automaticamente un CSV pubblico in Turtle/RDF usando le ontologie OntoPiA della PA italiana.
+Il worker Cloudflare espone un'API HTTP che converte qualsiasi CSV pubblico in Turtle/RDF usando lo stesso motore deterministico della demo web.
 
-## Come funziona
+**Endpoint pubblico:** `https://csv2rdf.datigovit.workers.dev/`
+**Demo web:** `https://piersoft.github.io/CSV-to-RDF/`
 
-1. **Pubblica il tuo CSV** su un URL pubblico (es. GitHub, dati.gov.it, portale opendata del comune)
-2. **Testa il CSV** su https://piersoft.github.io/CSV-to-RDF/ per verificare la conversione
-3. **Usa l'endpoint dinamico** per ottenere il TTL sempre aggiornato automaticamente
+---
 
-## Endpoint
+## Utilizzo rapido
 
 ```
-GET https://csv2rdf.piersoft.workers.dev/?url={URL_DEL_CSV}
+GET https://csv2rdf.datigovit.workers.dev/?url={URL_CSV}&ipa={codice_ipa}&pa={nome_ente}
 ```
 
 ### Parametri
 
-| Parametro | Obbligatorio | Descrizione | Esempio |
-|-----------|-------------|-------------|---------|
-| `url`     | ✅ sì | URL pubblico del file CSV | `url=https://comune.it/dati.csv` |
-| `ipa`     | opzionale | Codice IPA dell'ente | `ipa=c_a662` |
-| `pa`      | opzionale | Nome esteso dell'ente | `pa=Comune+di+Bari` |
-| `onto`    | opzionale | Forzare ontologie (virgola separato) | `onto=POI,CLV,L0` |
-| `fmt`     | opzionale | Formato output: `ttl` (default) o `json` | `fmt=json` |
+| Parametro | Tipo | Obbligatorio | Descrizione |
+|-----------|------|:-----------:|-------------|
+| `url` | string | ✅ | URL pubblico del file CSV (deve essere accessibile senza login) |
+| `ipa` | string | no | Codice IPA dell'ente (es. `c_a662`). Usato per costruire gli URI RDF |
+| `pa` | string | no | Nome esteso dell'ente (es. `Comune di Bari`). Incluso nei commenti del TTL |
+| `onto` | string | no | Forzare ontologie specifiche, separate da virgola (es. `POI,CLV,L0`) |
+| `fmt` | string | no | Formato output: `ttl` (default) oppure `json` |
 
-### Esempi
+---
+
+## Esempi
+
+### TTL puro (download diretto)
 
 ```bash
-# TTL puro (per aggiornamento catalogo)
-curl "https://csv2rdf.piersoft.workers.dev/?url=https://comune.bari.it/opendata/defibrillatori.csv&ipa=c_a662&pa=Comune+di+Bari"
+curl "https://csv2rdf.datigovit.workers.dev/?url=https://www.dati.lombardia.it/api/views/r2fj-jmpm/rows.csv?accessType=DOWNLOAD&ipa=c_d286&pa=Comune+di+Desio"
+```
 
-# JSON con metadati
-curl "https://csv2rdf.piersoft.workers.dev/?url=https://comune.bari.it/opendata/defibrillatori.csv&fmt=json"
+Risposta (`Content-Type: text/turtle`):
+```turtle
+# CSV→RDF — 2026-03-23T10:00:00.000Z
+# Sorgente: https://www.dati.lombardia.it/...
+# Ente: Comune di Desio (c_d286)
+# Ontologie: CLV, POI, L0
 
-# Forzare ontologie specifiche
-curl "https://csv2rdf.piersoft.workers.dev/?url=https://comune.bari.it/opendata/eventi.csv&onto=TI,CLV,L0&ipa=c_a662"
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix poi: <https://w3id.org/italia/onto/POI/> .
+...
+```
 
-# Health check
-curl "https://csv2rdf.piersoft.workers.dev/health"
+### Risposta JSON con metadati
+
+```bash
+curl "https://csv2rdf.datigovit.workers.dev/?url=https://esempio.it/dati.csv&fmt=json"
+```
+
+```json
+{
+  "meta": {
+    "csvUrl": "https://esempio.it/dati.csv",
+    "ipa": "ente",
+    "pa": "Ente Pubblico",
+    "ontologie": ["CLV", "POI", "L0"],
+    "righe": 42,
+    "colonne": ["id", "nome", "lat", "lon", "comune"],
+    "generato": "2026-03-23T10:00:00.000Z",
+    "versione": "v2026.03.23.171"
+  },
+  "ttl": "@prefix rdfs: ..."
+}
+```
+
+### Forzare ontologie specifiche
+
+```bash
+curl "https://csv2rdf.datigovit.workers.dev/?url=https://esempio.it/dati.csv&onto=TI,CLV,L0&ipa=c_a662"
+```
+
+### Health check
+
+```bash
+curl "https://csv2rdf.datigovit.workers.dev/health"
+# {"status":"ok","version":"v2026.03.23.171"}
+```
+
+---
+
+## Header di risposta
+
+Il TTL viene restituito con header utili per l'integrazione:
+
+| Header | Valore esempio | Descrizione |
+|--------|----------------|-------------|
+| `Content-Type` | `text/turtle; charset=utf-8` | Formato Turtle |
+| `Content-Disposition` | `attachment; filename="c_a662-1711188000000.ttl"` | Nome file download |
+| `X-Ontologie` | `CLV,POI,L0` | Ontologie rilevate |
+| `X-Righe` | `42` | Numero di righe convertite |
+| `Access-Control-Allow-Origin` | `*` | CORS abilitato per tutti |
+
+---
+
+## Integrazione con aggiornamenti automatici
+
+### Cron job
+
+```bash
+# /etc/cron.d/csv2rdf
+# Aggiorna il TTL ogni notte alle 3:00
+0 3 * * * www-data curl -sf -o /var/www/opendata/defibrillatori.ttl \
+  "https://csv2rdf.datigovit.workers.dev/?url=https://comune.bari.it/opendata/defibrillatori.csv&ipa=c_a662&pa=Comune+di+Bari" \
+  || echo "CSV2RDF update failed" | mail -s "Alert" admin@comune.bari.it
+```
+
+### GitHub Actions
+
+```yaml
+name: Aggiorna TTL
+on:
+  schedule:
+    - cron: '0 3 * * *'  # ogni notte alle 3:00
+  workflow_dispatch:       # oppure manuale
+
+jobs:
+  update-ttl:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Genera TTL aggiornato
+        run: |
+          curl -sf -o data/defibrillatori.ttl \
+            "https://csv2rdf.datigovit.workers.dev/?url=${{ vars.CSV_URL }}&ipa=${{ vars.IPA }}&pa=${{ vars.PA_NAME }}"
+      - name: Commit TTL aggiornato
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Auto: aggiorna TTL da CSV sorgente"
 ```
 
 ### Integrazione DCAT-AP_IT
 
-Aggiungere la distribuzione TTL dinamica al catalogo DCAT del proprio portale:
-
 ```turtle
-<https://comune.bari.it/opendata/dataset/defibrillatori> a dcat:Dataset ;
-  dcat:distribution <https://comune.bari.it/opendata/dataset/defibrillatori/dist/csv> ,
-                    <https://comune.bari.it/opendata/dataset/defibrillatori/dist/ttl> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
 
+<https://comune.bari.it/opendata/dataset/defibrillatori> a dcat:Dataset ;
+  dct:title "Defibrillatori DAE"@it ;
+  dcat:distribution
+    <https://comune.bari.it/opendata/dataset/defibrillatori/dist/csv> ,
+    <https://comune.bari.it/opendata/dataset/defibrillatori/dist/ttl> .
+
+# Distribuzione CSV originale
+<https://comune.bari.it/opendata/dataset/defibrillatori/dist/csv> a dcat:Distribution ;
+  dcat:downloadURL <https://comune.bari.it/opendata/defibrillatori.csv> ;
+  dct:format <http://publications.europa.eu/resource/authority/file-type/CSV> .
+
+# Distribuzione TTL dinamica via API
 <https://comune.bari.it/opendata/dataset/defibrillatori/dist/ttl> a dcat:Distribution ;
-  dcat:accessURL <https://csv2rdf.piersoft.workers.dev/?url=https://comune.bari.it/opendata/defibrillatori.csv&ipa=c_a662> ;
+  dcat:accessURL <https://csv2rdf.datigovit.workers.dev/?url=https://comune.bari.it/opendata/defibrillatori.csv&ipa=c_a662> ;
   dct:format <http://publications.europa.eu/resource/authority/file-type/RDF_TURTLE> ;
   dct:license <https://creativecommons.org/licenses/by/4.0/> .
 ```
 
-### Integrazione con aggiornamenti automatici
+---
 
-Se il CSV si aggiorna automaticamente (es. ogni notte da un processo ETL), il TTL sarà sempre sincronizzato:
+## Deploy della propria istanza
+
+### Metodo 1 — Editor online Cloudflare (più semplice)
+
+1. Vai su [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages** → **Create**
+2. Clicca **"Start with Hello World!"**
+3. Assegna un nome (es. `csv2rdf`), clicca **Deploy**
+4. Clicca **Edit code**
+5. Seleziona tutto (`Ctrl+A`), cancella, incolla il contenuto di [`worker.js`](worker.js)
+6. Clicca **Deploy**
+
+Il tuo endpoint: `https://csv2rdf.{tuo-account}.workers.dev/`
+
+### Metodo 2 — Wrangler CLI (per aggiornamenti automatici da terminale)
 
 ```bash
-# Script cron per aggiornare il catalogo ogni notte
-# 0 3 * * * curl -o /var/www/opendata/defibrillatori.ttl \
-#   "https://csv2rdf.piersoft.workers.dev/?url=https://comune.bari.it/opendata/defibrillatori.csv&ipa=c_a662&pa=Comune+di+Bari"
-```
-
-## Deploy del proprio Worker (opzionale)
-
-Se preferisci deployare il worker sulla tua infrastruttura Cloudflare:
-
-```bash
-# 1. Installa Wrangler CLI
 npm install -g wrangler
-
-# 2. Login a Cloudflare
 wrangler login
-
-# 3. Deploy
-wrangler deploy worker.js --name csv2rdf
-
-# Il tuo endpoint sarà: https://csv2rdf.{tuo-account}.workers.dev
+wrangler deploy worker.js --name csv2rdf --compatibility-date 2024-01-01
 ```
 
-### Requisiti
+### Metodo 3 — GitHub Actions automatico
 
-- Account Cloudflare gratuito
-- Il CSV sorgente deve essere pubblicamente accessibile (nessun login richiesto)
-- CORS abilitato: il worker risponde a richieste cross-origin
+Aggiungi alla repo il file `.github/workflows/deploy-worker.yml`:
 
-## Motore di conversione
+```yaml
+name: Deploy Cloudflare Worker
+on:
+  push:
+    branches: [main]
+    paths: ['worker.js']
 
-Il worker usa lo stesso motore deterministico dell'interfaccia web:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: deploy worker.js --name csv2rdf --compatibility-date 2024-01-01
+```
 
-- **Rilevamento automatico** delle ontologie OntoPiA (CLV, POI, COV, CPV, GTFS, QB, ...)
-- **Generazione URI** secondo le best practice dati.gov.it
-- **22 ontologie** supportate: CLV, COV, CPV, L0, POI, SM, RO, TI, ADMS, ACCO, GTFS, CulturalON, CPSV/CPSV-AP, QB, PublicContract, Route, RPO, Learning, Transparency, Indicator, POT, PARK
-- **Versione**: v2026.03.20.169
+Per il token: Cloudflare Dashboard → My Profile → API Tokens → Create Token → template "Edit Cloudflare Workers" → copia il token → GitHub repo → Settings → Secrets → `CLOUDFLARE_API_TOKEN`.
+
+---
 
 ## Limiti
 
-| Limite | Valore |
-|--------|--------|
-| Dimensione CSV max | 10 MB (limite Cloudflare Workers gratuito) |
-| Timeout | 30 secondi |
-| Request al giorno (piano gratuito) | 100.000 |
-| Cache | 5 minuti (TTL cached automaticamente) |
+| Limite | Piano gratuito | Piano Paid ($5/mese) |
+|--------|---------------|----------------------|
+| Richieste/giorno | 100.000 | illimitate |
+| Dimensione CSV | ~10 MB | ~10 MB |
+| Timeout | 30 secondi | 30 secondi |
+| Cache CSV | 5 minuti | 5 minuti |
 
-Per CSV più grandi o volumi elevati, considera il piano Workers Paid ($5/mese).
+> Il worker usa la cache di Cloudflare (`cacheTtl: 300`): lo stesso CSV scaricato entro 5 minuti non viene ri-fetchato, riducendo la latenza e il carico sul server sorgente.
+
+---
+
+## Versione e compatibilità
+
+- **Versione motore:** v2026.03.23.171
+- **Ontologie supportate:** 22 (CLV, COV, CPV, POI, RO, TI, ADMS, ACCO, GTFS, Cultural-ON, SMAPIT, IoT, QB, PARK, PublicContract, Route, RPO, Learning, Transparency, Indicator, POT, CPSV-AP)
+- **Encoding CSV supportati:** UTF-8, UTF-8 con BOM, Latin-1/ISO-8859-1, CP1252
+- **Separatori CSV supportati:** `,` `;` `\t` `|` (rilevamento automatico)
+- **Runtime:** Cloudflare Workers (V8 isolate, non Node.js)

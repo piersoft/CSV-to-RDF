@@ -6,57 +6,6 @@ Converte CSV della Pubblica Amministrazione italiana in **RDF/Turtle** conforme 
 
 ---
 
-## 🆕 v2026.03.23.186 — 29 ontologie supportate
-
-### Nuove ontologie aggiunte
-| Ontologia | Prefisso | Trigger CSV principali |
-|---|---|---|
-| **CPEV** — Core Public Event Vocabulary | `cpev:` | `titolo_evento`, `pubblico_target`, `format_evento` |
-| **AccessCondition** — Condizioni accesso | `ac:` | `orario_apertura`, `tipo_ammissione`, `motivazione_chiusura` |
-| **AtlasOfPaths** — Atlante percorsi | `aop:` | `numero_percorso`, `pavimentazione`, `segnaletica` |
-| **CulturalHeritage** — Beni culturali vincolati | `ch:` | `codice_bene`, `tutela`, `vincolo` |
-| **Project** — Progetti pubblici (PNRR/FESR) | `prj:` | `acronimo_progetto`, `programma_finanziamento`, `cup` |
-| **MU** — Unità di misura | `mu:` | `grandezza`, `tipo_misura`, `sistema_misura` |
-| **NDC** — National Data Catalog | `ndc:` | `concetto_chiave`, `endpoint_url` |
-
-### Tutte le ontologie supportate (29)
-
-| # | Ontologia | Prefisso | Descrizione |
-|---|---|---|---|
-| 1 | **CLV** | `clv:` | Core Location Vocabulary — indirizzi, strade |
-| 2 | **POI** | `poi:` | Point Of Interest — luoghi geolocalizzati |
-| 3 | **COV** | `cov:` | Core Organization Vocabulary — enti pubblici |
-| 4 | **CPV** | `cpv:` | Core Person Vocabulary — persone fisiche |
-| 5 | **TI** | `ti:` | Time Indexed — eventi temporali |
-| 6 | **L0** | `l0:` | Top Ontology — classi base (sempre inclusa) |
-| 7 | **SM** | `sm:` | Social Media — contatti digitali |
-| 8 | **SMAPIT** | `smapit:` | Scuole italiane MIUR |
-| 9 | **IoT** | `iot:` | Sensori e rilevazioni ambientali |
-| 10 | **ACCO** | `acco:` | Strutture ricettive (hotel, B&B) |
-| 11 | **CPSV/CPSV-AP** | `cpsv:` | Servizi pubblici al cittadino |
-| 12 | **GTFS** | `gtfs:` | Trasporto pubblico (fermate, linee) |
-| 13 | **QB** | `qb:` | RDF Data Cube — dati statistici |
-| 14 | **Cultural-ON** | `cis:` | Istituti culturali (musei, biblioteche) |
-| 15 | **RO** | `ro:` | Role Ontology — incarichi istituzionali |
-| 16 | **ADMS** | `adms:` | Asset semantici PA |
-| 17 | **PARK** | `park:` | Parcheggi pubblici |
-| 18 | **PublicContract** | `pc:` | Appalti pubblici (CIG/CUP) |
-| 19 | **Route** | `route:` | Percorsi/itinerari |
-| 20 | **RPO** | `rpo:` | Personale PA (contratti, qualifiche) |
-| 21 | **Learning** | `learn:` | Corsi e formazione PA |
-| 22 | **Transparency** | `tr:` | Obblighi trasparenza D.Lgs 33/2013 |
-| 23 | **Indicator** | `indicator:` | KPI e indicatori di performance |
-| 24 | **POT** | `pot:` | Prezzi e tariffe |
-| 25 | **CPEV** | `cpev:` | Core Public Event Vocabulary |
-| 26 | **AccessCondition** | `ac:` | Condizioni di accesso a luoghi |
-| 27 | **AtlasOfPaths** | `aop:` | Atlante dei percorsi (trekking, ciclovie) |
-| 28 | **CulturalHeritage** | `ch:` | Beni culturali vincolati MiC |
-| 29 | **Project** | `prj:` | Progetti pubblici (PNRR, FESR, PON) |
-
-> **MU** (Unità di misura) e **NDC** (National Data Catalog) supportati come ontologie aggiuntive.
-
----
-
 ## 📋 CSV sacri — dataset di riferimento
 
 Il tool include **29 CSV sacri** (22 storici + 7 nuovi) validati per verificare il rilevamento corretto delle ontologie:

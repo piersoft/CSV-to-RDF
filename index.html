@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.177 -->
+  <!-- build:v2026.03.23.178 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -636,7 +636,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.177</span>
+<span id="app-version">v2026.03.23.178</span>
 </footer>
 
 <script>
@@ -4499,22 +4499,7 @@ document.addEventListener("DOMContentLoaded",function(){
   // Fix \r nei CSV letti da FileReader (stessa logica di parseCSV)
   function normalizeText(txt){return txt.replace(/\r\n/g,'\n').replace(/\r/g,'\n');}
 
-  // Trigger 1: file input upload — solo showPanel per il corpus; il detect lo fa parseAndPreviewCSV
-  var fi=document.querySelector("input[type=\"file\"]");
-  if(fi){
-    fi.addEventListener("change",function(){
-      var f=fi.files[0];if(!f)return;
-      var rd=new FileReader();
-      rd.onload=function(e){
-        var txt=normalizeText(e.target.result);
-        var line=txt.split('\n')[0];
-        var sep=line.indexOf(';')>=0?';':',';
-        var hdrs=line.split(sep).map(function(h){return h.replace(/^\uFEFF/,'').replace(/^["']|["']$/g,'').trim();});
-        showPanel(hdrs);
-      };
-      rd.readAsText(f);
-    });
-  }
+  // Trigger 1 rimosso: parseAndPreviewCSV chiama gia showPanel dopo detectOntologiesDeterministic
 
   // Trigger 2: incolla/modifica nel textarea — aggiorna corpus panel E pill ontologie
   var textarea=document.getElementById('csv-input');

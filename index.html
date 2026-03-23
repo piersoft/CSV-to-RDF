@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.20.146 -->
+  <!-- build:v2026.03.20.148 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -575,7 +575,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.146</span>
+<span id="app-version">v2026.03.20.148</span>
 </footer>
 
 <script>
@@ -835,7 +835,7 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['parcheggio','parking','stalli','posti_auto','capacita_posti','tariffa_oraria','posti_disabili'])) result.add('PARK');
   if(has(['prezzo_intero','prezzo_ridotto','biglietto','tariffa_ingresso','costo_biglietto'])&&!result.has('ACCO')) result.add('POT');
   if(has(['cig','cup','importo_aggiudicazione','stazione_appaltante','oggetto_contratto','aggiudicatario','cpv_codice'])) result.add('PublicContract');
-  if(has(['tipo_percorso','lunghezza_km','difficolta','dislivello','numero_tappe','sentiero','percorso_ciclabile'])) result.add('Route');
+  if(has(['tipo_percorso','lunghezza_km','difficolta','dislivello','numero_tappe','sentiero','percorso_ciclabile','itinerario','tracciato','lat_start','lon_start','durata_stimata','nome_breve_percorso','nome_esteso_percorso'])) result.add('Route');
   if(has(['qualifica_dipendente','contratto_lavoro','ccnl','livello_contrattuale','ore_settimanali'])) result.add('RPO');
   if(has(['unita_misura','grandezza_fisica','conversione_si'])&&!result.has('IoT')) result.add('MU');
   if(has(['crediti','ects','ore_formazione','titolo_rilasciato','durata_corso','ente_erogatore'])) result.add('Learning');
@@ -844,12 +844,19 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['tipo_indicatore','baseline','target','fonte_indicatore'])&&!result.has('QB')) result.add('Indicator');
   result.add('L0');
   // Cleanup: ontologie più specifiche escludono quelle generiche sovrapposte
-  if(result.has('Route'))         result.delete('GTFS');          // Route più specifico di GTFS per percorsi non TPL
+  if(result.has('Route')){
+    result.delete('GTFS');   // Route più specifico di GTFS per percorsi non TPL
+    result.delete('SMAPIT'); // Route non è una scuola
+    // Route non implica POI a meno che non ci siano colonne POI esplicite
+    if(!has(['nome_poi','tipo_poi','categoria_poi','id_poi'])) result.delete('POI');
+  }
   if(result.has('PublicContract')){result.delete('CPSV');result.delete('CPSV-AP');}  // PublicContract copre gli appalti
-  if(result.has('RPO'))           result.delete('RO');            // RPO (risorse umane) più specifico di RO (ruoli politici)
-  if(result.has('Indicator'))     result.add('QB');               // Indicator estende QB per le osservazioni
-  if(result.has('Transparency')&&result.has('CPSV')) result.delete('CPSV'); // Transparency è separato da CPSV
-  if(result.has('Learning')&&result.has('TI')&&!has(['data_inizio','data_fine','orario'])) result.delete('TI'); // TI solo se date esplicite
+  if(result.has('RPO')){result.delete('RO');result.delete('SMAPIT');}  // RPO (risorse umane) è diverso da scuole
+  if(result.has('Indicator'))   result.add('QB');   // Indicator estende QB per le osservazioni
+  if(result.has('Transparency')&&result.has('CPSV')) result.delete('CPSV');
+  if(result.has('Learning')&&result.has('TI')&&!has(['data_inizio','data_fine','orario'])) result.delete('TI');
+  if(result.has('PARK')&&result.has('SMAPIT')) result.delete('SMAPIT'); // parcheggio non è scuola
+  if(result.has('POT')&&result.has('SMAPIT')) result.delete('SMAPIT');  // prezzi non è scuola
 
   return Array.from(result);
 }
@@ -885,7 +892,7 @@ Analizza queste intestazioni CSV e le prime righe di dati:
 ${sample}
 
 Rispondi SOLO con una lista JSON dei prefissi ontologici più appropriati tra questi valori esatti:
-CLV, COV, CPV, L0, POI, SM, RO, TI, ADMS, ACCO, PARK, GTFS, Cultural-ON, CPSV-AP, QB, SKOS
+CLV, COV, CPV, L0, POI, SM, RO, TI, ADMS, ACCO, PARK, GTFS, Cultural-ON, CPSV-AP, QB, SKOS, PublicContract, Route, RPO, Learning, Transparency, Indicator, POT
 
 REGOLE IMPORTANTI:
 - QB: includi SOLO se ci sono colonne con valori numerici aggregati (conteggi, importi, percentuali, misurazioni). QB serve per statistiche, non per dati anagrafici generici.
@@ -899,10 +906,17 @@ REGOLE IMPORTANTI:
 - POI: includi SEMPRE se ci sono colonne lat/lon con luoghi fisici (dae, defibrillatore, tipo_poi). COV NON va usato per luoghi fisici con coordinate.
 - Se colonne "tipo_poi","dae","defibrillatore" presenti: usa POI + CLV + L0, NON COV.
 - CPV: includi se ci sono colonne nome/cognome/codice_fiscale/data_nascita che riguardano persone fisiche. NON usare COV per persone fisiche.
-- GTFS: includi se ci sono colonne stop_id/stop_name/stop_lat/stop_lon/zone_id/route_id/trip_id che riguardano trasporto pubblico.
+- GTFS: includi se ci sono colonne stop_id/stop_name/stop_lat/stop_lon/zone_id/route_id/trip_id che riguardano trasporto pubblico locale (fermate, linee, corse).
+- Route: includi se ci sono colonne tipo_percorso/lunghezza_km/difficolta/dislivello/numero_tappe/lat_start/lon_start che riguardano percorsi/itinerari escursionistici o ciclabili. NON usare GTFS per percorsi non TPL.
 - IoT: includi se ci sono colonne sensore/sensor/misura/valore/timestamp/proprieta_osservata che riguardano dati da sensori o dispositivi.
-- SMAPIT: includi se ci sono colonne codice_scuola/denominazione_istituto/tipo_scuola/ciclo_scolastico.
+- SMAPIT: includi SOLO se ci sono colonne codice_scuola/denominazione_istituto/tipo_scuola/ciclo_scolastico. NON usarlo per percorsi o parcheggi.
 - CLV: includi SEMPRE se ci sono colonne indirizzo/lat/lon/cap/comune/via/civico.
+- PublicContract: includi se ci sono colonne cig/cup/importo_aggiudicazione/stazione_appaltante/aggiudicatario (appalti pubblici). NON usare CPSV-AP per gli appalti.
+- RPO: includi se ci sono colonne qualifica_dipendente/contratto_lavoro/ccnl/ore_settimanali (risorse umane PA). NON usare RO per dipendenti.
+- Learning: includi se ci sono colonne crediti/ects/ore_formazione/titolo_rilasciato/durata_corso (corsi/formazione).
+- Transparency: includi se ci sono colonne obbligo_trasparenza/categoria_trasparenza/dato_obbligatorio/d_lgs_33 (dati D.Lgs. 33/2013).
+- Indicator: includi se ci sono colonne tipo_indicatore/baseline/target/valore_indicatore (KPI e indicatori di performance).
+- POT: includi se ci sono colonne prezzo_intero/prezzo_ridotto/biglietto/tariffa_ingresso (prezzi e tariffe servizi). NON usare ACCO per tariffe generiche.
 - Se il CSV ha colonna "subject" con URI di istituti culturali → includi "Cultural-ON"
 
 Esempio di risposta valida: ["ACCO", "CLV", "L0"]
@@ -1692,16 +1706,59 @@ const ONTO_CLASSES = {
     classes: ['gtfs:Agency (Azienda trasporti)', 'gtfs:Stop (Fermata)', 'gtfs:Route (Linea)', 'gtfs:Trip (Corsa)', 'gtfs:StopTime (Orario fermata)', 'gtfs:Service (Servizio)'],
     props:   ['gtfs:agency', 'gtfs:route', 'gtfs:stop', 'gtfs:departureTime', 'gtfs:arrivalTime']
   },
+  'PUBLICCONTRACT': {
+    classes: ['pc:Contract (Contratto pubblico)', 'pc:ContractingAuthority (Stazione appaltante)', 'pc:BusinessEntity (Operatore economico)', 'pc:Award (Aggiudicazione)'],
+    props:   ['pc:hasCIG', 'pc:hasCUP', 'pc:hasAmount', 'pc:hasMainObject', 'pc:contractingAuthority', 'pc:awardedTo', 'pc:hasCPV', 'pc:selectionCriteria', 'pc:awardDate']
+  },
+  'ROUTE': {
+    classes: ['route:Route (Percorso/Itinerario)', 'route:RouteSection (Tappa/Sezione)'],
+    props:   ['route:routeLength', 'route:numberOfStages', 'route:routeEstDuration', 'route:routeShortName', 'route:routeLongName', 'route:difficulty', 'route:heightDifference']
+  },
+  'RPO': {
+    classes: ['rpo:RoleInOrganization (Ruolo lavorativo)', 'rpo:Employment (Rapporto di lavoro)'],
+    props:   ['rpo:hasRole', 'rpo:contractType', 'rpo:contractLevel', 'rpo:weeklyHours', 'rpo:hasCCNL']
+  },
+  'LEARNING': {
+    classes: ['learn:Course (Corso/Percorso formativo)', 'learn:LearningActivity (Attività formativa)', 'learn:Qualification (Titolo rilasciato)'],
+    props:   ['learn:ects', 'learn:hours', 'learn:duration', 'learn:awardedTitle']
+  },
+  'TRANSPARENCY': {
+    classes: ['tr:TransparencyObligation (Obbligo di trasparenza)', 'tr:TransparencyRecord (Dato pubblicato per trasparenza)'],
+    props:   ['tr:hasTransparencyObligation', 'tr:transparencyCategory', 'tr:mandatoryData']
+  },
+  'INDICATOR': {
+    classes: ['indicator:Indicator (Indicatore)', 'indicator:IndicatorObservation (Osservazione indicatore)'],
+    props:   ['indicator:indicatorType', 'indicator:baseline', 'indicator:target', 'sdmx-measure:obsValue', 'dct:source']
+  },
+  'POT': {
+    classes: ['pot:PriceSpecification (Specifica di prezzo)', 'pot:Offer (Offerta/Tariffa)'],
+    props:   ['pot:hasCurrencyValue', 'pot:hasCurrency', 'pot:hasUnitOfMeasure']
+  },
+  'QB': {
+    classes: ['qb:DataSet (Dataset statistico)', 'qb:Observation (Osservazione statistica)', 'qb:DimensionProperty (Dimensione)', 'qb:MeasureProperty (Misura)', 'qb:DataStructureDefinition (Struttura dati)'],
+    props:   ['qb:dataSet', 'qb:observation', 'sdmx-dimension:refPeriod', 'sdmx-dimension:refArea', 'sdmx-measure:obsValue', 'sdmx-attribute:obsStatus']
+  },
+  'CPSV-AP': {
+    classes: ['cpsv:PublicService (Servizio pubblico)', 'cpsv:Rule (Normativa)', 'cpsv:PublicOrganization (Ente erogatore)'],
+    props:   ['cpsv:hasInput', 'cpsv:produces', 'cpsv:hasCompetentAuthority', 'cpsv:isGroupedUnder']
+  },
+  'IoT': {
+    classes: ['iot:Sensor (Sensore)', 'iot:Actuator (Attuatore)', 'iot:FeatureOfInterest (Oggetto misurato)'],
+    props:   ['iot:hasValue', 'iot:hasUnitOfMeasure', 'iot:madeObservation', 'iot:observedProperty']
+  },
 };
 
 // Genera sezione classi per il prompt basandosi sulle ontologie rilevate
 async function fetchOntologyClasses(detectedOntos) {
   console.log('[Ontologie] Ontologie rilevate:', detectedOntos);
   const sections = [];
+  // Normalizza alias per lookup
+  const aliasMap = {'CULTURALON':'CULTURAL-ON','IOT':'IoT','CPSV':'CPSV-AP','CPSV-AP':'CPSV-AP'};
 
   for (const onto of detectedOntos) {
-    const key = onto.toUpperCase();
-    const data = ONTO_CLASSES[key];
+    const keyUp = onto.toUpperCase();
+    const key = aliasMap[keyUp] || keyUp;
+    const data = ONTO_CLASSES[key] || ONTO_CLASSES[onto] || ONTO_CLASSES[keyUp];
     if (!data) {
       console.log('[Ontologie]', key, '→ nessuna mappa statica');
       continue;
@@ -1864,50 +1921,67 @@ async function fetchVocabularies(detectedOntos) {
 
 // ── MAPPA ONTOLOGIA → TIPO-RISORSA URI ──────────────────────────────────────
 const ONTO_URI_TYPE = {
-  'ACCO':        'accommodation-facility',
-  'PARK':        'parking-facility',
-  'GTFS':        'stop',
-  'Cultural-ON': 'cultural-institute',
-  'CPSV-AP':     'public-service',
-  'COV':         'organization',
-  'CPV':         'person',
-  'ADMS':        'asset',
-  'POI':         'point-of-interest',
-  'CLV':         'place',
-  'L0':          'resource',
-  'SMAPIT':      'school',
-  'IOT':         'sensor',
-  'RO':          'role',
-  'QB':          'observation',
-  'SM':          'organization',
+  'ACCO':          'accommodation-facility',
+  'PARK':          'parking-facility',
+  'GTFS':          'stop',
+  'Cultural-ON':   'cultural-institute',
+  'CULTURALON':    'cultural-institute',
+  'CPSV-AP':       'public-service',
+  'COV':           'organization',
+  'CPV':           'person',
+  'ADMS':          'asset',
+  'POI':           'point-of-interest',
+  'CLV':           'place',
+  'L0':            'resource',
+  'SMAPIT':        'school',
+  'IOT':           'sensor',
+  'RO':            'role',
+  'QB':            'observation',
+  'SM':            'organization',
+  'PUBLICCONTRACT':'public-contract',
+  'ROUTE':         'route',
+  'RPO':           'role-in-organization',
+  'LEARNING':      'course',
+  'TRANSPARENCY':  'transparency-obligation',
+  'INDICATOR':     'indicator',
+  'POT':           'price-specification',
+  'TI':            'event',
 };
 
 // Mappa ontologia → classe RDF principale
 const ONTO_MAIN_CLASS = {
-  'ACCO':        'acco:Accommodation',
-  'PARK':        'park:ParkingFacility',
-  'GTFS':        'gtfs:Stop',
-  'CULTURAL-ON': 'cis:CulturalInstituteOrSite',
-  'Cultural-ON': 'cis:CulturalInstituteOrSite',
-  'CPSV-AP':     'cpsv:PublicService',
-  'COV':         'cov:PublicOrganization',
-  'CPV':         'cpv:Person',
-  'ADMS':        'adms:SemanticAsset',
-  'POI':         'poi:PointOfInterest',
-  'CLV':         'clv:Feature',
-  'TI':          'l0:EventOrSituation',
-  'QB':          'qb:Observation',
-  'L0':          'l0:Object',
-  'SMAPIT':      'smapit:School',
-  'IOT':         'iot:Sensor',
-  'RO':          'ro:Role',
+  'ACCO':          'acco:Accommodation',
+  'PARK':          'park:ParkingFacility',
+  'GTFS':          'gtfs:Stop',
+  'CULTURAL-ON':   'cis:CulturalInstituteOrSite',
+  'Cultural-ON':   'cis:CulturalInstituteOrSite',
+  'CULTURALON':    'cis:CulturalInstituteOrSite',
+  'CPSV-AP':       'cpsv:PublicService',
+  'COV':           'cov:PublicOrganization',
+  'CPV':           'cpv:Person',
+  'ADMS':          'adms:SemanticAsset',
+  'POI':           'poi:PointOfInterest',
+  'CLV':           'clv:Feature',
+  'TI':            'l0:EventOrSituation',
+  'QB':            'qb:Observation',
+  'L0':            'l0:Object',
+  'SMAPIT':        'smapit:School',
+  'IOT':           'iot:Sensor',
+  'RO':            'ro:Role',
+  'PUBLICCONTRACT':'pc:Contract',
+  'ROUTE':         'route:Route',
+  'RPO':           'rpo:RoleInOrganization',
+  'LEARNING':      'learn:Course',
+  'TRANSPARENCY':  'tr:TransparencyObligation',
+  'INDICATOR':     'indicator:Indicator',
+  'POT':           'pot:PriceSpecification',
 };
 
 function getMainClass(ontos) {
-  const priority = ['GTFS','SMAPIT','ACCO','IOT','CULTURAL-ON','CPSV-AP','QB','RO','POI','CPV','COV','TI','ADMS','L0'];
+  const priority = ['GTFS','SMAPIT','ACCO','IOT','CULTURAL-ON','CULTURALON','PUBLICCONTRACT','RPO','ROUTE','LEARNING','TRANSPARENCY','INDICATOR','PARK','POT','CPSV-AP','QB','RO','POI','CPV','COV','TI','ADMS','L0'];
   for (const onto of priority) {
     if (ontos.map(o => o.toUpperCase()).includes(onto)) {
-      return ONTO_MAIN_CLASS[onto] || 'l0:Object';
+      return ONTO_MAIN_CLASS[onto] || ONTO_MAIN_CLASS[ontos.find(o=>o.toUpperCase()===onto)] || 'l0:Object';
     }
   }
   return 'l0:Object';
@@ -1915,11 +1989,11 @@ function getMainClass(ontos) {
 
 // Determina il tipo-risorsa URI in base alle ontologie selezionate
 function getEntityTypeSegment(ontos) {
-  const priority = ['GTFS','SMAPIT','IOT','ACCO','PARK','CULTURAL-ON','CPSV-AP','QB','CPV','COV','RO','TI','POI','CLV','ADMS','L0'];
+  const priority = ['GTFS','SMAPIT','IOT','ACCO','PARK','PUBLICCONTRACT','RPO','ROUTE','LEARNING','TRANSPARENCY','INDICATOR','POT','CULTURAL-ON','CULTURALON','CPSV-AP','QB','CPV','COV','RO','TI','POI','CLV','ADMS','L0'];
   const up = ontos.map(o => o.toUpperCase());
   for (const onto of priority) {
     if (up.includes(onto)) {
-      return ONTO_URI_TYPE[onto] || ONTO_URI_TYPE[ontos.find(o=>o.toUpperCase()===onto)] || 'resource';
+      return ONTO_URI_TYPE[onto] || 'resource';
     }
   }
   return 'resource';
@@ -2361,8 +2435,8 @@ function fillMissingConnectedResources(ttl,ontos,rows,ipa){
 
 // ═══ MOTORE TTL DETERMINISTICO (basato su fixtures_v7.json - 274 dataset reali) ═══
 var DET_COL_NORM={coory:'lat',coorx:'lon',indirizzo_e_mail_autonomia:'email',indirizzo_e_mail_sede_corsi:'email',indirizzo_pec_sede_corsi:'email',e_mail:'email',email_scuola:'email',mail_scuola:'email',indirizzo_email_autonomia:'email',indirizzo_pec_autonomia:'email',telefono_sede_autonomia:'telefono',tipologia:'tipo',tipologia_sede:'tipo',macrotipologia_autonomia:'tipo',tipologia_autonomia:'tipo',caratteristica_scuola:'tipo',codice:'id',localita:'comune',distr:'_skip',num_sedi_autonomia:'_skip',organico_autonomia:'_skip',organico_sede:'_skip',location:'_skip',codice_sede_riferimento:'_skip',codice_sede_di_direttivo:'_skip',indirizzo_sede_di_direttivo:'_skip',cod_comune_sede_dir:'_skip',comune_sede_di_direttivo:'_skip',cap_sede_dir:'_skip',s_comune_montano:'_skip',denominazione_sede_direttivo:'_skip',nome_poi:'nome',tipo_poi:'tipo',accessibile_h24:'accessibile',ident:'id',cod:'id',ident:'id',nome_poi:'nome',tipo_poi:'tipo',tipo_struttura:'tipo',nome_struttura:'nome',accessibile_h24:'accessibile',accessibilita:'accessibile',cod:'id',codice:'id',code:'id',pk:'id',indirizzo_completo:'indirizzo',email_referente:'email',latitudine:'lat',lat_wgs84:'lat',coordy:'lat',geo_lat:'lat',longitudine:'lon',lon_wgs84:'lon',coordx:'lon',geo_lon:'lon',lng:'lon',stop_lat:'lat',stop_lon:'lon',denominazionescuola:'denominazione',denominazione_scuola:'denominazione',nome_dataset:'denominazione',label:'denominazione',titolo:'denominazione',stop_name:'denominazione',nome_sensore:'denominazione',denominazioneistitutoriferimento:'denominazione',istituzione_scolastica:'denominazione',amministrazione:'denominazione',indirizzoscuola:'indirizzo',indirizzo_scuola:'indirizzo',ubicazione:'indirizzo',localizzazione:'indirizzo',address:'indirizzo',descrizionecomune:'comune',citta:'comune',city:'comune',capscuola:'cap',cap_scuola:'cap',postcode:'cap',codicescuola:'id',codice_scuola:'id',slug:'id',cig:'id',fid:'id',codiceistitutoriferimento:'id',codice_istituzione:'id',codice_ente_bdap:'id',id_consigliere:'id',id_sensore:'id',idsensore:'id',node_id:'id',remoteid:'id',pec:'email',mail:'email',sito_web:'sitoweb',website:'sitoweb',web:'sitoweb',url:'sitoweb',data_inizio:'inizio',quando:'inizio',published:'inizio',creation_date:'inizio',issued:'inizio',data_fine:'termine',fine:'termine',last_edit_date:'modified',ultimamodifica:'modified',occorrenze:'valore',numero:'valore',totale:'valore',popolazione_residente:'valore',importo:'valore',tipologia:'tipo',tipo_bene:'tipo',tipo_evento:'tipo',tipo_struttura:'tipo',tipo_scuola:'tipo',descrizionetipologiagradoistruzione:'tipo',informazioni:'descrizione',note:'descrizione',oggetto:'descrizione',tel:'telefono',phone:'telefono',anno_rilevazione:'anno',annoscolastico:'anno',anno_scolastico:'anno'};
-var DET_URI_SEG={ACCO:'accommodation-facility',GTFS:'stop',POI:'point-of-interest','IoT':'sensor',COV:'public-organization',CPV:'person',RO:'role',SMAPIT:'school',QB:'observation',CLV:'address',TI:'event',CulturalON:'cultural-institute',ADMS:'asset',CPSV:'service'};
-var DET_CLASS={ACCO:'acco:Accommodation',GTFS:'gtfs:Stop',POI:'poi:PointOfInterest','IoT':'iot:Sensor',COV:'cov:PublicOrganization',CPV:'cpv:Person',RO:'ro:Role',SMAPIT:'smapit:School',QB:'qb:Observation',CLV:'clv:Address',TI:'l0:EventOrSituation',CulturalON:'cis:CulturalInstituteOrSite',ADMS:'adms:SemanticAsset',CPSV:'cpsv:PublicService'};
+var DET_URI_SEG={ACCO:'accommodation-facility',GTFS:'stop',POI:'point-of-interest','IoT':'sensor',COV:'public-organization',CPV:'person',RO:'role',SMAPIT:'school',QB:'observation',CLV:'address',TI:'event',CulturalON:'cultural-institute',ADMS:'asset',CPSV:'service',PARK:'parking-facility',PublicContract:'public-contract',Route:'route',RPO:'role-in-organization',Learning:'course',Transparency:'transparency-obligation',Indicator:'indicator',POT:'price-specification'};
+var DET_CLASS={ACCO:'acco:Accommodation',GTFS:'gtfs:Stop',POI:'poi:PointOfInterest','IoT':'iot:Sensor',COV:'cov:PublicOrganization',CPV:'cpv:Person',RO:'ro:Role',SMAPIT:'smapit:School',QB:'qb:Observation',CLV:'clv:Address',TI:'l0:EventOrSituation',CulturalON:'cis:CulturalInstituteOrSite',ADMS:'adms:SemanticAsset',CPSV:'cpsv:PublicService',PARK:'park:ParkingFacility',PublicContract:'pc:Contract',Route:'route:Route',RPO:'rpo:RoleInOrganization',Learning:'learn:Course',Transparency:'tr:TransparencyObligation',Indicator:'indicator:Indicator',POT:'pot:PriceSpecification'};
 var DET_PREFIXES={'rdf':'http://www.w3.org/1999/02/22-rdf-syntax-ns#','rdfs':'http://www.w3.org/2000/01/rdf-schema#','xsd':'http://www.w3.org/2001/XMLSchema#','dct':'http://purl.org/dc/terms/','dcat':'http://www.w3.org/ns/dcat#','foaf':'http://xmlns.com/foaf/0.1/','skos':'http://www.w3.org/2004/02/skos/core#','geo':'http://www.w3.org/2003/01/geo/wgs84_pos#','vcard':'http://www.w3.org/2006/vcard/ns#','schema':'https://schema.org/','park':'https://w3id.org/italia/onto/PARK/','pot':'https://w3id.org/italia/onto/POT/','pc':'https://w3id.org/italia/onto/PublicContract/','route':'https://w3id.org/italia/onto/Route/','rpo':'https://w3id.org/italia/onto/RPO/','mu':'https://w3id.org/italia/onto/MU/','learn':'https://w3id.org/italia/onto/Learning/','cpev':'https://w3id.org/italia/onto/CPEV/','tr':'https://w3id.org/italia/onto/Transparency/','indicator':'https://w3id.org/italia/onto/Indicator/','l0':'https://w3id.org/italia/onto/l0/','clv':'https://w3id.org/italia/onto/CLV/','sm':'https://w3id.org/italia/onto/SM/','ti':'https://w3id.org/italia/onto/TI/','acco':'https://w3id.org/italia/onto/ACCO/','poi':'https://w3id.org/italia/onto/POI/','iot':'https://w3id.org/italia/onto/IoT/','cov':'https://w3id.org/italia/onto/COV/','cpv':'https://w3id.org/italia/onto/CPV/','ro':'https://w3id.org/italia/onto/RO/','smapit':'https://w3id.org/italia/onto/SMAPIT/','gtfs':'http://vocab.gtfs.org/terms#','cis':'https://w3id.org/italia/onto/Cultural-ON/','adms':'http://www.w3.org/ns/adms#','cpsv':'http://purl.org/vocab/cpsv#','qb':'http://purl.org/linked-data/cube#','sdmx-dimension':'http://purl.org/linked-data/sdmx/2009/dimension#','sdmx-measure':'http://purl.org/linked-data/sdmx/2009/measure#','sdmx-attribute':'http://purl.org/linked-data/sdmx/2009/attribute#'};
 var DET_COL_RULES={denominazione:{pred:'rdfs:label',type:'langlit',lang:'it'},nome:{pred:'rdfs:label',type:'langlit',lang:'it'},nome_iniziativa:{pred:'rdfs:label',type:'langlit',lang:'it'},titolo_evento:{pred:'rdfs:label',type:'langlit',lang:'it'},titolo_manifestazione:{pred:'rdfs:label',type:'langlit',lang:'it'},descrizione:{pred:'dct:description',type:'langlit',lang:'it'},luogo:{pred:'schema:location',type:'langlit',lang:'it'},sede:{pred:'schema:location',type:'langlit',lang:'it'},dove:{pred:'schema:location',type:'langlit',lang:'it'},ingresso:{pred:'schema:isAccessibleForFree',type:'langlit',lang:'it'},biglietto:{pred:'schema:isAccessibleForFree',type:'langlit',lang:'it'},organizzatore:{pred:'dct:publisher',type:'langlit',lang:'it'},promotore:{pred:'dct:publisher',type:'langlit',lang:'it'},interpreti:{pred:'schema:performer',type:'langlit',lang:'it'},esecutori:{pred:'schema:performer',type:'langlit',lang:'it'},stalli:{pred:'park:numberOfParkingSpaces',type:'integer'},posti_auto:{pred:'park:numberOfParkingSpaces',type:'integer'},capacita_posti:{pred:'park:numberOfParkingSpaces',type:'integer'},posti_disabili:{pred:'park:numberOfDisabledParkingSpaces',type:'integer'},tariffa_oraria:{pred:'park:ratePerHour',type:'decimal'},tipo_parcheggio:{pred:'park:parkingType',type:'langlit',lang:'it'},cig:{pred:'pc:hasCIG',type:'literal'},cup:{pred:'pc:hasCUP',type:'literal'},importo_aggiudicazione:{pred:'pc:hasAmount',type:'decimal'},importo_base:{pred:'pc:hasAmount',type:'decimal'},importo_contratto:{pred:'pc:hasAmount',type:'decimal'},oggetto_contratto:{pred:'pc:hasMainObject',type:'langlit',lang:'it'},oggetto_gara:{pred:'pc:hasMainObject',type:'langlit',lang:'it'},stazione_appaltante:{pred:'pc:contractingAuthority',type:'langlit',lang:'it'},aggiudicatario:{pred:'pc:awardedTo',type:'langlit',lang:'it'},cpv_codice:{pred:'pc:hasCPV',type:'literal'},modalita_scelta:{pred:'pc:selectionCriteria',type:'langlit',lang:'it'},data_aggiudicazione:{pred:'pc:awardDate',type:'date'},lunghezza_km:{pred:'route:routelLength',type:'literal'},numero_tappe:{pred:'route:numberOfStages',type:'integer'},durata_stimata:{pred:'route:routeEstDuration',type:'literal'},nome_breve_percorso:{pred:'route:routeShortName',type:'literal'},nome_esteso_percorso:{pred:'route:routeLongName',type:'literal'},difficolta:{pred:'route:difficulty',type:'langlit',lang:'it'},dislivello:{pred:'route:heightDifference',type:'decimal'},qualifica_dipendente:{pred:'rpo:hasRole',type:'langlit',lang:'it'},contratto_lavoro:{pred:'rpo:contractType',type:'langlit',lang:'it'},livello_contrattuale:{pred:'rpo:contractLevel',type:'literal'},ore_settimanali:{pred:'rpo:weeklyHours',type:'decimal'},ccnl:{pred:'rpo:hasCCNL',type:'langlit',lang:'it'},crediti:{pred:'learn:ects',type:'decimal'},ects:{pred:'learn:ects',type:'decimal'},ore_formazione:{pred:'learn:hours',type:'decimal'},durata_corso:{pred:'learn:duration',type:'langlit',lang:'it'},titolo_rilasciato:{pred:'learn:awardedTitle',type:'langlit',lang:'it'},titolo_corso:{pred:'rdfs:label',type:'langlit',lang:'it'},obbligo_trasparenza:{pred:'tr:hasTransparencyObligation',type:'langlit',lang:'it'},categoria_trasparenza:{pred:'tr:transparencyCategory',type:'langlit',lang:'it'},dato_obbligatorio:{pred:'tr:mandatoryData',type:'langlit',lang:'it'},norma_riferimento:{pred:'dct:source',type:'literal'},tipo_indicatore:{pred:'indicator:indicatorType',type:'langlit',lang:'it'},valore_indicatore:{pred:'sdmx-measure:obsValue',type:'decimal'},baseline:{pred:'indicator:baseline',type:'decimal'},target:{pred:'indicator:target',type:'decimal'},fonte_indicatore:{pred:'dct:source',type:'langlit',lang:'it'},partita_iva:{pred:'cov:VATnumber',type:'literal'},codice_ipa:{pred:'cov:IPAcode',type:'literal'},rea:{pred:'cov:REANumber',type:'literal'},data_costituzione:{pred:'cov:foundationDate',type:'date'},codice_univoco_ufficio:{pred:'cov:officeIdentifier',type:'literal'},oggetto_sociale:{pred:'cov:businessObjective',type:'langlit',lang:'it'},acronimo:{pred:'cov:orgAcronym',type:'literal'},cf:{pred:'cpv:taxCode',type:'literal'},codice_fiscale:{pred:'cpv:taxCode',type:'literal'},codice_sesso:{pred:'cpv:sexID',type:'literal'},grado_istruzione:{pred:'cpv:educationLevelID',type:'literal'},eta:{pred:'cpv:age',type:'integer'},nome_completo:{pred:'cpv:fullName',type:'literal'},numero_camere:{pred:'acco:totalRoom',type:'integer'},numero_bagni:{pred:'acco:totalToilet',type:'integer'},codice_struttura:{pred:'acco:accommodationCode',type:'literal'},codice_stelle:{pred:'acco:accoStarRatingID',type:'literal'},nome_ufficiale:{pred:'poi:POIofficialName',type:'langlit',lang:'it'},nome_alternativo:{pred:'poi:POIalternativeName',type:'langlit',lang:'it'},categoria_poi:{pred:'poi:POIcategoryName',type:'langlit',lang:'it'},id_poi:{pred:'poi:POIID',type:'literal'},forma_giuridica:{pred:'cov:legalStatus',type:'langlit',lang:'it'},natura_giuridica:{pred:'cov:legalStatus',type:'langlit',lang:'it'},codice_ateco:{pred:'cov:economicActivity',type:'literal'},settore_ateco:{pred:'cov:economicActivity',type:'langlit',lang:'it'},licenza:{pred:'dct:license',type:'url'},tipo_licenza:{pred:'dct:license',type:'langlit',lang:'it'},numero_camere_totali:{pred:'acco:totalRoom',type:'integer'},tipo:{pred:'dct:type',type:'langlit',lang:'it'},categoria:{pred:'dct:type',type:'langlit',lang:'it'},email:{pred:'sm:hasEmail',type:'mailto'},sitoweb:{pred:'sm:hasWebSite',type:'url'},telefono:{pred:'sm:hasTelephone',type:'literal'},fax:{pred:'sm:hasFax',type:'literal'},lat:{pred:'geo:lat',type:'typed',xsd:'xsd:decimal'},lon:{pred:'geo:long',type:'typed',xsd:'xsd:decimal'},modified:{pred:'dct:modified',type:'typed',xsd:'xsd:date'},numero_posti_letto:{pred:'acco:numberOfRooms',type:'typed',xsd:'xsd:integer',onto:'ACCO'},posti_letto:{pred:'acco:numberOfRooms',type:'typed',xsd:'xsd:integer',onto:'ACCO'},letti:{pred:'acco:numberOfBeds',type:'typed',xsd:'xsd:integer',onto:'ACCO'},camere:{pred:'acco:numberOfRooms',type:'typed',xsd:'xsd:integer',onto:'ACCO'},stelle:{pred:'acco:starRating',type:'typed',xsd:'xsd:integer',onto:'ACCO'},stop_id:{pred:'dct:identifier',type:'literal',onto:'GTFS'},stop_code:{pred:'gtfs:code',type:'literal',onto:'GTFS'},zone_id:{pred:'gtfs:zone',type:'literal',onto:'GTFS'},location_type:{pred:'gtfs:locationType',type:'typed',xsd:'xsd:integer',onto:'GTFS'},parent_station:{pred:'gtfs:parentStation',type:'literal',onto:'GTFS'},route_id:{pred:'dct:identifier',type:'literal',onto:'GTFS'},route_short_name:{pred:'gtfs:shortName',type:'literal',onto:'GTFS'},route_long_name:{pred:'gtfs:longName',type:'langlit',lang:'it',onto:'GTFS'},route_type:{pred:'gtfs:routeType',type:'typed',xsd:'xsd:integer',onto:'GTFS'},agency_id:{pred:'gtfs:agency',type:'literal',onto:'GTFS'},arrival_time:{pred:'gtfs:arrivalTime',type:'literal',onto:'GTFS'},departure_time:{pred:'gtfs:departureTime',type:'literal',onto:'GTFS'},stop_sequence:{pred:'gtfs:stopSequence',type:'typed',xsd:'xsd:integer',onto:'GTFS'},valore:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},valore_medio:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},unita:{pred:'iot:hasUnitOfMeasure',type:'literal',onto:'IoT'},avgspeed:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},anno:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},mese:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},periodo:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},comparto:{pred:'cov:hasSector',type:'langlit',lang:'it',onto:'COV'},inquadramento:{pred:'cov:hasLegalForm',type:'langlit',lang:'it',onto:'COV'},cognome:{pred:'cpv:familyName',type:'langlit',lang:'it',onto:'CPV'},sesso:{pred:'cpv:sex',type:'literal',onto:'CPV'},cittadinanza:{pred:'cpv:citizenship',type:'langlit',lang:'it',onto:'CPV'},data_nascita:{pred:'cpv:dateOfBirth',type:'typed',xsd:'xsd:date',onto:'CPV'},ruolo:{pred:'rdfs:label',type:'langlit',lang:'it',onto:'RO'},legislatura:{pred:'dct:description',type:'langlit',lang:'it',onto:'RO'},voti_validi:{pred:'ro:votesObtained',type:'typed',xsd:'xsd:integer',onto:'RO'},gestore:{pred:'smapit:hasManager',type:'langlit',lang:'it',onto:'SMAPIT'},inizio:{pred:'ti:startDate',type:'typed',xsd:'xsd:dateTime',onto:'TI'},termine:{pred:'ti:endDate',type:'typed',xsd:'xsd:dateTime',onto:'TI'},durata:{pred:'ti:duration',type:'literal',onto:'TI'},dove:{pred:'l0:hasLocation',type:'langlit',lang:'it',onto:'TI'},accessibile:{pred:'poi:hasAccessCondition',type:'literal',onto:'POI'},distr:{pred:'_skip',type:'skip'},location:{pred:'_skip',type:'skip'},s_comune_montano:{pred:'_skip',type:'skip'},organico_autonomia:{pred:'_skip',type:'skip'},organico_sede:{pred:'_skip',type:'skip'},accessibile:{pred:'poi:hasAccessCondition',type:'literal',onto:'POI'},autore:{pred:'dct:creator',type:'langlit',lang:'it',onto:'CulturalON'},datazione:{pred:'dct:date',type:'literal',onto:'CulturalON'},numero_inventario:{pred:'dct:identifier',type:'literal',onto:'CulturalON'},version:{pred:'adms:version',type:'literal',onto:'ADMS'},versione:{pred:'adms:version',type:'literal',onto:'ADMS'},stato:{pred:'adms:status',type:'literal',onto:'ADMS'},formato:{pred:'dct:format',type:'literal',onto:'ADMS'},publisher:{pred:'dct:publisher',type:'langlit',lang:'it',onto:'ADMS'},aggiudicatario:{pred:'cpsv:hasParticipant',type:'langlit',lang:'it',onto:'CPSV'},cup:{pred:'dct:identifier',type:'literal',onto:'CPSV'},ufficio:{pred:'cpsv:isGroupedUnder',type:'langlit',lang:'it',onto:'CPSV'},indirizzo:{pred:'_skip',type:'skip'},comune:{pred:'_skip',type:'skip'},cap:{pred:'_skip',type:'skip'},provincia:{pred:'_skip',type:'skip'},civico:{pred:'_skip',type:'skip'},numerocivico:{pred:'_skip',type:'skip'},regione:{pred:'_skip',type:'skip'},via:{pred:'_skip',type:'skip'},strada:{pred:'_skip',type:'skip'}};
 
@@ -2399,7 +2473,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
   var seg=DET_URI_SEG[mainOnto]||'resource';
   var mainClass=DET_CLASS[mainOnto]||'l0:Object';
   var base='https://w3id.org/italia/data/'+(ipa||'ipa')+'/';
-  var idIdx=detFindColIdx(nh,['id','codice','codicescuola','stop_id','codice_scuola','cig','slug','remoteid','identifier','codice_fiscale']);
+  var idIdx=detFindColIdx(nh,['id','codice','codicescuola','stop_id','codice_scuola','cig','slug','remoteid','identifier','codice_fiscale','titolo','titolo_corso','denominazione']);
   if(idIdx<0)idIdx=0;
   var used=new Set(['rdfs','dct','foaf','xsd','l0','geo','sm']);
   ontos.forEach(function(o){detAddPrefix(o,used);});
@@ -2414,7 +2488,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
   ttl+=sp+'foaf:name '+dq+orgName+dq+'@it ;'+nl;
   ttl+=sp+'dct:identifier '+dq+orgIpa+dq+' .'+nl+nl;
   var dsUri=base+'dataset/ds-'+orgIpa;
-  if(ontos.indexOf('QB')>=0){
+  if(ontos.indexOf('QB')>=0||ontos.indexOf('Indicator')>=0){
     ttl+='<'+dsUri+'> a qb:DataSet ;'+nl;
     ttl+=sp+'rdfs:label '+dq+'Dataset '+orgName+dq+'@it ;'+nl;
     ttl+=sp+'dct:publisher <https://w3id.org/italia/data/'+orgIpa+'/ds> .'+nl+nl;
@@ -2501,6 +2575,110 @@ function detFormatLit(rule,val){
         var orgURI2=base+'organization/'+orgId2;
         if(!ttl.includes('<'+orgURI2+'>')){
           ttl+='<'+orgURI2+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+dq+ammV+dq+'@it .'+nl+nl;
+        }
+      }
+    }
+    // ── RPO: nodo persona + organizzazione collegati al ruolo ──────────────
+    if(ontos.indexOf('RPO')>=0){
+      var nI=nh.indexOf('nome'),cI=nh.indexOf('cognome'),cfI=nh.indexOf('codice_fiscale');
+      var enteI=nh.indexOf('ente'),ipaI2=nh.indexOf('codice_ipa');
+      var nV=(nI>=0?(row[nI]||'').trim():''),cV=(cI>=0?(row[cI]||'').trim():'');
+      var personLabel2=[nV,cV].filter(Boolean).join(' ');
+      if(personLabel2){
+        var personURI2=base+'person/'+(cfI>=0&&row[cfI]?row[cfI].trim().toLowerCase():idVal);
+        ttl+='<'+personURI2+'> a cpv:Person ;'+nl+sp+'rdfs:label '+dq+personLabel2+dq+'@it .'+nl;
+        ttl+=sp+'rpo:holdsRole <'+base+'role-in-organization/'+idVal+'> .'+nl+nl;
+      }
+      var enteV=enteI>=0?(row[enteI]||'').trim():'';
+      var ipaV2=ipaI2>=0?(row[ipaI2]||'').trim():'';
+      if(enteV){
+        var orgKey=ipaV2||enteV.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
+        var orgURI3=base+'organization/'+orgKey;
+        if(!ttl.includes('<'+orgURI3+'>')){
+          ttl+='<'+orgURI3+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+dq+enteV+dq+'@it .'+nl+nl;
+        }
+      }
+    }
+    // ── PublicContract: nodo stazione appaltante + aggiudicatario ──────────
+    if(ontos.indexOf('PublicContract')>=0){
+      var saI=nh.indexOf('stazione_appaltante'),ipaI3=nh.indexOf('codice_ipa');
+      var aggI=nh.indexOf('aggiudicatario');
+      if(saI>=0&&row[saI]&&row[saI].trim()){
+        var saV=row[saI].trim();
+        var ipaV3=ipaI3>=0?(row[ipaI3]||'').trim():'';
+        var saKey=ipaV3||saV.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
+        var saURI=base+'organization/'+saKey;
+        if(!ttl.includes('<'+saURI+'>')){
+          ttl+='<'+saURI+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+dq+saV+dq+'@it ;'+nl;
+          if(ipaV3)ttl+=sp+'cov:IPAcode '+dq+ipaV3+dq+' ;'+nl;
+          ttl+=sp+'dct:identifier '+dq+saKey+dq+' .'+nl+nl;
+        }
+      }
+      if(aggI>=0&&row[aggI]&&row[aggI].trim()){
+        var aggV=row[aggI].trim();
+        var aggKey=aggV.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
+        var aggURI=base+'organization/supplier-'+aggKey;
+        if(!ttl.includes('<'+aggURI+'>')){
+          ttl+='<'+aggURI+'> a cov:Organization ;'+nl+sp+'rdfs:label '+dq+aggV+dq+'@it .'+nl+nl;
+        }
+      }
+    }
+    // ── Route: nodo geografico start/end ──────────────────────────────────
+    if(ontos.indexOf('Route')>=0){
+      var latSI=nh.indexOf('lat_start'),lonSI=nh.indexOf('lon_start');
+      if(latSI>=0&&lonSI>=0&&row[latSI]&&row[lonSI]){
+        var startURI=base+'location/start-'+idVal;
+        ttl+='<'+startURI+'> a clv:Address ;'+nl;
+        ttl+=sp+'geo:lat '+dq+row[latSI].trim()+dq+'^^xsd:decimal ;'+nl;
+        ttl+=sp+'geo:long '+dq+row[lonSI].trim()+dq+'^^xsd:decimal .'+nl+nl;
+        used.add('clv');used.add('geo');
+      }
+    }
+    // ── POT: nodo prezzo con valuta ────────────────────────────────────────
+    if(ontos.indexOf('POT')>=0){
+      var prezzoI=nh.indexOf('prezzo_intero'),ridottoI=nh.indexOf('prezzo_ridotto');
+      if(prezzoI>=0&&row[prezzoI]&&row[prezzoI].trim()){
+        var prezzoURI=base+'price/'+idVal;
+        ttl+='<'+prezzoURI+'> a pot:PriceSpecification ;'+nl;
+        ttl+=sp+'pot:hasCurrencyValue '+dq+parseFloat(row[prezzoI].trim())+dq+'^^xsd:decimal ;'+nl;
+        ttl+=sp+'pot:hasCurrency "EUR"^^xsd:string .'+nl+nl;
+        used.add('pot');
+      }
+    }
+    // ── Indicator: nodo osservazione statistica ────────────────────────────
+    if(ontos.indexOf('Indicator')>=0){
+      var valIndI=nh.indexOf('valore_indicatore');
+      if(valIndI>=0&&row[valIndI]&&row[valIndI].trim()){
+        var obsURI=base+'observation/'+idVal;
+        ttl+='<'+obsURI+'> a qb:Observation ;'+nl;
+        ttl+=sp+'qb:dataSet <'+dsUri+'> ;'+nl;
+        ttl+=sp+'sdmx-measure:obsValue '+dq+parseFloat(row[valIndI].trim())+dq+'^^xsd:decimal .'+nl+nl;
+        used.add('qb');used.add('sdmx-measure');
+      }
+    }
+    // ── Learning: nodo ente erogatore ─────────────────────────────────────
+    if(ontos.indexOf('Learning')>=0){
+      var entErogI=nh.indexOf('ente_erogatore'),ipaErogI=nh.indexOf('codice_ipa');
+      if(entErogI>=0&&row[entErogI]&&row[entErogI].trim()){
+        var entErogV=row[entErogI].trim();
+        var ipaErogV=ipaErogI>=0?(row[ipaErogI]||'').trim():'';
+        var entErogKey=ipaErogV||entErogV.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
+        var entErogURI=base+'organization/'+entErogKey;
+        if(!ttl.includes('<'+entErogURI+'>')){
+          ttl+='<'+entErogURI+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+dq+entErogV+dq+'@it .'+nl+nl;
+        }
+      }
+    }
+    // ── Transparency: nodo ente referente ─────────────────────────────────
+    if(ontos.indexOf('Transparency')>=0){
+      var enteTransI=nh.indexOf('ente'),ipaTransI=nh.indexOf('codice_ipa');
+      if(enteTransI>=0&&row[enteTransI]&&row[enteTransI].trim()){
+        var enteTransV=row[enteTransI].trim();
+        var ipaTransV=ipaTransI>=0?(row[ipaTransI]||'').trim():'';
+        var enteTransKey=ipaTransV||enteTransV.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
+        var enteTransURI=base+'organization/'+enteTransKey;
+        if(!ttl.includes('<'+enteTransURI+'>')){
+          ttl+='<'+enteTransURI+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+dq+enteTransV+dq+'@it .'+nl+nl;
         }
       }
     }
@@ -2679,6 +2857,13 @@ REGOLE:
   TI selezionata: genera nodo ti:TimeInstant/TimeInterval per OGNI record con data/ora. Collega con ti:atTime.
   PARK selezionata      → park:ParkingFacility per parcheggi e aree di sosta
   GTFS selezionata      → gtfs:Stop per fermate, gtfs:Route per linee, gtfs:Agency per aziende di trasporto
+  Route selezionata     → route:Route OBBLIGATORIO per percorsi/itinerari escursionistici e ciclabili. NON usare gtfs:Route o l0:Object
+  PublicContract selezionata → pc:Contract OBBLIGATORIO per contratti pubblici/appalti. NON usare cpsv:PublicService o l0:Object
+  RPO selezionata       → rpo:RoleInOrganization OBBLIGATORIO per ruoli lavorativi PA (dipendenti, contratti). NON usare ro:Role che è per ruoli politici/istituzionali
+  Learning selezionata  → learn:Course OBBLIGATORIO per corsi e attività formative. NON usare l0:Object
+  Transparency selezionata → tr:TransparencyObligation OBBLIGATORIO per dati D.Lgs. 33/2013. NON usare cpsv:PublicService
+  Indicator selezionata → indicator:Indicator OBBLIGATORIO per KPI e indicatori. Usa qb:Observation per i valori misurati. NON usare l0:Object
+  POT selezionata       → pot:PriceSpecification OBBLIGATORIO per prezzi e tariffe servizi. NON usare acco:Accommodation
   IoT selezionata       → iot:Sensor per sensori, iot:Observation per osservazioni (NON usare qb:Observation per IoT)
 SMAPIT selezionata    → smapit:School per scuole di qualsiasi ordine e grado (NON usare cultural-on per le scuole)
   IoT selezionata       - iot:Sensor OBBLIGATORIO per sensori/dispositivi IoT. NON usare l0:Object o l0:EventOrSituation.
@@ -2728,14 +2913,23 @@ const PROP_WHITELIST = {
   'sm':   ['hasTelephone','hasEmail','hasWebSite','hasSocialNetworkAccount'],
   'l0':   ['name','identifier','hasDescription','isPartOf','hasLocation'],
   'adms': ['status','identifier','schemaAgency'],
-  'park': ['hasParkingLot','hasParkingSpace','hasTariff','capacity'],
+  'park': ['hasParkingLot','hasParkingSpace','hasTariff','capacity','numberOfParkingSpaces','numberOfDisabledParkingSpaces','ratePerHour','parkingType'],
   'acco': ['hasRoom','hasStar','checkIn','checkOut'],
   'qb':   ['dataSet','dimension','measure','attribute','observation','slice'],
-  'sdmx-dimension': ['refArea','timePeriod','sex','age','occupation'],
+  'sdmx-dimension': ['refArea','timePeriod','sex','age','occupation','refPeriod'],
   'sdmx-measure':   ['obsValue'],
-  'gtfs': ['agency','route','stop','trip','departureTime','arrivalTime','stopSequence'],
+  'sdmx-attribute': ['obsStatus','unitMeasure'],
+  'gtfs': ['agency','route','stop','trip','departureTime','arrivalTime','stopSequence','shortName','longName','routeType','code','zone','locationType'],
+  'pc':   ['hasCIG','hasCUP','hasAmount','hasMainObject','contractingAuthority','awardedTo','hasCPV','selectionCriteria','awardDate'],
+  'route':['routeLength','numberOfStages','routeEstDuration','routeShortName','routeLongName','difficulty','heightDifference'],
+  'rpo':  ['hasRole','contractType','contractLevel','weeklyHours','hasCCNL'],
+  'learn':['ects','hours','duration','awardedTitle'],
+  'tr':   ['hasTransparencyObligation','transparencyCategory','mandatoryData'],
+  'indicator':['indicatorType','baseline','target'],
+  'pot':  ['hasCurrencyValue','hasCurrency','hasUnitOfMeasure'],
+  'cis':  ['hasCollection','hasOpeningHours','hasSubject'],
 };
-const SAFE_PREFIXES = new Set(['rdf','rdfs','owl','xsd','dct','dcat','foaf','geo','skos','vcard','schema','qb','sdmx-dimension','sdmx-measure','sdmx-attribute','clv','cov','cpv','l0','poi','ro','ti','sm','cultural-on','acco','gtfs','park','cpsv','adms','muapit','iot','smapit','dcatapit']);
+const SAFE_PREFIXES = new Set(['rdf','rdfs','owl','xsd','dct','dcat','foaf','geo','skos','vcard','schema','qb','sdmx-dimension','sdmx-measure','sdmx-attribute','clv','cov','cpv','l0','poi','ro','ti','sm','cultural-on','acco','gtfs','park','cpsv','adms','muapit','iot','smapit','dcatapit','cis','pc','route','rpo','learn','tr','indicator','pot','mu','cpev']);
 
 // Whitelist classi approvate per prefisso
 const CLASS_WHITELIST = {
@@ -2754,6 +2948,15 @@ const CLASS_WHITELIST = {
   'sdmx-dimension': [],
   'sdmx-measure':   [],
   'gtfs': ['Agency','Stop','Route','Trip','StopTime','Service','Shape'],
+  'pc':   ['Contract','ContractingAuthority','BusinessEntity','Award'],
+  'route':['Route','RouteSection','NamedIndividual'],
+  'rpo':  ['RoleInOrganization','Employment'],
+  'learn':['Course','LearningActivity','Qualification'],
+  'tr':   ['TransparencyObligation','TransparencyRecord'],
+  'indicator':['Indicator','IndicatorObservation'],
+  'pot':  ['PriceSpecification','Offer'],
+  'cis':  ['CulturalInstituteOrSite','Museum','Library','Archive','Site','CollectionItem'],
+  'smapit':['School','HighSchool','PrimarySchool','KindergartenSchool'],
 };
 
 function fixURIs(ttl, ipa) {
@@ -3111,13 +3314,13 @@ function cleanTTL(text) {
     return '"'+m.slice(1,-1).replace(/"/g,"'")+'"+"@it"';
   });
   // Fix 0c: converti oggetti "prefisso-non-dichiarato:localname" in literal
-  var _kpArr=['rdf','rdfs','owl','xsd','dct','dcat','foaf','skos','geo','vcard','schema','l0','clv','sm','ti','acco','poi','iot','cov','cpv','ro','smapit','gtfs','cis','adms','cpsv','qb','sdmx-dimension','sdmx-measure','sdmx-attribute'];
+  var _kpArr=['rdf','rdfs','owl','xsd','dct','dcat','foaf','skos','geo','vcard','schema','l0','clv','sm','ti','acco','poi','iot','cov','cpv','ro','smapit','gtfs','cis','adms','cpsv','qb','sdmx-dimension','sdmx-measure','sdmx-attribute','park','pc','route','rpo','learn','tr','indicator','pot','mu','cpev'];
   text=text.replace(/([^<"\n])(\b([a-z][a-z0-9-]*):(\S+?))(\s*[;.])/g,function(m,pre,full,pfx,loc,end){
     if(_kpArr.indexOf(pfx)>=0)return m;
     return pre+'"'+full+'"@it'+end;
   });
   // Fix 0b: rimuovi triple con prefissi non standard
-  var _kpfx=/^(rdf|rdfs|owl|xsd|dct|dcat|foaf|skos|geo|vcard|schema|l0|clv|sm|ti|acco|poi|iot|cov|cpv|ro|smapit|gtfs|cis|adms|cpsv|qb|sdmx-dimension|sdmx-measure|sdmx-attribute):/;
+  var _kpfx=/^(rdf|rdfs|owl|xsd|dct|dcat|foaf|skos|geo|vcard|schema|l0|clv|sm|ti|acco|poi|iot|cov|cpv|ro|smapit|gtfs|cis|adms|cpsv|qb|sdmx-dimension|sdmx-measure|sdmx-attribute|park|pc|route|rpo|learn|tr|indicator|pot|mu|cpev):/;
   text=text.split('\n').filter(function(l){var m=l.match(/^\s+([\w-]+):/);return!m||_kpfx.test(m[1]+':');}).join('\n');
       // Fix 1: rimuovi predicati duplicati sullo stesso soggetto
     text = removeDuplicatePredicates(text);

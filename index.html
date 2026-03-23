@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.174 -->
+  <!-- build:v2026.03.23.175 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -636,7 +636,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.174</span>
+<span id="app-version">v2026.03.23.175</span>
 </footer>
 
 <script>
@@ -1059,6 +1059,13 @@ function detectOntologiesDeterministic(headers, rows) {
   if(result.has('Learning')&&result.has('TI')&&!has(['data_inizio','data_fine','orario'])) result.delete('TI');
   if(result.has('PARK')&&result.has('SMAPIT')) result.delete('SMAPIT'); // parcheggio non è scuola
   if(result.has('POT')&&result.has('SMAPIT')) result.delete('SMAPIT');  // prezzi non è scuola
+
+  // OSM schema puro: se osm_id+osm_type+lat/lon ma nessuna colonna evento reale → rimuovi TI spurio
+  if(_hasOSMschema && result.has('TI') &&
+     !has(['data_inizio','data_fine','data_evento','quando','inizio','termine',
+            'tipo_evento','nome_evento','titolo_evento','manifestazione'])) {
+    result.delete('TI');
+  }
 
   // CLV toponomastica pura: stradari/civici senza coordinate né trigger forti di altri domini
   // (es. codvia/specie/descrizione/cap/comune) → rimuovi POI, COV, TI spurii

@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.20.169 -->
+  <!-- build:v2026.03.23.170 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -514,8 +514,8 @@
             </div>
           </div>
           <div class="info-note mt-2" style="font-size:0.75rem">
-            Genera <code>dct:rightsHolder</code> con URI IPA ufficiale:
-            <code>https://w3id.org/italia/data/public-organization/{ipa}</code>
+            Usato per costruire gli URI RDF:
+            <code>https://w3id.org/italia/data/{ipa}/...</code>
           </div>
         </div>
       </div>
@@ -528,10 +528,10 @@
       <div class="status-bar" id="status-bar"></div>
 
       <!-- ── ENDPOINT DINAMICO ────────────────────────────── -->
-      <div id="api-endpoint-box" style="display:none;margin-top:1rem;border:2px solid #1a6b35;border-radius:6px;overflow:hidden;">
+      <div id="api-endpoint-box" style="margin-top:1rem;border:2px solid #1a6b35;border-radius:6px;overflow:hidden;">
         <div style="background:#1a6b35;padding:.5rem 1rem;display:flex;align-items:center;justify-content:space-between;">
           <span style="color:#fff;font-size:.75rem;font-weight:700;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;">
-            🔗 Endpoint TTL dinamico
+            🔗 Endpoint TTL dinamico — aggiorna il TTL automaticamente ad ogni chiamata
           </span>
           <span style="color:rgba(255,255,255,.7);font-size:.68rem;font-family:var(--mono)">
             Usa questo URL per avere il TTL sempre aggiornato
@@ -539,10 +539,10 @@
         </div>
         <div style="background:#f0faf4;padding:.75rem 1rem;">
           <div style="font-size:.72rem;color:#555;font-family:var(--mono);margin-bottom:.4rem;">
-            Se il tuo CSV è pubblicato a un URL pubblico, incollalo qui:
+            Incolla l'URL pubblico del tuo CSV per ottenere sempre il TTL aggiornato automaticamente:
           </div>
           <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;">
-            <input type="text" id="api-csv-url" class="inp" placeholder="https://miaPA.it/opendata/dati.csv"
+            <input type="text" id="api-csv-url" class="inp" placeholder="https://miaPA.it/opendata/dati.csv  ← incolla qui l'URL pubblico del tuo CSV"
               style="font-family:var(--mono);font-size:.72rem;flex:1;min-width:280px;"
               oninput="updateApiEndpoint()"/>
             <button class="btn-sec" style="font-size:.72rem;padding:.3rem .7rem" onclick="copyApiEndpoint()">
@@ -608,7 +608,7 @@
           <p>La PA ha già pubblicato il dataset su <strong>dati.gov.it</strong> o sul portale opendata locale con tutti i metadati DCAT. Questo strumento genera la <strong>distribuzione TTL</strong> da aggiungere al catalogo.</p>
           <p>Il file TTL contiene:</p>
           <ul style="margin:0;padding-left:1.2rem">
-            <li>Il <strong>titolare</strong> (<code>dct:rightsHolder</code>) con URI IPA ufficiale</li>
+            <li>Il <strong>titolare</strong> (<code>dct:rightsHolder</code>) collegato al codice IPA</li>
             <li>Le <strong>entità LOD</strong> per ogni riga del CSV, tipizzate con le ontologie ufficiali di <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer" style="color:var(--dg-blue)">dati-semantic-assets</a></li>
           </ul>
           <p class="mt-2">Il file generato va aggiunto come <strong>nuova distribuzione</strong> al dataset già esistente.</p>
@@ -636,7 +636,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.169</span>
+<span id="app-version">v2026.03.23.170</span>
 </footer>
 
 <script>

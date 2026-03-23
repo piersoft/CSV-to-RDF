@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.20.157 -->
+  <!-- build:v2026.03.20.158 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -603,7 +603,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.157</span>
+<span id="app-version">v2026.03.20.158</span>
 </footer>
 
 <script>
@@ -2887,10 +2887,22 @@ async function startDeterministicConversion() {
   } catch(e) {
     showStatus('Errore deterministico: '+e.message);
   } finally {
-    // animazione completata
-    document.getElementById('btn-convert').disabled = false;
     var _btnConv = document.getElementById('btn-convert');
-    if(_btnConv){_btnConv.textContent=_btnConv.dataset.origText||'⚡ Genera TTL';_btnConv.disabled=false;}
+    if(_btnConv){
+      _btnConv.disabled = false;
+      // Successo: mostra verde per 3 secondi, poi ripristina
+      if(document.getElementById('ttl-output').value.trim()){
+        _btnConv.textContent = '✅ TTL generato';
+        _btnConv.style.background = '#1a6b35';
+        setTimeout(function(){
+          _btnConv.textContent = '⚡ Genera TTL';
+          _btnConv.style.background = '';
+        }, 3000);
+      } else {
+        _btnConv.textContent = '⚡ Genera TTL';
+        _btnConv.style.background = '';
+      }
+    }
     // Abilita bottoni output dopo generazione deterministica
     ['btn-download-ttl','btn-download-rdf','btn-validate'].forEach(function(id){
       var el = document.getElementById(id);
@@ -3656,7 +3668,21 @@ async function startConversion() {
   } catch (err) {
     showStatus(`✕ ${err.message}`, 'error');
   } finally {
-    document.getElementById('btn-convert').disabled = false;
+    var _btnConvAI = document.getElementById('btn-convert');
+    if(_btnConvAI){
+      _btnConvAI.disabled = false;
+      if(document.getElementById('ttl-output').value.trim()){
+        _btnConvAI.textContent = '✅ TTL generato';
+        _btnConvAI.style.background = '#1a6b35';
+        setTimeout(function(){
+          _btnConvAI.textContent = '⚡ Genera TTL';
+          _btnConvAI.style.background = '';
+        }, 3000);
+      } else {
+        _btnConvAI.textContent = '⚡ Genera TTL';
+        _btnConvAI.style.background = '';
+      }
+    }
   }
 }
 

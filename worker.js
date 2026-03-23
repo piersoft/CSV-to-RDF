@@ -1,35 +1,5 @@
-/**
- * CSV→RDF Cloudflare Worker
- * Converte un CSV pubblico in Turtle/RDF usando il motore deterministico OntoPiA
- * 
- * API: GET /?url={csv_url}&ipa={codice_ipa}&pa={nome_pa}
- * 
- * Parametri:
- *   url  (obbligatorio) – URL pubblico del file CSV
- *   ipa  (opzionale)    – Codice IPA dell'ente (es. c_a662)
- *   pa   (opzionale)    – Nome PA (es. "Comune di Bari")
- *   onto (opzionale)    – Forzare ontologia (es. POI,CLV,L0)
- *   fmt  (opzionale)    – Formato output: ttl (default) | json-ld | json
- */
+// ═══ COSTANTI GLOBALI ═══
 
-// ═══ MOTORE DETERMINISTICO (estratto da CSV-to-RDF/index.html) ═══
-
-// DET_COL_NORM
-var DET_COL_NORM={coory:'lat',coorx:'lon',indirizzo_e_mail_autonomia:'email',indirizzo_e_mail_sede_corsi:'email',indirizzo_pec_sede_corsi:'email',e_mail:'email',email_scuola:'email',mail_scuola:'email',indirizzo_email_autonomia:'email',indirizzo_pec_autonomia:'email',telefono_sede_autonomia:'telefono',tipologia:'tipo',tipologia_sede:'tipo',macrotipologia_autonomia:'tipo',tipologia_autonomia:'tipo',caratteristica_scuola:'tipo',codice:'id',localita:'comune',distr:'_skip',num_sedi_autonomia:'_skip',organico_autonomia:'_skip',organico_sede:'_skip',location:'_skip',codice_sede_riferimento:'_skip',codice_sede_di_direttivo:'_skip',indirizzo_sede_di_direttivo:'_skip',cod_comune_sede_dir:'_skip',comune_sede_di_direttivo:'_skip',cap_sede_dir:'_skip',s_comune_montano:'_skip',denominazione_sede_direttivo:'_skip',nome_poi:'nome',tipo_poi:'tipo',accessibile_h24:'accessibile',ident:'id',cod:'id',ident:'id',nome_poi:'nome',tipo_poi:'tipo',tipo_struttura:'tipo',nome_struttura:'nome',accessibile_h24:'accessibile',accessibilita:'accessibile',cod:'id',codice:'id',code:'id',pk:'id',indirizzo_completo:'indirizzo',email_referente:'email',latitudine:'lat',lat_wgs84:'lat',coordy:'lat',geo_lat:'lat',longitudine:'lon',lon_wgs84:'lon',coordx:'lon',geo_lon:'lon',lng:'lon',stop_lat:'lat',stop_lon:'lon',denominazionescuola:'denominazione',denominazione_scuola:'denominazione',nome_dataset:'denominazione',label:'denominazione',titolo:'denominazione',stop_name:'denominazione',nome_sensore:'denominazione',denominazioneistitutoriferimento:'denominazione',istituzione_scolastica:'denominazione',amministrazione:'denominazione',indirizzoscuola:'indirizzo',indirizzo_scuola:'indirizzo',ubicazione:'indirizzo',localizzazione:'indirizzo',address:'indirizzo',descrizionecomune:'comune',citta:'comune',city:'comune',capscuola:'cap',cap_scuola:'cap',postcode:'cap',codicescuola:'id',codice_scuola:'id',slug:'id',cig:'id',fid:'id',codiceistitutoriferimento:'id',codice_istituzione:'id',codice_ente_bdap:'id',id_consigliere:'id',id_sensore:'id',idsensore:'id',node_id:'id',remoteid:'id',pec:'email',mail:'email',sito_web:'sitoweb',website:'sitoweb',web:'sitoweb',url:'sitoweb',data_inizio:'inizio',quando:'inizio',published:'inizio',creation_date:'inizio',issued:'inizio',data_fine:'termine',fine:'termine',last_edit_date:'modified',ultimamodifica:'modified',occorrenze:'valore',numero:'valore',totale:'valore',popolazione_residente:'valore',importo:'valore',tipologia:'tipo',tipo_bene:'tipo',tipo_evento:'tipo',tipo_struttura:'tipo',tipo_scuola:'tipo',descrizionetipologiagradoistruzione:'tipo',informazioni:'descrizione',note:'descrizione',oggetto:'descrizione',tel:'telefono',phone:'telefono',anno_rilevazione:'anno',annoscolastico:'anno',anno_scolastico:'anno'};
-
-// DET_URI_SEG
-var DET_URI_SEG={ACCO:'accommodation-facility',GTFS:'stop',POI:'point-of-interest','IoT':'sensor',COV:'public-organization',CPV:'person',RO:'role',SMAPIT:'school',QB:'observation',CLV:'address',TI:'event',CulturalON:'cultural-institute',ADMS:'asset',CPSV:'service',PARK:'parking-facility',PublicContract:'public-contract',Route:'route',RPO:'role-in-organization',Learning:'course',Transparency:'transparency-obligation',Indicator:'indicator',POT:'price-specification'};
-
-// DET_CLASS
-var DET_CLASS={ACCO:'acco:Accommodation',GTFS:'gtfs:Stop',POI:'poi:PointOfInterest','IoT':'iot:Sensor',COV:'cov:PublicOrganization',CPV:'cpv:Person',RO:'ro:Role',SMAPIT:'smapit:School',QB:'qb:Observation',CLV:'clv:Address',TI:'l0:EventOrSituation',CulturalON:'cis:CulturalInstituteOrSite',ADMS:'adms:SemanticAsset',CPSV:'cpsv:PublicService',PARK:'park:ParkingFacility',PublicContract:'pc:Contract',Route:'route:Route',RPO:'rpo:RoleInOrganization',Learning:'learn:Course',Transparency:'tr:TransparencyObligation',Indicator:'indicator:Indicator',POT:'pot:PriceSpecification'};
-
-// DET_PREFIXES
-var DET_PREFIXES={'rdf':'http://www.w3.org/1999/02/22-rdf-syntax-ns#','rdfs':'http://www.w3.org/2000/01/rdf-schema#','xsd':'http://www.w3.org/2001/XMLSchema#','dct':'http://purl.org/dc/terms/','dcat':'http://www.w3.org/ns/dcat#','foaf':'http://xmlns.com/foaf/0.1/','skos':'http://www.w3.org/2004/02/skos/core#','geo':'http://www.w3.org/2003/01/geo/wgs84_pos#','vcard':'http://www.w3.org/2006/vcard/ns#','schema':'https://schema.org/','park':'https://w3id.org/italia/onto/PARK/','pot':'https://w3id.org/italia/onto/POT/','pc':'https://w3id.org/italia/onto/PublicContract/','route':'https://w3id.org/italia/onto/Route/','rpo':'https://w3id.org/italia/onto/RPO/','mu':'https://w3id.org/italia/onto/MU/','learn':'https://w3id.org/italia/onto/Learning/','cpev':'https://w3id.org/italia/onto/CPEV/','tr':'https://w3id.org/italia/onto/Transparency/','indicator':'https://w3id.org/italia/onto/Indicator/','l0':'https://w3id.org/italia/onto/l0/','clv':'https://w3id.org/italia/onto/CLV/','sm':'https://w3id.org/italia/onto/SM/','ti':'https://w3id.org/italia/onto/TI/','acco':'https://w3id.org/italia/onto/ACCO/','poi':'https://w3id.org/italia/onto/POI/','iot':'https://w3id.org/italia/onto/IoT/','cov':'https://w3id.org/italia/onto/COV/','cpv':'https://w3id.org/italia/onto/CPV/','ro':'https://w3id.org/italia/onto/RO/','smapit':'https://w3id.org/italia/onto/SMAPIT/','gtfs':'http://vocab.gtfs.org/terms#','cis':'https://w3id.org/italia/onto/Cultural-ON/','adms':'http://www.w3.org/ns/adms#','cpsv':'http://purl.org/vocab/cpsv#','qb':'http://purl.org/linked-data/cube#','sdmx-dimension':'http://purl.org/linked-data/sdmx/2009/dimension#','sdmx-measure':'http://purl.org/linked-data/sdmx/2009/measure#','sdmx-attribute':'http://purl.org/linked-data/sdmx/2009/attribute#'};
-
-// DET_COL_RULES
-var DET_COL_RULES={denominazione:{pred:'rdfs:label',type:'langlit',lang:'it'},nome:{pred:'rdfs:label',type:'langlit',lang:'it'},nome_iniziativa:{pred:'rdfs:label',type:'langlit',lang:'it'},titolo_evento:{pred:'rdfs:label',type:'langlit',lang:'it'},titolo_manifestazione:{pred:'rdfs:label',type:'langlit',lang:'it'},descrizione:{pred:'dct:description',type:'langlit',lang:'it'},luogo:{pred:'schema:location',type:'langlit',lang:'it'},sede:{pred:'schema:location',type:'langlit',lang:'it'},dove:{pred:'l0:hasLocation',type:'langlit',lang:'it'},ingresso:{pred:'schema:isAccessibleForFree',type:'langlit',lang:'it'},biglietto:{pred:'schema:isAccessibleForFree',type:'langlit',lang:'it'},organizzatore:{pred:'dct:publisher',type:'langlit',lang:'it'},promotore:{pred:'dct:publisher',type:'langlit',lang:'it'},interpreti:{pred:'schema:performer',type:'langlit',lang:'it'},esecutori:{pred:'schema:performer',type:'langlit',lang:'it'},autore:{pred:'dct:creator',type:'langlit',lang:'it'},periodo:{pred:'dct:temporal',type:'langlit',lang:'it'},stagione:{pred:'dct:temporal',type:'langlit',lang:'it'},programmazione:{pred:'dct:temporal',type:'langlit',lang:'it'},stalli:{pred:'park:numberOfParkingSpaces',type:'integer'},posti_auto:{pred:'park:numberOfParkingSpaces',type:'integer'},capacita_posti:{pred:'park:numberOfParkingSpaces',type:'integer'},posti_disabili:{pred:'park:numberOfDisabledParkingSpaces',type:'integer'},tariffa_oraria:{pred:'park:ratePerHour',type:'decimal'},tipo_parcheggio:{pred:'park:parkingType',type:'langlit',lang:'it'},cig:{pred:'pc:hasCIG',type:'literal'},cup:{pred:'pc:hasCUP',type:'literal'},importo_aggiudicazione:{pred:'pc:hasAmount',type:'decimal'},importo_base:{pred:'pc:hasAmount',type:'decimal'},importo_contratto:{pred:'pc:hasAmount',type:'decimal'},oggetto_contratto:{pred:'pc:hasMainObject',type:'langlit',lang:'it'},oggetto_gara:{pred:'pc:hasMainObject',type:'langlit',lang:'it'},stazione_appaltante:{pred:'pc:contractingAuthority',type:'langlit',lang:'it'},aggiudicatario:{pred:'pc:awardedTo',type:'langlit',lang:'it'},cpv_codice:{pred:'pc:hasCPV',type:'literal'},modalita_scelta:{pred:'pc:selectionCriteria',type:'langlit',lang:'it'},data_aggiudicazione:{pred:'pc:awardDate',type:'date'},lunghezza_km:{pred:'route:routelLength',type:'literal'},numero_tappe:{pred:'route:numberOfStages',type:'integer'},durata_stimata:{pred:'route:routeEstDuration',type:'literal'},nome_breve_percorso:{pred:'route:routeShortName',type:'literal'},nome_esteso_percorso:{pred:'route:routeLongName',type:'literal'},difficolta:{pred:'route:difficulty',type:'langlit',lang:'it'},dislivello:{pred:'route:heightDifference',type:'decimal'},qualifica_dipendente:{pred:'rpo:hasRole',type:'langlit',lang:'it'},contratto_lavoro:{pred:'rpo:contractType',type:'langlit',lang:'it'},livello_contrattuale:{pred:'rpo:contractLevel',type:'literal'},ore_settimanali:{pred:'rpo:weeklyHours',type:'decimal'},ccnl:{pred:'rpo:hasCCNL',type:'langlit',lang:'it'},crediti:{pred:'learn:ects',type:'decimal'},ects:{pred:'learn:ects',type:'decimal'},ore_formazione:{pred:'learn:hours',type:'decimal'},durata_corso:{pred:'learn:duration',type:'langlit',lang:'it'},titolo_rilasciato:{pred:'learn:awardedTitle',type:'langlit',lang:'it'},titolo_corso:{pred:'rdfs:label',type:'langlit',lang:'it'},obbligo_trasparenza:{pred:'tr:hasTransparencyObligation',type:'langlit',lang:'it'},categoria_trasparenza:{pred:'tr:transparencyCategory',type:'langlit',lang:'it'},dato_obbligatorio:{pred:'tr:mandatoryData',type:'langlit',lang:'it'},norma_riferimento:{pred:'dct:source',type:'literal'},tipo_indicatore:{pred:'indicator:indicatorType',type:'langlit',lang:'it'},valore_indicatore:{pred:'sdmx-measure:obsValue',type:'decimal'},baseline:{pred:'indicator:baseline',type:'decimal'},target:{pred:'indicator:target',type:'decimal'},fonte_indicatore:{pred:'dct:source',type:'langlit',lang:'it'},partita_iva:{pred:'cov:VATnumber',type:'literal'},codice_ipa:{pred:'cov:IPAcode',type:'literal'},rea:{pred:'cov:REANumber',type:'literal'},data_costituzione:{pred:'cov:foundationDate',type:'date'},codice_univoco_ufficio:{pred:'cov:officeIdentifier',type:'literal'},oggetto_sociale:{pred:'cov:businessObjective',type:'langlit',lang:'it'},acronimo:{pred:'cov:orgAcronym',type:'literal'},cf:{pred:'cpv:taxCode',type:'literal'},codice_fiscale:{pred:'cpv:taxCode',type:'literal'},codice_sesso:{pred:'cpv:sexID',type:'literal'},grado_istruzione:{pred:'cpv:educationLevelID',type:'literal'},eta:{pred:'cpv:age',type:'integer'},nome_completo:{pred:'cpv:fullName',type:'literal'},numero_camere:{pred:'acco:totalRoom',type:'integer'},numero_bagni:{pred:'acco:totalToilet',type:'integer'},codice_struttura:{pred:'acco:accommodationCode',type:'literal'},codice_stelle:{pred:'acco:accoStarRatingID',type:'literal'},nome_ufficiale:{pred:'poi:POIofficialName',type:'langlit',lang:'it'},nome_alternativo:{pred:'poi:POIalternativeName',type:'langlit',lang:'it'},categoria_poi:{pred:'poi:POIcategoryName',type:'langlit',lang:'it'},id_poi:{pred:'poi:POIID',type:'literal'},forma_giuridica:{pred:'cov:legalStatus',type:'langlit',lang:'it'},natura_giuridica:{pred:'cov:legalStatus',type:'langlit',lang:'it'},codice_ateco:{pred:'cov:economicActivity',type:'literal'},settore_ateco:{pred:'cov:economicActivity',type:'langlit',lang:'it'},licenza:{pred:'dct:license',type:'url'},tipo_licenza:{pred:'dct:license',type:'langlit',lang:'it'},numero_camere_totali:{pred:'acco:totalRoom',type:'integer'},tipo:{pred:'dct:type',type:'langlit',lang:'it'},categoria:{pred:'dct:type',type:'langlit',lang:'it'},email:{pred:'sm:hasEmail',type:'mailto'},sitoweb:{pred:'sm:hasWebSite',type:'url'},telefono:{pred:'sm:hasTelephone',type:'literal'},fax:{pred:'sm:hasFax',type:'literal'},lat:{pred:'geo:lat',type:'typed',xsd:'xsd:decimal'},lon:{pred:'geo:long',type:'typed',xsd:'xsd:decimal'},modified:{pred:'dct:modified',type:'typed',xsd:'xsd:date'},numero_posti_letto:{pred:'acco:numberOfRooms',type:'typed',xsd:'xsd:integer',onto:'ACCO'},posti_letto:{pred:'acco:numberOfRooms',type:'typed',xsd:'xsd:integer',onto:'ACCO'},letti:{pred:'acco:numberOfBeds',type:'typed',xsd:'xsd:integer',onto:'ACCO'},camere:{pred:'acco:numberOfRooms',type:'typed',xsd:'xsd:integer',onto:'ACCO'},stelle:{pred:'acco:starRating',type:'typed',xsd:'xsd:integer',onto:'ACCO'},stop_id:{pred:'dct:identifier',type:'literal',onto:'GTFS'},stop_code:{pred:'gtfs:code',type:'literal',onto:'GTFS'},zone_id:{pred:'gtfs:zone',type:'literal',onto:'GTFS'},location_type:{pred:'gtfs:locationType',type:'typed',xsd:'xsd:integer',onto:'GTFS'},parent_station:{pred:'gtfs:parentStation',type:'literal',onto:'GTFS'},route_id:{pred:'dct:identifier',type:'literal',onto:'GTFS'},route_short_name:{pred:'gtfs:shortName',type:'literal',onto:'GTFS'},route_long_name:{pred:'gtfs:longName',type:'langlit',lang:'it',onto:'GTFS'},route_type:{pred:'gtfs:routeType',type:'typed',xsd:'xsd:integer',onto:'GTFS'},agency_id:{pred:'gtfs:agency',type:'literal',onto:'GTFS'},arrival_time:{pred:'gtfs:arrivalTime',type:'literal',onto:'GTFS'},departure_time:{pred:'gtfs:departureTime',type:'literal',onto:'GTFS'},stop_sequence:{pred:'gtfs:stopSequence',type:'typed',xsd:'xsd:integer',onto:'GTFS'},valore:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},valore_medio:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},unita:{pred:'iot:hasUnitOfMeasure',type:'literal',onto:'IoT'},avgspeed:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},anno:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},mese:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},comparto:{pred:'cov:hasSector',type:'langlit',lang:'it',onto:'COV'},inquadramento:{pred:'cov:hasLegalForm',type:'langlit',lang:'it',onto:'COV'},cognome:{pred:'cpv:familyName',type:'langlit',lang:'it',onto:'CPV'},sesso:{pred:'cpv:sex',type:'literal',onto:'CPV'},cittadinanza:{pred:'cpv:citizenship',type:'langlit',lang:'it',onto:'CPV'},data_nascita:{pred:'cpv:dateOfBirth',type:'typed',xsd:'xsd:date',onto:'CPV'},ruolo:{pred:'rdfs:label',type:'langlit',lang:'it',onto:'RO'},legislatura:{pred:'dct:description',type:'langlit',lang:'it',onto:'RO'},voti_validi:{pred:'ro:votesObtained',type:'typed',xsd:'xsd:integer',onto:'RO'},gestore:{pred:'smapit:hasManager',type:'langlit',lang:'it',onto:'SMAPIT'},inizio:{pred:'ti:startDate',type:'typed',xsd:'xsd:dateTime',onto:'TI'},termine:{pred:'ti:endDate',type:'typed',xsd:'xsd:dateTime',onto:'TI'},durata:{pred:'ti:duration',type:'literal',onto:'TI'},dove:{pred:'l0:hasLocation',type:'langlit',lang:'it',onto:'TI'},accessibile:{pred:'poi:hasAccessCondition',type:'literal',onto:'POI'},distr:{pred:'_skip',type:'skip'},location:{pred:'_skip',type:'skip'},s_comune_montano:{pred:'_skip',type:'skip'},organico_autonomia:{pred:'_skip',type:'skip'},organico_sede:{pred:'_skip',type:'skip'},accessibile:{pred:'poi:hasAccessCondition',type:'literal',onto:'POI'},datazione:{pred:'dct:date',type:'literal',onto:'CulturalON'},numero_inventario:{pred:'dct:identifier',type:'literal',onto:'CulturalON'},version:{pred:'adms:version',type:'literal',onto:'ADMS'},versione:{pred:'adms:version',type:'literal',onto:'ADMS'},stato:{pred:'adms:status',type:'literal',onto:'ADMS'},formato:{pred:'dct:format',type:'literal',onto:'ADMS'},publisher:{pred:'dct:publisher',type:'langlit',lang:'it',onto:'ADMS'},aggiudicatario:{pred:'cpsv:hasParticipant',type:'langlit',lang:'it',onto:'CPSV'},cup:{pred:'dct:identifier',type:'literal',onto:'CPSV'},ufficio:{pred:'cpsv:isGroupedUnder',type:'langlit',lang:'it',onto:'CPSV'},indirizzo:{pred:'_skip',type:'skip'},comune:{pred:'_skip',type:'skip'},cap:{pred:'_skip',type:'skip'},provincia:{pred:'_skip',type:'skip'},civico:{pred:'_skip',type:'skip'},numerocivico:{pred:'_skip',type:'skip'},regione:{pred:'_skip',type:'skip'},via:{pred:'_skip',type:'skip'},strada:{pred:'_skip',type:'skip'}};
-
-// ONTO_RULES
 const ONTO_RULES = [
   { keys: ['lat','lon','lng','latitudine','longitudine','coord'],          ontos: ['CLV','L0'] },
   { keys: ['indirizzo','address','via','strada','civico','cap','comune'],  ontos: ['CLV'] },
@@ -60,7 +30,6 @@ const ONTO_RULES = [
   { keys: ['trasparenza','obbligo','pubblicazione'],                       ontos: ['Transparency'] },
 ];
 
-// ONTO_CLASSES
 const ONTO_CLASSES = {
   'CLV': {
     classes: ['clv:Address (Indirizzo)', 'clv:Feature (Caratteristica geografica)', 'clv:Geometry (Geometria)', 'clv:AdminUnit (Unità amministrativa)', 'clv:Road (Strada)', 'clv:StreetNumber (Numero civico)', 'clv:Identifier (Identificativo)', 'clv:GeographicalDistribution (Ripartizione geografica)'],
@@ -164,7 +133,6 @@ const ONTO_CLASSES = {
   },
 };
 
-// ONTO_URI_TYPE
 const ONTO_URI_TYPE = {
   'ACCO':          'accommodation-facility',
   'PARK':          'parking-facility',
@@ -193,7 +161,6 @@ const ONTO_URI_TYPE = {
   'TI':            'event',
 };
 
-// ONTO_MAIN_CLASS
 const ONTO_MAIN_CLASS = {
   'ACCO':          'acco:Accommodation',
   'PARK':          'park:ParkingFacility',
@@ -222,31 +189,18 @@ const ONTO_MAIN_CLASS = {
   'POT':           'pot:PriceSpecification',
 };
 
-// SAFE_PREFIXES
 const SAFE_PREFIXES = new Set(['rdf','rdfs','owl','xsd','dct','dcat','foaf','geo','skos','vcard','schema','qb','sdmx-dimension','sdmx-measure','sdmx-attribute','clv','cov','cpv','l0','poi','ro','ti','sm','cultural-on','acco','gtfs','park','cpsv','adms','muapit','iot','smapit','dcatapit','cis','pc','route','rpo','learn','tr','indicator','pot','mu','cpev']);
 
-// ONTO_GATE
-var ONTO_GATE={
-    'CLV':   ['lat','lon','lng','latitudine','longitudine','indirizzo','via','civico','comune','cap','stop_lat','stop_lon','coord_lat','coord_lon','lat_wgs84','lon_wgs84'],
-    'GTFS':  ['stop_id','stop_name','stop_lat','stop_lon','route_id','agency_id','trip_id'],
-    'QB':    ['valore','obs_value','numero_residenti','importo','misura','fascia_eta','anno','trimestre','mese'],
-    'ACCO':  ['stelle','posti_letto','tipo_struttura','hotel','albergo','camere','letti'],
-    'PARK':  ['stalli','posti_auto','tariffa_oraria','posti_disabili','capacita_posti'],
-    'IoT':   ['sensore','id_sensore','proprieta_osservata','tipo_sensore','valore_medio'],
-    'SMAPIT':['codice_scuola','tipo_scuola','denominazione_scuola','codice_istituto'],
-    'CPV':   ['cognome','codice_fiscale','data_nascita','nome_completo'],
-    'RO':    ['ruolo','tipo_nomina','legislatura','voti_validi'],
-    'ADMS':  ['tipo_asset','versione','stato','formato','licenza'],
-    'PublicContract':['cig','importo_aggiudicazione','stazione_appaltante','aggiudicatario'],
-    'Route': ['tipo_percorso','lunghezza_km','difficolta','dislivello','lat_start'],
-    'RPO':   ['qualifica_dipendente','contratto_lavoro','ccnl','ore_settimanali'],
-    'Learning':['crediti','ore_formazione','titolo_rilasciato','ente_erogatore'],
-    'Transparency':['obbligo_trasparenza','categoria_trasparenza','dato_obbligatorio'],
-    'Indicator':['tipo_indicatore','baseline','target','valore_indicatore'],
-    'POT':   ['prezzo_intero','prezzo_ridotto','biglietto','tariffa_ingresso'],
-  };
+var DET_COL_NORM={coory:'lat',coorx:'lon',indirizzo_e_mail_autonomia:'email',indirizzo_e_mail_sede_corsi:'email',indirizzo_pec_sede_corsi:'email',e_mail:'email',email_scuola:'email',mail_scuola:'email',indirizzo_email_autonomia:'email',indirizzo_pec_autonomia:'email',telefono_sede_autonomia:'telefono',tipologia:'tipo',tipologia_sede:'tipo',macrotipologia_autonomia:'tipo',tipologia_autonomia:'tipo',caratteristica_scuola:'tipo',codice:'id',localita:'comune',distr:'_skip',num_sedi_autonomia:'_skip',organico_autonomia:'_skip',organico_sede:'_skip',location:'_skip',codice_sede_riferimento:'_skip',codice_sede_di_direttivo:'_skip',indirizzo_sede_di_direttivo:'_skip',cod_comune_sede_dir:'_skip',comune_sede_di_direttivo:'_skip',cap_sede_dir:'_skip',s_comune_montano:'_skip',denominazione_sede_direttivo:'_skip',nome_poi:'nome',tipo_poi:'tipo',accessibile_h24:'accessibile',ident:'id',cod:'id',ident:'id',nome_poi:'nome',tipo_poi:'tipo',tipo_struttura:'tipo',nome_struttura:'nome',accessibile_h24:'accessibile',accessibilita:'accessibile',cod:'id',codice:'id',code:'id',pk:'id',indirizzo_completo:'indirizzo',email_referente:'email',latitudine:'lat',lat_wgs84:'lat',coordy:'lat',geo_lat:'lat',longitudine:'lon',lon_wgs84:'lon',coordx:'lon',geo_lon:'lon',lng:'lon',stop_lat:'lat',stop_lon:'lon',denominazionescuola:'denominazione',denominazione_scuola:'denominazione',nome_dataset:'denominazione',label:'denominazione',titolo:'denominazione',stop_name:'denominazione',nome_sensore:'denominazione',denominazioneistitutoriferimento:'denominazione',istituzione_scolastica:'denominazione',amministrazione:'denominazione',indirizzoscuola:'indirizzo',indirizzo_scuola:'indirizzo',ubicazione:'indirizzo',localizzazione:'indirizzo',address:'indirizzo',descrizionecomune:'comune',citta:'comune',city:'comune',capscuola:'cap',cap_scuola:'cap',postcode:'cap',codicescuola:'id',codice_scuola:'id',slug:'id',cig:'id',fid:'id',codiceistitutoriferimento:'id',codice_istituzione:'id',codice_ente_bdap:'id',id_consigliere:'id',id_sensore:'id',idsensore:'id',node_id:'id',remoteid:'id',pec:'email',mail:'email',sito_web:'sitoweb',website:'sitoweb',web:'sitoweb',url:'sitoweb',data_inizio:'inizio',quando:'inizio',published:'inizio',creation_date:'inizio',issued:'inizio',data_fine:'termine',fine:'termine',last_edit_date:'modified',ultimamodifica:'modified',occorrenze:'valore',numero:'valore',totale:'valore',popolazione_residente:'valore',importo:'valore',tipologia:'tipo',tipo_bene:'tipo',tipo_evento:'tipo',tipo_struttura:'tipo',tipo_scuola:'tipo',descrizionetipologiagradoistruzione:'tipo',informazioni:'descrizione',note:'descrizione',oggetto:'descrizione',tel:'telefono',phone:'telefono',anno_rilevazione:'anno',annoscolastico:'anno',anno_scolastico:'anno'};
 
-// ONTO_URI
+var DET_URI_SEG={ACCO:'accommodation-facility',GTFS:'stop',POI:'point-of-interest','IoT':'sensor',COV:'public-organization',CPV:'person',RO:'role',SMAPIT:'school',QB:'observation',CLV:'address',TI:'event',CulturalON:'cultural-institute',ADMS:'asset',CPSV:'service',PARK:'parking-facility',PublicContract:'public-contract',Route:'route',RPO:'role-in-organization',Learning:'course',Transparency:'transparency-obligation',Indicator:'indicator',POT:'price-specification'};
+
+var DET_CLASS={ACCO:'acco:Accommodation',GTFS:'gtfs:Stop',POI:'poi:PointOfInterest','IoT':'iot:Sensor',COV:'cov:PublicOrganization',CPV:'cpv:Person',RO:'ro:Role',SMAPIT:'smapit:School',QB:'qb:Observation',CLV:'clv:Address',TI:'l0:EventOrSituation',CulturalON:'cis:CulturalInstituteOrSite',ADMS:'adms:SemanticAsset',CPSV:'cpsv:PublicService',PARK:'park:ParkingFacility',PublicContract:'pc:Contract',Route:'route:Route',RPO:'rpo:RoleInOrganization',Learning:'learn:Course',Transparency:'tr:TransparencyObligation',Indicator:'indicator:Indicator',POT:'pot:PriceSpecification'};
+
+var DET_PREFIXES={'rdf':'http://www.w3.org/1999/02/22-rdf-syntax-ns#','rdfs':'http://www.w3.org/2000/01/rdf-schema#','xsd':'http://www.w3.org/2001/XMLSchema#','dct':'http://purl.org/dc/terms/','dcat':'http://www.w3.org/ns/dcat#','foaf':'http://xmlns.com/foaf/0.1/','skos':'http://www.w3.org/2004/02/skos/core#','geo':'http://www.w3.org/2003/01/geo/wgs84_pos#','vcard':'http://www.w3.org/2006/vcard/ns#','schema':'https://schema.org/','park':'https://w3id.org/italia/onto/PARK/','pot':'https://w3id.org/italia/onto/POT/','pc':'https://w3id.org/italia/onto/PublicContract/','route':'https://w3id.org/italia/onto/Route/','rpo':'https://w3id.org/italia/onto/RPO/','mu':'https://w3id.org/italia/onto/MU/','learn':'https://w3id.org/italia/onto/Learning/','cpev':'https://w3id.org/italia/onto/CPEV/','tr':'https://w3id.org/italia/onto/Transparency/','indicator':'https://w3id.org/italia/onto/Indicator/','l0':'https://w3id.org/italia/onto/l0/','clv':'https://w3id.org/italia/onto/CLV/','sm':'https://w3id.org/italia/onto/SM/','ti':'https://w3id.org/italia/onto/TI/','acco':'https://w3id.org/italia/onto/ACCO/','poi':'https://w3id.org/italia/onto/POI/','iot':'https://w3id.org/italia/onto/IoT/','cov':'https://w3id.org/italia/onto/COV/','cpv':'https://w3id.org/italia/onto/CPV/','ro':'https://w3id.org/italia/onto/RO/','smapit':'https://w3id.org/italia/onto/SMAPIT/','gtfs':'http://vocab.gtfs.org/terms#','cis':'https://w3id.org/italia/onto/Cultural-ON/','adms':'http://www.w3.org/ns/adms#','cpsv':'http://purl.org/vocab/cpsv#','qb':'http://purl.org/linked-data/cube#','sdmx-dimension':'http://purl.org/linked-data/sdmx/2009/dimension#','sdmx-measure':'http://purl.org/linked-data/sdmx/2009/measure#','sdmx-attribute':'http://purl.org/linked-data/sdmx/2009/attribute#'};
+
+var DET_COL_RULES={denominazione:{pred:'rdfs:label',type:'langlit',lang:'it'},nome:{pred:'rdfs:label',type:'langlit',lang:'it'},nome_iniziativa:{pred:'rdfs:label',type:'langlit',lang:'it'},titolo_evento:{pred:'rdfs:label',type:'langlit',lang:'it'},titolo_manifestazione:{pred:'rdfs:label',type:'langlit',lang:'it'},descrizione:{pred:'dct:description',type:'langlit',lang:'it'},luogo:{pred:'schema:location',type:'langlit',lang:'it'},sede:{pred:'schema:location',type:'langlit',lang:'it'},dove:{pred:'l0:hasLocation',type:'langlit',lang:'it'},ingresso:{pred:'schema:isAccessibleForFree',type:'langlit',lang:'it'},biglietto:{pred:'schema:isAccessibleForFree',type:'langlit',lang:'it'},organizzatore:{pred:'dct:publisher',type:'langlit',lang:'it'},promotore:{pred:'dct:publisher',type:'langlit',lang:'it'},interpreti:{pred:'schema:performer',type:'langlit',lang:'it'},esecutori:{pred:'schema:performer',type:'langlit',lang:'it'},autore:{pred:'dct:creator',type:'langlit',lang:'it'},periodo:{pred:'dct:temporal',type:'langlit',lang:'it'},stagione:{pred:'dct:temporal',type:'langlit',lang:'it'},programmazione:{pred:'dct:temporal',type:'langlit',lang:'it'},stalli:{pred:'park:numberOfParkingSpaces',type:'integer'},posti_auto:{pred:'park:numberOfParkingSpaces',type:'integer'},capacita_posti:{pred:'park:numberOfParkingSpaces',type:'integer'},posti_disabili:{pred:'park:numberOfDisabledParkingSpaces',type:'integer'},tariffa_oraria:{pred:'park:ratePerHour',type:'decimal'},tipo_parcheggio:{pred:'park:parkingType',type:'langlit',lang:'it'},cig:{pred:'pc:hasCIG',type:'literal'},cup:{pred:'pc:hasCUP',type:'literal'},importo_aggiudicazione:{pred:'pc:hasAmount',type:'decimal'},importo_base:{pred:'pc:hasAmount',type:'decimal'},importo_contratto:{pred:'pc:hasAmount',type:'decimal'},oggetto_contratto:{pred:'pc:hasMainObject',type:'langlit',lang:'it'},oggetto_gara:{pred:'pc:hasMainObject',type:'langlit',lang:'it'},stazione_appaltante:{pred:'pc:contractingAuthority',type:'langlit',lang:'it'},aggiudicatario:{pred:'pc:awardedTo',type:'langlit',lang:'it'},cpv_codice:{pred:'pc:hasCPV',type:'literal'},modalita_scelta:{pred:'pc:selectionCriteria',type:'langlit',lang:'it'},data_aggiudicazione:{pred:'pc:awardDate',type:'date'},lunghezza_km:{pred:'route:routelLength',type:'literal'},numero_tappe:{pred:'route:numberOfStages',type:'integer'},durata_stimata:{pred:'route:routeEstDuration',type:'literal'},nome_breve_percorso:{pred:'route:routeShortName',type:'literal'},nome_esteso_percorso:{pred:'route:routeLongName',type:'literal'},difficolta:{pred:'route:difficulty',type:'langlit',lang:'it'},dislivello:{pred:'route:heightDifference',type:'decimal'},qualifica_dipendente:{pred:'rpo:hasRole',type:'langlit',lang:'it'},contratto_lavoro:{pred:'rpo:contractType',type:'langlit',lang:'it'},livello_contrattuale:{pred:'rpo:contractLevel',type:'literal'},ore_settimanali:{pred:'rpo:weeklyHours',type:'decimal'},ccnl:{pred:'rpo:hasCCNL',type:'langlit',lang:'it'},crediti:{pred:'learn:ects',type:'decimal'},ects:{pred:'learn:ects',type:'decimal'},ore_formazione:{pred:'learn:hours',type:'decimal'},durata_corso:{pred:'learn:duration',type:'langlit',lang:'it'},titolo_rilasciato:{pred:'learn:awardedTitle',type:'langlit',lang:'it'},titolo_corso:{pred:'rdfs:label',type:'langlit',lang:'it'},obbligo_trasparenza:{pred:'tr:hasTransparencyObligation',type:'langlit',lang:'it'},categoria_trasparenza:{pred:'tr:transparencyCategory',type:'langlit',lang:'it'},dato_obbligatorio:{pred:'tr:mandatoryData',type:'langlit',lang:'it'},norma_riferimento:{pred:'dct:source',type:'literal'},tipo_indicatore:{pred:'indicator:indicatorType',type:'langlit',lang:'it'},valore_indicatore:{pred:'sdmx-measure:obsValue',type:'decimal'},baseline:{pred:'indicator:baseline',type:'decimal'},target:{pred:'indicator:target',type:'decimal'},fonte_indicatore:{pred:'dct:source',type:'langlit',lang:'it'},partita_iva:{pred:'cov:VATnumber',type:'literal'},codice_ipa:{pred:'cov:IPAcode',type:'literal'},rea:{pred:'cov:REANumber',type:'literal'},data_costituzione:{pred:'cov:foundationDate',type:'date'},codice_univoco_ufficio:{pred:'cov:officeIdentifier',type:'literal'},oggetto_sociale:{pred:'cov:businessObjective',type:'langlit',lang:'it'},acronimo:{pred:'cov:orgAcronym',type:'literal'},cf:{pred:'cpv:taxCode',type:'literal'},codice_fiscale:{pred:'cpv:taxCode',type:'literal'},codice_sesso:{pred:'cpv:sexID',type:'literal'},grado_istruzione:{pred:'cpv:educationLevelID',type:'literal'},eta:{pred:'cpv:age',type:'integer'},nome_completo:{pred:'cpv:fullName',type:'literal'},numero_camere:{pred:'acco:totalRoom',type:'integer'},numero_bagni:{pred:'acco:totalToilet',type:'integer'},codice_struttura:{pred:'acco:accommodationCode',type:'literal'},codice_stelle:{pred:'acco:accoStarRatingID',type:'literal'},nome_ufficiale:{pred:'poi:POIofficialName',type:'langlit',lang:'it'},nome_alternativo:{pred:'poi:POIalternativeName',type:'langlit',lang:'it'},categoria_poi:{pred:'poi:POIcategoryName',type:'langlit',lang:'it'},id_poi:{pred:'poi:POIID',type:'literal'},forma_giuridica:{pred:'cov:legalStatus',type:'langlit',lang:'it'},natura_giuridica:{pred:'cov:legalStatus',type:'langlit',lang:'it'},codice_ateco:{pred:'cov:economicActivity',type:'literal'},settore_ateco:{pred:'cov:economicActivity',type:'langlit',lang:'it'},licenza:{pred:'dct:license',type:'url'},tipo_licenza:{pred:'dct:license',type:'langlit',lang:'it'},numero_camere_totali:{pred:'acco:totalRoom',type:'integer'},tipo:{pred:'dct:type',type:'langlit',lang:'it'},categoria:{pred:'dct:type',type:'langlit',lang:'it'},email:{pred:'sm:hasEmail',type:'mailto'},sitoweb:{pred:'sm:hasWebSite',type:'url'},telefono:{pred:'sm:hasTelephone',type:'literal'},fax:{pred:'sm:hasFax',type:'literal'},lat:{pred:'geo:lat',type:'typed',xsd:'xsd:decimal'},lon:{pred:'geo:long',type:'typed',xsd:'xsd:decimal'},modified:{pred:'dct:modified',type:'typed',xsd:'xsd:date'},numero_posti_letto:{pred:'acco:numberOfRooms',type:'typed',xsd:'xsd:integer',onto:'ACCO'},posti_letto:{pred:'acco:numberOfRooms',type:'typed',xsd:'xsd:integer',onto:'ACCO'},letti:{pred:'acco:numberOfBeds',type:'typed',xsd:'xsd:integer',onto:'ACCO'},camere:{pred:'acco:numberOfRooms',type:'typed',xsd:'xsd:integer',onto:'ACCO'},stelle:{pred:'acco:starRating',type:'typed',xsd:'xsd:integer',onto:'ACCO'},stop_id:{pred:'dct:identifier',type:'literal',onto:'GTFS'},stop_code:{pred:'gtfs:code',type:'literal',onto:'GTFS'},zone_id:{pred:'gtfs:zone',type:'literal',onto:'GTFS'},location_type:{pred:'gtfs:locationType',type:'typed',xsd:'xsd:integer',onto:'GTFS'},parent_station:{pred:'gtfs:parentStation',type:'literal',onto:'GTFS'},route_id:{pred:'dct:identifier',type:'literal',onto:'GTFS'},route_short_name:{pred:'gtfs:shortName',type:'literal',onto:'GTFS'},route_long_name:{pred:'gtfs:longName',type:'langlit',lang:'it',onto:'GTFS'},route_type:{pred:'gtfs:routeType',type:'typed',xsd:'xsd:integer',onto:'GTFS'},agency_id:{pred:'gtfs:agency',type:'literal',onto:'GTFS'},arrival_time:{pred:'gtfs:arrivalTime',type:'literal',onto:'GTFS'},departure_time:{pred:'gtfs:departureTime',type:'literal',onto:'GTFS'},stop_sequence:{pred:'gtfs:stopSequence',type:'typed',xsd:'xsd:integer',onto:'GTFS'},valore:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},valore_medio:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},unita:{pred:'iot:hasUnitOfMeasure',type:'literal',onto:'IoT'},avgspeed:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},anno:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},mese:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},comparto:{pred:'cov:hasSector',type:'langlit',lang:'it',onto:'COV'},inquadramento:{pred:'cov:hasLegalForm',type:'langlit',lang:'it',onto:'COV'},cognome:{pred:'cpv:familyName',type:'langlit',lang:'it',onto:'CPV'},sesso:{pred:'cpv:sex',type:'literal',onto:'CPV'},cittadinanza:{pred:'cpv:citizenship',type:'langlit',lang:'it',onto:'CPV'},data_nascita:{pred:'cpv:dateOfBirth',type:'typed',xsd:'xsd:date',onto:'CPV'},ruolo:{pred:'rdfs:label',type:'langlit',lang:'it',onto:'RO'},legislatura:{pred:'dct:description',type:'langlit',lang:'it',onto:'RO'},voti_validi:{pred:'ro:votesObtained',type:'typed',xsd:'xsd:integer',onto:'RO'},gestore:{pred:'smapit:hasManager',type:'langlit',lang:'it',onto:'SMAPIT'},inizio:{pred:'ti:startDate',type:'typed',xsd:'xsd:dateTime',onto:'TI'},termine:{pred:'ti:endDate',type:'typed',xsd:'xsd:dateTime',onto:'TI'},durata:{pred:'ti:duration',type:'literal',onto:'TI'},dove:{pred:'l0:hasLocation',type:'langlit',lang:'it',onto:'TI'},accessibile:{pred:'poi:hasAccessCondition',type:'literal',onto:'POI'},distr:{pred:'_skip',type:'skip'},location:{pred:'_skip',type:'skip'},s_comune_montano:{pred:'_skip',type:'skip'},organico_autonomia:{pred:'_skip',type:'skip'},organico_sede:{pred:'_skip',type:'skip'},accessibile:{pred:'poi:hasAccessCondition',type:'literal',onto:'POI'},datazione:{pred:'dct:date',type:'literal',onto:'CulturalON'},numero_inventario:{pred:'dct:identifier',type:'literal',onto:'CulturalON'},version:{pred:'adms:version',type:'literal',onto:'ADMS'},versione:{pred:'adms:version',type:'literal',onto:'ADMS'},stato:{pred:'adms:status',type:'literal',onto:'ADMS'},formato:{pred:'dct:format',type:'literal',onto:'ADMS'},publisher:{pred:'dct:publisher',type:'langlit',lang:'it',onto:'ADMS'},aggiudicatario:{pred:'cpsv:hasParticipant',type:'langlit',lang:'it',onto:'CPSV'},cup:{pred:'dct:identifier',type:'literal',onto:'CPSV'},ufficio:{pred:'cpsv:isGroupedUnder',type:'langlit',lang:'it',onto:'CPSV'},indirizzo:{pred:'_skip',type:'skip'},comune:{pred:'_skip',type:'skip'},cap:{pred:'_skip',type:'skip'},provincia:{pred:'_skip',type:'skip'},civico:{pred:'_skip',type:'skip'},numerocivico:{pred:'_skip',type:'skip'},regione:{pred:'_skip',type:'skip'},via:{pred:'_skip',type:'skip'},strada:{pred:'_skip',type:'skip'}};
+
 var ONTO_URI={'acco':'https://w3id.org/italia/onto/ACCO/','gtfs':'http://vocab.gtfs.org/terms#',
     'poi':'https://w3id.org/italia/onto/POI/','iot':'https://w3id.org/italia/onto/IoT/',
     'cov':'https://w3id.org/italia/onto/COV/','cpv':'https://w3id.org/italia/onto/CPV/',
@@ -255,24 +209,8 @@ var ONTO_URI={'acco':'https://w3id.org/italia/onto/ACCO/','gtfs':'http://vocab.g
     'cis':'http://dati.beniculturali.it/cis/','adms':'http://www.w3.org/ns/adms#',
     'clv':'https://w3id.org/italia/onto/CLV/'};
 
-// CORPUS_GATE
-var CORPUS_GATE = {
-    'CLV':   ['lat','lon','lng','latitudine','longitudine','indirizzo','via','civico','comune','cap','stop_lat','stop_lon','coord_lat','coord_lon'],
-    'GTFS':  ['stop_id','stop_name','stop_lat','stop_lon','route_id','agency_id','trip_id','zone_id'],
-    'QB':    ['valore','obs_value','numero_residenti','importo','misura','fascia_eta','anno','trimestre','mese'],
-    'ACCO':  ['stelle','posti_letto','tipo_struttura','albergo','camere','letti','hotel','agriturismo'],
-    'IoT':   ['sensore','id_sensore','proprieta_osservata','tipo_sensore','valore_medio','avgspeed'],
-    'SMAPIT':['codice_scuola','tipo_scuola','denominazione_scuola','codice_istituto','ciclo'],
-    'CPV':   ['cognome','codice_fiscale','data_nascita','nome_completo','sesso','cittadinanza'],
-    'RO':    ['ruolo','tipo_nomina','legislatura','voti_validi','qualifica_dipendente','contratto_lavoro','ccnl','data_assunzione'],
-    'ADMS':  ['tipo_asset','versione','stato','formato','licenza','titolo_corso','ore_formazione','crediti','titolo_rilasciato','ente_erogatore'],
-    'CPSV':  ['cig','cup','oggetto_contratto','importo_aggiudicazione','stazione_appaltante','aggiudicatario'],
-    // TI, POI, COV, CulturalON: nessun gate — possono comparire in molti contesti
-  };
 
-
-
-// ═══ FUNZIONI HELPER MANCANTI ═══
+// ═══ FUNZIONI ENGINE ═══
 
 function detectSeparator(firstLine) {
   // Conta occorrenze dei separatori candidati nella prima riga
@@ -286,18 +224,48 @@ function detectSeparator(firstLine) {
   return best;
 }
 
-function detAddPrefix(onto,set){var m={ACCO:'acco',GTFS:'gtfs',POI:'poi','IoT':'iot',COV:'cov',CPV:'cpv',RO:'ro',SMAPIT:'smapit',QB:'qb',CLV:'clv',TI:'ti',PARK:'park',POT:'pot',PublicContract:'pc',Route:'route',RPO:'rpo',MU:'mu',Learning:'learn',CPEV:'cpev',Transparency:'tr',Indicator:'indicator',CulturalON:'cis',ADMS:'adms',CPSV:'cpsv',L0:'l0'};if(m[onto])set.add(m[onto]);if(onto==='RO'){set.add('cov');set.add('cpv');}if(onto==='CPSV-AP'||onto==='CPSV'){set.add('cpsv');}if(onto==='QB'){set.add('sdmx-dimension');set.add('sdmx-measure');set.add('sdmx-attribute');}if(onto==='CulturalON'){set.add('schema');}if(onto==='TI'){set.add('schema');}if(onto==='PARK'){set.add('park');}if(onto==='POT'){set.add('pot');}if(onto==='PublicContract'){set.add('pc');set.add('cov');}if(onto==='Route'){set.add('route');}if(onto==='RPO'){set.add('rpo');set.add('cov');set.add('cpv');}if(onto==='MU'){set.add('mu');}if(onto==='Learning'){set.add('learn');}if(onto==='CPEV'){set.add('cpev');}if(onto==='Transparency'){set.add('tr');}if(onto==='Indicator'){set.add('indicator');set.add('qb');}}
+function splitLine(line, sep) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (inQuotes && line[i+1] === '"') { current += '"'; i++; }
+        else inQuotes = !inQuotes;
+      } else if (ch === sep && !inQuotes) {
+        result.push(current.trim().replace(/^"|"$/g,'').replace(/""/g,'"'));
+        current = '';
+      } else {
+        current += ch;
+      }
+    }
+    result.push(current.trim().replace(/^"|"$/g,'').replace(/""/g,'"'));
+    return result;
+  }
 
-function detFindColIdx(nh,cands){for(var i=0;i<cands.length;i++){var x=nh.indexOf(cands[i]);if(x>=0)return x;}return-1;}
-
-function detFindRule(normH,ontos){if(ontos.indexOf('CPV')>=0&&normH==='nome')return{pred:'cpv:givenName',type:'langlit',lang:'it',onto:'CPV'};if(ontos.indexOf('QB')>=0&&(normH==='valore'||normH==='obs_value'||normH==='osservazione'))return{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'};if(ontos.indexOf('QB')>=0&&normH==='sesso')return{pred:'sdmx-dimension:sex',type:'literal'};if(ontos.indexOf('QB')>=0&&normH==='cittadinanza')return{pred:'sdmx-attribute:obsStatus',type:'literal'};var rule=DET_COL_RULES[normH];if(!rule)return null;if(rule.onto&&ontos.indexOf(rule.onto)<0)return null;return rule;}
-
-function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat','lon'].some(function(c){return nh.indexOf(c)>=0;});}
-
-function detHasTime(nh,ontos){return ontos.indexOf('TI')>=0&&['inizio','termine','data','quando'].some(function(c){return nh.indexOf(c)>=0;});}
-
-// Stub per compatibilità Node.js
-const window = { _corpusIndex: null };
+function splitIntoLogicalLines(raw) {
+    const logical = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < raw.length; i++) {
+      const ch = raw[i];
+      if (ch === '"') {
+        // Gestisce doppi apici escaped ""
+        if (inQuotes && raw[i+1] === '"') { current += '"'; i++; }
+        else inQuotes = !inQuotes;
+        current += ch;
+      } else if ((ch === '\n' || ch === '\r') && !inQuotes) {
+        if (ch === '\r' && raw[i+1] === '\n') i++; // salta \n di \r\n
+        if (current.trim()) logical.push(current);
+        current = '';
+      } else {
+        current += ch;
+      }
+    }
+    if (current.trim()) logical.push(current);
+    return logical;
+  }
 
 function parseCSV(text) {
   if (!text || !text.trim()) return null;
@@ -366,6 +334,124 @@ function parseCSV(text) {
   });
 
   return { headers, rows, sep };
+}
+
+function detNormH(h){var n=h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');return DET_COL_NORM[n]||n;}
+
+function detParseCSV(text){
+  // Normalizza fine riga: \r\n → \n, poi \r isolato → \n (vecchi CSV Mac/dati.gov.it)
+  text=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  return text.trim().split('\n').map(function(line){
+    var res=[],cur='',inQ=false;
+    for(var i=0;i<line.length;i++){var c=line[i];if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){res.push(cur.trim());cur='';}else cur+=c;}
+    res.push(cur.trim());return res;
+  });
+}
+
+function detGetMainOnto(ontos){var priority=['GTFS','SMAPIT','ACCO','IoT','CulturalON','PublicContract','RPO','Route','Learning','Transparency','Indicator','PARK','POT','CPSV-AP','RO','ADMS','TI','CPV','COV','POI','QB','CLV','L0'];for(var i=0;i<priority.length;i++){if(ontos.indexOf(priority[i])>=0)return priority[i];}return ontos[0]||'L0';}
+
+function detFindColIdx(nh,cands){for(var i=0;i<cands.length;i++){var x=nh.indexOf(cands[i]);if(x>=0)return x;}return-1;}
+
+function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat','lon'].some(function(c){return nh.indexOf(c)>=0;});}
+
+function detHasTime(nh,ontos){return ontos.indexOf('TI')>=0&&['inizio','termine','data','quando'].some(function(c){return nh.indexOf(c)>=0;});}
+
+function detFindRule(normH,ontos){if(ontos.indexOf('CPV')>=0&&normH==='nome')return{pred:'cpv:givenName',type:'langlit',lang:'it',onto:'CPV'};if(ontos.indexOf('QB')>=0&&(normH==='valore'||normH==='obs_value'||normH==='osservazione'))return{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'};if(ontos.indexOf('QB')>=0&&normH==='sesso')return{pred:'sdmx-dimension:sex',type:'literal'};if(ontos.indexOf('QB')>=0&&normH==='cittadinanza')return{pred:'sdmx-attribute:obsStatus',type:'literal'};var rule=DET_COL_RULES[normH];if(!rule)return null;if(rule.onto&&ontos.indexOf(rule.onto)<0)return null;return rule;}
+
+function detGetTimeVal(nh,row){var tc=['inizio','data','quando','published','data_inizio','periodo','stagione','programmazione'];for(var i=0;i<tc.length;i++){var x=nh.indexOf(tc[i]);if(x>=0&&row[x]&&row[x].trim())return row[x].trim();}return null;}
+
+function detAddPrefix(onto,set){var m={ACCO:'acco',GTFS:'gtfs',POI:'poi','IoT':'iot',COV:'cov',CPV:'cpv',RO:'ro',SMAPIT:'smapit',QB:'qb',CLV:'clv',TI:'ti',PARK:'park',POT:'pot',PublicContract:'pc',Route:'route',RPO:'rpo',MU:'mu',Learning:'learn',CPEV:'cpev',Transparency:'tr',Indicator:'indicator',CulturalON:'cis',ADMS:'adms',CPSV:'cpsv',L0:'l0'};if(m[onto])set.add(m[onto]);if(onto==='RO'){set.add('cov');set.add('cpv');}if(onto==='CPSV-AP'||onto==='CPSV'){set.add('cpsv');}if(onto==='QB'){set.add('sdmx-dimension');set.add('sdmx-measure');set.add('sdmx-attribute');}if(onto==='CulturalON'){set.add('schema');}if(onto==='TI'){set.add('schema');}if(onto==='PARK'){set.add('park');}if(onto==='POT'){set.add('pot');}if(onto==='PublicContract'){set.add('pc');set.add('cov');}if(onto==='Route'){set.add('route');}if(onto==='RPO'){set.add('rpo');set.add('cov');set.add('cpv');}if(onto==='MU'){set.add('mu');}if(onto==='Learning'){set.add('learn');}if(onto==='CPEV'){set.add('cpev');}if(onto==='Transparency'){set.add('tr');}if(onto==='Indicator'){set.add('indicator');set.add('qb');}}
+
+function detFormatLit(rule,val){
+  if(!val&&val!==0)return null;
+  val=String(val).trim();if(!val)return null;
+  if(rule.type==='skip')return null;
+  if(rule.type==='langlit')return'"'+val.replace(/"/g,'\"')+'"@'+(rule.lang||'it');
+  if(rule.type==='literal')return'"'+val.replace(/"/g,'\"')+'"^^xsd:string';
+  if(rule.type==='decimal'){var n=parseFloat(val);return isNaN(n)?null:'"'+n+'"^^xsd:decimal';}
+  if(rule.type==='integer'){var n2=parseInt(val);return isNaN(n2)?null:'"'+n2+'"^^xsd:integer';}
+  if(rule.type==='boolean'){var b=val.toLowerCase();return(b==='si'||b==='true'||b==='1'||b==='yes')?'"true"^^xsd:boolean':'"false"^^xsd:boolean';}
+  if(rule.type==='date'){var d=val.replace(/\//g,'-');return'"'+d+'"^^xsd:date';}
+  if(rule.type==='datetime')return'"'+val+'"^^xsd:dateTime';
+  if(rule.type==='mailto'){var em=sanitizeEmailValue(val);if(!em)return null;return'"'+em+'"^^xsd:string';}
+  if(rule.type==='url'){var u=val.replace(/^<|>$/g,'').trim();if(!u||/[\s()<>"@]/.test(u)||/^\(/.test(u))return null;if(!u.startsWith('http')&&!u.startsWith('ftp'))u='https://'+u;return'<'+u+'>';}
+  if(rule.type==='phone')return'"'+val+'"^^xsd:string';
+  return'"'+val.replace(/"/g,'\"')+'"@it';
+}
+
+function detectDeterministicMappings(cols, rows) {
+  const mappings = {}; // col → {prop, type}
+  const sampleRow = rows[0] || {};
+
+  for (const col of cols) {
+    // Salta colonne con prefisso numerico: "1-FRATELLI D'ITALIA", "9-+EUROPA"
+    if (/^\d+[-–]/.test(col)) continue;
+    const normalizedCol = normalizeColName(col);
+    const val = String(sampleRow[col] || '').trim();
+    for (const rule of COLUMN_RULES) {
+      const nameMatch = rule.names.test(col) || rule.names.test(normalizedCol);
+      const valueMatch = !rule.value || rule.value.test(val);
+      if (nameMatch && valueMatch) {
+        mappings[col] = { prop: rule.prop, type: rule.type };
+        break;
+      }
+    }
+  }
+  return mappings;
+}
+
+function detectFromCorpus(headers) {
+  if(!window._corpusIndex) return [];
+  var scores = {};
+  headers.forEach(function(h){
+    var n = h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');
+    var colOntos = window._corpusIndex[n];
+    if(!colOntos) return;
+    Object.keys(colOntos).forEach(function(onto){
+      scores[onto] = (scores[onto]||0) + colOntos[onto];
+    });
+  });
+  // Normalizza i nomi ontologia
+  var ontoMap = {'IOT-AP_IT':'IoT','COV-AP_IT':'COV','RO-AP_IT':'RO',
+    'CULTURAL-ON':'CulturalON','CPSV-AP':'CPSV','CPVAPIT':'CPV'};
+  // Prende le ontologie con score più alto — top 3 + CLV se presente
+  var sorted = Object.keys(scores).sort(function(a,b){return scores[b]-scores[a];});
+  var top = sorted.slice(0,5).filter(function(o){return scores[o]>=5;});
+  var result = top.map(function(o){return ontoMap[o]||o;}).filter(function(o){
+    return ['QB','POI','CPV','CLV','CPSV','TI','ACCO',
+      'CulturalON','ADMS','RO','COV','GTFS','IoT','SMAPIT'].indexOf(o)>=0;
+  });
+  // Limita a top 2 + CLV solo se il CSV ha colonne geografiche reali
+  var normHeaders = new Set(headers.map(function(h){
+    return h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');
+  }));
+  // Gate strutturale: ogni ontologia viene accettata dal corpus SOLO se
+  // il CSV contiene almeno una colonna caratteristica di quell'ontologia.
+  var CORPUS_GATE = {
+    'CLV':   ['lat','lon','lng','latitudine','longitudine','indirizzo','via','civico','comune','cap','stop_lat','stop_lon','coord_lat','coord_lon'],
+    'GTFS':  ['stop_id','stop_name','stop_lat','stop_lon','route_id','agency_id','trip_id','zone_id'],
+    'QB':    ['valore','obs_value','numero_residenti','importo','misura','fascia_eta','anno','trimestre','mese'],
+    'ACCO':  ['stelle','posti_letto','tipo_struttura','albergo','camere','letti','hotel','agriturismo'],
+    'IoT':   ['sensore','id_sensore','proprieta_osservata','tipo_sensore','valore_medio','avgspeed'],
+    'SMAPIT':['codice_scuola','tipo_scuola','denominazione_scuola','codice_istituto','ciclo'],
+    'CPV':   ['cognome','codice_fiscale','data_nascita','nome_completo','sesso','cittadinanza'],
+    'RO':    ['ruolo','tipo_nomina','legislatura','voti_validi','qualifica_dipendente','contratto_lavoro','ccnl','data_assunzione'],
+    'ADMS':  ['tipo_asset','versione','stato','formato','licenza','titolo_corso','ore_formazione','crediti','titolo_rilasciato','ente_erogatore'],
+    'CPSV':  ['cig','cup','oggetto_contratto','importo_aggiudicazione','stazione_appaltante','aggiudicatario'],
+    // TI, POI, COV, CulturalON: nessun gate — possono comparire in molti contesti
+  };
+  // Filtra: tieni solo ontologie il cui gate è soddisfatto (o non hanno gate)
+  var result2 = result.filter(function(o){
+    var gate = CORPUS_GATE[o];
+    if(!gate) return true;
+    return gate.some(function(col){ return normHeaders.has(col); });
+  });
+  // Limita a top 2 + CLV solo se colonne geografiche reali presenti
+  var CLV_COLS = CORPUS_GATE['CLV'];
+  var clvReallyPresent = CLV_COLS.some(function(col){return normHeaders.has(col);});
+  var mainResult = result2.filter(function(o){return o!=='CLV';}).slice(0,2);
+  if((scores['CLV']||0)>=5 && clvReallyPresent) mainResult.push('CLV');
+  return [...new Set(mainResult)];
 }
 
 function detectOntologiesDeterministic(headers, rows) {
@@ -577,6 +663,136 @@ function detectOntologiesDeterministic(headers, rows) {
   if(result.has('POT')&&result.has('SMAPIT')) result.delete('SMAPIT');  // prezzi non è scuola
 
   return Array.from(result);
+}
+
+function getMainClass(ontos) {
+  const priority = ['GTFS','SMAPIT','ACCO','IOT','CULTURAL-ON','CULTURALON','PUBLICCONTRACT','RPO','ROUTE','LEARNING','TRANSPARENCY','INDICATOR','PARK','POT','CPSV-AP','QB','RO','POI','CPV','COV','TI','ADMS','L0'];
+  for (const onto of priority) {
+    if (ontos.map(o => o.toUpperCase()).includes(onto)) {
+      return ONTO_MAIN_CLASS[onto] || ONTO_MAIN_CLASS[ontos.find(o=>o.toUpperCase()===onto)] || 'l0:Object';
+    }
+  }
+  return 'l0:Object';
+}
+
+function getEntityTypeSegment(ontos) {
+  const priority = ['GTFS','SMAPIT','IOT','ACCO','PARK','PUBLICCONTRACT','RPO','ROUTE','LEARNING','TRANSPARENCY','INDICATOR','POT','CULTURAL-ON','CULTURALON','CPSV-AP','QB','CPV','COV','RO','TI','POI','CLV','ADMS','L0'];
+  const up = ontos.map(o => o.toUpperCase());
+  for (const onto of priority) {
+    if (up.includes(onto)) {
+      return ONTO_URI_TYPE[onto] || 'resource';
+    }
+  }
+  return 'resource';
+}
+
+function sanitizeEmailValue(v){
+  if(!v)return v;
+  v=v.trim().split(/[;\s]/)[0]; // prende solo prima email
+  v=v.replace(/,/g,"."); // virgola→punto (errore comune nei CSV PA)
+  if(v.indexOf("@")<0)return ""; // non è un email
+  var parts=v.split("@");
+  if(parts.length!==2||parts[1].indexOf(".")<0)return ""; // dominio malformato
+  return v;
+}
+
+function forceMainClassInTTL(ttl, ontos, entityBase) {
+  var mc = getMainClass(ontos); if(!mc||mc==="l0:Object") return ttl;
+  var KEEP=["foaf:","clv:","skos:","dct:","dcat:","rdfs:","owl:","geo:","sm:","vcard:","schema:"];
+  if(entityBase){var esc=entityBase.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");var re1=new RegExp("(<"+esc+"[^>]+>)\\s+a\\s+([\\w:]+)","g");ttl=ttl.replace(re1,function(m,uri,cls){if(KEEP.some(function(k){return cls.indexOf(k)===0;}))return m;return uri+" a "+mc;});}
+  if(ttl.indexOf(mc)<0){var re2=/(<https?:\/\/[^>]+>)\s+a\s+([\w:]+)/g;ttl=ttl.replace(re2,function(m,uri,cls){if(cls==="foaf:Agent")return m;if(KEEP.some(function(k){return cls.indexOf(k)===0;}))return m;return uri+" a "+mc;});}
+  return ttl;
+}
+
+function buildTTLHeader(paname, ipa) {
+  const ipaURI = `https://w3id.org/italia/data/public-organization/${ipa}`;
+  return `@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix clv:   <https://w3id.org/italia/onto/CLV/> .
+@prefix cov:   <https://w3id.org/italia/onto/COV/> .
+@prefix cpv:   <https://w3id.org/italia/onto/CPV/> .
+@prefix l0:    <https://w3id.org/italia/onto/l0/> .
+@prefix cultural-on: <https://w3id.org/italia/onto/Cultural-ON/> .
+@prefix poi:   <https://w3id.org/italia/onto/POI/> .
+@prefix ro:    <https://w3id.org/italia/onto/RO/> .
+@prefix ti:    <https://w3id.org/italia/onto/TI/> .
+@prefix sm:    <https://w3id.org/italia/onto/SM/> .
+@prefix dcat:  <http://www.w3.org/ns/dcat#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix geo:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix schema:<https://schema.org/> .
+@prefix adms:  <https://w3id.org/italia/onto/ADMS/> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix qb:    <http://purl.org/linked-data/cube#> .
+@prefix sdmx-dimension: <http://purl.org/linked-data/sdmx/2009/dimension#> .
+@prefix sdmx-measure:   <http://purl.org/linked-data/sdmx/2009/measure#> .
+@prefix sdmx-attribute: <http://purl.org/linked-data/sdmx/2009/attribute#> .
+@prefix smapit: <https://w3id.org/italia/onto/SMAPIT/> .
+
+# Titolare del dato
+<${ipaURI}>
+    a foaf:Agent ;
+    foaf:name "${paname}"@it ;
+    dct:identifier "${ipa}" .
+`;
+}
+
+function buildDeterministicTriples(cols, rows, entityBase, deterMappings, typeSegment='resource', ontos=[]) {
+  const lines = [];
+  // Colonne da saltare completamente (tipo _SKIP_ o pivot non mappabili)
+  const skipColSet = new Set(
+    Object.entries(deterMappings)
+      .filter(([,m]) => m && m.prop === '_SKIP_')
+      .map(([col]) => col)
+  );
+
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    // URI entità: usa id/codice se disponibile, altrimenti indice
+    const idCol = cols.find(c => /^(id|codice|cod|n_enea|numero|num|pk)$/i.test(c));
+    const entityId = idCol ? String(row[idCol]).trim().replace(/[^a-zA-Z0-9_-]/g, '_') : String(i + 1);
+    const uri = `<${entityBase}${typeSegment}/${entityId}>`;
+
+    const triples = [];
+    // Aggiungi classe principale deterministica
+    const mainClass = getMainClass(ontos || []);
+    triples.push(`    a ${mainClass}`);
+    for (const col of cols) {
+      // Salta colonne con prefisso numerico: "1-LISTA", "9-+EUROPA"
+      if (/^\d+[-–]/.test(col)) continue;
+      const m = deterMappings[col];
+      if (!m) continue;
+      if (m.prop === '_SKIP_') continue; // colonna pivot non mappabile
+      const val = (row[col] !== undefined && row[col] !== null) ? String(row[col]).trim() : '';
+      if (!val || val === 'null' || val === 'N/A') continue;
+
+      if (m.type === 'xsd:decimal') {
+        triples.push(`    ${m.prop} "${val}"^^xsd:decimal`);
+      } else if (m.type === 'xsd:date') {
+        triples.push(`    ${m.prop} "${val}"^^xsd:date`);
+      } else if (m.type === 'xsd:anyURI') {
+        triples.push(`    ${m.prop} <${val}>`);
+      } else if (m.type === 'boolean') {
+        // Per booleani si/no include il nome colonna per chiarezza
+        const label = col.replace(/_/g, ' ').toLowerCase();
+        triples.push(`    ${m.prop} "${label}: ${val.replace(/"/g, "'")}"@it`);
+      } else if (m.type === '@it') {
+        triples.push(`    ${m.prop} "${val.replace(/"/g, "'")}"@it`);
+      } else {
+        triples.push(`    ${m.prop} "${val.replace(/"/g, "'")}"^^xsd:string`);
+      }
+    }
+    if (triples.length > 0) {
+      lines.push(`${uri}`);
+      lines.push(triples.join(' ;\n') + ' .');
+      lines.push('');
+    }
+  }
+  return lines.join('\n');
 }
 
 function buildDeterministicTTL(csvText,ontos,ipa,ente){
@@ -806,103 +1022,6 @@ function detFormatLit(rule,val){
   return ttl.trim();
 }
 
-function getMainClass(ontos) {
-  const priority = ['GTFS','SMAPIT','ACCO','IOT','CULTURAL-ON','CULTURALON','PUBLICCONTRACT','RPO','ROUTE','LEARNING','TRANSPARENCY','INDICATOR','PARK','POT','CPSV-AP','QB','RO','POI','CPV','COV','TI','ADMS','L0'];
-  for (const onto of priority) {
-    if (ontos.map(o => o.toUpperCase()).includes(onto)) {
-      return ONTO_MAIN_CLASS[onto] || ONTO_MAIN_CLASS[ontos.find(o=>o.toUpperCase()===onto)] || 'l0:Object';
-    }
-  }
-  return 'l0:Object';
-}
-
-function getEntityTypeSegment(ontos) {
-  const priority = ['GTFS','SMAPIT','IOT','ACCO','PARK','PUBLICCONTRACT','RPO','ROUTE','LEARNING','TRANSPARENCY','INDICATOR','POT','CULTURAL-ON','CULTURALON','CPSV-AP','QB','CPV','COV','RO','TI','POI','CLV','ADMS','L0'];
-  const up = ontos.map(o => o.toUpperCase());
-  for (const onto of priority) {
-    if (up.includes(onto)) {
-      return ONTO_URI_TYPE[onto] || 'resource';
-    }
-  }
-  return 'resource';
-}
-
-function detGetMainOnto(ontos){var priority=['GTFS','SMAPIT','ACCO','IoT','CulturalON','PublicContract','RPO','Route','Learning','Transparency','Indicator','PARK','POT','CPSV-AP','RO','ADMS','TI','CPV','COV','POI','QB','CLV','L0'];for(var i=0;i<priority.length;i++){if(ontos.indexOf(priority[i])>=0)return priority[i];}return ontos[0]||'L0';}
-
-function detGetTimeVal(nh,row){var tc=['inizio','data','quando','published','data_inizio','periodo','stagione','programmazione'];for(var i=0;i<tc.length;i++){var x=nh.indexOf(tc[i]);if(x>=0&&row[x]&&row[x].trim())return row[x].trim();}return null;}
-
-function detParseCSV(text){
-  // Normalizza fine riga: \r\n → \n, poi \r isolato → \n (vecchi CSV Mac/dati.gov.it)
-  text=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
-  return text.trim().split('\n').map(function(line){
-    var res=[],cur='',inQ=false;
-    for(var i=0;i<line.length;i++){var c=line[i];if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){res.push(cur.trim());cur='';}else cur+=c;}
-    res.push(cur.trim());return res;
-  });
-}
-
-function forceMainClassInTTL(ttl, ontos, entityBase) {
-  var mc = getMainClass(ontos); if(!mc||mc==="l0:Object") return ttl;
-  var KEEP=["foaf:","clv:","skos:","dct:","dcat:","rdfs:","owl:","geo:","sm:","vcard:","schema:"];
-  if(entityBase){var esc=entityBase.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");var re1=new RegExp("(<"+esc+"[^>]+>)\\s+a\\s+([\\w:]+)","g");ttl=ttl.replace(re1,function(m,uri,cls){if(KEEP.some(function(k){return cls.indexOf(k)===0;}))return m;return uri+" a "+mc;});}
-  if(ttl.indexOf(mc)<0){var re2=/(<https?:\/\/[^>]+>)\s+a\s+([\w:]+)/g;ttl=ttl.replace(re2,function(m,uri,cls){if(cls==="foaf:Agent")return m;if(KEEP.some(function(k){return cls.indexOf(k)===0;}))return m;return uri+" a "+mc;});}
-  return ttl;
-}
-
-function detectFromCorpus(headers) {
-  if(!window._corpusIndex) return [];
-  var scores = {};
-  headers.forEach(function(h){
-    var n = h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');
-    var colOntos = window._corpusIndex[n];
-    if(!colOntos) return;
-    Object.keys(colOntos).forEach(function(onto){
-      scores[onto] = (scores[onto]||0) + colOntos[onto];
-    });
-  });
-  // Normalizza i nomi ontologia
-  var ontoMap = {'IOT-AP_IT':'IoT','COV-AP_IT':'COV','RO-AP_IT':'RO',
-    'CULTURAL-ON':'CulturalON','CPSV-AP':'CPSV','CPVAPIT':'CPV'};
-  // Prende le ontologie con score più alto — top 3 + CLV se presente
-  var sorted = Object.keys(scores).sort(function(a,b){return scores[b]-scores[a];});
-  var top = sorted.slice(0,5).filter(function(o){return scores[o]>=5;});
-  var result = top.map(function(o){return ontoMap[o]||o;}).filter(function(o){
-    return ['QB','POI','CPV','CLV','CPSV','TI','ACCO',
-      'CulturalON','ADMS','RO','COV','GTFS','IoT','SMAPIT'].indexOf(o)>=0;
-  });
-  // Limita a top 2 + CLV solo se il CSV ha colonne geografiche reali
-  var normHeaders = new Set(headers.map(function(h){
-    return h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');
-  }));
-  // Gate strutturale: ogni ontologia viene accettata dal corpus SOLO se
-  // il CSV contiene almeno una colonna caratteristica di quell'ontologia.
-  var CORPUS_GATE = {
-    'CLV':   ['lat','lon','lng','latitudine','longitudine','indirizzo','via','civico','comune','cap','stop_lat','stop_lon','coord_lat','coord_lon'],
-    'GTFS':  ['stop_id','stop_name','stop_lat','stop_lon','route_id','agency_id','trip_id','zone_id'],
-    'QB':    ['valore','obs_value','numero_residenti','importo','misura','fascia_eta','anno','trimestre','mese'],
-    'ACCO':  ['stelle','posti_letto','tipo_struttura','albergo','camere','letti','hotel','agriturismo'],
-    'IoT':   ['sensore','id_sensore','proprieta_osservata','tipo_sensore','valore_medio','avgspeed'],
-    'SMAPIT':['codice_scuola','tipo_scuola','denominazione_scuola','codice_istituto','ciclo'],
-    'CPV':   ['cognome','codice_fiscale','data_nascita','nome_completo','sesso','cittadinanza'],
-    'RO':    ['ruolo','tipo_nomina','legislatura','voti_validi','qualifica_dipendente','contratto_lavoro','ccnl','data_assunzione'],
-    'ADMS':  ['tipo_asset','versione','stato','formato','licenza','titolo_corso','ore_formazione','crediti','titolo_rilasciato','ente_erogatore'],
-    'CPSV':  ['cig','cup','oggetto_contratto','importo_aggiudicazione','stazione_appaltante','aggiudicatario'],
-    // TI, POI, COV, CulturalON: nessun gate — possono comparire in molti contesti
-  };
-  // Filtra: tieni solo ontologie il cui gate è soddisfatto (o non hanno gate)
-  var result2 = result.filter(function(o){
-    var gate = CORPUS_GATE[o];
-    if(!gate) return true;
-    return gate.some(function(col){ return normHeaders.has(col); });
-  });
-  // Limita a top 2 + CLV solo se colonne geografiche reali presenti
-  var CLV_COLS = CORPUS_GATE['CLV'];
-  var clvReallyPresent = CLV_COLS.some(function(col){return normHeaders.has(col);});
-  var mainResult = result2.filter(function(o){return o!=='CLV';}).slice(0,2);
-  if((scores['CLV']||0)>=5 && clvReallyPresent) mainResult.push('CLV');
-  return [...new Set(mainResult)];
-}
-
 
 // ═══ CLOUDFLARE WORKER HANDLER ═══════════════════════════════════
 
@@ -918,74 +1037,56 @@ async function fetchCSV(url) {
     cf: { cacheTtl: 300, cacheEverything: true }
   });
   if (!resp.ok) throw new Error(`HTTP ${resp.status} scaricando ${url}`);
-  const ct = resp.headers.get('content-type') || '';
   const buf = await resp.arrayBuffer();
-  // Gestione encoding
+  const ct = resp.headers.get('content-type') || '';
   let text;
   if (ct.includes('charset=utf-8') || ct.includes('charset=UTF-8')) {
     text = new TextDecoder('utf-8').decode(buf);
   } else {
-    // Prova utf-8-sig (BOM), poi latin-1
-    try {
-      text = new TextDecoder('utf-8').decode(buf);
-      if (text.includes('\uFFFD')) text = new TextDecoder('latin1').decode(buf);
-    } catch {
-      text = new TextDecoder('latin1').decode(buf);
-    }
+    text = new TextDecoder('utf-8').decode(buf);
+    if (text.includes('�')) text = new TextDecoder('latin1').decode(buf);
   }
-  return text;
+  // Rimuovi BOM
+  return text.replace(/^﻿/, '');
 }
 
 export default {
   async fetch(request, env, ctx) {
-    // CORS preflight
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: CORS_HEADERS });
     }
 
-    const url = new URL(request.url);
-    
-    // Health check
-    if (url.pathname === '/health') {
-      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.20.168' }), {
+    const reqUrl = new URL(request.url);
+
+    if (reqUrl.pathname === '/health') {
+      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.20.169' }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
     }
 
-    // Parametri
-    const csvUrl = url.searchParams.get('url');
+    const csvUrl = reqUrl.searchParams.get('url');
     if (!csvUrl) {
-      return new Response(
-        JSON.stringify({
-          error: 'Parametro ?url= obbligatorio',
-          esempio: '/?url=https://miaPA.it/dati.csv&ipa=c_a662&pa=Comune+di+Bari',
-          docs: 'https://github.com/piersoft/CSV-to-RDF'
-        }),
-        { status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } }
-      );
+      return new Response(JSON.stringify({
+        error: 'Parametro ?url= obbligatorio',
+        esempio: '/?url=https://miaPA.it/dati.csv&ipa=c_a662&pa=Comune+di+Bari',
+        docs: 'https://github.com/piersoft/CSV-to-RDF'
+      }), { status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
     }
 
-    // Validazione URL
-    let parsedUrl;
-    try {
-      parsedUrl = new URL(csvUrl);
-      if (!['http:', 'https:'].includes(parsedUrl.protocol)) throw new Error('protocollo non valido');
-    } catch {
+    try { new URL(csvUrl); } catch {
       return new Response(JSON.stringify({ error: 'URL non valido: ' + csvUrl }), {
         status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
     }
 
-    const ipa    = (url.searchParams.get('ipa') || 'ente').toLowerCase().replace(/[^a-z0-9_]/g, '');
-    const paName = url.searchParams.get('pa') || 'Ente Pubblico';
-    const fmtReq = url.searchParams.get('fmt') || 'ttl';
-    const ontoForced = url.searchParams.get('onto');
+    const ipa    = (reqUrl.searchParams.get('ipa') || 'ente').toLowerCase().replace(/[^a-z0-9_]/g, '');
+    const paName = reqUrl.searchParams.get('pa') || 'Ente Pubblico';
+    const fmtReq = reqUrl.searchParams.get('fmt') || 'ttl';
+    const ontoForced = reqUrl.searchParams.get('onto');
 
     try {
-      // 1. Scarica CSV
       const csvText = await fetchCSV(csvUrl);
 
-      // 2. Parsing
       const parsed = parseCSV(csvText);
       if (!parsed || !parsed.headers || parsed.headers.length < 2) {
         return new Response(JSON.stringify({ error: 'CSV non valido o meno di 2 colonne' }), {
@@ -993,27 +1094,16 @@ export default {
         });
       }
 
-      // 3. Rilevamento ontologie
-      let ontos;
-      if (ontoForced) {
-        ontos = ontoForced.split(',').map(o => o.trim());
-      } else {
-        ontos = detectOntologiesDeterministic(parsed.headers, parsed.rows);
-      }
+      const ontos = ontoForced
+        ? ontoForced.split(',').map(o => o.trim())
+        : detectOntologiesDeterministic(parsed.headers, parsed.rows);
 
-      // 4. Generazione TTL (buildDeterministicTTL accetta csvText grezzo)
       const ttl = buildDeterministicTTL(csvText, ontos, ipa, paName);
 
-      // 5. Output
       const meta = {
-        csvUrl,
-        ipa,
-        pa: paName,
-        ontologie: ontos,
-        righe: parsed ? parsed.rows.length : 0,
-        colonne: parsed.headers,
-        generato: new Date().toISOString(),
-        versione: 'v2026.03.20.168'
+        csvUrl, ipa, pa: paName, ontologie: ontos,
+        righe: parsed.rows.length, colonne: parsed.headers,
+        generato: new Date().toISOString(), versione: 'v2026.03.20.169'
       };
 
       if (fmtReq === 'json') {
@@ -1022,14 +1112,13 @@ export default {
         });
       }
 
-      // TTL con commento header
       const header = [
-        `# CSV→RDF Converter — ${meta.generato}`,
+        `# CSV→RDF — ${meta.generato}`,
         `# Sorgente: ${csvUrl}`,
         `# Ente: ${paName} (${ipa})`,
         `# Ontologie: ${ontos.join(', ')}`,
         `# Righe: ${parsed.rows.length}`,
-        `# Generato da: https://piersoft.github.io/CSV-to-RDF/`,
+        `# https://piersoft.github.io/CSV-to-RDF/`,
         ''
       ].join('\n');
 
@@ -1045,12 +1134,9 @@ export default {
 
     } catch (err) {
       return new Response(JSON.stringify({
-        error: err.message,
-        csvUrl,
-        hint: 'Verifica che il CSV sia pubblicamente accessibile e abbia intestazioni nella prima riga'
-      }), {
-        status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-      });
+        error: err.message, csvUrl,
+        hint: 'Verifica che il CSV sia pubblicamente accessibile con intestazioni nella prima riga'
+      }), { status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
     }
   }
 };

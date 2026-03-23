@@ -271,6 +271,31 @@ var CORPUS_GATE = {
   };
 
 
+
+// ═══ FUNZIONI HELPER MANCANTI ═══
+
+function detectSeparator(firstLine) {
+  // Conta occorrenze dei separatori candidati nella prima riga
+  const candidates = [',', ';', '\t', '|'];
+  let best = ',';
+  let bestCount = 0;
+  candidates.forEach(sep => {
+    const count = firstLine.split(sep).length - 1;
+    if (count > bestCount) { bestCount = count; best = sep; }
+  });
+  return best;
+}
+
+function detAddPrefix(onto,set){var m={ACCO:'acco',GTFS:'gtfs',POI:'poi','IoT':'iot',COV:'cov',CPV:'cpv',RO:'ro',SMAPIT:'smapit',QB:'qb',CLV:'clv',TI:'ti',PARK:'park',POT:'pot',PublicContract:'pc',Route:'route',RPO:'rpo',MU:'mu',Learning:'learn',CPEV:'cpev',Transparency:'tr',Indicator:'indicator',CulturalON:'cis',ADMS:'adms',CPSV:'cpsv',L0:'l0'};if(m[onto])set.add(m[onto]);if(onto==='RO'){set.add('cov');set.add('cpv');}if(onto==='CPSV-AP'||onto==='CPSV'){set.add('cpsv');}if(onto==='QB'){set.add('sdmx-dimension');set.add('sdmx-measure');set.add('sdmx-attribute');}if(onto==='CulturalON'){set.add('schema');}if(onto==='TI'){set.add('schema');}if(onto==='PARK'){set.add('park');}if(onto==='POT'){set.add('pot');}if(onto==='PublicContract'){set.add('pc');set.add('cov');}if(onto==='Route'){set.add('route');}if(onto==='RPO'){set.add('rpo');set.add('cov');set.add('cpv');}if(onto==='MU'){set.add('mu');}if(onto==='Learning'){set.add('learn');}if(onto==='CPEV'){set.add('cpev');}if(onto==='Transparency'){set.add('tr');}if(onto==='Indicator'){set.add('indicator');set.add('qb');}}
+
+function detFindColIdx(nh,cands){for(var i=0;i<cands.length;i++){var x=nh.indexOf(cands[i]);if(x>=0)return x;}return-1;}
+
+function detFindRule(normH,ontos){if(ontos.indexOf('CPV')>=0&&normH==='nome')return{pred:'cpv:givenName',type:'langlit',lang:'it',onto:'CPV'};if(ontos.indexOf('QB')>=0&&(normH==='valore'||normH==='obs_value'||normH==='osservazione'))return{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'};if(ontos.indexOf('QB')>=0&&normH==='sesso')return{pred:'sdmx-dimension:sex',type:'literal'};if(ontos.indexOf('QB')>=0&&normH==='cittadinanza')return{pred:'sdmx-attribute:obsStatus',type:'literal'};var rule=DET_COL_RULES[normH];if(!rule)return null;if(rule.onto&&ontos.indexOf(rule.onto)<0)return null;return rule;}
+
+function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat','lon'].some(function(c){return nh.indexOf(c)>=0;});}
+
+function detHasTime(nh,ontos){return ontos.indexOf('TI')>=0&&['inizio','termine','data','quando'].some(function(c){return nh.indexOf(c)>=0;});}
+
 // Stub per compatibilità Node.js
 const window = { _corpusIndex: null };
 

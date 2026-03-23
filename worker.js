@@ -378,9 +378,10 @@ function detAddPrefix(onto,set){var m={ACCO:'acco',GTFS:'gtfs',POI:'poi','IoT':'
 function detFormatLit(rule,val){
   if(!val&&val!==0)return null;
   val=String(val).trim();if(!val)return null;
+  var BQ='\\"'; // backslash + virgoletta per Turtle
   if(rule.type==='skip')return null;
-  if(rule.type==='langlit')return'"'+val.replace(/"/g,'\"')+'"@'+(rule.lang||'it');
-  if(rule.type==='literal')return'"'+val.replace(/"/g,'\"')+'"^^xsd:string';
+  if(rule.type==='langlit')return'"'+val.replace(/"/g,BQ)+'"@'+(rule.lang||'it');
+  if(rule.type==='literal')return'"'+val.replace(/"/g,BQ)+'"^^xsd:string';
   if(rule.type==='decimal'){var n=parseFloat(val);return isNaN(n)?null:'"'+n+'"^^xsd:decimal';}
   if(rule.type==='integer'){var n2=parseInt(val);return isNaN(n2)?null:'"'+n2+'"^^xsd:integer';}
   if(rule.type==='boolean'){var b=val.toLowerCase();return(b==='si'||b==='true'||b==='1'||b==='yes')?'"true"^^xsd:boolean':'"false"^^xsd:boolean';}
@@ -869,9 +870,10 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
 function detFormatLit(rule,val){
   if(!val&&val!==0)return null;
   val=String(val).trim();if(!val)return null;
+  var BQ='\\"'; // backslash + virgoletta per Turtle
   if(rule.type==='skip')return null;
-  if(rule.type==='langlit')return'"'+val.replace(/"/g,'\"')+'"@'+(rule.lang||'it');
-  if(rule.type==='literal')return'"'+val.replace(/"/g,'\"')+'"^^xsd:string';
+  if(rule.type==='langlit')return'"'+val.replace(/"/g,BQ)+'"@'+(rule.lang||'it');
+  if(rule.type==='literal')return'"'+val.replace(/"/g,BQ)+'"^^xsd:string';
   if(rule.type==='decimal'){var n=parseFloat(val);return isNaN(n)?null:'"'+n+'"^^xsd:decimal';}
   if(rule.type==='integer'){var n2=parseInt(val);return isNaN(n2)?null:'"'+n2+'"^^xsd:integer';}
   if(rule.type==='boolean'){var b=val.toLowerCase();return(b==='si'||b==='true'||b==='1'||b==='yes')?'"true"^^xsd:boolean':'"false"^^xsd:boolean';}

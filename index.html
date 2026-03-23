@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.20.160 -->
+  <!-- build:v2026.03.20.168 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -603,7 +603,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.160</span>
+<span id="app-version">v2026.03.20.168</span>
 </footer>
 
 <script>
@@ -878,21 +878,25 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['tipo_poi','dae','defibrillatore','punto_di_interesse','punto_interesse',
           'point_of_interest','idelem','id_elem'])) {
     result.add('POI');
-  } else if(_hasPOIcoord && !result.has('ACCO') && !result.has('GTFS') &&
-            !result.has('SMAPIT') && !result.has('IoT') && !result.has('QB')) {
+  } else if(_hasPOIcoord && !result.has('GTFS') &&  // B1: ACCO+lat/lon = anche POI
+            !result.has('SMAPIT') && !result.has('IoT') && !result.has('QB') &&
+            !result.has('Cultural-ON')) { // non aggiungere POI su istituti culturali
     if(has(['nome','denominazione','tipo','categoria','descrizione']) &&
        !has(['mortali','feriti','deceduti','incidenti','importo','spesa','entrata']))
       result.add('POI');
   }
 
-  // COV — organizzazioni pubbliche: richiede colonne specifiche di ente, NON dati geografici generici
-  // P2-FIX: "comune/provincia" come colonna dati ≠ ente COV
+  // COV — organizzazioni: FIX1 esclude codice_ipa quando accompagnato da colonne di altri domini
+  var _hasCOVStrong = has(['codice_ipa','codice_ente','partita_iva','codice_fiscale_ente','ragione_sociale']) &&
+                      !has(['qualifica_dipendente','obbligo_trasparenza','titolo_corso','ore_formazione',
+                             'cig','importo_aggiudicazione','tipo_percorso','valore_indicatore']);
+  var _hasCOVWeak   = has(['amministrazione','ente','pubblica_amministrazione','organizzazione',
+                           'comparto','inquadramento','codice_istituzione','codice_ente_bdap']);
   if(!result.has('ACCO') && !result.has('POI') && !result.has('GTFS') &&
-     has(['codice_fiscale','codice_ente','amministrazione','ente',
-          'pubblica_amministrazione','organizzazione','comparto','inquadramento',
-          'codice_istituzione','codice_ente_bdap','cov','codice_ipa','partita_iva']) &&
-     !has(['popolazione_residente','numero_famiglie','numero_residenti','nati','morti',
-           'incidenti','sinistri','importo_liquidato','spesa_corrente'])) {
+     (_hasCOVStrong || (_hasCOVWeak &&
+      !has(['popolazione_residente','numero_famiglie','numero_residenti','nati','morti',
+            'incidenti','sinistri','importo_liquidato','spesa_corrente']) &&
+      !result.has('QB')))) {
     result.add('COV');
   }
 
@@ -903,12 +907,13 @@ function detectOntologiesDeterministic(headers, rows) {
   // CPV — persone fisiche: richiede cognome O CF O data_nascita+sesso (P3-FIX: esclude QB puro)
   // FN-CPV FIX: aggiunge alias MAIUSCOLI e varianti comuni nei dataset PA
   // CPV — R4-FIX: fascia_eta/tipo_capofamiglia per dataset demografici
-  var _hasAnag = has(['cognome','nome_completo','codice_fiscale','cf','codice_fiscale_sa',
+  // FIX2: codice_fiscale_sa è della stazione appaltante, non di una persona fisica
+  var _hasAnag = has(['cognome','nome_completo','codice_fiscale',
                       'nome_cognome','nominativo','intestatario','titolare','beneficiario',
                       'data_nascita','luogo_nascita','comune_nascita',
                       'tipo_capofamiglia','fascia_eta','classi_eta','eta_','nazionalita']) ||
                  (has(['data_nascita']) && has(['sesso']) && !has(['anno','totale','numero','occorrenze']));
-  if(!result.has('SMAPIT') && _hasAnag)
+  if(!result.has('SMAPIT') && !result.has('IoT') && _hasAnag)
     result.add('CPV');
 
   // RO — ruoli
@@ -916,35 +921,57 @@ function detectOntologiesDeterministic(headers, rows) {
           'id_consigliere','legislatura','voti_validi']))
     result.add('RO');
 
-  // QB — dati statistici aggregati
+  // QB — dati statistici aggregati (R2-FIX: blocca su cataloghi ADMS e dataset trasporto)
+  // FIX5: include incidenti/feriti/mortali come dati statistici aggregati
   if(has(['anno','mese','occorrenze','totale','numero','valore','indice',
-          'popolazione_residente','numero_famiglie']) &&
+          'popolazione_residente','numero_famiglie',
+          'incidenti','feriti','mortali','deceduti','sinistri']) &&
      !result.has('ACCO') && !result.has('GTFS') && !result.has('IoT') &&
      !result.has('COV') && !result.has('CPV') && !result.has('SMAPIT') &&
-     !result.has('CPSV') && !result.has('ADMS') && !result.has('RO'))
+     !result.has('CPSV') && !result.has('ADMS') && !result.has('RO') &&
+     !result.has('CulturalON') &&
+     !has(['nome_dataset','nome_risorsa','numero_righe','distribution_url']) &&
+     !has(['tratta','capolinea','fermata_origine','fermata_arrivo']) &&
+     !has(['codice_istat','codice_civico','cod_civico','numero_civico']))  // B3: codici geo ≠ QB
+    result.add('QB');
 
-  // TI — eventi con date
-  if(has(['inizio','termine','data_inizio','data_fine','quando','titolo','tipo_evento',
-          'manifestazione','evento','orario','durata','nome_iniziativa','nome_evento',
-          'periodo','programmazione','edizione','stagione','rassegna','spettacolo','concerto']))
+  // TI — R6-FIX: richiede date esplicite O combo evento+luogo (non solo titolo/tipo)
+  var _tiStrong = has(['data_inizio','data_fine','inizio','termine','quando','orario_inizio',
+                       'orario_fine','data_evento','ora_inizio','ora_fine','data_ora',
+                       'data_rilevazione','data_apertura','data_chiusura']);
+  var _tiEvent  = has(['tipo_evento','nome_iniziativa','nome_evento','manifestazione',
+                       'spettacolo','concerto','rassegna','stagione','programmazione']) &&
+                  has(['luogo','dove','sede','periodo','durata','orario']);
+  if(_tiStrong || _tiEvent)
     result.add('TI');
 
   // CulturalON — solo se colonne specifiche, non valori casuali in indirizzi
   var _cultHdr = norm.filter(function(h){
     return h==='tipo_bene'||h==='datazione'||h==='numero_inventario'||h==='autore'||h==='luoghistorico';
   });
-  if(_cultHdr.length>0 || has(['beniculturali','mibact','mibac','cis:','luoghicultura','museo','nome_museo','orari','biglietto','mostra','pinacoteca','galleria','teatro_bene','sito_archeologico']))
-    if(!result.has('SMAPIT')&&!result.has('GTFS')&&!result.has('IoT')) result.add('CulturalON');
+  // FIX3: 'museo'/'teatro' nei valori non bastano — richiede colonne specifiche beni culturali
+  if(_cultHdr.length>0 || has(['beniculturali','mibact','mibac','cis:','luoghicultura',
+      'nome_museo','mostra','pinacoteca','galleria','sito_archeologico','tipo_bene_culturale']))
+    if(!result.has('SMAPIT')&&!result.has('GTFS')&&!result.has('IoT')){
+      result.add('Cultural-ON'); result.add('CulturalON'); }
+  if(result.has('Cultural-ON') && result.has('POI') && !has(['tipo_poi','dae','defibrillatore']))
+    result.delete('POI'); // istituto culturale geolocalizzato ≠ POI generico
   // CPSV — servizi pubblici / appalti con varianti PA reali
   // FN-CPSV FIX: aggiunge "procedura/licitazione/affidamento" comuni nei dati PA
   if(has(['cig','cup','aggiudicatario','appalto','gara','oggetto_appalto',
           'servizio_pubblico','cpsv','procedura','licitazione','affidamento',
           'scelta_contraente','oggetto_gara','struttura_proponente']))
     result.add('CPSV');
+  // M4: servizi pubblici puri (senza CIG) → CPSV-AP
+  if(has(['nome_servizio','canale_erogazione','requisiti_accesso','url_servizio']) && !has(['cig','appalto','gara']))
+    result.add('CPSV-AP');
 
   // ADMS — cataloghi / asset semantici
-  if(has(['slug','version','versione','creation_date','last_edit_date','api_url',
-          'distribution_url','asset','ontologia','vocabolario']))
+  // FIX4: ADMS richiede contesto specifico, non solo 'versione'
+  if(has(['slug','version','creation_date','last_edit_date','api_url',
+          'distribution_url','asset','ontologia','vocabolario']) ||
+     (has(['versione']) && has(['stato','formato','licenza','tipo_asset','editore'])) ||
+     (has(['identifier','nome_dataset','nome_risorsa']) && has(['formato','numero_righe'])))
     result.add('ADMS');
 
   // Arricchisci con il corpus se disponibile
@@ -956,15 +983,19 @@ function detectOntologiesDeterministic(headers, rows) {
     if(result.has('QB')&&result.has('CPV')&&!_hasAnagrafica) result.delete('CPV'); // QB stats senza cognome
     if(result.has('QB') && (result.has('TI')||result.has('CulturalON')||result.has('ACCO')||result.has('GTFS'))) result.delete('QB'); // QB non su eventi/strutture
   // Se SMAPIT rilevato, rimuovi ontologie incompatibili
-  if(result.has('SMAPIT')){result.delete('CulturalON');result.delete('QB');result.delete('CPV');}
+  if(result.has('SMAPIT')){result.delete('CulturalON');result.delete('Cultural-ON');result.delete('QB');result.delete('CPV');}
+  if(result.has('Cultural-ON')) result.add('CulturalON'); // alias retrocompatibilità
   // L0 — sempre aggiunto come base
   if(has(['parcheggio','parking','stalli','posti_auto','capacita_posti','tariffa_oraria','posti_disabili'])) result.add('PARK');
   if(has(['prezzo_intero','prezzo_ridotto','biglietto','tariffa_ingresso','costo_biglietto'])&&!result.has('ACCO')) result.add('POT');
   if(has(['cig','cup','importo_aggiudicazione','stazione_appaltante','oggetto_contratto','aggiudicatario','cpv_codice'])) result.add('PublicContract');
   if(has(['tipo_percorso','lunghezza_km','difficolta','dislivello','numero_tappe','sentiero','percorso_ciclabile','itinerario','tracciato','lat_start','lon_start','durata_stimata','nome_breve_percorso','nome_esteso_percorso'])) result.add('Route');
   if(has(['qualifica_dipendente','contratto_lavoro','ccnl','livello_contrattuale','ore_settimanali'])) result.add('RPO');
-  if(has(['unita_misura','grandezza_fisica','conversione_si'])&&!result.has('IoT')) result.add('MU');
-  if(has(['crediti','ects','ore_formazione','titolo_rilasciato','durata_corso','ente_erogatore'])) result.add('Learning');
+  // FIX7: MU solo con colonne scientifiche specifiche, non 'unita_misura' generico
+  if(has(['grandezza_fisica','conversione_si','unita_si','fattore_conversione'])&&!result.has('IoT')) result.add('MU');
+  if(has(['crediti','ects','ore_formazione','titolo_rilasciato','durata_corso']) ||
+     (has(['titolo_corso']) && has(['durata_corso','ore_formazione','crediti'])))
+    result.add('Learning'); // M5
   if(has(['evento_civico','tipo_evento_civico'])&&result.has('TI')) result.add('CPEV');
   if(has(['obbligo_trasparenza','categoria_trasparenza','dato_obbligatorio','d_lgs_33'])) result.add('Transparency');
   if(has(['tipo_indicatore','baseline','target','fonte_indicatore'])&&!result.has('QB')) result.add('Indicator');
@@ -978,9 +1009,16 @@ function detectOntologiesDeterministic(headers, rows) {
   }
   if(result.has('QB') && result.has('POI') && !has(['tipo_poi','dae','defibrillatore','nome_poi','idelem','id_elem'])) result.delete('POI');
   if(result.has('QB') && result.has('COV') && !_hasCOVStrong) result.delete('COV');
-  if(result.has('QB') && result.has('TI') && !_tiEvent && !_tiStrong) result.delete('TI'); // R6 // P2: QB+ente ≠ COV strutturale
-  if(result.has('PublicContract')){result.delete('CPSV');result.delete('CPSV-AP');}  // PublicContract copre gli appalti
+  if(result.has('QB') && result.has('TI') && !_tiEvent && !_tiStrong) result.delete('TI'); // R6
+  if(result.has('POT') && result.has('CPV') && !has(['cognome','codice_fiscale','data_nascita']))
+    result.delete('CPV'); // POT: tariffe non implicano persone fisiche // P2: QB+ente ≠ COV strutturale
+  if(result.has('PublicContract')){
+    result.delete('CPSV-AP');
+    result.add('CPSV'); // compatibilità corpus
+    result.add('COV'); // B4: stazione appaltante è sempre COV
+  }
   if(result.has('RPO')){result.delete('RO');result.delete('SMAPIT');}  // RPO (risorse umane) è diverso da scuole
+  if(result.has('RO') && result.has('TI') && !_tiEvent) result.delete('TI'); // B2
   if(result.has('Indicator'))   result.add('QB');   // Indicator estende QB per le osservazioni
   if(result.has('Transparency')&&result.has('CPSV')) result.delete('CPSV');
   if(result.has('Learning')&&result.has('TI')&&!has(['data_inizio','data_fine','orario'])) result.delete('TI');
@@ -1593,7 +1631,7 @@ function loadExample(tipo) {
 1,RMIS00100G,Liceo Scientifico Fermi,Liceo Scientifico,Via Roma 1,Roma,RM,00100,41.8902,12.4922,segreteria@fermi.it
 2,MIIC8FJ00T,IC Milano Centro,Istituto Comprensivo,Via Dante 10,Milano,MI,20121,45.4654,9.1860,segreteria@icmilano.it
 3,FIIS00200B,IIS Leonardo da Vinci,Ist. Istruzione Superiore,Via Cavour 5,Firenze,FI,50129,43.7696,11.2558,info@iis-davinci.fi.it`,
-    iot: `id,id_sensore,tipo_sensore,proprieta_osservata,valore,unita_misura,timestamp,lat,lon,comune
+    iot: `id,id_sensore,tipo_sensore,proprieta_osservata,valore,unita_misura,data_rilevazione,lat,lon,comune
 1,SENS-BO-001,iot:Sensor,PM10,18.5,ug/m3,2024-03-21T10:00:00,44.4940,11.3421,Bologna
 2,SENS-BO-002,iot:Sensor,Temperatura,12.3,celsius,2024-03-21T10:00:00,44.4938,11.3430,Bologna
 3,SENS-BO-003,iot:Sensor,Umidita relativa,68.2,percent,2024-03-21T10:00:00,44.4945,11.3445,Bologna`,
@@ -1601,10 +1639,10 @@ function loadExample(tipo) {
 1,Hotel Centrale Roma,Albergo,4 stelle,Via Nazionale 22,Roma,RM,00184,41.8982,12.4879,120,info@hotelcentrale.it,www.hotelcentrale.it
 2,B&B Trastevere,Bed and Breakfast,,Vicolo del Cedro 10,Roma,RM,00153,41.8893,12.4711,12,info@bbtrastevere.it,
 3,Agriturismo Colle Verde,Agriturismo,,Strada Prov 12,Montefalco,PG,06036,42.8872,12.6504,20,info@colleverde.it,www.colleverde.it`,
-    cpsv: `id,cig,oggetto,importo_aggiudicazione,stazione_appaltante,codice_fiscale_sa,data_aggiudicazione,comune
-1,Z1A2B3C4D5,Fornitura arredi uffici comunali,45000.00,Comune di Bologna,01232710374,2024-01-15,Bologna
-2,Z9F8E7D6C5,Manutenzione verde pubblico,120000.00,Comune di Firenze,01307110484,2024-02-20,Firenze
-3,ZAB1CD2EF3,Servizi informatici sportello,85000.00,Comune di Milano,01199250154,2024-03-10,Milano`,
+    cpsv: `id,nome_servizio,descrizione_servizio,ente_erogatore,codice_ipa,canale_erogazione,requisiti_accesso,url_servizio
+1,SUAP - Sportello Unico Attivita Produttive,Servizio telematico per avvio e gestione attivita produttive,Comune di Bologna,c_a944,online,Titolare di impresa o professionista,https://suap.comune.bologna.it
+2,Anagrafe online - Certificati,Rilascio certificati anagrafici in formato digitale,Comune di Firenze,c_d612,online,Residente nel comune,https://anagrafe.comune.firenze.it
+3,Iscrizione asili nido,Servizio di iscrizione ai nidi comunali,Comune di Milano,c_f205,sportello+online,Genitore con figlio 0-3 anni,https://nidi.comune.milano.it`,
     gtfs: `stop_id,stop_name,stop_lat,stop_lon,zone_id,location_type,wheelchair_boarding
 S001,Piazza Maggiore,44.4938,11.3430,1,0,1
 S002,Stazione Centrale Bologna,44.5058,11.3452,1,1,1
@@ -1614,31 +1652,31 @@ S003,Porta San Vitale,44.4881,11.3521,2,0,2`,
 2023,Q4,Milano,015146,0-14,F,43210
 2023,Q4,Milano,015146,15-64,M,412300
 2023,Q4,Milano,015146,65+,F,121400`,
-    clv: `id,tipo_via,nome_via,numero_civico,cap,comune,codice_istat,provincia,lat,lon
-1,Via,Roma,1,20121,Milano,015146,MI,45.4641,9.1919
-2,Piazza,del Duomo,1,20122,Milano,015146,MI,45.4641,9.1919
-3,Corso,Buenos Aires,10,20124,Milano,015146,MI,45.4711,9.2040
-4,Via,Dante,10,20121,Milano,015146,MI,45.4659,9.1860`,
-    cov: `id,denominazione,tipo_ente,codice_fiscale,codice_ipa,indirizzo,comune,provincia,cap,email,sito_web,lat,lon
-1,Comune di Milano,Comune,01199250154,c_f205,Piazza della Scala 2,Milano,MI,20121,comune.milano@pec.comune.milano.it,https://www.comune.milano.it,45.4654,9.1859
-2,Regione Lombardia,Regione,80050050154,r_lomb,Piazza Citta di Lombardia 1,Milano,MI,20124,regione.lombardia@pec.regione.lombardia.it,https://www.regione.lombardia.it,45.4844,9.1965
-3,ASL Milano,Azienda Sanitaria Locale,04376350158,asl_mi,Via Ricordi 1,Milano,MI,20121,aslmi@pec.aslmi.it,https://www.aslmi.it,45.4710,9.1867`,
+    clv: `id,tipo_via,nome_via,numero_civico,cap,comune,codice_istat,provincia
+1,Via,Roma,1,20121,Milano,015146,MI
+2,Piazza,del Duomo,1,20122,Milano,015146,MI
+3,Corso,Buenos Aires,10,20124,Milano,015146,MI
+4,Via,Dante,10,20121,Milano,015146,MI`,
+    cov: `id,denominazione,tipo_ente,cf_ente,codice_ipa,indirizzo,comune,provincia,cap,email,sito_web
+1,Comune di Milano,Comune,01199250154,c_f205,Piazza della Scala 2,Milano,MI,20121,comune.milano@pec.comune.milano.it,https://www.comune.milano.it
+2,Regione Lombardia,Regione,80050050154,r_lomb,Piazza Citta di Lombardia 1,Milano,MI,20124,regione.lombardia@pec.regione.lombardia.it,https://www.regione.lombardia.it
+3,ASL Milano,Azienda Sanitaria Locale,04376350158,asl_mi,Via Ricordi 1,Milano,MI,20121,aslmi@pec.aslmi.it,https://www.aslmi.it`,
     cpv: `id,nome,cognome,codice_fiscale,data_nascita,comune_nascita,provincia_nascita,sesso,comune_residenza
 1,Mario,Rossi,RSSMRA80A01H501Z,1980-01-01,Roma,RM,M,Milano
 2,Lucia,Bianchi,BNCLCU85M41F839P,1985-08-01,Napoli,NA,F,Torino
 3,Giuseppe,Verdi,VRDGPP70C15L219X,1970-03-15,Torino,TO,M,Roma`,
-    cultural: `id,denominazione,tipo_istituto,disciplina,indirizzo,comune,provincia,lat,lon,telefono,email
-1,Museo Nazionale del Risorgimento,Museo,storia,Via Accademia delle Scienze 5,Torino,TO,45.0680,7.6830,0115621147,info@museorisorgimento.it
-2,Biblioteca Nazionale Braidense,Biblioteca,letteratura,Via Brera 28,Milano,MI,45.4719,9.1878,0286460907,bn-mi@cultura.gov.it
-3,Archivio di Stato di Firenze,Archivio,storia,Viale Giovine Italia 6,Firenze,FI,43.7728,11.2694,0552340782,as-fi@cultura.gov.it`,
+    cultural: `id,denominazione,tipo_istituto,tipo_bene_culturale,disciplina,indirizzo,comune,provincia,lat,lon,telefono,email,data_apertura
+1,Museo Nazionale del Risorgimento,Museo,museo,storia,Via Accademia delle Scienze 5,Torino,TO,45.0680,7.6830,0115621147,info@museorisorgimento.it,1878-01-01
+2,Biblioteca Nazionale Braidense,Biblioteca,biblioteca,letteratura,Via Brera 28,Milano,MI,45.4719,9.1878,0286460907,bn-mi@cultura.gov.it,1770-01-01
+3,Archivio di Stato di Firenze,Archivio,archivio_storico,storia,Viale Giovine Italia 6,Firenze,FI,43.7728,11.2694,0552340782,as-fi@cultura.gov.it,1852-01-01`,
     ro: `id,nome,cognome,codice_fiscale,ruolo,ente,codice_ipa,data_inizio,data_fine,tipo_nomina
 1,Marco,Ferrari,FRRMRC65A01F205Z,Sindaco,Comune di Milano,c_f205,2021-06-15,,Elezione diretta
 2,Anna,Conte,CNTNNNA70B41L219T,Assessore Lavori Pubblici,Comune di Milano,c_f205,2021-07-01,,Nomina sindacale
 3,Luigi,Marini,MRNLGU58C01H501P,Dirigente Urbanistica,Comune di Milano,c_f205,2019-01-01,,Concorso pubblico`,
-    ti: `id,titolo,tipo_evento,data_inizio,data_fine,orario_inizio,orario_fine,luogo,comune,provincia
-1,Festival della Scienza,Evento culturale,2024-10-25,2024-11-03,09:00,20:00,Porto Antico,Genova,GE
-2,Salone del Libro,Fiera,2024-05-09,2024-05-13,10:00,20:00,Lingotto Fiere,Torino,TO
-3,Maratona di Roma,Evento sportivo,2024-03-17,2024-03-17,09:00,18:00,Foro Italico,Roma,RM`,
+    ti: `id,titolo,tipo_evento,data_inizio,data_fine,orario_inizio,orario_fine,luogo,comune,provincia,lat,lon
+1,Festival della Scienza,Evento culturale,2024-10-25,2024-11-03,09:00,20:00,Porto Antico,Genova,GE,44.4074,8.9326
+2,Salone del Libro,Fiera,2024-05-09,2024-05-13,10:00,20:00,Lingotto Fiere,Torino,TO,45.0354,7.6694
+3,Maratona di Roma,Evento sportivo,2024-03-17,2024-03-17,09:00,18:00,Foro Italico,Roma,RM,41.9351,12.4574`,
     adms: `id,titolo,tipo_asset,versione,stato,licenza,formato,url,editore,data_rilascio
 1,Ontologia CLV,Ontologia,2.0,Stabile,CC BY 4.0,OWL/RDF,https://w3id.org/italia/onto/CLV,AgID,2017-01-01
 2,Vocabolario Tipi Ente,Vocabolario controllato,1.1,Stabile,CC BY 4.0,SKOS/RDF,https://w3id.org/italia/controlled-vocabulary/tipi-ente,AgID,2018-03-15
@@ -1651,10 +1689,10 @@ S003,Porta San Vitale,44.4881,11.3521,2,0,2`,
 1,A1B2C3D4E5,B11F22000000001,Manutenzione strade comunali 2024,285000.00,Comune di Bari,c_a662,Impresa Strade Srl,45233141-9,2024-02-10,Procedura aperta
 2,B2C3D4E5F6,,Fornitura PC e monitor per uffici,48000.00,Comune di Taranto,c_l049,TechSupply SpA,30213100-6,2024-03-05,Affidamento diretto
 3,C3D4E5F6G7,B19H24000000003,Servizi di pulizia edifici comunali,72000.00,Comune di Lecce,c_e506,CleanService Coop,90919200-4,2024-01-20,Procedura negoziata`,
-    route: `id,denominazione,tipo_percorso,lunghezza_km,difficolta,dislivello,durata_stimata,numero_tappe,descrizione,comune,provincia,lat_start,lon_start
-1,Sentiero delle Murge,Escursionistico,18.5,Media,320,PT6H,5,Percorso tra masserie e trulli delle Murge baresi,Altamura,BA,40.8259,16.5543
-2,Via Traiana Ciclabile,Cicloturistico,42.0,Facile,80,PT4H,3,Tracciato ciclabile sul percorso dell'antica Via Traiana,Bari,BA,41.1171,16.8719
-3,Cammino Basiliano,Culturale,95.0,Impegnativo,1200,PT4D,12,Itinerario tra chiese rupestri e santuari basiliani,Matera,MT,40.6665,16.6043`,
+    route: `id,denominazione,tipo_percorso,lunghezza_km,difficolta,dislivello,durata_stimata,numero_tappe,descrizione,comune,provincia,lat_start,lon_start,data_apertura,data_chiusura
+1,Sentiero delle Murge,Escursionistico,18.5,Media,320,PT6H,5,Percorso tra masserie e trulli delle Murge baresi,Altamura,BA,40.8259,16.5543,2020-04-01,
+2,Via Traiana Ciclabile,Cicloturistico,42.0,Facile,80,PT4H,3,Tracciato ciclabile sul percorso dell'antica Via Traiana,Bari,BA,41.1171,16.8719,2019-06-01,
+3,Cammino Basiliano,Culturale,95.0,Impegnativo,1200,PT4D,12,Itinerario tra chiese rupestri e santuari basiliani,Matera,MT,40.6665,16.6043,2021-05-01,`,
     rpo: `id,nome,cognome,codice_fiscale,ente,codice_ipa,qualifica_dipendente,contratto_lavoro,ccnl,livello_contrattuale,ore_settimanali,data_assunzione
 1,Lucia,Conte,CNTLCU80A41A662Z,Comune di Bari,c_a662,Funzionario amministrativo,Tempo indeterminato,Comparto funzioni locali,D3,36,2010-03-01
 2,Marco,Farina,FRNMRC75B01H501K,Comune di Bari,c_a662,Istruttore tecnico,Tempo indeterminato,Comparto funzioni locali,C2,36,2015-09-01
@@ -1681,26 +1719,26 @@ S003,Porta San Vitale,44.4881,11.3521,2,0,2`,
   const ontoMap = {
     poi:     ['CLV','POI','L0'],
     smapit:  ['CLV','L0','SMAPIT'],
-    iot:     ['IoT','L0','TI'],
+    iot:     ['IoT','TI','CLV','L0'],
     acco:    ['CLV','POI','ACCO','L0'],
-    cpsv:    ['CLV','COV','CPSV-AP','L0'],
+    cpsv:    ['COV','CPSV-AP','L0'],
     gtfs:    ['CLV','GTFS','L0'],
     qb:      ['QB','CLV','L0'],
     clv:     ['CLV','L0'],
     cov:     ['COV','CLV','L0'],
     cpv:     ['CPV','CLV','L0'],
-    cultural:['Cultural-ON','CLV','L0','TI'],
+    cultural:['Cultural-ON','CLV','TI','L0'],
     ro:      ['RO','CPV','COV','L0'],
-    ti:      ['TI','CLV','L0','POI'],
+    ti:      ['TI','CLV','POI','L0'],
     adms:    ['ADMS','L0'],
-    park:          ['PARK','CLV','L0'],
-    publiccontract:['PublicContract','COV','CLV','L0'],
-    route:         ['Route','CLV','L0','TI'],
+    park:          ['PARK','POI','CLV','L0'],
+    publiccontract:['PublicContract','CPSV','COV','CLV','L0'],
+    route:         ['Route','CLV','TI','L0'],
     rpo:           ['RPO','CPV','COV','L0'],
     learning:      ['Learning','COV','L0','TI'],
     transparency:  ['Transparency','COV','L0'],
     indicator:     ['Indicator','QB','COV','L0'],
-    pot:           ['POT','CLV','L0']
+    pot:           ['POT','POI','CLV','L0']
   };
   const sacredTTL = {"poi":"@prefix poi: <https://w3id.org/italia/onto/POI/> .\n@prefix clv: <https://w3id.org/italia/onto/CLV/> .\n@prefix l0: <https://w3id.org/italia/onto/l0/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix dct: <http://purl.org/dc/terms/> .\n@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n\n<https://w3id.org/italia/data/comune-roma/ds> a foaf:Agent ; foaf:name \"Comune di Roma\"@it .\n<https://w3id.org/italia/data/comune-roma/point-of-interest/1> a poi:PointOfInterest ;\n  rdfs:label \"Defibrillatore Piazza Repubblica\"@it ;\n  dct:type \"DAE\" ;\n  geo:lat \"41.9028\"^^xsd:decimal ; geo:long \"12.4964\"^^xsd:decimal ;\n  clv:hasAddress <https://w3id.org/italia/data/comune-roma/address/1> .\n<https://w3id.org/italia/data/comune-roma/address/1> a clv:Address ;\n  clv:fullAddress \"Piazza della Repubblica, Roma\"@it .\n<https://w3id.org/italia/data/comune-roma/point-of-interest/2> a poi:PointOfInterest ;\n  rdfs:label \"Defibrillatore Stazione Termini\"@it ;\n  dct:type \"DAE\" ;\n  geo:lat \"41.9009\"^^xsd:decimal ; geo:long \"12.5018\"^^xsd:decimal ;\n  clv:hasAddress <https://w3id.org/italia/data/comune-roma/address/2> .\n<https://w3id.org/italia/data/comune-roma/address/2> a clv:Address ;\n  clv:fullAddress \"Piazza dei Cinquecento, Roma\"@it .","smapit":"@prefix smapit: <https://w3id.org/italia/onto/SMAPIT/> .\n@prefix clv: <https://w3id.org/italia/onto/CLV/> .\n@prefix l0: <https://w3id.org/italia/onto/l0/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix dct: <http://purl.org/dc/terms/> .\n@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n\n<https://w3id.org/italia/data/miur/ds> a foaf:Agent ; foaf:name \"MIUR\"@it .\n<https://w3id.org/italia/data/miur/school/RMIS00100G> a smapit:School ;\n  rdfs:label \"Liceo Scientifico Fermi\"@it ;\n  dct:type \"Liceo Scientifico\" ;\n  dct:identifier \"RMIS00100G\" ;\n  geo:lat \"41.8902\"^^xsd:decimal ; geo:long \"12.4922\"^^xsd:decimal ;\n  clv:hasAddress <https://w3id.org/italia/data/miur/address/RMIS00100G> .\n<https://w3id.org/italia/data/miur/address/RMIS00100G> a clv:Address ;\n  clv:fullAddress \"Via Roma 1, Roma\"@it ;\n  clv:postCode \"00100\" .\n<https://w3id.org/italia/data/miur/school/MIIC8FJ00T> a smapit:School ;\n  rdfs:label \"IC Milano Centro\"@it ;\n  dct:type \"Istituto Comprensivo\" ;\n  dct:identifier \"MIIC8FJ00T\" ;\n  geo:lat \"45.4654\"^^xsd:decimal ; geo:long \"9.1860\"^^xsd:decimal ;\n  clv:hasAddress <https://w3id.org/italia/data/miur/address/MIIC8FJ00T> .\n<https://w3id.org/italia/data/miur/address/MIIC8FJ00T> a clv:Address ;\n  clv:fullAddress \"Via Dante 10, Milano\"@it .","iot":"@prefix iot: <https://w3id.org/italia/onto/IoT/> .\n@prefix ti: <https://w3id.org/italia/onto/TI/> .\n@prefix l0: <https://w3id.org/italia/onto/l0/> .\n@prefix clv: <https://w3id.org/italia/onto/CLV/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix dct: <http://purl.org/dc/terms/> .\n@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n\n<https://w3id.org/italia/data/comune-bologna/ds> a foaf:Agent ; foaf:name \"Comune di Bologna\"@it .\n<https://w3id.org/italia/data/comune-bologna/sensor/SENS-BO-001> a iot:Sensor ;\n  rdfs:label \"Sensore PM10 Centro\"@it ;\n  dct:type \"PM10\" ;\n  dct:description \"18.5 ug/m3\"@it ;\n  geo:lat \"44.4940\"^^xsd:decimal ; geo:long \"11.3421\"^^xsd:decimal ;\n  ti:atTime <https://w3id.org/italia/data/comune-bologna/time/2024-03-21T10:00:00> .\n<https://w3id.org/italia/data/comune-bologna/time/2024-03-21T10:00:00> a ti:TimeInstant ;\n  ti:inDateTime \"2024-03-21T10:00:00\"^^xsd:dateTime .\n<https://w3id.org/italia/data/comune-bologna/sensor/SENS-BO-002> a iot:Sensor ;\n  rdfs:label \"Sensore Temperatura\"@it ;\n  dct:type \"Temperatura\" ;\n  dct:description \"12.3 celsius\"@it ;\n  geo:lat \"44.4938\"^^xsd:decimal ; geo:long \"11.3430\"^^xsd:decimal .","acco":"@prefix acco: <https://w3id.org/italia/onto/ACCO/> .\n@prefix clv: <https://w3id.org/italia/onto/CLV/> .\n@prefix poi: <https://w3id.org/italia/onto/POI/> .\n@prefix l0: <https://w3id.org/italia/onto/l0/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix dct: <http://purl.org/dc/terms/> .\n@prefix sm: <https://w3id.org/italia/onto/SM/> .\n@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n\n<https://w3id.org/italia/data/regione-umbria/ds> a foaf:Agent ; foaf:name \"Regione Umbria\"@it .\n<https://w3id.org/italia/data/regione-umbria/accommodation-facility/1> a acco:Accommodation ;\n  rdfs:label \"Hotel Centrale Roma\"@it ;\n  dct:type \"Albergo 4 stelle\" ;\n  acco:numberOfRooms \"60\"^^xsd:integer ;\n  geo:lat \"41.8982\"^^xsd:decimal ; geo:long \"12.4879\"^^xsd:decimal ;\n  sm:hasEmail \"info@hotelcentrale.it\" ;\n  clv:hasAddress <https://w3id.org/italia/data/regione-umbria/address/1> .\n<https://w3id.org/italia/data/regione-umbria/address/1> a clv:Address ;\n  clv:fullAddress \"Via Nazionale 22, Roma\"@it ;\n  clv:postCode \"00184\" .\n<https://w3id.org/italia/data/regione-umbria/accommodation-facility/2> a acco:Accommodation ;\n  rdfs:label \"B&B Trastevere\"@it ;\n  dct:type \"Bed and Breakfast\" ;\n  geo:lat \"41.8893\"^^xsd:decimal ; geo:long \"12.4711\"^^xsd:decimal ;\n  clv:hasAddress <https://w3id.org/italia/data/regione-umbria/address/2> .\n<https://w3id.org/italia/data/regione-umbria/address/2> a clv:Address ;\n  clv:fullAddress \"Vicolo del Cedro 10, Roma\"@it ;\n  clv:postCode \"00153\" .","cpsv":"@prefix cpsv: <https://w3id.org/italia/onto/CPSV/> .\n@prefix l0: <https://w3id.org/italia/onto/l0/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix dct: <http://purl.org/dc/terms/> .\n@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n\n<https://w3id.org/italia/data/comune-bologna/ds> a foaf:Agent ; foaf:name \"Comune di Bologna\"@it .\n<https://w3id.org/italia/data/comune-bologna/public-service/Z1A2B3C4D5> a cpsv:PublicService ;\n  rdfs:label \"Fornitura arredi uffici comunali\"@it ;\n  dct:identifier \"Z1A2B3C4D5\" ;\n  dct:description \"Appalto fornitura arredi 2024\"@it .\n<https://w3id.org/italia/data/comune-firenze/public-service/Z9F8E7D6C5> a cpsv:PublicService ;\n  rdfs:label \"Manutenzione verde pubblico\"@it ;\n  dct:identifier \"Z9F8E7D6C5\" .","gtfs":"@prefix gtfs: <http://vocab.gtfs.org/terms#> .\n@prefix clv: <https://w3id.org/italia/onto/CLV/> .\n@prefix l0: <https://w3id.org/italia/onto/l0/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix dct: <http://purl.org/dc/terms/> .\n@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n\n<https://w3id.org/italia/data/tper/ds> a foaf:Agent ; foaf:name \"TPER\"@it .\n<https://w3id.org/italia/data/tper/stop/S001> a gtfs:Stop ;\n  rdfs:label \"Piazza Maggiore\"@it ;\n  dct:identifier \"S001\" ;\n  geo:lat \"44.4938\"^^xsd:decimal ; geo:long \"11.3430\"^^xsd:decimal ;\n  clv:hasAddress <https://w3id.org/italia/data/tper/address/S001> .\n<https://w3id.org/italia/data/tper/address/S001> a clv:Address ;\n  clv:fullAddress \"Piazza Maggiore, Bologna\"@it .\n<https://w3id.org/italia/data/tper/stop/S002> a gtfs:Stop ;\n  rdfs:label \"Stazione Centrale Bologna\"@it ;\n  dct:identifier \"S002\" ;\n  geo:lat \"44.5058\"^^xsd:decimal ; geo:long \"11.3452\"^^xsd:decimal ;\n  clv:hasAddress <https://w3id.org/italia/data/tper/address/S002> .\n<https://w3id.org/italia/data/tper/address/S002> a clv:Address ;\n  clv:fullAddress \"Piazza dei Cinquecento, Bologna\"@it .","qb":"@prefix qb: <http://purl.org/linked-data/cube#> .\n@prefix sdmx-dimension: <http://purl.org/linked-data/sdmx/2009/dimension#> .\n@prefix sdmx-measure: <http://purl.org/linked-data/sdmx/2009/measure#> .\n@prefix l0: <https://w3id.org/italia/onto/l0/> .\n@prefix clv: <https://w3id.org/italia/onto/CLV/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix dct: <http://purl.org/dc/terms/> .\n@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n\n<https://w3id.org/italia/data/comune-milano/ds> a foaf:Agent ; foaf:name \"Comune di Milano\"@it .\n<https://w3id.org/italia/data/comune-milano/dataset/residenti-2023> a qb:DataSet ;\n  rdfs:label \"Residenti Milano 2023\"@it ;\n  dct:publisher <https://w3id.org/italia/data/comune-milano/ds> .\n<https://w3id.org/italia/data/comune-milano/observation/2023-015146-0-14-M> a qb:Observation ;\n  qb:dataSet <https://w3id.org/italia/data/comune-milano/dataset/residenti-2023> ;\n  sdmx-dimension:refArea <https://w3id.org/italia/data/comune-milano/address/015146> ;\n  sdmx-dimension:refPeriod \"2023-Q4\" ;\n  sdmx-measure:obsValue \"45821\"^^xsd:decimal ;\n  dct:description \"Fascia 0-14, maschi\"@it .\n<https://w3id.org/italia/data/comune-milano/address/015146> a clv:Address ;\n  clv:fullAddress \"Milano, Italia\"@it .","clv":"@prefix clv: <https://w3id.org/italia/onto/CLV/> .\n@prefix l0: <https://w3id.org/italia/onto/l0/> .\n@prefix dct: <http://purl.org/dc/terms/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n<https://w3id.org/italia/data/comune-milano/address/1> a clv:Address ;\n  rdfs:label \"Via Roma 1, 20121 Milano\"@it ;\n  dct:identifier \"1\" ;\n  clv:fullAddress \"Via Roma 1, 20121 Milano\"@it ;\n  clv:postCode \"20121\" .\n<https://w3id.org/italia/data/comune-milano/address/2> a clv:Address ;\n  rdfs:label \"Via Dante 10, 20121 Milano\"@it ;\n  dct:identifier \"2\" ;\n  clv:fullAddress \"Via Dante 10, 20121 Milano\"@it ;\n  clv:postCode \"20121\" .","cov":"@prefix cov: <https://w3id.org/italia/onto/COV/> .\n@prefix clv: <https://w3id.org/italia/onto/CLV/> .\n@prefix l0: <https://w3id.org/italia/onto/l0/> .\n@prefix dct: <http://purl.org/dc/terms/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n<https://w3id.org/italia/data/c_f205/organization/c_f205> a cov:PublicOrganization ;\n  rdfs:label \"Comune di Milano\"@it ;\n  dct:identifier \"01199250154\" ;\n  l0:identifier \"c_f205\" ;\n  foaf:homepage <https://www.comune.milano.it> ;\n  clv:hasAddress <https://w3id.org/italia/data/c_f205/address/sede> .\n<https://w3id.org/italia/data/c_f205/address/sede> a clv:Address ;\n  clv:fullAddress \"Piazza della Scala 2, 20121 Milano\"@it .","cpv":"@prefix cpv: <https://w3id.org/italia/onto/CPV/> .\n@prefix clv: <https://w3id.org/italia/onto/CLV/> .\n@prefix l0: <https://w3id.org/italia/onto/l0/> .\n@prefix dct: <http://purl.org/dc/terms/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n<https://w3id.org/italia/data/comune-milano/person/RSSMRA80A01H501Z> a cpv:Person ;\n  rdfs:label \"Mario Rossi\"@it ;\n  cpv:givenName \"Mario\"@it ;\n  cpv:familyName \"Rossi\"@it ;\n  cpv:taxCode \"RSSMRA80A01H501Z\" ;\n  cpv:dateOfBirth \"1980-01-01\"^^xsd:date ;\n  dct:description \"M\"@it .","cultural":"@prefix cis: <https://w3id.org/italia/onto/Cultural-ON/> .\n@prefix ti: <https://w3id.org/italia/onto/TI/> .\n@prefix clv: <https://w3id.org/italia/onto/CLV/> .\n@prefix l0: <https://w3id.org/italia/onto/l0/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix dct: <http://purl.org/dc/terms/> .\n@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n\n<https://w3id.org/italia/data/regione-piemonte/ds> a foaf:Agent ; foaf:name \"Regione Piemonte\"@it .\n<https://w3id.org/italia/data/regione-piemonte/cultural-institute/1> a cis:Museum ;\n  rdfs:label \"Museo Nazionale del Risorgimento\"@it ;\n  dct:type \"Museo\" ;\n  geo:lat \"45.0680\"^^xsd:decimal ; geo:long \"7.6830\"^^xsd:decimal ;\n  clv:hasAddress <https://w3id.org/italia/data/regione-piemonte/address/1> ;\n  ti:hasTemporalCoverage <https://w3id.org/italia/data/regione-piemonte/time/orari-museo> .\n<https://w3id.org/italia/data/regione-piemonte/address/1> a clv:Address ;\n  clv:fullAddress \"Via Accademia delle Scienze 5, Torino\"@it .\n<https://w3id.org/italia/data/regione-piemonte/time/orari-museo> a ti:TimeInterval ;\n  rdfs:label \"Orario apertura\"@it ;\n  ti:startTime \"10:00\"^^xsd:time ; ti:endTime \"18:00\"^^xsd:time .\n<https://w3id.org/italia/data/regione-piemonte/cultural-institute/2> a cis:Library ;\n  rdfs:label \"Biblioteca Nazionale Braidense\"@it ;\n  dct:type \"Biblioteca\" ;\n  geo:lat \"45.4719\"^^xsd:decimal ; geo:long \"9.1878\"^^xsd:decimal ;\n  clv:hasAddress <https://w3id.org/italia/data/regione-piemonte/address/2> .\n<https://w3id.org/italia/data/regione-piemonte/address/2> a clv:Address ;\n  clv:fullAddress \"Via Brera 28, Milano\"@it .","ro":"@prefix ro: <https://w3id.org/italia/onto/RO/> .\n@prefix cpv: <https://w3id.org/italia/onto/CPV/> .\n@prefix cov: <https://w3id.org/italia/onto/COV/> .\n@prefix ti: <https://w3id.org/italia/onto/TI/> .\n@prefix l0: <https://w3id.org/italia/onto/l0/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix dct: <http://purl.org/dc/terms/> .\n@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n\n<https://w3id.org/italia/data/c_f205/ds> a foaf:Agent ; foaf:name \"Comune di Milano\"@it .\n<https://w3id.org/italia/data/c_f205/role/1> a ro:Role ;\n  rdfs:label \"Sindaco\"@it ;\n  dct:identifier \"1\" ;\n  ro:roleHolder <https://w3id.org/italia/data/c_f205/person/FRRMRC65A01F205Z> ;\n  ro:roleIn <https://w3id.org/italia/data/c_f205/organization/c_f205> ;\n  ti:hasTemporalCoverage <https://w3id.org/italia/data/c_f205/time/mandato-1> .\n<https://w3id.org/italia/data/c_f205/person/FRRMRC65A01F205Z> a cpv:Person ;\n  rdfs:label \"Marco Ferrari\"@it ;\n  dct:identifier \"FRRMRC65A01F205Z\" .\n<https://w3id.org/italia/data/c_f205/organization/c_f205> a cov:PublicOrganization ;\n  rdfs:label \"Comune di Milano\"@it .\n<https://w3id.org/italia/data/c_f205/time/mandato-1> a ti:TimeInterval ;\n  ti:startDate \"2021-06-15\"^^xsd:date .","ti":"@prefix ti: <https://w3id.org/italia/onto/TI/> .\n@prefix clv: <https://w3id.org/italia/onto/CLV/> .\n@prefix l0: <https://w3id.org/italia/onto/l0/> .\n@prefix poi: <https://w3id.org/italia/onto/POI/> .\n@prefix dct: <http://purl.org/dc/terms/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n<https://w3id.org/italia/data/regione-liguria/event/1> a l0:EventOrSituation ;\n  rdfs:label \"Festival della Scienza\"@it ;\n  dct:identifier \"1\" ;\n  l0:name \"Festival della Scienza\"@it ;\n  dct:description \"Evento culturale\"@it ;\n  ti:startTime \"2024-10-25\"^^xsd:date ;\n  ti:endTime \"2024-11-03\"^^xsd:date ;\n  clv:hasAddress <https://w3id.org/italia/data/regione-liguria/address/1> .\n<https://w3id.org/italia/data/regione-liguria/address/1> a clv:Address ;\n  clv:fullAddress \"Porto Antico, Genova\"@it .","adms":"@prefix adms: <http://www.w3.org/ns/adms#> .\n@prefix dcat: <http://www.w3.org/ns/dcat#> .\n@prefix dct: <http://purl.org/dc/terms/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n\n<https://w3id.org/italia/data/agid/ds> a foaf:Agent ; foaf:name \"AgID\"@it .\n<https://w3id.org/italia/data/agid/asset/ontologia-clv> a adms:SemanticAsset ;\n  rdfs:label \"Ontologia CLV\"@it ;\n  dct:title \"Ontologia CLV - Core Location Vocabulary\"@it ;\n  dct:identifier \"ontologia-clv\" ;\n  dct:type \"Ontologia\" ;\n  adms:version \"2.0\" ;\n  adms:status \"Stabile\" ;\n  dct:publisher <https://w3id.org/italia/data/agid/ds> ;\n  dcat:distribution <https://w3id.org/italia/data/agid/asset/ontologia-clv/dist> .\n<https://w3id.org/italia/data/agid/asset/ontologia-clv/dist> a adms:SemanticAssetDistribution ;\n  rdfs:label \"Distribuzione OWL/RDF\"@it ;\n  dct:format \"OWL/RDF\" ;\n  dcat:downloadURL <https://w3id.org/italia/onto/CLV> .\n<https://w3id.org/italia/data/agid/asset/vocabolario-tipi-ente> a adms:SemanticAsset ;\n  rdfs:label \"Vocabolario Tipi Ente\"@it ;\n  dct:identifier \"vocabolario-tipi-ente\" ;\n  dct:publisher <https://w3id.org/italia/data/agid/ds> ;\n  dcat:distribution <https://w3id.org/italia/data/agid/asset/vocabolario-tipi-ente/dist> .\n<https://w3id.org/italia/data/agid/asset/vocabolario-tipi-ente/dist> a adms:SemanticAssetDistribution ;\n  rdfs:label \"Distribuzione SKOS/RDF\"@it ;\n  dct:format \"SKOS/RDF\" ."};
   window._exampleLocked = true;

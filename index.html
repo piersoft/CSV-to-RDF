@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.20.153 -->
+  <!-- build:v2026.03.20.154 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -587,7 +587,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.153</span>
+<span id="app-version">v2026.03.20.154</span>
 </footer>
 
 <script>
@@ -648,10 +648,32 @@ function detectFromCorpus(headers) {
   var normHeaders = new Set(headers.map(function(h){
     return h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');
   }));
-  var CLV_GATE = ['lat','lon','lng','latitudine','longitudine','indirizzo','via','civico','comune','cap','stop_lat','stop_lon','coord_lat','coord_lon'];
-  var clvReallyPresent = CLV_GATE.some(function(col){return normHeaders.has(col);});
-  var mainResult = result.filter(function(o){return o!=='CLV';}).slice(0,2);
-  if(clvScore>=5 && clvReallyPresent) mainResult.push('CLV');
+  // Gate strutturale: ogni ontologia viene accettata dal corpus SOLO se
+  // il CSV contiene almeno una colonna caratteristica di quell'ontologia.
+  var CORPUS_GATE = {
+    'CLV':   ['lat','lon','lng','latitudine','longitudine','indirizzo','via','civico','comune','cap','stop_lat','stop_lon','coord_lat','coord_lon'],
+    'GTFS':  ['stop_id','stop_name','stop_lat','stop_lon','route_id','agency_id','trip_id','zone_id'],
+    'QB':    ['valore','obs_value','numero_residenti','importo','misura','fascia_eta','anno','trimestre','mese'],
+    'ACCO':  ['stelle','posti_letto','tipo_struttura','albergo','camere','letti','hotel','agriturismo'],
+    'IoT':   ['sensore','id_sensore','proprieta_osservata','tipo_sensore','valore_medio','avgspeed'],
+    'SMAPIT':['codice_scuola','tipo_scuola','denominazione_scuola','codice_istituto','ciclo'],
+    'CPV':   ['cognome','codice_fiscale','data_nascita','nome_completo','sesso','cittadinanza'],
+    'RO':    ['ruolo','tipo_nomina','legislatura','voti_validi','qualifica_dipendente','contratto_lavoro','ccnl','data_assunzione'],
+    'ADMS':  ['tipo_asset','versione','stato','formato','licenza','titolo_corso','ore_formazione','crediti','titolo_rilasciato','ente_erogatore'],
+    'CPSV':  ['cig','cup','oggetto_contratto','importo_aggiudicazione','stazione_appaltante','aggiudicatario'],
+    // TI, POI, COV, CulturalON: nessun gate — possono comparire in molti contesti
+  };
+  // Filtra: tieni solo ontologie il cui gate è soddisfatto (o non hanno gate)
+  var result2 = result.filter(function(o){
+    var gate = CORPUS_GATE[o];
+    if(!gate) return true;
+    return gate.some(function(col){ return normHeaders.has(col); });
+  });
+  // Limita a top 2 + CLV solo se colonne geografiche reali presenti
+  var CLV_COLS = CORPUS_GATE['CLV'];
+  var clvReallyPresent = CLV_COLS.some(function(col){return normHeaders.has(col);});
+  var mainResult = result2.filter(function(o){return o!=='CLV';}).slice(0,2);
+  if((scores['CLV']||0)>=5 && clvReallyPresent) mainResult.push('CLV');
   return [...new Set(mainResult)];
 }
 

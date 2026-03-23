@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.20.158 -->
+  <!-- build:v2026.03.20.160 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -603,7 +603,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.158</span>
+<span id="app-version">v2026.03.20.160</span>
 </footer>
 
 <script>
@@ -847,44 +847,68 @@ function detectOntologiesDeterministic(headers, rows) {
           'codice_fermata','nome_fermata','linea','capolinea','percorso','corsa','fermata_id']))
     result.add('GTFS');
 
-  // SMAPIT
-  if(has(['codice_scuola','codicescuola','denominazione_scuola','tipo_scuola','codice_istituto','ciclo','grado','scuola','istituto','liceo','comprensivo','istruzione']))
+  // SMAPIT — scuole: richiede colonne specifiche istruzione
+  // P4-FIX: "istituto" generico (banche, sanità, cultura) NON è SMAPIT
+  if(has(['codice_scuola','codicescuola','denominazione_scuola','tipo_scuola','ciclo_scolastico',
+          'ordine_scuola','grado_scolastico','codice_meccanografico']) ||
+     (has(['scuola','liceo','comprensivo','istruzione']) && !has(['cig','importo','appalto','museo','biblioteca','ospedale','banca'])))
     result.add('SMAPIT');
 
-  // ACCO
-  if(has(['albergo','hotel','b&b','stelle','posti_letto','numero_posti_letto','struttura_ricettiva',
-          'tipo_struttura','agriturismo','ostello','accommodation','camere','letti']))
+  // ACCO — strutture ricettive con varianti PA regionali
+  // FN-ACCO FIX: aggiunge "classificazione/categoria_struttura/RTA/B&B" comuni
+  // ACCO — R5-FIX: trigger forti sempre; trigger deboli richiedono contesto
+  var _accoStrong = has(['albergo','hotel','b&b','ostello','agriturismo','accommodation',
+                         'struttura_ricettiva','rta','affittacamere','casa_vacanze','tipo_esercizio','codice_struttura_acco']);
+  var _accoCtx    = has(['stelle','posti_letto','numero_posti_letto','camere','letti',
+                         'check_in','check_out','classificazione_struttura','categoria_struttura']);
+  if(_accoStrong || _accoCtx)
     result.add('ACCO');
 
-  // IOT
-  if(has(['sensore','sensor','id_sensore','idsensore','nome_sensore','misura','temperatura','umidita','pressione','precipitazioni','velocita_vento',
-          'valore_medio','data_ricezione','tipo_misura','proprieta_osservata','avgspeed','transiti',
-          'unita_misura','proprieta_osservata','iot:sensor','id_sensore2'])||
-     (has(['valore','unita'])&&has(['inizio'])&&has(['lat','lon'])&&!has(['ruolo','cognome','cig'])))
+  // IOT — sensori fisici: richiede identificatore sensore O proprietà misurata specifica
+  // P5-FIX: "valore/misura" generici NON sono IoT senza id_sensore o proprieta_osservata
+  if(has(['id_sensore','idsensore','id_sensore2','iot:sensor','proprieta_osservata','tipo_misura','data_ricezione','avgspeed']) ||
+     (has(['sensore','sensor']) && has(['valore','misura','unita'])) ||
+     (has(['temperatura','umidita','pressione','precipitazioni','velocita_vento','valore_medio']) && has(['lat','lon'])))
     result.add('IoT');
 
-  // POI — se lat/lon con luoghi fisici
+  // POI — R3-FIX: LATITUDINE/LONGITUDINE MAIUSCOLE + UTMX/UTMY
+  var _hasPOIcoord = hasH(['lat','lon','latitudine','longitudine','utmx','utmy',
+                            'x_wgs84','y_wgs84','coord_x','coord_y','longitude','latitude',
+                            'coordx','coordy','x_coord','y_coord']);
   if(has(['tipo_poi','dae','defibrillatore','punto_di_interesse','punto_interesse',
-          'point_of_interest','poi','park'])) {
+          'point_of_interest','idelem','id_elem'])) {
     result.add('POI');
-  } else if(result.has('CLV') && has(['lat','lon']) &&
-    !result.has('ACCO') && !result.has('GTFS') && !result.has('SMAPIT') && !result.has('IoT')) {
-    if(has(['nome','denominazione','tipo','categoria'])) result.add('POI');
+  } else if(_hasPOIcoord && !result.has('ACCO') && !result.has('GTFS') &&
+            !result.has('SMAPIT') && !result.has('IoT') && !result.has('QB')) {
+    if(has(['nome','denominazione','tipo','categoria','descrizione']) &&
+       !has(['mortali','feriti','deceduti','incidenti','importo','spesa','entrata']))
+      result.add('POI');
   }
 
-  // COV — organizzazioni, NON strutture ricettive
-  if(!result.has('ACCO') && !result.has('POI') && !result.has('GTFS') && has(['codice_fiscale','codice_ente','amministrazione','ente',
-      'pubblica_amministrazione','organizzazione','comparto','inquadramento',
-      'codice_istituzione','codice_ente_bdap','cov'])) {
+  // COV — organizzazioni pubbliche: richiede colonne specifiche di ente, NON dati geografici generici
+  // P2-FIX: "comune/provincia" come colonna dati ≠ ente COV
+  if(!result.has('ACCO') && !result.has('POI') && !result.has('GTFS') &&
+     has(['codice_fiscale','codice_ente','amministrazione','ente',
+          'pubblica_amministrazione','organizzazione','comparto','inquadramento',
+          'codice_istituzione','codice_ente_bdap','cov','codice_ipa','partita_iva']) &&
+     !has(['popolazione_residente','numero_famiglie','numero_residenti','nati','morti',
+           'incidenti','sinistri','importo_liquidato','spesa_corrente'])) {
     result.add('COV');
   }
 
-  // QB statistico: anno + sesso/cittadinanza senza cognome = dati demografici non persone
-  if(!result.has('CPV') && has(['anno']) && (has(['sesso']) || has(['cittadinanza'])) && !has(['cognome','nome_completo','codice_fiscale']))
+  // QB statistico: anno + aggregati numerici senza anagrafica = dati demografici
+  if(!result.has('CPV') && has(['anno']) && (has(['sesso']) || has(['cittadinanza'])) &&
+     !has(['cognome','nome_completo','codice_fiscale','data_nascita']))
     result.add('QB');
-  // CPV — persone fisiche
-  if(!result.has('QB') && !result.has('SMAPIT') && (has(['cognome']) || has(['codice_fiscale']) ||
-     (has(['data_nascita']) && has(['sesso']))))
+  // CPV — persone fisiche: richiede cognome O CF O data_nascita+sesso (P3-FIX: esclude QB puro)
+  // FN-CPV FIX: aggiunge alias MAIUSCOLI e varianti comuni nei dataset PA
+  // CPV — R4-FIX: fascia_eta/tipo_capofamiglia per dataset demografici
+  var _hasAnag = has(['cognome','nome_completo','codice_fiscale','cf','codice_fiscale_sa',
+                      'nome_cognome','nominativo','intestatario','titolare','beneficiario',
+                      'data_nascita','luogo_nascita','comune_nascita',
+                      'tipo_capofamiglia','fascia_eta','classi_eta','eta_','nazionalita']) ||
+                 (has(['data_nascita']) && has(['sesso']) && !has(['anno','totale','numero','occorrenze']));
+  if(!result.has('SMAPIT') && _hasAnag)
     result.add('CPV');
 
   // RO — ruoli
@@ -911,9 +935,11 @@ function detectOntologiesDeterministic(headers, rows) {
   });
   if(_cultHdr.length>0 || has(['beniculturali','mibact','mibac','cis:','luoghicultura','museo','nome_museo','orari','biglietto','mostra','pinacoteca','galleria','teatro_bene','sito_archeologico']))
     if(!result.has('SMAPIT')&&!result.has('GTFS')&&!result.has('IoT')) result.add('CulturalON');
-  // CPSV — servizi pubblici / appalti
+  // CPSV — servizi pubblici / appalti con varianti PA reali
+  // FN-CPSV FIX: aggiunge "procedura/licitazione/affidamento" comuni nei dati PA
   if(has(['cig','cup','aggiudicatario','appalto','gara','oggetto_appalto',
-          'servizio_pubblico','cpsv']))
+          'servizio_pubblico','cpsv','procedura','licitazione','affidamento',
+          'scelta_contraente','oggetto_gara','struttura_proponente']))
     result.add('CPSV');
 
   // ADMS — cataloghi / asset semantici
@@ -950,6 +976,9 @@ function detectOntologiesDeterministic(headers, rows) {
     // Route non implica POI a meno che non ci siano colonne POI esplicite
     if(!has(['nome_poi','tipo_poi','categoria_poi','id_poi'])) result.delete('POI');
   }
+  if(result.has('QB') && result.has('POI') && !has(['tipo_poi','dae','defibrillatore','nome_poi','idelem','id_elem'])) result.delete('POI');
+  if(result.has('QB') && result.has('COV') && !_hasCOVStrong) result.delete('COV');
+  if(result.has('QB') && result.has('TI') && !_tiEvent && !_tiStrong) result.delete('TI'); // R6 // P2: QB+ente ≠ COV strutturale
   if(result.has('PublicContract')){result.delete('CPSV');result.delete('CPSV-AP');}  // PublicContract copre gli appalti
   if(result.has('RPO')){result.delete('RO');result.delete('SMAPIT');}  // RPO (risorse umane) è diverso da scuole
   if(result.has('Indicator'))   result.add('QB');   // Indicator estende QB per le osservazioni

@@ -1808,7 +1808,31 @@ S003,Porta San Vitale,44.4881,11.3521,2,0,2`,
     pot: `id,denominazione,tipo_servizio,prezzo_intero,prezzo_ridotto,biglietto,descrizione,comune,provincia,lat,lon,eta_ridotto
 1,Teatro Petruzzelli — Stagione lirica,Cultura,95.00,47.50,Biglietto intero/ridotto,Stagione lirica 2024,Bari,BA,41.1216,16.8720,under 26 e over 65
 2,Musei Civici Bari — ingresso,Cultura,5.00,3.00,Biglietto museo,Accesso ai musei civici comunali,Bari,BA,41.1256,16.8671,under 18 e over 65
-3,Piscina Comunale — nuoto libero,Sport,4.50,3.00,Biglietto ingresso,Nuoto libero piscina olimpionica,Bari,BA,41.0890,16.8542,under 14`
+3,Piscina Comunale — nuoto libero,Sport,4.50,3.00,Biglietto ingresso,Nuoto libero piscina olimpionica,Bari,BA,41.0890,16.8542,under 14`,
+    accesscondition: `id,nome_luogo,tipo_luogo,orario_apertura,orario_chiusura,giorno_chiusura,tipo_ammissione,tariffa_intera,tariffa_ridotta,motivazione_chiusura,condizione_accesso,lat,lon,comune
+1,Biblioteca Comunale,biblioteca,09:00,19:00,domenica,libero,0,0,chiusura festiva,accesso libero,41.1253,16.8620,Bari
+2,Museo Nazionale,museo,10:00,18:00,lunedi,a pagamento,10,5,giorno di riposo,prenotazione consigliata,41.1278,16.8718,Bari
+3,Piscina Comunale,impianto sportivo,07:00,22:00,,a pagamento,5,3,,tesseramento richiesto,41.1200,16.8800,Bari`,
+    atlasofpaths: `id,numero_percorso,nome_percorso,numero_tappe,lunghezza_km,dislivello_m,pavimentazione,segnaletica,livello_sicurezza,tipo_servizio,difficolta,comune_partenza,comune_arrivo,lat_start,lon_start
+1,TR-001,Via Appia Traiana,5,48.5,320,sterrato,presente,alto,rifugio,medio,Benevento,Brindisi,41.1300,14.7800
+2,CIC-042,Ciclovia dell'Acquedotto,8,510,1200,misto,presente,alto,assistenza,facile,Caposele,Santa Maria di Leuca,40.8500,15.4200
+3,ST-007,Sentiero delle Murge,3,22.3,180,ghiaia,parziale,medio,nessuno,difficile,Gravina,Altamura,40.8200,16.4200`,
+    culturalheritage: `id,codice_bene,denominazione_bene,tipo_bene,tutela,vincolo,epoca,materiale,stato_conservazione,ente_tutela,comune,lat,lon,indirizzo
+1,CH-0001,Castello Normanno-Svevo,castello,statale,monumentale,XI-XIII sec,pietra leccese,buono,MiC,Bari,41.1278,16.8718,Via Castello 1
+2,CH-0002,Basilica di San Nicola,basilica,ecclesiastica,architettonico,XI sec,tufo,ottimo,Arcidiocesi Bari,Bari,41.1260,16.8710,Piazza San Nicola
+3,CH-0003,Trulli di Alberobello,trullo,UNESCO,paesaggistico,XIV-XIX sec,calcare,ottimo,MiC,Alberobello,40.7845,17.2395,Rione Monti`,
+    project: `id,titolo_progetto,acronimo_progetto,cup,codice_progetto,programma_finanziamento,finanziatore,costo_totale_progetto,data_inizio,data_fine,stato_progetto,responsabile,comune,parola_chiave_progetto,work_package
+1,Digitalizzazione Servizi Comunali,DIGICOM,F97H21000160006,PR-2024-001,PNRR M1C1,Unione Europea,850000,2024-01-01,2025-12-31,in corso,Comune di Bari,Bari,digitale PA,WP1-Analisi
+2,Mobilita Sostenibile Puglia,MOBPUG,F97H22000340001,PR-2024-002,FESR 2021-2027,Regione Puglia,2500000,2023-06-01,2026-05-31,in corso,Regione Puglia,Bari,mobilita,WP2-Infrastrutture
+3,Smart City Lecce,SMALLE,F97H23000120003,PR-2024-003,PON Metro,MIMS,1200000,2024-03-01,2026-02-28,avviato,Comune di Lecce,Lecce,smart city,WP1-Sensori`,
+    mu: `id,grandezza,valore,unita_misura,tipo_misura,simbolo,sistema_misura,descrizione,data_rilevazione,sensore,comune
+1,temperatura,23.5,gradi Celsius,temperatura,C,SI,temperatura aria,2024-03-21T10:00:00,SENS-001,Bari
+2,velocita_vento,12.3,metri al secondo,velocita,m/s,SI,velocita vento,2024-03-21T10:00:00,SENS-002,Bari
+3,precipitazioni,5.2,millimetri,precipitazione,mm,SI,pioggia giornaliera,2024-03-21T10:00:00,SENS-003,Lecce`,
+    ndc: `id,concetto_chiave,titolo_risorsa,tipo_risorsa,endpoint_url,formato_distribuzione,versione,data_aggiornamento,editore,licenza,descrizione
+1,mobilita-urbana,Ontologia Mobilita Urbana PA,ontologia,https://w3id.org/italia/onto/CLV,RDF/Turtle,1.2,2024-01-15,AgID,CC-BY 4.0,Ontologia per la mobilita
+2,eventi-pubblici,Vocabolario Tipi Evento,vocabolario_controllato,https://w3id.org/italia/controlled-vocabulary/event-types,JSON-LD,2.0,2024-02-20,AgID,CC-BY 4.0,Tipi di eventi pubblici
+3,beni-culturali,Schema Beni Culturali,schema,https://w3id.org/italia/onto/CulturalHeritage,RDF/Turtle,0.8,2024-03-01,MiC,CC-BY 4.0,Schema per i beni culturali`
   };
   const csv = esempi[tipo] || esempi['poi'];
   document.getElementById('csv-input').value = csv;

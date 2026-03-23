@@ -1682,12 +1682,21 @@ function parseAndPreviewCSV() {
   validateCSV(parsed);
   // FONTE UNICA: solo motore deterministico — autoDetectOnto() rimossa (logica legacy)
   var _autoOntos = detectOntologiesDeterministic(parsed.headers, parsed.rows);
-  if (_autoOntos && _autoOntos.length > 0) {
-    setExampleOntos(_autoOntos);
-    if(typeof showPanel==='function') showPanel(parsed.headers);
-    showStatus('✅ ' + parsed.headers.length + ' colonne • ' + parsed.rows.length + ' righe • Ontologie: ' + _autoOntos.join(', '), 'success');
+  // Se _exampleLocked è true, le pill sono già state impostate da loadExample tramite ontoMap
+  // non sovrascrivere con il detect automatico
+  if (!window._exampleLocked) {
+    if (_autoOntos && _autoOntos.length > 0) {
+      setExampleOntos(_autoOntos);
+      if(typeof showPanel==='function') showPanel(parsed.headers);
+      showStatus('✅ ' + parsed.headers.length + ' colonne • ' + parsed.rows.length + ' righe • Ontologie: ' + _autoOntos.join(', '), 'success');
+    } else {
+      showStatus('✓ ' + parsed.headers.length + ' colonne · ' + parsed.rows.length + ' righe', 'success');
+      if(typeof showPanel==='function') showPanel(parsed.headers);
+    }
   } else {
-    showStatus('✓ ' + parsed.headers.length + ' colonne · ' + parsed.rows.length + ' righe', 'success');
+    // Esempio caricato: mostra status con le ontologie già impostate da ontoMap
+    var activePills = Array.from(document.querySelectorAll('.pill[data-onto].active')).map(p=>p.dataset.onto).filter(o=>o!=='L0'&&o!=='SM');
+    showStatus('✅ ' + parsed.headers.length + ' colonne • ' + parsed.rows.length + ' righe • Ontologie: ' + activePills.join(', '), 'success');
     if(typeof showPanel==='function') showPanel(parsed.headers);
   }
   // Lancia AI-detect automaticamente se c'è una API key configurata

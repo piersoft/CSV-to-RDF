@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.20.152 -->
+  <!-- build:v2026.03.20.153 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -587,7 +587,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.152</span>
+<span id="app-version">v2026.03.20.153</span>
 </footer>
 
 <script>
@@ -644,10 +644,14 @@ function detectFromCorpus(headers) {
     return ['QB','POI','CPV','CLV','CPSV','TI','ACCO',
       'CulturalON','ADMS','RO','COV','GTFS','IoT','SMAPIT'].indexOf(o)>=0;
   });
-  // Limita a top 2 + CLV (se rilevato) per evitare rumore
-  var clvScore = scores['CLV']||0;
+  // Limita a top 2 + CLV solo se il CSV ha colonne geografiche reali
+  var normHeaders = new Set(headers.map(function(h){
+    return h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');
+  }));
+  var CLV_GATE = ['lat','lon','lng','latitudine','longitudine','indirizzo','via','civico','comune','cap','stop_lat','stop_lon','coord_lat','coord_lon'];
+  var clvReallyPresent = CLV_GATE.some(function(col){return normHeaders.has(col);});
   var mainResult = result.filter(function(o){return o!=='CLV';}).slice(0,2);
-  if(clvScore>=5) mainResult.push('CLV');
+  if(clvScore>=5 && clvReallyPresent) mainResult.push('CLV');
   return [...new Set(mainResult)];
 }
 
@@ -4169,7 +4173,41 @@ function matchCorpus(headers,topN){
   var ts={};scored.forEach(function(f){(f.confirmed_temi||f.tema_onto||[]).forEach(function(t){ts[t]=(ts[t]||0)+f._s;});});
   var tot=scored.reduce(function(s,f){return s+f._s;},0)||1;
   var conf={};Object.keys(ts).forEach(function(t){conf[t]=Math.round(100*ts[t]/tot);});
-  var temi=Object.keys(conf).filter(function(t){return conf[t]>=25;}).sort(function(a,b){return conf[b]-conf[a];});
+
+  // Normalizza le colonne del CSV per il filtro
+  var normCols=new Set(headers.map(function(h){return h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_');}));
+
+  // Colonne minime richieste per ogni ontologia "strutturale"
+  // Se nessuna di queste colonne è presente nel CSV, l'ontologia viene filtrata
+  var ONTO_GATE={
+    'CLV':   ['lat','lon','lng','latitudine','longitudine','indirizzo','via','civico','comune','cap','stop_lat','stop_lon','coord_lat','coord_lon','lat_wgs84','lon_wgs84'],
+    'GTFS':  ['stop_id','stop_name','stop_lat','stop_lon','route_id','agency_id','trip_id'],
+    'QB':    ['valore','obs_value','numero_residenti','importo','misura','fascia_eta','anno','trimestre','mese'],
+    'ACCO':  ['stelle','posti_letto','tipo_struttura','hotel','albergo','camere','letti'],
+    'PARK':  ['stalli','posti_auto','tariffa_oraria','posti_disabili','capacita_posti'],
+    'IoT':   ['sensore','id_sensore','proprieta_osservata','tipo_sensore','valore_medio'],
+    'SMAPIT':['codice_scuola','tipo_scuola','denominazione_scuola','codice_istituto'],
+    'CPV':   ['cognome','codice_fiscale','data_nascita','nome_completo'],
+    'RO':    ['ruolo','tipo_nomina','legislatura','voti_validi'],
+    'ADMS':  ['tipo_asset','versione','stato','formato','licenza'],
+    'PublicContract':['cig','importo_aggiudicazione','stazione_appaltante','aggiudicatario'],
+    'Route': ['tipo_percorso','lunghezza_km','difficolta','dislivello','lat_start'],
+    'RPO':   ['qualifica_dipendente','contratto_lavoro','ccnl','ore_settimanali'],
+    'Learning':['crediti','ore_formazione','titolo_rilasciato','ente_erogatore'],
+    'Transparency':['obbligo_trasparenza','categoria_trasparenza','dato_obbligatorio'],
+    'Indicator':['tipo_indicatore','baseline','target','valore_indicatore'],
+    'POT':   ['prezzo_intero','prezzo_ridotto','biglietto','tariffa_ingresso'],
+  };
+
+  // Filtra i temi: tieni solo quelli senza gate (TI, POI, COV, Cultural-ON, L0, ecc.)
+  // oppure quelli il cui gate è soddisfatto dalle colonne del CSV
+  var temi=Object.keys(conf).filter(function(t){
+    if(conf[t]<25)return false;
+    var gate=ONTO_GATE[t];
+    if(!gate)return true; // nessun requisito strutturale → accetta
+    return gate.some(function(col){return normCols.has(col);});
+  }).sort(function(a,b){return conf[b]-conf[a];});
+
   var examples=scored.map(function(f){return{title:f.title,org:f.ente||f.org,temi:f.confirmed_temi||f.tema_onto||[],score:Math.round(100*f._s),headers:(f.headers||[]).slice(0,6),id:f.id};});
   return{temi:temi,confidence:conf,examples:examples};
 }

@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.184 -->
+  <!-- build:v2026.03.23.185 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -636,7 +636,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.184</span>
+<span id="app-version">v2026.03.23.185</span>
 </footer>
 
 <script>
@@ -2745,6 +2745,8 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
   if(!csvText||!csvText.trim())return'';
   if(!ontos||!ontos.length)return'';
   var nl='\n',sp='    ',dq='"';
+  // Escape virgolette doppie e backslash per literal Turtle
+  function escTTL(v){return String(v).replace(/\\/g,'\\\\').replace(/"/g,'\\"');}
   var rows=detParseCSV(csvText);
   if(!rows||rows.length<2)return'';
   var headers=rows[0];
@@ -2792,9 +2794,10 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
 function detFormatLit(rule,val){
   if(!val&&val!==0)return null;
   val=String(val).trim();if(!val)return null;
+  var BQ='\\"'; // backslash + virgoletta per Turtle
   if(rule.type==='skip')return null;
-  if(rule.type==='langlit')return'"'+val.replace(/"/g,'\"')+'"@'+(rule.lang||'it');
-  if(rule.type==='literal')return'"'+val.replace(/"/g,'\"')+'"^^xsd:string';
+  if(rule.type==='langlit')return'"'+val.replace(/"/g,BQ)+'"@'+(rule.lang||'it');
+  if(rule.type==='literal')return'"'+val.replace(/"/g,BQ)+'"^^xsd:string';
   if(rule.type==='decimal'){var n=parseFloat(val);return isNaN(n)?null:'"'+n+'"^^xsd:decimal';}
   if(rule.type==='integer'){var n2=parseInt(val);return isNaN(n2)?null:'"'+n2+'"^^xsd:integer';}
   if(rule.type==='boolean'){var b=val.toLowerCase();return(b==='si'||b==='true'||b==='1'||b==='yes')?'"true"^^xsd:boolean':'"false"^^xsd:boolean';}
@@ -4121,12 +4124,15 @@ async function validateTTL() {
   }
 
   // ── 16. LITERAL SENZA LANGUAGE TAG su proprietà multilingua ──────────
+  // Usa il TTL senza stringhe per evitare falsi positivi su virgolette interne escaped
   const noLangProps = ['rdfs:label','dct:title','l0:name'];
   for (const prop of noLangProps) {
-    const re = new RegExp(`\\b${prop.replace(':','\\:')}\\s+"[^"@]+"(?!@)(?!\\^\\^)`, 'g');
-    const hits = (ttl.match(re) || []).length;
-    if (hits > 0)
-      warnings.push(`${prop} senza @lang tag (${hits}×) — aggiungi @it`);
+    // Sostituisce i literal con @lang corretto con placeholder, poi conta quelli rimasti senza
+    const propRe = new RegExp(`(\\b${prop.replace(':','\\:')}\\s+)("(?:[^"\\\\]|\\\\.)*")(@[a-z]+)?`, 'g');
+    let noLangCount = 0;
+    ttl.replace(propRe, (m, p, lit, lang) => { if(!lang) noLangCount++; return m; });
+    if (noLangCount > 0)
+      warnings.push(`${prop} senza @lang tag (${noLangCount}×) — aggiungi @it`);
   }
 
   // ── 17. QB: sdmx-measure:obsValue senza xsd:decimal ──────────────────

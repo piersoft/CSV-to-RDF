@@ -529,6 +529,13 @@ function detectOntologiesDeterministic(headers, rows) {
       result.add('POI');
   }
 
+  // OSM schema puro: rimuovi TI spurio se nessuna colonna evento reale
+  if(_hasOSMschema && result.has('TI') &&
+     !has(['data_inizio','data_fine','data_evento','quando','inizio','termine',
+            'tipo_evento','nome_evento','titolo_evento','manifestazione'])) {
+    result.delete('TI');
+  }
+
   // COV — organizzazioni: FIX1 esclude codice_ipa quando accompagnato da colonne di altri domini
   var _hasCOVStrong = has(['codice_ipa','codice_ente','partita_iva','codice_fiscale_ente','ragione_sociale']) &&
                       !has(['qualifica_dipendente','obbligo_trasparenza','titolo_corso','ore_formazione',

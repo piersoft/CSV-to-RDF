@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.20.143 -->
+  <!-- build:v2026.03.20.144 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -567,7 +567,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.143</span>
+<span id="app-version">v2026.03.20.144</span>
 </footer>
 
 <script>
@@ -735,7 +735,8 @@ function detectOntologiesDeterministic(headers, rows) {
     result.add('CLV');
 
   // GTFS
-  if(has(['stop_id','stop_name','route_id','trip_id','agency_id','stop_lat','stop_lon']))
+  if(has(['stop_id','stop_name','route_id','trip_id','agency_id','stop_lat','stop_lon',
+          'codice_fermata','nome_fermata','linea','capolinea','percorso','corsa','fermata_id']))
     result.add('GTFS');
 
   // SMAPIT
@@ -748,7 +749,7 @@ function detectOntologiesDeterministic(headers, rows) {
     result.add('ACCO');
 
   // IOT
-  if(has(['sensore','sensor','id_sensore','idsensore','nome_sensore','misura',
+  if(has(['sensore','sensor','id_sensore','idsensore','nome_sensore','misura','temperatura','umidita','pressione','precipitazioni','velocita_vento',
           'valore_medio','data_ricezione','tipo_misura','proprieta_osservata','avgspeed','transiti',
           'unita_misura','proprieta_osservata','iot:sensor','id_sensore2'])||
      (has(['valore','unita'])&&has(['inizio'])&&has(['lat','lon'])&&!has(['ruolo','cognome','cig'])))
@@ -792,14 +793,15 @@ function detectOntologiesDeterministic(headers, rows) {
 
   // TI — eventi con date
   if(has(['inizio','termine','data_inizio','data_fine','quando','titolo','tipo_evento',
-          'manifestazione','evento','orario','durata']))
+          'manifestazione','evento','orario','durata','nome_iniziativa','nome_evento',
+          'periodo','programmazione','edizione','stagione','rassegna','spettacolo','concerto']))
     result.add('TI');
 
   // CulturalON — solo se colonne specifiche, non valori casuali in indirizzi
   var _cultHdr = norm.filter(function(h){
     return h==='tipo_bene'||h==='datazione'||h==='numero_inventario'||h==='autore'||h==='luoghistorico';
   });
-  if(_cultHdr.length>0 || has(['beniculturali','mibact','mibac','cis:','luoghicultura']))
+  if(_cultHdr.length>0 || has(['beniculturali','mibact','mibac','cis:','luoghicultura','museo','nome_museo','orari','biglietto','mostra','pinacoteca','galleria','teatro_bene','sito_archeologico']))
     if(!result.has('SMAPIT')&&!result.has('GTFS')&&!result.has('IoT')) result.add('CulturalON');
   // CPSV — servizi pubblici / appalti
   if(has(['cig','cup','aggiudicatario','appalto','gara','oggetto_appalto',
@@ -1182,7 +1184,7 @@ function validateCSV(parsed) {
   });
   Object.entries(missingByCol).forEach(([col, count]) => {
     const pct = Math.round(count / rows.length * 100);
-    if (pct >= 50) {
+    if (pct >= 80) {
       issues.push({ level:'warning', title:`"${col}": ${pct}% valori mancanti (${count}/${rows.length})`, hint:'Colonna quasi vuota — valuta se includerla o rimuoverla.' });
     } else if (pct > 0) {
       issues.push({ level:'info', title:`"${col}": ${count} valori mancanti (${pct}%)`, hint:'Alcune celle sono vuote — il TTL avrà triple incomplete per queste righe.' });

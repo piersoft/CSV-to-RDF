@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.20.155 -->
+  <!-- build:v2026.03.20.157 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -128,6 +128,13 @@
     footer { background: #17324d; color: rgba(255,255,255,0.65); text-align: center; padding: 1rem; font-size: 0.73rem; font-family: var(--mono); margin-top: 3rem; }
     footer a { color: #80c0ff; text-decoration: none; }
   
+  @keyframes onto-flash {
+    0%   { border-color: #1a6b35; box-shadow: 0 0 0 3px rgba(26,107,53,.25); }
+    60%  { border-color: #1a6b35; box-shadow: 0 0 0 6px rgba(26,107,53,.1); }
+    100% { border-color: transparent; box-shadow: none; }
+  }
+  .onto-card-flash { animation: onto-flash 1.2s ease-out forwards; }
+  
   /* WCAG 2.1 AA — focus visible */
   :focus-visible {
     outline: 3px solid #f97316;
@@ -202,12 +209,13 @@
     </p>
     
     <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1rem;">
-      <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 1</div><div style="font-size:.9rem;">Incolla il <strong>CSV</strong></div></div>
-      <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 2</div><div style="font-size:.9rem;">Clicca <strong>AI-Detect</strong> <em style="opacity:.7">(opzionale)</em></div></div>
-      <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 3</div><div style="font-size:.9rem;">Inserisci <strong>codice IPA</strong> e nome ente</div></div>
+      <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 1</div><div style="font-size:.9rem;">Incolla o <strong>carica il CSV</strong></div></div>
+      <div style="background:rgba(255,255,255,0.18);border-radius:8px;padding:.6rem .9rem;min-width:130px;border:1px solid rgba(255,255,255,.35)"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">AUTO ✨</div><div style="font-size:.9rem;">Le <strong>ontologie</strong> si rilevano</div></div>
+      <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 2 <em style="font-weight:400;opacity:.7">(opz.)</em></div><div style="font-size:.9rem;">API key <strong>AI-Detect</strong></div></div>
+      <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 3</div><div style="font-size:.9rem;">Inserisci <strong>codice IPA</strong></div></div>
       <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 4</div><div style="font-size:.9rem;">Clicca <strong>Genera TTL</strong></div></div>
     </div>
-    <p style="margin-top:.5rem;font-size:.8rem;opacity:.75;">Senza API key: generazione <strong>istantanea</strong> con motore deterministico. L'AI (STEP 3) e' opzionale.</p>
+    <p style="margin-top:.5rem;font-size:.8rem;opacity:.75;">Le ontologie si rilevano <strong>automaticamente</strong>. L'AI (STEP 2) è opzionale — senza API key la generazione è istantanea.</p>
   </div>
 </div>
 
@@ -270,6 +278,56 @@
               🔍 Analisi qualità CSV
             </div>
             <div id="csv-validation-items"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ONTOLOGIE — sezione separata dagli step, auto-rilevata -->
+      <div class="card-pa" id="onto-card" style="border:2px solid transparent;transition:border-color .4s">
+        <div class="card-head" style="background:#1a6b35;">
+          🔗 Ontologie rilevate automaticamente
+          <span style="font-weight:400;font-size:.78em;opacity:.8;margin-left:.4rem;">— clicca per modificare</span>
+          <button class="btn-auto-onto" id="btn-ai-onto" onclick="autoDetectOntoAI()" disabled
+            style="margin-left:auto;font-size:.72rem;padding:.2rem .6rem;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:3px;cursor:pointer;font-family:var(--mono)">
+            🤖 Rileva ontologie
+          </button>
+        </div>
+        <div class="card-body-pa" style="padding:.75rem 1rem">
+          <div id="auto-onto-msg" style="display:none;font-size:0.72rem;color:#1a6b35;margin-bottom:0.4rem;font-family:var(--mono)"></div>
+          <div id="manual-pills-msg" style="display:none;font-size:0.72rem;color:#c45e00;margin-bottom:0.4rem;font-family:var(--mono)">
+            ✋ Selezione manuale attiva — il detect automatico è disabilitato.
+            <button onclick="resetToAutoDetect()" style="margin-left:.5rem;font-size:0.7rem;font-family:var(--mono);background:none;border:1px solid #c45e00;border-radius:3px;color:#c45e00;cursor:pointer;padding:1px 6px">↺ Torna al detect automatico</button>
+          </div>
+          <div class="pills" id="onto-selector">
+            <span class="pill active" data-onto="CLV">CLV — Indirizzi</span>
+            <span class="pill active" data-onto="COV">COV — Organizzazioni</span>
+            <span class="pill" data-onto="CPV">CPV — Persone</span>
+            <span class="pill active" data-onto="L0">L0 — Top-level</span>
+            <span class="pill active" data-onto="POI">POI — Punti interesse</span>
+            <span class="pill active" data-onto="SM">SM — Social/Contatti</span>
+            <span class="pill" data-onto="RO">RO — Ruoli</span>
+            <span class="pill" data-onto="TI">TI — Tempo</span>
+            <span class="pill" data-onto="ADMS">ADMS — Asset</span>
+          </div>
+          <div style="margin-top:0.5rem">
+            <button class="btn-expand" onclick="toggleAdv()" id="btn-adv">▶ Mostra ontologie avanzate</button>
+            <div id="onto-advanced" style="display:none;margin-top:0.5rem">
+              <div class="pills" id="onto-selector-adv">
+                <span class="pill" data-onto="ACCO">ACCO — Accommodation</span>
+                <span class="pill" data-onto="AC">AC — Condizioni accesso</span>
+                <span class="pill" data-onto="PARK">PARK — Parcheggi</span>
+                <span class="pill" data-onto="CPSV-AP">CPSV-AP — Servizi pubblici</span>
+                <span class="pill" data-onto="Cultural-ON">Cultural-ON — Patrimonio</span>
+                <span class="pill" data-onto="GTFS">GTFS — Trasporto pubblico</span>
+                <span class="pill" data-onto="Route">Route — Percorsi</span>
+                <span class="pill" data-onto="Language">Language — Lingue</span>
+                <span class="pill" data-onto="IoT">IoT — Internet of Things</span>
+                <span class="pill" data-onto="SMAPIT">SMAPIT — Scuole</span>
+                <span class="pill" data-onto="Transparency">Transparency — Trasparenza</span>
+                <span class="pill" data-onto="SKOS">SKOS — Classificazioni</span>
+                <span class="pill" data-onto="QB">QB — Data Cube (statistiche)</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -441,56 +499,9 @@
         </div>
       </div>
 
-      <!-- ONTOLOGIE -->
+      <!-- TITOLARE (STEP 3) -->
       <div class="card-pa">
-        <div class="card-head dark">🔗 STEP 3 — Ontologie (rilevate automaticamente)</div>
-        <div class="card-body-pa">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <label class="lbl" style="margin:0">Seleziona le ontologie (clicca per attivare)</label>
-            <button class="btn-auto-onto" id="btn-ai-onto" onclick="autoDetectOntoAI()" disabled>🤖 Rileva ontologie</button>
-          </div>
-          <div id="auto-onto-msg" style="display:none;font-size:0.72rem;color:#1a6b35;margin-bottom:0.4rem;font-family:var(--mono)"></div>
-          <div id="manual-pills-msg" style="display:none;font-size:0.72rem;color:#c45e00;margin-bottom:0.4rem;font-family:var(--mono)">
-            ✋ Selezione manuale attiva — il detect automatico è disabilitato.
-            <button onclick="resetToAutoDetect()" style="margin-left:.5rem;font-size:0.7rem;font-family:var(--mono);background:none;border:1px solid #c45e00;border-radius:3px;color:#c45e00;cursor:pointer;padding:1px 6px">↺ Torna al detect automatico</button>
-          </div>
-          <div class="pills" id="onto-selector">
-            <span class="pill active" data-onto="CLV">CLV — Indirizzi</span>
-            <span class="pill active" data-onto="COV">COV — Organizzazioni</span>
-            <span class="pill" data-onto="CPV">CPV — Persone</span>
-            <span class="pill active" data-onto="L0">L0 — Top-level</span>
-            <span class="pill active" data-onto="POI">POI — Punti interesse</span>
-            <span class="pill active" data-onto="SM">SM — Social/Contatti</span>
-            <span class="pill" data-onto="RO">RO — Ruoli</span>
-            <span class="pill" data-onto="TI">TI — Tempo</span>
-            <span class="pill" data-onto="ADMS">ADMS — Asset</span>
-          </div>
-          <div style="margin-top:0.5rem">
-            <button class="btn-expand" onclick="toggleAdv()" id="btn-adv">▶ Mostra ontologie avanzate</button>
-            <div id="onto-advanced" style="display:none;margin-top:0.5rem">
-              <div class="pills" id="onto-selector-adv">
-                <span class="pill" data-onto="ACCO">ACCO — Accommodation</span>
-                <span class="pill" data-onto="AC">AC — Condizioni accesso</span>
-                <span class="pill" data-onto="PARK">PARK — Parcheggi</span>
-                <span class="pill" data-onto="CPSV-AP">CPSV-AP — Servizi pubblici</span>
-                <span class="pill" data-onto="Cultural-ON">Cultural-ON — Patrimonio</span>
-                <span class="pill" data-onto="GTFS">GTFS — Trasporto pubblico</span>
-                <span class="pill" data-onto="Route">Route — Percorsi</span>
-                <span class="pill" data-onto="Language">Language — Lingue</span>
-                <span class="pill" data-onto="IoT">IoT — Internet of Things</span>
-<span class="pill" data-onto="SMAPIT">SMAPIT — Scuole</span>
-                <span class="pill" data-onto="Transparency">Transparency — Trasparenza</span>
-                <span class="pill" data-onto="SKOS">SKOS — Classificazioni</span>
-                <span class="pill" data-onto="QB">QB — Data Cube (statistiche)</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TITOLARE (STEP 4) -->
-      <div class="card-pa">
-        <div class="card-head orange">🏛 STEP 4 — Titolare del dato</div>
+        <div class="card-head orange">🏛 STEP 3 — Titolare del dato</div>
         <div class="card-body-pa">
           <div class="row g-2">
             <div class="col-md-7">
@@ -509,6 +520,7 @@
         </div>
       </div>
 
+      <div style="margin-bottom:.5rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--dg-muted)">⚡ STEP 4 — Genera il file TTL</div>
       <div class="d-flex gap-2 flex-wrap mb-3">
         <button class="btn-orange" id="btn-convert" onclick="startConversion()">⚡ Genera TTL</button>
         <button class="btn-sec" onclick="clearAll()">↺ Reset</button>
@@ -591,7 +603,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.155</span>
+<span id="app-version">v2026.03.20.157</span>
 </footer>
 
 <script>
@@ -758,6 +770,13 @@ function setExampleOntos(ontos) {
   // Nascondi banner manuale se visibile
   const banner = document.getElementById('manual-pills-msg');
   if (banner) banner.style.display = 'none';
+  // Flash visivo sulla card ontologie per segnalare l'aggiornamento
+  const card = document.getElementById('onto-card');
+  if (card) {
+    card.classList.remove('onto-card-flash');
+    void card.offsetWidth; // force reflow per riavviare l'animazione
+    card.classList.add('onto-card-flash');
+  }
 }
 
 function toggleAdv() {
@@ -2833,9 +2852,9 @@ async function startDeterministicConversion() {
   var ente = (document.getElementById('meta-ente')||{value:''}).value.trim()||ipa;
   var ontos = Array.from(document.querySelectorAll('.pill.active')).map(function(p){return p.dataset.onto;}).filter(Boolean);
   if(!csvText){showStatus('Nessun CSV caricato.');return;}
-  if(!ipa){showStatus('? Inserisci il Codice IPA dell\'ente titolare (STEP 2).', 'error');return;}
+  if(!ipa){showStatus('? Inserisci il Codice IPA dell\'ente titolare (STEP 3).', 'error');return;}
   var _ipav=(document.getElementById('meta-ipa')||{value:''}).value.trim();
-  if(!_ipav){showStatus('⚠️ Inserisci il codice IPA nel STEP 2.','error');return;}
+  if(!_ipav){showStatus('⚠️ Inserisci il codice IPA nel STEP 3.','error');return;}
   if(!ontos.length){showStatus('Seleziona almeno una ontologia.');return;}
   var _btnC=document.getElementById('btn-convert');
   if(_btnC){_btnC.dataset.origText=_btnC.textContent;_btnC.textContent='⏳ Generazione...';_btnC.disabled=true;}
@@ -3522,7 +3541,7 @@ async function callGemini(prompt) {
 const CHUNK_SIZE = 25;
 
 async function startConversion() {
-  var _ipaCheck=(document.getElementById('meta-ipa')||{value:''}).value.trim();if(!_ipaCheck){showStatus('? Inserisci il Codice IPA dell\'ente titolare (STEP 2).', 'error');return;}
+  var _ipaCheck=(document.getElementById('meta-ipa')||{value:''}).value.trim();if(!_ipaCheck){showStatus('? Inserisci il Codice IPA dell\'ente titolare (STEP 3).', 'error');return;}
   if (!hasApiKey()) { startDeterministicConversion(); return; }
   const csvText = document.getElementById('csv-input').value.trim();
   const paname  = document.getElementById('meta-paname').value.trim();

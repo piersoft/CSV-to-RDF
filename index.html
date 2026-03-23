@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.182 -->
+  <!-- build:v2026.03.23.183 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -636,7 +636,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.182</span>
+<span id="app-version">v2026.03.23.183</span>
 </footer>
 
 <script>
@@ -2956,6 +2956,31 @@ function detFormatLit(rule,val){
       }
     }
   });
+
+  // Auto-correzione lat/lon invertite: se geo:long ha valore nel range lat-Italia (35-48)
+  // scambia geo:lat e geo:long su quella riga/soggetto
+  ttl = ttl.split('\n').map(function(line) {
+    // Sostituisce geo:long "40.xx" con il valore corretto se è nel range latitudine
+    var mLon = line.match(/geo:long\s+"([\d.]+)"/);
+    if (mLon) {
+      var lonVal = parseFloat(mLon[1]);
+      if (lonVal >= 35 && lonVal <= 48) {
+        // Questo valore sembra una latitudine — cerca la riga geo:lat vicina
+        // Non possiamo fare swap riga per riga, segniamo per post-swap
+        line = line.replace('geo:long', 'GEO_LONG_SWAP');
+      }
+    }
+    var mLat = line.match(/geo:lat\s+"([\d.]+)"/);
+    if (mLat) {
+      var latVal = parseFloat(mLat[1]);
+      if (latVal >= 6 && latVal <= 19) {
+        line = line.replace('geo:lat', 'GEO_LAT_SWAP');
+      }
+    }
+    return line;
+  }).join('\n');
+  // Esegui lo swap effettivo
+  ttl = ttl.replace(/GEO_LONG_SWAP/g, 'geo:lat').replace(/GEO_LAT_SWAP/g, 'geo:long');
   return ttl.trim();
 }
 // ═══ FINE MOTORE DETERMINISTICO ═══

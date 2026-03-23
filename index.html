@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.176 -->
+  <!-- build:v2026.03.23.177 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -636,7 +636,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.176</span>
+<span id="app-version">v2026.03.23.177</span>
 </footer>
 
 <script>
@@ -1648,7 +1648,16 @@ function parseAndPreviewCSV() {
   document.getElementById('btn-ai-onto').disabled = false;
   window._aiDetectDone = false; // reset flag AI-detect per nuovo CSV
   validateCSV(parsed);
-  autoDetectOnto();
+  // FONTE UNICA: solo motore deterministico — autoDetectOnto() rimossa (logica legacy)
+  var _autoOntos = detectOntologiesDeterministic(parsed.headers, parsed.rows);
+  if (_autoOntos && _autoOntos.length > 0) {
+    setExampleOntos(_autoOntos);
+    if(typeof showPanel==='function') showPanel(parsed.headers);
+    showStatus('✅ ' + parsed.headers.length + ' colonne • ' + parsed.rows.length + ' righe • Ontologie: ' + _autoOntos.join(', '), 'success');
+  } else {
+    showStatus('✓ ' + parsed.headers.length + ' colonne · ' + parsed.rows.length + ' righe', 'success');
+    if(typeof showPanel==='function') showPanel(parsed.headers);
+  }
   // Lancia AI-detect automaticamente se c'è una API key configurata
   const hasKey = (
     document.getElementById('mistral-key')?.value.trim() ||
@@ -1659,19 +1668,7 @@ function parseAndPreviewCSV() {
     document.getElementById('ollama-key')?.value.trim()
   );
   if (hasKey) {
-    setTimeout(() => autoDetectOntoAI(), 300); // piccolo delay per non sovrapporre i messaggi
-  }
-  showStatus(`✓ ${parsed.headers.length} colonne · ${parsed.rows.length} righe`, 'success');
-  // Auto-detect ontologie dopo il parsing CSV (senza bisogno di API key)
-  try {
-    var _autoOntos = detectOntologiesDeterministic(parsed.headers, parsed.rows);
-    if (_autoOntos && _autoOntos.length > 0) {
-      setExampleOntos(_autoOntos);
-      if(typeof showPanel==="function")showPanel(parsed.headers);
-      showStatus('\u2705 ' + parsed.headers.length + ' colonne \u2022 ' + parsed.rows.length + ' righe \u2022 Ontologie: ' + _autoOntos.join(', '), 'success');
-    }
-  } catch(e) {
-    // detect fallito silenziosamente
+    setTimeout(() => autoDetectOntoAI(), 300);
   }
 }
 
@@ -4502,7 +4499,7 @@ document.addEventListener("DOMContentLoaded",function(){
   // Fix \r nei CSV letti da FileReader (stessa logica di parseCSV)
   function normalizeText(txt){return txt.replace(/\r\n/g,'\n').replace(/\r/g,'\n');}
 
-  // Trigger 1: file input upload
+  // Trigger 1: file input upload — solo showPanel per il corpus; il detect lo fa parseAndPreviewCSV
   var fi=document.querySelector("input[type=\"file\"]");
   if(fi){
     fi.addEventListener("change",function(){
@@ -4514,21 +4511,12 @@ document.addEventListener("DOMContentLoaded",function(){
         var sep=line.indexOf(';')>=0?';':',';
         var hdrs=line.split(sep).map(function(h){return h.replace(/^\uFEFF/,'').replace(/^["']|["']$/g,'').trim();});
         showPanel(hdrs);
-        // Il motore deterministico ha priorità sul corpus per lo schema delle pill
-        if(typeof detectOntologiesDeterministic==='function') {
-          var detOntos=detectOntologiesDeterministic(hdrs,[{}]);
-          var INFRA=['L0','SM'];
-          var mainOntos=detOntos.filter(function(o){return !INFRA.includes(o);});
-          if(mainOntos.length>0 && typeof setExampleOntos==='function') {
-            setExampleOntos(detOntos);
-          }
-        }
       };
       rd.readAsText(f);
     });
   }
 
-  // Trigger 2: qualsiasi incolla/modifica nel textarea CSV
+  // Trigger 2: incolla/modifica nel textarea — aggiorna corpus panel E pill ontologie
   var textarea=document.getElementById('csv-input');
   if(textarea){
     textarea.addEventListener('input',function(){
@@ -4537,7 +4525,14 @@ document.addEventListener("DOMContentLoaded",function(){
       var line=txt.split('\n')[0];
       var sep=line.indexOf(';')>=0?';':',';
       var hdrs=line.split(sep).map(function(h){return h.replace(/^\uFEFF/,'').replace(/^["']|["']$/g,'').trim();});
-      if(hdrs.length>1)showPanel(hdrs);
+      if(hdrs.length>1){
+        showPanel(hdrs);
+        // Aggiorna anche le pill con il motore deterministico
+        if(typeof detectOntologiesDeterministic==='function' && typeof setExampleOntos==='function') {
+          var detOntos=detectOntologiesDeterministic(hdrs,[{}]);
+          if(detOntos && detOntos.length>0) setExampleOntos(detOntos);
+        }
+      }
     });
   }
 });

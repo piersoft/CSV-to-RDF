@@ -1,5 +1,9 @@
 // ═══ COSTANTI GLOBALI ═══
 
+// Stub: nel Worker Cloudflare non esiste window né DOM
+const _workerState = { _corpusIndex: null };
+
+
 const ONTO_RULES = [
   { keys: ['lat','lon','lng','latitudine','longitudine','coord'],          ontos: ['CLV','L0'] },
   { keys: ['indirizzo','address','via','strada','civico','cap','comune'],  ontos: ['CLV'] },
@@ -401,11 +405,11 @@ function detectDeterministicMappings(cols, rows) {
 }
 
 function detectFromCorpus(headers) {
-  if(!window._corpusIndex) return [];
+  if(!_workerState._corpusIndex) return [];
   var scores = {};
   headers.forEach(function(h){
     var n = h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');
-    var colOntos = window._corpusIndex[n];
+    var colOntos = _workerState._corpusIndex[n];
     if(!colOntos) return;
     Object.keys(colOntos).forEach(function(onto){
       scores[onto] = (scores[onto]||0) + colOntos[onto];
@@ -612,7 +616,7 @@ function detectOntologiesDeterministic(headers, rows) {
     result.add('ADMS');
 
   // Arricchisci con il corpus se disponibile
-  if(window._corpusIndex) {
+  if(_workerState._corpusIndex) {
     var _corpusOntos = detectFromCorpus(headers);
     _corpusOntos.forEach(function(o){if((o==='CulturalON'||o==='Cultural-ON')&&result.has('SMAPIT'))return;if(o==='QB'&&(result.has('ACCO')||result.has('POI')||result.has('SMAPIT')))return;result.add(o);});
   }

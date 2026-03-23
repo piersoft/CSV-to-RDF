@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.195 -->
+  <!-- build:v2026.03.23.196 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -654,7 +654,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.195</span>
+<span id="app-version">v2026.03.23.196</span>
 </footer>
 
 <script>
@@ -4048,8 +4048,22 @@ async function validateTTL() {
     'sdmx-dimension':'http://purl.org/linked-data/sdmx/2009/dimension#',
     'sdmx-measure':'http://purl.org/linked-data/sdmx/2009/measure#',
     'sdmx-attribute':'http://purl.org/linked-data/sdmx/2009/attribute#',
-    'muapit':'https://w3id.org/italia/onto/MU/','iot':'https://w3id.org/italia/onto/IoT-AP_IT/',
-    'smapit':'https://w3id.org/italia/onto/SM/','smapit':'https://w3id.org/italia/onto/SMAPIT/','iot':'https://w3id.org/italia/onto/IoT/','dcatapit':'http://dati.gov.it/onto/dcatapit#'
+    'muapit':'https://w3id.org/italia/onto/MU/','iot':'https://w3id.org/italia/onto/IoT/',
+    'smapit':'https://w3id.org/italia/onto/SMAPIT/','dcatapit':'http://dati.gov.it/onto/dcatapit#',
+    'pc':'https://w3id.org/italia/onto/PublicContract/',
+    'route':'https://w3id.org/italia/onto/Route/',
+    'rpo':'https://w3id.org/italia/onto/RPO/',
+    'mu':'https://w3id.org/italia/onto/MU/',
+    'learn':'https://w3id.org/italia/onto/Learning/',
+    'tr':'https://w3id.org/italia/onto/Transparency/',
+    'indicator':'https://w3id.org/italia/onto/Indicator/',
+    'pot':'https://w3id.org/italia/onto/POT/',
+    'cpev':'https://w3id.org/italia/onto/CPEV/',
+    'ac':'https://w3id.org/italia/onto/AccessCondition/',
+    'aop':'https://w3id.org/italia/onto/AtlasOfPaths/',
+    'ch':'https://w3id.org/italia/onto/CulturalHeritage/',
+    'prj':'https://w3id.org/italia/onto/Project/',
+    'ndc':'https://w3id.org/italia/onto/NDC/'
   };
   Object.assign(prefixMap, KNOWN_PREFIXES);
   if (prefixLines.length === 0) errors.push('Nessun @prefix dichiarato');
@@ -4132,8 +4146,8 @@ async function validateTTL() {
     if (isDCATContext) warnings.push(`dct:publisher con valore literal (${pubLiterals}×) — dovrebbe essere URI <...>`);
 
   // ── 7c. dct:date usato al posto di dct:issued ────────────────────────
-  if (/\bdct:date\b/.test(ttl) && /xsd:date/.test(ttl))
-    warnings.push('dct:date con xsd:date — probabilmente intendi dct:issued');
+  if (/\bdct:date\b/.test(ttl) && /xsd:date/.test(ttl) && !ttl.includes('dct:issued'))
+    warnings.push('dct:date con xsd:date — se è data di pubblicazione, preferisci dct:issued');
 
   // ── 8. rdfs:label NUMERICO → dovrebbe essere dct:extent ───────────────
   const numLabels = (ttl.match(/rdfs:label\s+"[\d]+"(\^\^xsd:\w+)?/g) || []).length;

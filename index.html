@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.191 -->
+  <!-- build:v2026.03.23.192 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -654,7 +654,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.191</span>
+<span id="app-version">v2026.03.23.192</span>
 </footer>
 
 <script>
@@ -2811,6 +2811,10 @@ DET_COL_RULES['numero_tappa']={pred:'aop:stageNumber',type:'integer',onto:'Atlas
 DET_COL_RULES['pavimentazione']={pred:'aop:hasQuantifiedPathSurfacing',type:'langlit',lang:'it',onto:'AtlasOfPaths'};
 DET_COL_RULES['segnaletica']={pred:'aop:hasSignage',type:'langlit',lang:'it',onto:'AtlasOfPaths'};
 DET_COL_RULES['livello_sicurezza']={pred:'aop:hasSecurityLevel',type:'langlit',lang:'it',onto:'AtlasOfPaths'};
+DET_COL_RULES['tipo_bene_culturale']={pred:'dct:type',type:'langlit',lang:'it',onto:'CulturalON'};
+DET_COL_RULES['tipo_istituto']={pred:'dct:type',type:'langlit',lang:'it',onto:'CulturalON'};
+DET_COL_RULES['disciplina']={pred:'dct:subject',type:'langlit',lang:'it',onto:'CulturalON'};
+DET_COL_RULES['data_apertura']={pred:'dct:issued',type:'date',onto:'CulturalON'};
 DET_COL_RULES['codice_bene']={pred:'dct:identifier',type:'literal',onto:'CulturalHeritage'};
 DET_COL_RULES['tipo_bene']={pred:'dct:type',type:'langlit',lang:'it',onto:'CulturalHeritage'};
 DET_COL_RULES['tutela']={pred:'ch:hasProtection',type:'langlit',lang:'it',onto:'CulturalHeritage'};

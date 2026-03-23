@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.185 -->
+  <!-- build:v2026.03.23.186 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -636,7 +636,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.185</span>
+<span id="app-version">v2026.03.23.186</span>
 </footer>
 
 <script>
@@ -2752,6 +2752,11 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
   var headers=rows[0];
   var dataRows=rows.slice(1).filter(function(r){return r.some(function(v){return v&&v.trim();});});
   if(!dataRows.length)return'';
+  // Auto-correzione shift: se i dati hanno una colonna in più degli header,
+  // probabilmente è una colonna _id implicita (numero di riga) → aggiungila all'header
+  if(dataRows.length>0 && dataRows[0].length===headers.length+1){
+    headers=['_id'].concat(headers);
+  }
   var nh=headers.map(detNormH);
   var mainOnto=detGetMainOnto(ontos);
   var seg=DET_URI_SEG[mainOnto]||'resource';
@@ -4251,13 +4256,16 @@ function updateStats(ttl) {
     var _csvEl = document.getElementById('csv-input');
     var _rows = [];
     if (_csvEl && _csvEl.value.trim()) {
-      var _lines = _csvEl.value.trim().split('\n');
-      var _hdr = _lines[0].split(',').map(function(h){return h.trim();});
-      for (var _i=1;_i<_lines.length;_i++){
-        var _cells=_lines[_i].split(',');
-        var _row={};
-        _hdr.forEach(function(h,i){_row[h]=(_cells[i]||'').trim();});
-        if(Object.values(_row).some(function(v){return v!=='';}))_rows.push(_row);
+      // Usa detParseCSV per gestire correttamente i campi quotati con virgole interne
+      var _parsed = detParseCSV(_csvEl.value.trim());
+      if (_parsed && _parsed.length > 1) {
+        var _hdr2 = _parsed[0];
+        for (var _i=1;_i<_parsed.length;_i++){
+          var _cells2=_parsed[_i];
+          var _row={};
+          _hdr2.forEach(function(h,i){_row[h]=(_cells2[i]||'').trim();});
+          if(Object.values(_row).some(function(v){return v!=='';}))_rows.push(_row);
+        }
       }
     }
     if(_rows.length>0){_out.value=fillMissingConnectedResources(_out.value,_ontos,_rows,_ipa);ttl=_out.value;}

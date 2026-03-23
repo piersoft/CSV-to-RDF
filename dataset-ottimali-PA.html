@@ -3,1219 +3,429 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dataset Ottimali PA — Riferimento Ontologie LOD</title>
+<title>Ontologie PA Italiana — CSV→RDF piersoft</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap');
-
   :root {
-    --bg: #0a0e1a;
-    --surface: #111827;
-    --surface2: #1a2235;
-    --border: #1e2d45;
-    --accent: #00d4ff;
-    --accent2: #7c3aed;
-    --accent3: #10b981;
-    --warn: #f59e0b;
-    --danger: #ef4444;
-    --text: #e2e8f0;
-    --text-dim: #8c9eb8;
-    --text-mid: #a8baca;
-    --font: 'IBM Plex Sans', sans-serif;
-    --mono: 'IBM Plex Mono', monospace;
+    --bg: #f8f9fb; --card: #fff; --border: #e2e6ea;
+    --primary: #1a56db; --accent: #6366f1; --muted: #6b7280;
+    --green: #16a34a; --orange: #d97706; --red: #dc2626;
+    --text: #111827; --radius: 10px;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font);
-    min-height: 100vh;
-    padding: 0;
-  }
-
-  /* Grid background */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .container { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 40px 24px; }
-
-  /* Header */
-  .header { margin-bottom: 48px; }
-  .badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3);
-    color: var(--accent); font-family: var(--mono); font-size: 11px;
-    padding: 4px 12px; border-radius: 2px; margin-bottom: 20px;
-    letter-spacing: 0.1em; text-transform: uppercase;
-  }
-  .badge::before { content: '●'; font-size: 8px; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-  h1 {
-    font-size: clamp(28px, 4vw, 48px);
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    margin-bottom: 16px;
-  }
-  h1 span { color: var(--accent); }
-
-  .subtitle {
-    font-size: 16px; color: var(--text-mid); max-width: 700px;
-    line-height: 1.6; font-weight: 300;
-  }
-
-  /* Scoring panel */
-  .scoring-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
-    margin: 32px 0;
-  }
-  .score-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 16px;
-    position: relative;
-    overflow: hidden;
-  }
-  .score-card::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-  }
-  .score-card.green::after { background: var(--accent3); }
-  .score-card.blue::after { background: var(--accent); }
-  .score-card.yellow::after { background: var(--warn); }
-  .score-card.red::after { background: var(--danger); }
-
-  .score-onto { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-bottom: 6px; }
-  .score-val { font-size: 26px; font-weight: 700; font-family: var(--mono); }
-  .score-card.green .score-val { color: var(--accent3); }
-  .score-card.blue .score-val { color: var(--accent); }
-  .score-card.yellow .score-val { color: var(--warn); }
-  .score-card.red .score-val { color: var(--danger); }
-  .score-label { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
-
-  /* Filters */
-  .filters {
-    display: flex; flex-wrap: wrap; gap: 8px;
-    margin-bottom: 24px;
-  }
-  .filter-btn {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text-mid);
-    font-family: var(--mono); font-size: 11px;
-    padding: 6px 14px; border-radius: 2px;
-    cursor: pointer; transition: all 0.15s;
-    letter-spacing: 0.05em;
-  }
-  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .filter-btn.active { background: rgba(0,212,255,0.1); border-color: var(--accent); color: var(--accent); }
-
-  /* Section title */
-  .section-title {
-    font-family: var(--mono); font-size: 11px;
-    color: var(--text-dim); letter-spacing: 0.15em;
-    text-transform: uppercase; margin-bottom: 16px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  /* Dataset cards */
-  .cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-    gap: 16px;
-    margin-bottom: 48px;
-  }
-
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 20px;
-    transition: border-color 0.2s, transform 0.2s;
-    cursor: default;
-    position: relative;
-  }
-  .card:hover { border-color: rgba(0,212,255,0.4); transform: translateY(-2px); }
-
-  .card-top {
-    display: flex; justify-content: space-between; align-items: flex-start;
-    margin-bottom: 12px; gap: 8px;
-  }
-
-  .card-onto {
-    font-family: var(--mono); font-size: 10px;
-    padding: 3px 8px; border-radius: 2px;
-    font-weight: 600; letter-spacing: 0.08em;
-    white-space: nowrap;
-  }
-  .onto-QB { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
-  .onto-POI { background: rgba(0,212,255,0.12); color: #00d4ff; border: 1px solid rgba(0,212,255,0.3); }
-  .onto-ACCO { background: rgba(124,58,237,0.15); color: #a78bfa; border: 1px solid rgba(124,58,237,0.3); }
-  .onto-CPSV { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
-  .onto-TI { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
-  .onto-CLV { background: rgba(236,72,153,0.12); color: #f472b6; border: 1px solid rgba(236,72,153,0.3); }
-  .onto-Cultural-ON { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.3); }
-  .onto-GTFS { background: rgba(20,184,166,0.12); color: #2dd4bf; border: 1px solid rgba(20,184,166,0.3); }
-  .onto-CPV { background: rgba(249,115,22,0.12); color: #fb923c; border: 1px solid rgba(249,115,22,0.3); }
-  .onto-ADMS { background: rgba(148,163,184,0.1); color: #94a3b8; border: 1px solid rgba(148,163,184,0.3); }
-
-  .card-tipo {
-    font-size: 10px; color: var(--text-dim);
-    font-family: var(--mono);
-  }
-
-  .card-title {
-    font-size: 15px; font-weight: 600; line-height: 1.35;
-    margin-bottom: 6px; color: var(--text);
-  }
-
-  .card-ente {
-    font-size: 12px; color: var(--text-mid); margin-bottom: 12px;
-  }
-
-  .card-headers {
-    display: flex; flex-wrap: wrap; gap: 4px;
-    margin-bottom: 14px;
-  }
-  .header-tag {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    font-family: var(--mono); font-size: 10px;
-    color: var(--text-dim); padding: 2px 6px; border-radius: 2px;
-  }
-  .header-tag.key {
-    border-color: rgba(0,212,255,0.3);
-    color: var(--accent);
-    background: rgba(0,212,255,0.05);
-  }
-
-  /* Leggenda headers */
-  .headers-legend {
-    display: flex; gap: 14px; margin-top: 6px; margin-bottom: 0;
-  }
-  .headers-legend-item {
-    display: flex; align-items: center; gap: 5px;
-    font-family: var(--mono); font-size: 9px;
-    color: var(--text-dim); letter-spacing: 0.05em;
-  }
-  .legend-swatch {
-    width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0;
-  }
-  .legend-swatch.key {
-    background: rgba(0,212,255,0.08);
-    border: 1px solid rgba(0,212,255,0.35);
-  }
-  .legend-swatch.std {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-  }
-
-  .card-footer {
-    display: flex; align-items: center; justify-content: space-between;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-    gap: 8px;
-  }
-
-  .card-url {
-    font-family: var(--mono); font-size: 10px;
-    color: var(--text-dim); overflow: hidden;
-    text-overflow: ellipsis; white-space: nowrap;
-    flex: 1;
-  }
-
-  .card-link {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-family: var(--mono); font-size: 10px;
-    color: var(--accent); text-decoration: none;
-    padding: 4px 10px; border: 1px solid rgba(0,212,255,0.3);
-    border-radius: 2px; white-space: nowrap;
-    transition: all 0.15s;
-  }
-  .card-link:hover { background: rgba(0,212,255,0.1); }
-
-  .card-note {
-    font-size: 11px; color: var(--text-dim);
-    line-height: 1.5; margin-bottom: 10px;
-    padding: 8px 10px;
-    background: var(--surface2);
-    border-left: 2px solid var(--border);
-    border-radius: 0 2px 2px 0;
-  }
-
-  /* Score bar */
-  .score-bar-wrap { margin-bottom: 14px; }
-  .score-bar-label {
-    display: flex; justify-content: space-between;
-    font-size: 10px; font-family: var(--mono);
-    color: var(--text-dim); margin-bottom: 4px;
-  }
-  .score-bar-track {
-    height: 3px; background: var(--border); border-radius: 2px; overflow: hidden;
-  }
-  .score-bar-fill {
-    height: 100%; border-radius: 2px;
-    transition: width 0.8s ease;
-  }
-
-  /* Legend */
-  .legend {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 20px 24px;
-    margin-bottom: 32px;
-  }
-  .legend-title { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-bottom: 14px; letter-spacing: 0.1em; }
-  .legend-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;
-  }
-  .legend-item { display: flex; align-items: flex-start; gap: 8px; }
-  .legend-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
-  .legend-text { font-size: 12px; line-height: 1.4; }
-  .legend-text strong { color: var(--text); font-weight: 600; }
-  .legend-text span { color: var(--text-dim); }
-
-  /* Footer */
-  .footer {
-    margin-top: 48px; padding-top: 24px;
-    border-top: 1px solid var(--border);
-    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
-  }
-  .footer-left { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
-  .footer-right { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
-
-  .hidden { display: none !important; }
-
-  /* Accessibilità WCAG 2.1 AA — focus visible */
-  :focus-visible {
-    outline: 3px solid var(--accent);
-    outline-offset: 2px;
-    border-radius: 2px;
-  }
-  .filter-btn:focus-visible,
-  .card-link:focus-visible {
-    outline: 3px solid var(--accent);
-    outline-offset: 3px;
-  }
-  /* Skip link */
-  .skip-link {
-    position: absolute;
-    top: -40px;
-    left: 0;
-    background: var(--accent);
-    color: #000;
-    padding: 8px 16px;
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 600;
-    z-index: 9999;
-    text-decoration: none;
-    border-radius: 0 0 4px 0;
-  }
-  .skip-link:focus { top: 0; }
-
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
+  header { background: linear-gradient(135deg,#1a56db 0%,#6366f1 100%); color: #fff; padding: 2.5rem 2rem 2rem; }
+  header h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.4rem; }
+  header p  { opacity: .85; font-size: .95rem; max-width: 700px; }
+  .meta { display: flex; gap: 1.2rem; margin-top: 1rem; flex-wrap: wrap; }
+  .meta span { background: rgba(255,255,255,.18); border-radius: 20px; padding: .2rem .8rem; font-size: .8rem; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.2rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.2rem; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem 1.4rem; transition: box-shadow .2s; }
+  .card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.08); }
+  .card-head { display: flex; align-items: flex-start; gap: .8rem; margin-bottom: .7rem; }
+  .badge { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; font-size: .75rem; font-weight: 800; flex-shrink: 0; }
+  .prio-alta   { background: #fee2e2; color: var(--red); }
+  .prio-media  { background: #fef3c7; color: var(--orange); }
+  .prio-base   { background: #dbeafe; color: var(--primary); }
+  .card h3 { font-size: 1rem; font-weight: 700; }
+  .card .ns { font-size: .72rem; color: var(--muted); font-family: monospace; margin-top: .1rem; }
+  .card p { font-size: .85rem; color: #374151; margin: .5rem 0; }
+  .triggers { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .6rem; }
+  .trig { background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 4px; padding: .15rem .45rem; font-size: .72rem; font-family: monospace; color: #374151; }
+  .section-title { font-size: 1.1rem; font-weight: 700; margin: 2rem 0 .8rem; padding-left: .4rem; border-left: 3px solid var(--primary); }
+  .legend { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; font-size: .82rem; }
+  .legend span { display: flex; align-items: center; gap: .4rem; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  footer { text-align: center; padding: 2rem; font-size: .8rem; color: var(--muted); border-top: 1px solid var(--border); margin-top: 2rem; }
+  a { color: var(--primary); }
 </style>
 </head>
 <body>
-<a href="#cards" class="skip-link">Salta al contenuto</a>
-<div class="container" role="main" id="main-content">
-
-  <!-- Header -->
-  <div class="header">
-    <div class="badge">Linked Open Data PA · Ontologie DCAT-AP_IT</div>
-    <h1>Dataset Ottimali<br><span>di Riferimento per PA</span></h1>
-    <p class="subtitle">Catalogo dei dataset CSV ideali per Comuni e Regioni che vogliono pubblicare dati conformi alle ontologie dati-semantic-assets. Per ogni tipologia: headers chiave, ente modello e URL di riferimento su dati.gov.it.</p>
+<header>
+  <h1>🔗 Ontologie PA Italiana — CSV→RDF</h1>
+  <p>Guida alle 29 ontologie supportate dal convertitore CSV→RDF/Turtle per la Pubblica Amministrazione italiana, basate sulla repo ufficiale <a href="https://github.com/italia/dati-semantic-assets" style="color:#c7d2fe">dati-semantic-assets</a>.</p>
+  <div class="meta">
+    <span>📦 v2026.03.23.186</span>
+    <span>🗂 29 ontologie</span>
+    <span>📋 289 dataset PA reali</span>
+    <span>🧪 22+7 CSV sacri testati</span>
+    <span>🔗 <a href="https://piersoft.github.io/CSV-to-RDF/" style="color:#c7d2fe">Apri il tool</a></span>
   </div>
-
-  <!-- Scoring corpus -->
-  <h2 class="section-title">Score stimato corpus attuale — 274 dataset · v2026.03.20.29</h2>
-  <div class="scoring-grid">
-    <div class="score-card green"><div class="score-onto">QB</div><div class="score-val">91%</div><div class="score-label">155 fixture · 64%</div></div>
-    <div class="score-card green"><div class="score-onto">POI</div><div class="score-val">86%</div><div class="score-label">63 fixture · 26%</div></div>
-    <div class="score-card green"><div class="score-onto">CPV</div><div class="score-val">86%</div><div class="score-label">63 fixture · 23%</div></div>
-    <div class="score-card blue"><div class="score-onto">CPSV</div><div class="score-val">80%</div><div class="score-label">46 fixture · 17%</div></div>
-    <div class="score-card blue"><div class="score-onto">CLV</div><div class="score-val">78%</div><div class="score-label">53 fixture · 20%</div></div>
-    <div class="score-card blue"><div class="score-onto">ACCO</div><div class="score-val">74%</div><div class="score-label">23 fixture · 9%</div></div>
-    <div class="score-card blue"><div class="score-onto">TI</div><div class="score-val">71%</div><div class="score-label">21 fixture · 9%</div></div>
-    <div class="score-card blue"><div class="score-onto">Cultural-ON</div><div class="score-val">73%</div><div class="score-label">20 fixture · 7%</div></div>
-    <div class="score-card yellow"><div class="score-onto">ADMS</div><div class="score-val">68%</div><div class="score-label">15 fixture · 6%</div></div>
-    <div class="score-card green"><div class="score-onto">DCATAPIT</div><div class="score-val">100%</div><div class="score-label">3 fixture · 1%</div></div>
-    <div class="score-card yellow"><div class="score-onto">RO-AP_IT</div><div class="score-val">68%</div><div class="score-label">14 fixture · 5%</div></div>
-    <div class="score-card yellow"><div class="score-onto">COV-AP_IT</div><div class="score-val">64%</div><div class="score-label">12 fixture · 5%</div></div>
-    <div class="score-card yellow"><div class="score-onto">PublicOrganization</div><div class="score-val">55%</div><div class="score-label">3 fixture · 1%</div></div>
-    <div class="score-card yellow"><div class="score-onto">CPVAPIT</div><div class="score-val">60%</div><div class="score-label">9 fixture · 3%</div></div>
-    <div class="score-card yellow"><div class="score-onto">GTFS</div><div class="score-val">62%</div><div class="score-label">10 fixture · 4%</div></div>
-    <div class="score-card red"><div class="score-onto">SMAPIT</div><div class="score-val">55%</div><div class="score-label">8 fixture · 3%</div></div>
-    <div class="score-card red"><div class="score-onto">IoT-AP_IT</div><div class="score-val">55%</div><div class="score-label">8 fixture · 3%</div></div>
-    <div class="score-card red"><div class="score-onto">MUAPIT</div><div class="score-val">64%</div><div class="score-label">10 fixture · 4%</div></div>
-  </div>
-
-  <!-- Legend ontologie -->
+</header>
+<div class="container">
   <div class="legend">
-    <div class="legend-title">GLOSSARIO ONTOLOGIE</div>
-    <div class="legend-grid">
-      <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div><div class="legend-text"><strong>QB</strong> <span>— RDF Data Cube: statistiche, indicatori, serie temporali</span></div></div>
-      <div class="legend-item"><div class="legend-dot" style="background:#00d4ff"></div><div class="legend-text"><strong>POI</strong> <span>— Point of Interest: luoghi geolocalizzati con lat/lon</span></div></div>
-      <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div><div class="legend-text"><strong>ACCO</strong> <span>— Accommodation: strutture ricettive e turismo</span></div></div>
-      <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div><div class="legend-text"><strong>CPSV</strong> <span>— Core Public Service: appalti, gare, determine, atti PA</span></div></div>
-      <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div><div class="legend-text"><strong>TI</strong> <span>— Time Interval: eventi con data inizio/fine</span></div></div>
-      <div class="legend-item"><div class="legend-dot" style="background:#f472b6"></div><div class="legend-text"><strong>CLV</strong> <span>— Controlled Vocabulary: stradari, civici, indirizzi</span></div></div>
-      <div class="legend-item"><div class="legend-dot" style="background:#818cf8"></div><div class="legend-text"><strong>Cultural-ON</strong> <span>— Patrimonio culturale: musei, biblioteche, archivi</span></div></div>
-      <div class="legend-item"><div class="legend-dot" style="background:#2dd4bf"></div><div class="legend-text"><strong>GTFS</strong> <span>— General Transit Feed: fermate, linee, orari TPL</span></div></div>
-      <div class="legend-item"><div class="legend-dot" style="background:#fb923c"></div><div class="legend-text"><strong>CPV</strong> <span>— Core Person Vocabulary: popolazione, anagrafe, cittadinanza</span></div></div>
-      <div class="legend-item"><div class="legend-dot" style="background:#94a3b8"></div><div class="legend-text"><strong>ADMS</strong> <span>— Asset Description: catalogo dataset e portali open data</span></div></div>
-      <div class="legend-item"><div class="legend-dot" style="background:#34d399"></div><div class="legend-text"><strong>SMAPIT</strong> <span>— Strutture scolastiche: scuole, istituti, nidi d'infanzia</span></div></div>
-      <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div><div class="legend-text"><strong>IoT-AP_IT</strong> <span>— Internet of Things: sensori, misurazioni, serie temporali ambientali</span></div></div>
-      <div class="legend-item"><div class="legend-dot" style="background:#e879f9"></div><div class="legend-text"><strong>MUAPIT</strong> <span>— Musei e luoghi della cultura: istituti culturali MiC/ArCo</span></div></div>
-      <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div><div class="legend-text"><strong>COV-AP_IT</strong> <span>— Organizzazioni PA: personale, contratti, comparti NoiPA/BDAP</span></div></div>
-      <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div><div class="legend-text"><strong>RO-AP_IT</strong> <span>— Ruoli e incarichi: consiglieri, assessori, eletti, presenze</span></div></div>
-      <div class="legend-item"><div class="legend-dot" style="background:#22d3ee"></div><div class="legend-text"><strong>PublicOrganization</strong> <span>— Organizzazioni pubbliche: enti PA, ASL, enti strumentali (IPA, org:Organization)</span></div></div>
-      <div class="legend-item"><div class="legend-dot" style="background:#0ea5e9"></div><div class="legend-text"><strong>DCATAPIT</strong> <span>— Catalogo open data: metadati DCAT-AP_IT, distribuzioni, publisher, licenze</span></div></div>
-      <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div><div class="legend-text"><strong>CPVAPIT</strong> <span>— Persone fisiche: anagrafica candidati, dipendenti PA, ruoli nominativi</span></div></div>
-    </div>
-  </div>
-</div>
-
-  <!-- Filtri -->
-  <div class="filters" id="filters" role="group" aria-label="Filtra per ontologia">
-    <button class="filter-btn active" data-onto="ALL" aria-pressed="true">TUTTE</button>
-    <button class="filter-btn" data-onto="QB" aria-pressed="false">QB</button>
-    <button class="filter-btn" data-onto="POI" aria-pressed="false">POI</button>
-    <button class="filter-btn" data-onto="ACCO" aria-pressed="false">ACCO</button>
-    <button class="filter-btn" data-onto="CPSV" aria-pressed="false">CPSV</button>
-    <button class="filter-btn" data-onto="TI" aria-pressed="false">TI</button>
-    <button class="filter-btn" data-onto="CLV" aria-pressed="false">CLV</button>
-    <button class="filter-btn" data-onto="Cultural-ON" aria-pressed="false">Cultural-ON</button>
-    <button class="filter-btn" data-onto="GTFS" aria-pressed="false">GTFS</button>
-    <button class="filter-btn" data-onto="CPV" aria-pressed="false">CPV</button>
-    <button class="filter-btn" data-onto="ADMS" aria-pressed="false">ADMS</button>
-    <button class="filter-btn" data-onto="SMAPIT" aria-pressed="false">SMAPIT</button>
-    <button class="filter-btn" data-onto="IoT-AP_IT" aria-pressed="false">IoT-AP_IT</button>
-    <button class="filter-btn" data-onto="MUAPIT" aria-pressed="false">MUAPIT</button>
-    <button class="filter-btn" data-onto="COV-AP_IT" aria-pressed="false">COV-AP_IT</button>
-    <button class="filter-btn" data-onto="RO-AP_IT" aria-pressed="false">RO-AP_IT</button>
-    <button class="filter-btn" data-onto="PublicOrganization" aria-pressed="false">PublicOrganization</button>
-    <button class="filter-btn" data-onto="DCATAPIT" aria-pressed="false">DCATAPIT</button>
-    <button class="filter-btn" data-onto="CPVAPIT" aria-pressed="false">CPVAPIT</button>
+    <span><span class="dot" style="background:#dc2626"></span> Alta priorità PA</span>
+    <span><span class="dot" style="background:#d97706"></span> Media priorità</span>
+    <span><span class="dot" style="background:#1a56db"></span> Base / trasversale</span>
   </div>
 
-  <h2 class="section-title">Dataset Ottimali di Riferimento</h2>
+  <div class="section-title">🆕 Nuove ontologie v186 (alta/media priorità)</div>
+  <div class="grid">
 
-  <!-- Cards -->
-  <div class="cards-grid" id="cards">
-
-    <!-- QB -->
-    <div class="card" data-onto="QB">
-      <div class="card-top"><span class="card-onto onto-QB">QB</span><span class="card-tipo">COMUNE · STATISTICO</span></div>
-      <div class="card-title">Popolazione residente per età, sesso e stato civile</div>
-      <div class="card-ente">Comuni italiani — Istat / Maggioli</div>
-      <div class="card-note">Template ideale per tutti i comuni. Serie storica con breakdowns demografici. Facilmente replicabile da qualsiasi ufficio anagrafe.</div>
-      <div class="card-headers">
-        <span class="header-tag key">Anno</span><span class="header-tag key">Fascia_Eta</span><span class="header-tag key">Sesso</span><span class="header-tag key">Stato_Civile</span><span class="header-tag">Residenti</span><span class="header-tag">Comune</span><span class="header-tag">Codice_ISTAT</span>
+    <div class="card">
+      <div class="card-head">
+        <div class="badge prio-alta">🎭</div>
+        <div>
+          <h3>CPEV — Core Public Event Vocabulary</h3>
+          <div class="ns">cpev: &lt;https://w3id.org/italia/onto/CPEV/&gt;</div>
+        </div>
       </div>
-      <div class="headers-legend">
-        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
-        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">100%</span></div>
-        <div class="score-bar-track"><div class="score-bar-fill" style="width:100%;background:#10b981"></div></div>
-      </div>
-      <div class="card-footer">
-        <span class="card-url">dati.gov.it · popolazione-residenti</span>
-        <a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=popolazione+residenti+eta+sesso" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
+      <p>Ontologia per gli <strong>eventi pubblici</strong>: concerti, mostre, convegni, manifestazioni. Descrive titolo, tipologia, periodo, luogo, pubblico target e formato (fisico/online/ibrido).</p>
+      <div class="triggers">
+        <span class="trig">titolo_evento</span>
+        <span class="trig">evento_pubblico</span>
+        <span class="trig">pubblico_target</span>
+        <span class="trig">format_evento</span>
+        <span class="trig">abstract_evento</span>
+        <span class="trig">tipo_evento_pubblico</span>
       </div>
     </div>
 
-    <div class="card" data-onto="QB">
-      <div class="card-top"><span class="card-onto onto-QB">QB</span><span class="card-tipo">COMUNE · STATISTICO</span></div>
-      <div class="card-title">Nascite, decessi e saldo naturale per mese</div>
-      <div class="card-ente">Comuni italiani — Maggioli OpenData</div>
-      <div class="card-note">Dataset mensile obbligatorio per trasparenza anagrafica. Producibile automaticamente dai sistemi demografici comunali.</div>
-      <div class="card-headers">
-        <span class="header-tag key">Anno</span><span class="header-tag key">Mese</span><span class="header-tag">Nati_Vivi</span><span class="header-tag">Deceduti</span><span class="header-tag">Saldo_Naturale</span><span class="header-tag">Comune</span>
+    <div class="card">
+      <div class="card-head">
+        <div class="badge prio-media">🚪</div>
+        <div>
+          <h3>AccessCondition — Condizioni di accesso</h3>
+          <div class="ns">ac: &lt;https://w3id.org/italia/onto/AccessCondition/&gt;</div>
+        </div>
       </div>
-      <div class="headers-legend">
-        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
-        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">91%</span></div>
-        <div class="score-bar-track"><div class="score-bar-fill" style="width:91%;background:#10b981"></div></div>
-      </div>
-      <div class="card-footer">
-        <span class="card-url">opendata.maggioli.cloud · nati-deceduti</span>
-        <a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=nascite+decessi+comune" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
+      <p>Orari di apertura/chiusura, tipo di ammissione (libero/a pagamento), motivazione di chiusura, condizioni speciali di accesso a luoghi pubblici.</p>
+      <div class="triggers">
+        <span class="trig">orario_apertura</span>
+        <span class="trig">orario_chiusura</span>
+        <span class="trig">tipo_ammissione</span>
+        <span class="trig">motivazione_chiusura</span>
+        <span class="trig">giorno_chiusura</span>
+        <span class="trig">condizione_accesso</span>
       </div>
     </div>
 
-    <div class="card" data-onto="QB">
-      <div class="card-top"><span class="card-onto onto-QB">QB</span><span class="card-tipo">REGIONE · STATISTICO</span></div>
-      <div class="card-title">Matrimoni celebrati per rito e mese</div>
-      <div class="card-ente">Comuni italiani — Maggioli OpenData</div>
-      <div class="card-note">Dati ISTAT standardizzati. Codici ISTAT provincia/comune già presenti. Ideale come primo dataset per comuni che iniziano con LOD.</div>
-      <div class="card-headers">
-        <span class="header-tag key">Anno</span><span class="header-tag key">Mese</span><span class="header-tag key">Codice_Comune</span><span class="header-tag">Provincia</span><span class="header-tag">Rito_Religioso</span><span class="header-tag">Rito_Civile</span>
+    <div class="card">
+      <div class="card-head">
+        <div class="badge prio-media">🥾</div>
+        <div>
+          <h3>AtlasOfPaths — Atlante dei percorsi</h3>
+          <div class="ns">aop: &lt;https://w3id.org/italia/onto/AtlasOfPaths/&gt;</div>
+        </div>
       </div>
-      <div class="headers-legend">
-        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
-        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">89%</span></div>
-        <div class="score-bar-track"><div class="score-bar-fill" style="width:89%;background:#10b981"></div></div>
-      </div>
-      <div class="card-footer">
-        <span class="card-url">opendata.maggioli.cloud · matrimoni-rito</span>
-        <a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=matrimoni+rito+comune" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
+      <p>Percorsi trekking, ciclovie, itinerari storici. Numero percorso, numero tappe, pavimentazione, segnaletica, livello di sicurezza e tipo servizio.</p>
+      <div class="triggers">
+        <span class="trig">numero_percorso</span>
+        <span class="trig">numero_tappa</span>
+        <span class="trig">pavimentazione</span>
+        <span class="trig">segnaletica</span>
+        <span class="trig">livello_sicurezza</span>
       </div>
     </div>
 
-    <!-- POI -->
-    <div class="card" data-onto="POI">
-      <div class="card-top"><span class="card-onto onto-POI">POI</span><span class="card-tipo">COMUNE · GEOGRAFICO</span></div>
-      <div class="card-title">Defibrillatori DAE geolocalizzati</div>
-      <div class="card-ente">Comuni e ASL — OpenStreetMap / portali regionali</div>
-      <div class="card-note">Dataset ad alto impatto civico. Richiesto dal DL 158/2012. Lat/lon obbligatori. Ottimo per iniziare con POI-AP_IT e CLV-AP_IT.</div>
-      <div class="card-headers">
-        <span class="header-tag key">lat</span><span class="header-tag key">lon</span><span class="header-tag key">nome</span><span class="header-tag">indirizzo</span><span class="header-tag">comune</span><span class="header-tag">cap</span><span class="header-tag">accessibile_h24</span>
+    <div class="card">
+      <div class="card-head">
+        <div class="badge prio-media">🏛</div>
+        <div>
+          <h3>CulturalHeritage — Beni culturali</h3>
+          <div class="ns">ch: &lt;https://w3id.org/italia/onto/CulturalHeritage/&gt;</div>
+        </div>
       </div>
-      <div class="headers-legend">
-        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
-        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar-label"><span>Match corpus</span><span style="color:#00d4ff">86%</span></div>
-        <div class="score-bar-track"><div class="score-bar-fill" style="width:86%;background:#00d4ff"></div></div>
-      </div>
-      <div class="card-footer">
-        <span class="card-url">dati.gov.it · defibrillatori-dae</span>
-        <a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=defibrillatori+DAE" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
+      <p>Patrimonio culturale vincolato: codice bene, tipo, tutela (statale/ecclesiastica/UNESCO), vincolo (monumentale/paesaggistico), stato di conservazione.</p>
+      <div class="triggers">
+        <span class="trig">codice_bene</span>
+        <span class="trig">tutela</span>
+        <span class="trig">vincolo</span>
+        <span class="trig">stato_conservazione</span>
+        <span class="trig">ente_tutela</span>
       </div>
     </div>
 
-    <div class="card" data-onto="POI">
-      <div class="card-top"><span class="card-onto onto-POI">POI</span><span class="card-tipo">COMUNE · GEOGRAFICO</span></div>
-      <div class="card-title">Farmacie e parafarmacie con orari</div>
-      <div class="card-ente">Comuni e ASL italiane</div>
-      <div class="card-note">Dataset essenziale per servizi di prossimità. Facilmente esportabile da anagrafe ASL. Aggiornabile trimestralmente.</div>
-      <div class="card-headers">
-        <span class="header-tag key">lat</span><span class="header-tag key">lon</span><span class="header-tag key">denominazione</span><span class="header-tag">indirizzo</span><span class="header-tag">comune</span><span class="header-tag">orario_apertura</span><span class="header-tag">telefono</span>
+    <div class="card">
+      <div class="card-head">
+        <div class="badge prio-media">📋</div>
+        <div>
+          <h3>Project — Progetti pubblici</h3>
+          <div class="ns">prj: &lt;https://w3id.org/italia/onto/Project/&gt;</div>
+        </div>
       </div>
-      <div class="headers-legend">
-        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
-        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar-label"><span>Match corpus</span><span style="color:#00d4ff">83%</span></div>
-        <div class="score-bar-track"><div class="score-bar-fill" style="width:83%;background:#00d4ff"></div></div>
-      </div>
-      <div class="card-footer">
-        <span class="card-url">dati.gov.it · farmacie</span>
-        <a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=farmacie+geolocalizzate" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
+      <p>Progetti di investimento pubblico (PNRR, FESR, PON): CUP, acronimo, programma di finanziamento, costo totale, work package, parola chiave.</p>
+      <div class="triggers">
+        <span class="trig">acronimo_progetto</span>
+        <span class="trig">programma_finanziamento</span>
+        <span class="trig">costo_totale_progetto</span>
+        <span class="trig">work_package</span>
+        <span class="trig">cup</span>+<span class="trig">finanziatore</span>
       </div>
     </div>
 
-    <!-- ACCO -->
-    <div class="card" data-onto="ACCO">
-      <div class="card-top"><span class="card-onto onto-ACCO">ACCO</span><span class="card-tipo">REGIONE · TURISMO</span></div>
-      <div class="card-title">Elenco strutture ricettive con classificazione</div>
-      <div class="card-ente">Regione Campania / Regione Puglia</div>
-      <div class="card-note">Standard minimo: codice CUSR, tipologia (albergo/B&B/agriturismo), classificazione stelle, capacità ricettiva. Aggiornamento annuale obbligatorio per legge regionale.</div>
-      <div class="card-headers">
-        <span class="header-tag key">Codice_CUSR</span><span class="header-tag key">Tipologia</span><span class="header-tag key">Classificazione</span><span class="header-tag">Denominazione</span><span class="header-tag">Comune</span><span class="header-tag">Provincia</span><span class="header-tag">Posti_letto</span><span class="header-tag">Camere</span>
+    <div class="card">
+      <div class="card-head">
+        <div class="badge prio-base">📐</div>
+        <div>
+          <h3>MU — Unità di misura</h3>
+          <div class="ns">mu: &lt;https://w3id.org/italia/onto/MU/&gt;</div>
+        </div>
       </div>
-      <div class="headers-legend">
-        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
-        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar-label"><span>Match corpus</span><span style="color:#a78bfa">78%</span></div>
-        <div class="score-bar-track"><div class="score-bar-fill" style="width:78%;background:#a78bfa"></div></div>
-      </div>
-      <div class="card-footer">
-        <span class="card-url">dati.gov.it · elenco-strutture-ricettive</span>
-        <a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=strutture+ricettive+campania" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Apri</a>
+      <p>Valori con unità di misura: grandezza fisica, valore numerico, unità (SI), tipo di misura, simbolo. Usato per dati meteo, ambientali, scientifici.</p>
+      <div class="triggers">
+        <span class="trig">grandezza</span>
+        <span class="trig">tipo_misura</span>
+        <span class="trig">sistema_misura</span>
+        <span class="trig">simbolo_misura</span>
+        <span class="trig">measurement_unit</span>
       </div>
     </div>
 
-    <div class="card" data-onto="ACCO">
-      <div class="card-top"><span class="card-onto onto-ACCO">ACCO</span><span class="card-tipo">COMUNE · TURISMO</span></div>
-      <div class="card-title">Arrivi e presenze turistiche per provenienza</div>
-      <div class="card-ente">Comune di Milano / Regioni italiane</div>
-      <div class="card-note">Serie storica annuale. Indispensabile per pianificazione turistica e rendicontazione fondi regionali. Dati aggregati, nessun problema privacy.</div>
-      <div class="card-headers">
-        <span class="header-tag key">Anno</span><span class="header-tag key">Area_geografica</span><span class="header-tag key">Paese_provenienza</span><span class="header-tag">Arrivi</span><span class="header-tag">Presenze</span><span class="header-tag">Tipo_struttura</span>
+    <div class="card">
+      <div class="card-head">
+        <div class="badge prio-base">📚</div>
+        <div>
+          <h3>NDC — National Data Catalog</h3>
+          <div class="ns">ndc: &lt;https://w3id.org/italia/onto/NDC/&gt;</div>
+        </div>
       </div>
-      <div class="headers-legend">
-        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
-        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar-label"><span>Match corpus</span><span style="color:#a78bfa">74%</span></div>
-        <div class="score-bar-track"><div class="score-bar-fill" style="width:74%;background:#a78bfa"></div></div>
-      </div>
-      <div class="card-footer">
-        <span class="card-url">dati.comune.milano.it · turismo-strutture</span>
-        <a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=arrivi+presenze+strutture+ricettive" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
+      <p>Catalogo nazionale degli asset semantici: ontologie, vocabolari controllati, schemi. Concetto chiave, URL endpoint, tipo risorsa, formato distribuzione.</p>
+      <div class="triggers">
+        <span class="trig">concetto_chiave</span>
+        <span class="trig">endpoint_url</span>
+        <span class="trig">tipo_risorsa</span>
+        <span class="trig">formato_distribuzione</span>
       </div>
     </div>
 
-    <!-- CPSV -->
-    <div class="card" data-onto="CPSV">
-      <div class="card-top"><span class="card-onto onto-CPSV">CPSV</span><span class="card-tipo">COMUNE · APPALTI</span></div>
-      <div class="card-title">Gare e appalti con CIG e aggiudicatario</div>
-      <div class="card-ente">Comune di Bologna / Città Metropolitane</div>
-      <div class="card-note">Dati obbligatori per trasparenza (D.Lgs 33/2013 e D.Lgs 36/2023). CIG univoco come chiave. Esportabile da ANAC o da sistemi gestionali comunali.</div>
-      <div class="card-headers">
-        <span class="header-tag key">CIG</span><span class="header-tag key">CUP</span><span class="header-tag key">Oggetto</span><span class="header-tag">Tipo_procedura</span><span class="header-tag">Importo_base</span><span class="header-tag">Aggiudicatario</span><span class="header-tag">Data_aggiudicazione</span>
-      </div>
-      <div class="headers-legend">
-        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
-        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar-label"><span>Match corpus</span><span style="color:#f87171">72%</span></div>
-        <div class="score-bar-track"><div class="score-bar-fill" style="width:72%;background:#f87171"></div></div>
-      </div>
-      <div class="card-footer">
-        <span class="card-url">dati.anticorruzione.it · appalti</span>
-        <a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=appalti+CIG+aggiudicazione" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
-      </div>
-    </div>
-
-    <div class="card" data-onto="CPSV">
-      <div class="card-top"><span class="card-onto onto-CPSV">CPSV</span><span class="card-tipo">PROVINCIA · ATTI</span></div>
-      <div class="card-title">Registro determine dirigenziali</div>
-      <div class="card-ente">Province e Comuni — albo pretorio</div>
-      <div class="card-note">Atti amministrativi pubblicati per obbligo normativo. Struttura semplice e uniforme. Ottimo dataset iniziale per CPSV.</div>
-      <div class="card-headers">
-        <span class="header-tag key">Num_Reg</span><span class="header-tag key">Data_Atto</span><span class="header-tag key">Oggetto</span><span class="header-tag">Settore</span><span class="header-tag">Mov_Finanziaria</span><span class="header-tag">Data_Pubblicazione</span>
-      </div>
-      <div class="headers-legend">
-        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
-        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar-label"><span>Match corpus</span><span style="color:#f87171">68%</span></div>
-        <div class="score-bar-track"><div class="score-bar-fill" style="width:68%;background:#f87171"></div></div>
-      </div>
-      <div class="card-footer">
-        <span class="card-url">dati.gov.it · determine-dirigenziali</span>
-        <a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=determine+dirigenziali+registro" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
-      </div>
-    </div>
-
-    <!-- TI -->
-    <div class="card" data-onto="TI">
-      <div class="card-top"><span class="card-onto onto-TI">TI</span><span class="card-tipo">COMUNE/REGIONE · EVENTI</span></div>
-      <div class="card-title">Calendario eventi culturali e manifestazioni</div>
-      <div class="card-ente">Regione Marche / Comuni lombardi</div>
-      <div class="card-note">Dataset ad alto valore turistico. Data_inizio e Data_fine obbligatorie. Se include lat/lon diventa anche POI. Aggiornamento continuo raccomandato.</div>
-      <div class="card-headers">
-        <span class="header-tag key">Data_Inizio</span><span class="header-tag key">Data_Fine</span><span class="header-tag key">Titolo</span><span class="header-tag">Tipo</span><span class="header-tag">Comune</span><span class="header-tag">Indirizzo</span><span class="header-tag">Organizzatore</span>
-      </div>
-      <div class="headers-legend">
-        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
-        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar-label"><span>Match corpus</span><span style="color:#fbbf24">65%</span></div>
-        <div class="score-bar-track"><div class="score-bar-fill" style="width:65%;background:#fbbf24"></div></div>
-      </div>
-      <div class="card-footer">
-        <span class="card-url">dati.gov.it · eventi-manifestazioni</span>
-        <a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=eventi+manifestazioni+calendario" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
-      </div>
-    </div>
-
-    <!-- CLV -->
-    <div class="card" data-onto="CLV">
-      <div class="card-top"><span class="card-onto onto-CLV">CLV</span><span class="card-tipo">COMUNE · TERRITORIO</span></div>
-      <div class="card-title">Stradario comunale con numerazione civica</div>
-      <div class="card-ente">Comuni italiani — Anagrafe Nazionale</div>
-      <div class="card-note">Base fondamentale per ogni servizio digitale comunale. Codice ISTAT via obbligatorio. Necessario per interoperabilità con ANPR e sistemi catastali.</div>
-      <div class="card-headers">
-        <span class="header-tag key">Codice_Via</span><span class="header-tag key">Denominazione_Via</span><span class="header-tag key">Civico</span><span class="header-tag">CAP</span><span class="header-tag">Frazione</span><span class="header-tag">Codice_ISTAT</span><span class="header-tag">lat</span><span class="header-tag">lon</span>
-      </div>
-      <div class="headers-legend">
-        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
-        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar-label"><span>Match corpus</span><span style="color:#f472b6">66%</span></div>
-        <div class="score-bar-track"><div class="score-bar-fill" style="width:66%;background:#f472b6"></div></div>
-      </div>
-      <div class="card-footer">
-        <span class="card-url">dati.gov.it · stradario-civici</span>
-        <a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=stradario+numerazione+civica" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
-      </div>
-    </div>
-
-    <!-- Cultural-ON -->
-    <div class="card" data-onto="Cultural-ON">
-      <div class="card-top"><span class="card-onto onto-Cultural-ON">Cultural-ON</span><span class="card-tipo">REGIONE · PATRIMONIO</span></div>
-      <div class="card-title">Anagrafe biblioteche con tipologia e geolocalizzazione</div>
-      <div class="card-ente">ICCU — Istituto Centrale Catalogo Unico</div>
-      <div class="card-note">13.691 biblioteche italiane con codice ISIL univoco. Dataset nazionale di riferimento. Aggiornato periodicamente da ICCU/MiC.</div>
-      <div class="card-headers">
-        <span class="header-tag key">codice-isil</span><span class="header-tag key">denominazione</span><span class="header-tag">tipologia_funzionale</span><span class="header-tag">indirizzo</span><span class="header-tag">comune</span><span class="header-tag">regione</span><span class="header-tag key">latitudine</span><span class="header-tag key">longitudine</span>
-      </div>
-      <div class="headers-legend">
-        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
-        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar-label"><span>Match corpus</span><span style="color:#818cf8">79%</span></div>
-        <div class="score-bar-track"><div class="score-bar-fill" style="width:79%;background:#818cf8"></div></div>
-      </div>
-      <div class="card-footer">
-        <span class="card-url">anagrafe.iccu.sbn.it · biblioteche</span>
-        <a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=biblioteche+ICCU+ISIL" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
-      </div>
-    </div>
-
-    <div class="card" data-onto="Cultural-ON">
-      <div class="card-top"><span class="card-onto onto-Cultural-ON">Cultural-ON</span><span class="card-tipo">COMUNE/REGIONE · PATRIMONIO</span></div>
-      <div class="card-title">Elenco musei e luoghi della cultura</div>
-      <div class="card-ente">MiC / Regioni italiane</div>
-      <div class="card-note">Obbligatorio per regioni con beni tutelati. Codice MiBAC come identificatore univoco. Include orari apertura e accessibilità.</div>
-      <div class="card-headers">
-        <span class="header-tag key">Codice_MiBAC</span><span class="header-tag key">Denominazione</span><span class="header-tag">Tipologia</span><span class="header-tag">Indirizzo</span><span class="header-tag">Comune</span><span class="header-tag">lat</span><span class="header-tag">lon</span><span class="header-tag">Orari</span>
-      </div>
-      <div class="headers-legend">
-        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
-        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar-label"><span>Match corpus</span><span style="color:#818cf8">73%</span></div>
-        <div class="score-bar-track"><div class="score-bar-fill" style="width:73%;background:#818cf8"></div></div>
-      </div>
-      <div class="card-footer">
-        <span class="card-url">dati.gov.it · musei-luoghi-cultura</span>
-        <a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=musei+luoghi+cultura" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
-      </div>
-    </div>
-
-    <!-- GTFS -->
-    <div class="card" data-onto="GTFS">
-      <div class="card-top"><span class="card-onto onto-GTFS">GTFS</span><span class="card-tipo">COMUNE/REGIONE · TPL</span></div>
-      <div class="card-title">Fermate trasporto pubblico (stops.txt)</div>
-      <div class="card-ente">Regioni e aziende TPL italiane</div>
-      <div class="card-note">File GTFS standard. Stop_id univoco. Stop_lat/lon obbligatori. Da estrarre dallo ZIP GTFS del gestore TPL locale. Formato universale internazionale.</div>
-      <div class="card-headers">
-        <span class="header-tag key">stop_id</span><span class="header-tag key">stop_name</span><span class="header-tag key">stop_lat</span><span class="header-tag key">stop_lon</span><span class="header-tag">stop_code</span><span class="header-tag">location_type</span><span class="header-tag">wheelchair_boarding</span>
-      </div>
-      <div class="headers-legend">
-        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
-        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar-label"><span>Match corpus</span><span style="color:#2dd4bf">76%</span></div>
-        <div class="score-bar-track"><div class="score-bar-fill" style="width:76%;background:#2dd4bf"></div></div>
-      </div>
-      <div class="card-footer">
-        <span class="card-url">dati.gov.it · trasporto-pubblico-GTFS</span>
-        <a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=GTFS+trasporto+pubblico" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
-      </div>
-    </div>
-
-    <!-- CPV -->
-    <div class="card" data-onto="CPV">
-      <div class="card-top"><span class="card-onto onto-CPV">CPV</span><span class="card-tipo">COMUNE · ANAGRAFE</span></div>
-      <div class="card-title">Iscritti anagrafe per anno, sesso e cittadinanza</div>
-      <div class="card-ente">Comuni italiani — Maggioli OpenData</div>
-      <div class="card-note">Dataset minimo per CPV. Anno + Sesso + Cittadinanza + Occorrenze è il template più semplice e più diffuso. Disponibile su centinaia di comuni Maggioli.</div>
-      <div class="card-headers">
-        <span class="header-tag key">Anno_Iscrizione</span><span class="header-tag key">Sesso</span><span class="header-tag key">Cittadinanza</span><span class="header-tag">Occorrenze</span>
-      </div>
-      <div class="headers-legend">
-        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
-        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar-label"><span>Match corpus</span><span style="color:#fb923c">63%</span></div>
-        <div class="score-bar-track"><div class="score-bar-fill" style="width:63%;background:#fb923c"></div></div>
-      </div>
-      <div class="card-footer">
-        <span class="card-url">opendata.maggioli.cloud · elenco-iscritti</span>
-        <a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=iscritti+anagrafe+sesso+cittadinanza" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
-      </div>
-    </div>
-
-    <div class="card" data-onto="CPV">
-      <div class="card-top"><span class="card-onto onto-CPV">CPV</span><span class="card-tipo">COMUNE · DEMOGRAFICO</span></div>
-      <div class="card-title">Residenti per quartiere, età e cittadinanza</div>
-      <div class="card-ente">Comune di Milano</div>
-      <div class="card-note">Versione avanzata con breakdown geografico. Nil/quartiere come dimensione spaziale aggiuntiva. Ottimo per analisi di equità territoriale.</div>
-      <div class="card-headers">
-        <span class="header-tag key">Anno</span><span class="header-tag key">Quartiere</span><span class="header-tag key">Eta</span><span class="header-tag key">Cittadinanza</span><span class="header-tag">Genere</span><span class="header-tag">Residenti</span>
-      </div>
-      <div class="headers-legend">
-        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
-        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar-label"><span>Match corpus</span><span style="color:#fb923c">67%</span></div>
-        <div class="score-bar-track"><div class="score-bar-fill" style="width:67%;background:#fb923c"></div></div>
-      </div>
-      <div class="card-footer">
-        <span class="card-url">dati.comune.milano.it · residenti-cittadinanza</span>
-        <a class="card-link" href="https://dati.comune.milano.it/dataset/ds27-popolazione-residenti-cittadinanza-quartiere-serie-storica" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Apri</a>
-      </div>
-    </div>
-
-    <!-- ADMS -->
-    <div class="card" data-onto="ADMS">
-      <div class="card-top"><span class="card-onto onto-ADMS">ADMS</span><span class="card-tipo">REGIONE/ENTE · CATALOGO</span></div>
-      <div class="card-title">Catalogo dataset open data dell'ente</div>
-      <div class="card-ente">Regioni e PA — dati.gov.it</div>
-      <div class="card-note">Metadatazione del patrimonio informativo. DCAT-AP_IT obbligatorio dal CAD. Titolo, descrizione, licenza, frequenza aggiornamento, formato sono campi minimi.</div>
-      <div class="card-headers">
-        <span class="header-tag key">Titolo</span><span class="header-tag key">Descrizione</span><span class="header-tag key">Licenza</span><span class="header-tag">Formato</span><span class="header-tag">Frequenza_Aggiornamento</span><span class="header-tag">Ente_Titolare</span><span class="header-tag">URL</span>
-      </div>
-      <div class="headers-legend">
-        <div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave — discriminante per l'ontologia</div>
-        <div class="headers-legend-item"><div class="legend-swatch std"></div>Colonna complementare — arricchisce il TTL</div>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar-label"><span>Match corpus</span><span style="color:#94a3b8">82%</span></div>
-        <div class="score-bar-track"><div class="score-bar-fill" style="width:82%;background:#94a3b8"></div></div>
-      </div>
-      <div class="card-footer">
-        <span class="card-url">dati.gov.it · catalogo-opendata</span>
-        <a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=catalogo+open+data" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> Cerca</a>
-      </div>
-    </div>
-
-    <!-- SMAPIT -->
-    <div class="card" data-onto="SMAPIT">
-      <div class="card-top"><span class="card-onto" style="background:#34d399;color:#fff">SMAPIT</span><span class="card-tipo">COMUNE · ISTRUZIONE</span></div>
-      <div class="card-title">Elenco delle scuole per quartiere e gestione</div>
-      <div class="card-ente">Comuni italiani — Ministero dell'Istruzione / MIUR</div>
-      <div class="card-note">Dataset scuole geolocalizzate con nome, tipo, gestione, indirizzo e anno scolastico. Copre nidi, primarie, secondarie. Ideale per qualsiasi comune con un registro scolastico.</div>
-      <div class="card-headers">
-        <span class="header-tag key">CODICESCUOLA</span><span class="header-tag key">DENOMINAZIONESCUOLA</span><span class="header-tag key">DESCRIZIONETIPOLOGIAGRADOISTRUZIONE</span><span class="header-tag">INDIRIZZOSCUOLA</span><span class="header-tag">COMUNE</span><span class="header-tag">REGIONE</span><span class="header-tag">GESTIONE</span><span class="header-tag">ANNO SCOLASTICO</span><span class="header-tag">lat</span><span class="header-tag">lon</span>
-      </div>
-      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
-      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">78%</span></div>
-      <div class="score-bar"><div class="score-bar-fill" style="width:78%"></div></div>
-    
-<div class="card-footer">
-<span class="card-url">dati.gov.it · scuole</span>
-<a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=scuole+geolocalizzate+istruzione" target="_blank" rel="noopener noreferrer">↗ Apri</a>
-</div>
-</div>
-
-    <!-- IoT-AP_IT -->
-    <div class="card" data-onto="IoT-AP_IT">
-      <div class="card-top"><span class="card-onto" style="background:#60a5fa;color:#fff">IoT-AP_IT</span><span class="card-tipo">COMUNE · AMBIENTE · SENSORI</span></div>
-      <div class="card-title">Rilevazioni sensori ambientali (temperatura, meteo, idrometria)</div>
-      <div class="card-ente">Comuni / Province / Regioni — Gestori infrastruttura IoT</div>
-      <div class="card-note">Serie temporali da sensori fissi: temperatura, vento, precipitazioni, livelli idrometrici. Fondamentale per PA che gestiscono reti di monitoraggio ambientale e traffico.</div>
-      <div class="card-headers">
-        <span class="header-tag key">IdSensore</span><span class="header-tag key">Data/Ora</span><span class="header-tag key">Valore</span><span class="header-tag">Nome sensore</span><span class="header-tag">Categoria</span><span class="header-tag">Lat_wgs84</span><span class="header-tag">Lon_wgs84</span><span class="header-tag">Validato</span>
-      </div>
-      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
-      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">80%</span></div>
-      <div class="score-bar"><div class="score-bar-fill" style="width:80%"></div></div>
-    
-<div class="card-footer">
-<span class="card-url">dati.gov.it · sensori-IoT</span>
-<a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=sensori+ambientali+IoT+misurazioni" target="_blank" rel="noopener noreferrer">↗ Apri</a>
-</div>
-</div>
-
-    <!-- MUAPIT -->
-    <div class="card" data-onto="MUAPIT">
-      <div class="card-top"><span class="card-onto" style="background:#e879f9;color:#fff">MUAPIT</span><span class="card-tipo">MINISTERO · CULTURA</span></div>
-      <div class="card-title">Luoghi della cultura — musei, biblioteche e archivi MiC</div>
-      <div class="card-ente">Ministero della Cultura — dati.cultura.gov.it / ArCo SPARQL</div>
-      <div class="card-note">6.721 istituti culturali italiani con nome, disciplina, indirizzo, coordinate e contatti. Estraibile via SPARQL da dati.cultura.gov.it. Ontologia cis:CulturalInstituteOrSite + CLV + SM.</div>
-      <div class="card-headers">
-        <span class="header-tag key">codice</span><span class="header-tag key">nome</span><span class="header-tag key">disciplina</span><span class="header-tag">indirizzo</span><span class="header-tag">comune</span><span class="header-tag">provincia</span><span class="header-tag">regione</span><span class="header-tag">lat</span><span class="header-tag">lon</span><span class="header-tag">sito</span><span class="header-tag">email</span>
-      </div>
-      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
-      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">90%</span></div>
-      <div class="score-bar"><div class="score-bar-fill" style="width:90%"></div></div>
-    
-<div class="card-footer">
-<span class="card-url">dati.cultura.gov.it · sparql</span>
-<a class="card-link" href="https://dati.cultura.gov.it/sparql" target="_blank" rel="noopener noreferrer">↗ Apri</a>
-</div>
-</div>
-
-    <!-- COV-AP_IT -->
-    <div class="card" data-onto="COV-AP_IT">
-      <div class="card-top"><span class="card-onto" style="background:#f59e0b;color:#fff">COV-AP_IT</span><span class="card-tipo">MINISTERO · PERSONALE PA</span></div>
-      <div class="card-title">Dipendenti PA per ente, comparto e genere — NoiPA / BDAP</div>
-      <div class="card-ente">MEF — NoiPA (sparql-noipa.mef.gov.it) / BDAP</div>
-      <div class="card-note">Personale della PA aggregato per contratti, inquadramenti, età, sesso e comparto. Disponibile sia in CSV da BDAP che via SPARQL NoiPA con 1,7M+ entry per anno.</div>
-      <div class="card-headers">
-        <span class="header-tag key">amministrazione</span><span class="header-tag key">comparto</span><span class="header-tag key">inquadramento</span><span class="header-tag key">sesso</span><span class="header-tag">provincia_della_sede</span><span class="header-tag">eta_min</span><span class="header-tag">eta_max</span><span class="header-tag">numero</span>
-      </div>
-      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
-      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">85%</span></div>
-      <div class="score-bar"><div class="score-bar-fill" style="width:85%"></div></div>
-    
-<div class="card-footer">
-<span class="card-url">dati.gov.it · personale-PA</span>
-<a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=personale+organizzazioni+PA+dotazione" target="_blank" rel="noopener noreferrer">↗ Apri</a>
-</div>
-</div>
-
-    <!-- RO-AP_IT -->
-    <div class="card" data-onto="RO-AP_IT">
-      <div class="card-top"><span class="card-onto" style="background:#ef4444;color:#fff">RO-AP_IT</span><span class="card-tipo">COMUNE · REGIONE · GOVERNANCE</span></div>
-      <div class="card-title">Consiglieri e assessori — anagrafica, presenze e atti consiliari</div>
-      <div class="card-ente">Comuni e Regioni italiane</div>
-      <div class="card-note">Eletti: anagrafica consiglieri e assessori, presenze alle sedute, interpellanze, voti per sezione. Coprono tutti i livelli di governo locale. Ontologia RO-AP_IT per ruoli e incarichi istituzionali.</div>
-      <div class="card-headers">
-        <span class="header-tag key">ID_consigliere</span><span class="header-tag key">Cognome</span><span class="header-tag key">Nome</span><span class="header-tag key">Legislatura</span><span class="header-tag">Data_nascita</span><span class="header-tag">Sesso</span><span class="header-tag">Gruppo Consiliare</span><span class="header-tag">NOME_LISTA</span><span class="header-tag">VOTI_VALIDI</span>
-      </div>
-      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
-      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">82%</span></div>
-      <div class="score-bar"><div class="score-bar-fill" style="width:82%"></div></div>
-    
-<div class="card-footer">
-<span class="card-url">dati.gov.it · incarichi-PA</span>
-<a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=incarichi+ruoli+commissioni+PA" target="_blank" rel="noopener noreferrer">↗ Apri</a>
-</div>
-</div>
-
-    <!-- CPVAPIT -->
-    <div class="card" data-onto="CPVAPIT">
-      <div class="card-top"><span class="card-onto" style="background:#8b5cf6;color:#fff">CPVAPIT</span><span class="card-tipo">COMUNE · PERSONE · ELEZIONI</span></div>
-      <div class="card-title">Candidati elezioni comunali — voti per lista e sezione</div>
-      <div class="card-ente">Comuni italiani — Ministero dell'Interno / portali open data locali</div>
-      <div class="card-note">Candidati nominativi con voti validi, lista di appartenenza e sezione elettorale. CPVAPIT per persone fisiche identificate con nome, cognome e ruolo istituzionale nel grafo RDF.</div>
-      <div class="card-headers">
-        <span class="header-tag key">Cognome Candidato</span><span class="header-tag key">Nome Candidato</span><span class="header-tag key">Sigla Lista</span><span class="header-tag key">Voti Validi</span><span class="header-tag">Comune</span><span class="header-tag">Sezione</span><span class="header-tag">NOME_LISTA</span><span class="header-tag">NOME_CONS</span>
-      </div>
-      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
-      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">78%</span></div>
-      <div class="score-bar"><div class="score-bar-fill" style="width:78%"></div></div>
-    
-<div class="card-footer">
-<span class="card-url">dati.gov.it · anagrafe</span>
-<a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=anagrafe+residenti+persone+fisiche" target="_blank" rel="noopener noreferrer">↗ Apri</a>
-</div>
-</div>
-
-  
-    <!-- Cultural-ON / MUAPIT — eventi -->
-    <div class="card" data-onto="Cultural-ON">
-      <div class="card-top"><span class="card-onto" style="background:#818cf8;color:#fff">Cultural-ON + MUAPIT</span><span class="card-tipo">MINISTERO · EVENTI CULTURA</span></div>
-      <div class="card-title">Eventi culturali MiC — mostre, concerti, spettacoli</div>
-      <div class="card-ente">Ministero della Cultura — dati.cultura.gov.it/sparql</div>
-      <div class="card-note">42.892 eventi culturali con tipo (Mostra/Concerto/Spettacolo), luogo, date di inizio/fine, prezzi biglietti e contatti. Grafo SPARQL: mibact/eventi. Ontologie: cis:CulturalEvent + TI + POI + CLV.</div>
-      <div class="card-headers">
-        <span class="header-tag key">codice</span><span class="header-tag key">nome</span><span class="header-tag key">tipo</span><span class="header-tag key">data_inizio</span><span class="header-tag key">data_fine</span><span class="header-tag">comune</span><span class="header-tag">provincia</span><span class="header-tag">lat</span><span class="header-tag">lon</span><span class="header-tag">prezzo_intero</span><span class="header-tag">sito</span>
-      </div>
-      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
-      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">88%</span></div>
-      <div class="score-bar"><div class="score-bar-fill" style="width:88%"></div></div>
-    
-<div class="card-footer">
-<span class="card-url">dati.gov.it · eventi-culturali</span>
-<a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=eventi+culturali+manifestazioni" target="_blank" rel="noopener noreferrer">↗ Apri</a>
-</div>
-</div>
-
-    <!-- IoT-AP_IT — traffico -->
-    <div class="card" data-onto="IoT-AP_IT">
-      <div class="card-top"><span class="card-onto" style="background:#60a5fa;color:#fff">IoT-AP_IT + QB</span><span class="card-tipo">COMUNE · TRAFFICO · SENSORI</span></div>
-      <div class="card-title">Velocità media e transiti orari veicoli — sensori traffico geolocalizzati</div>
-      <div class="card-ente">Comuni / Province — portali open data locali</div>
-      <div class="card-note">Sensori fissi di traffico stradale: velocità media oraria (km/h) e numero di transiti per fascia oraria, con coordinata WKT (POINT lat lon) e timestamp inizio/fine misurazione.</div>
-      <div class="card-headers">
-        <span class="header-tag key">ID</span><span class="header-tag key">AVGSPEED</span><span class="header-tag key">TRANSITI</span><span class="header-tag key">DALLE</span><span class="header-tag key">ALLE</span><span class="header-tag">the_geom</span><span class="header-tag">FID</span>
-      </div>
-      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
-      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">83%</span></div>
-      <div class="score-bar"><div class="score-bar-fill" style="width:83%"></div></div>
-    
-<div class="card-footer">
-<span class="card-url">dati.gov.it · sensori-IoT</span>
-<a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=sensori+ambientali+IoT+misurazioni" target="_blank" rel="noopener noreferrer">↗ Apri</a>
-</div>
-</div>
-
-  
-    <!-- DCATAPIT -->
-    <div class="card" data-onto="DCATAPIT">
-      <div class="card-top"><span class="card-onto" style="background:#0ea5e9;color:#fff">DCATAPIT</span><span class="card-tipo">PA · METADATI CATALOGO</span></div>
-      <div class="card-title">Catalogo DCAT-AP_IT — metadati dataset open data italiani</div>
-      <div class="card-ente">dati.gov.it — tutte le PA italiane</div>
-      <div class="card-note">Il file catalog.ttl di dati.gov.it espone i metadati DCAT-AP_IT di tutti i dataset pubblicati. Struttura: dcatapit:Dataset, dct:publisher, dcat:distribution, foaf:Agent, skos:Concept. Filtro per organizzazione: ?fq=organization:nome-ente</div>
-      <div class="card-headers">
-        <span class="header-tag key">identifier</span><span class="header-tag key">title</span><span class="header-tag key">publisher</span><span class="header-tag key">distribution_url</span><span class="header-tag">description</span><span class="header-tag">accrualPeriodicity</span><span class="header-tag">theme</span><span class="header-tag">issued</span><span class="header-tag">modified</span><span class="header-tag">license</span><span class="header-tag">format</span><span class="header-tag">keyword</span>
-      </div>
-      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
-      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">95%</span></div>
-      <div class="score-bar"><div class="score-bar-fill" style="width:95%"></div></div>
-    
-<div class="card-footer">
-<span class="card-url">dati.gov.it · catalogo</span>
-<a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=catalogo+opendata+metadati+DCAT" target="_blank" rel="noopener noreferrer">↗ Apri</a>
-</div>
-</div>
-
-  
-    <!-- IoT-AP_IT + SMAPIT — edifici scolastici -->
-    <div class="card" data-onto="IoT-AP_IT">
-      <div class="card-top"><span class="card-onto" style="background:#60a5fa;color:#fff">IoT-AP_IT + SMAPIT</span><span class="card-tipo">REGIONE · SCUOLE · SENSORI</span></div>
-      <div class="card-title">Misure ambientali in edifici scolastici — sensori per edificio e sito</div>
-      <div class="card-ente">Regione Piemonte / Città Metropolitana di Torino</div>
-      <div class="card-note">Unica combo SMAPIT + IoT-AP_IT: sensori fissi installati in istituti scolastici (umidità, temperatura) con ID edificio, nome scuola, timestamp orario e unità di misura. Ideale per PA che gestiscono patrimonio edilizio scolastico.</div>
-      <div class="card-headers">
-        <span class="header-tag key">ID_edificio</span><span class="header-tag key">ID_sensore</span><span class="header-tag key">Data_rilevazione</span><span class="header-tag key">Valore_misura</span><span class="header-tag key">Unita_misurazione</span><span class="header-tag">Descrizione_edificio</span><span class="header-tag">Tipo_misura</span><span class="header-tag">Nome_sito</span>
-      </div>
-      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
-      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">80%</span></div>
-      <div class="score-bar"><div class="score-bar-fill" style="width:80%"></div></div>
-    
-<div class="card-footer">
-<span class="card-url">dati.gov.it · sensori-IoT</span>
-<a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=sensori+ambientali+IoT+misurazioni" target="_blank" rel="noopener noreferrer">↗ Apri</a>
-</div>
-</div>
-
-  
-    <!-- GTFS — Trentino -->
-    <div class="card" data-onto="GTFS">
-      <div class="card-top"><span class="card-onto" style="background:#2dd4bf;color:#fff">GTFS</span><span class="card-tipo">REGIONE · TRASPORTO PUBBLICO</span></div>
-      <div class="card-title">Trasporti pubblici del Trentino — fermate, linee, orari e tariffe GTFS</div>
-      <div class="card-ente">Provincia Autonoma di Trento — dati.trentino.it</div>
-      <div class="card-note">Dataset GTFS completo con fermate geolocalizzate, percorsi linee, orari urbani ed extraurbani e tariffe. Formato standard internazionale GTFS: stops.txt, routes.txt, trips.txt, stop_times.txt, fare_attributes.txt.</div>
-      <div class="card-headers">
-        <span class="header-tag key">stop_id</span><span class="header-tag key">stop_name</span><span class="header-tag key">stop_lat</span><span class="header-tag key">stop_lon</span><span class="header-tag key">route_id</span><span class="header-tag key">arrival_time</span><span class="header-tag">route_short_name</span><span class="header-tag">route_type</span><span class="header-tag">trip_id</span><span class="header-tag">fare_id</span><span class="header-tag">price</span>
-      </div>
-      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
-      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">88%</span></div>
-      <div class="score-bar"><div class="score-bar-fill" style="width:88%"></div></div>
-    
-<div class="card-footer">
-<span class="card-url">dati.gov.it · GTFS-TPL</span>
-<a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=trasporto+pubblico+fermate+orari" target="_blank" rel="noopener noreferrer">↗ Apri</a>
-</div>
-</div>
-
-    <!-- ACCO — strutture ricettive Umbria -->
-    <div class="card" data-onto="ACCO">
-      <div class="card-top"><span class="card-onto" style="background:#a78bfa;color:#fff">ACCO</span><span class="card-tipo">REGIONE · TURISMO</span></div>
-      <div class="card-title">Strutture ricettive — Regione Umbria (alberghi, B&B, agriturismi, campeggi)</div>
-      <div class="card-ente">Regione Umbria — dati.regione.umbria.it</div>
-      <div class="card-note">Elenco completo strutture ricettive con tipologia, categoria stelle, indirizzo, coordinate, contatti, totale letti e unità. Comprende alberghi, bed & breakfast, agriturismi, campeggi e residenze d'epoca.</div>
-      <div class="card-headers">
-        <span class="header-tag key">ID</span><span class="header-tag key">DENOMINAZIONE</span><span class="header-tag key">TIPOLOGIA</span><span class="header-tag key">CATEGORIA</span><span class="header-tag">COMUNE</span><span class="header-tag">PROV</span><span class="header-tag">INDIRIZZO</span><span class="header-tag">CAP</span><span class="header-tag">COORDX</span><span class="header-tag">COORDY</span><span class="header-tag">TOTALE_LETTI</span><span class="header-tag">EMAIL</span><span class="header-tag">WEB</span>
-      </div>
-      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
-      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">87%</span></div>
-      <div class="score-bar"><div class="score-bar-fill" style="width:87%"></div></div>
-    
-<div class="card-footer">
-<span class="card-url">dati.gov.it · strutture-ricettive</span>
-<a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=strutture+ricettive+alberghi+turismo" target="_blank" rel="noopener noreferrer">↗ Apri</a>
-</div>
-</div>
-
-    <!-- IoT-AP_IT — qualità aria ARPA -->
-    <div class="card" data-onto="IoT-AP_IT">
-      <div class="card-top"><span class="card-onto" style="background:#60a5fa;color:#fff">IoT-AP_IT + QB</span><span class="card-tipo">REGIONE · AMBIENTE · ARPA</span></div>
-      <div class="card-title">Rete monitoraggio qualità dell'aria — stazioni fisse ARPA (PM10, NO2, O3)</div>
-      <div class="card-ente">Regione Lazio / ARPA — dati.lazio.it</div>
-      <div class="card-note">Stazioni fisse di rilevamento atmosferico: PM10, PM2.5, NO2, ozono, biossido di azoto. Dati annuali con valori misurati, superamenti soglia, tipo stazione (traffico/fondo/industriale) e coordinate geografiche.</div>
-      <div class="card-headers">
-        <span class="header-tag key">stazione</span><span class="header-tag key">inquinante</span><span class="header-tag key">valore</span><span class="header-tag key">data</span><span class="header-tag key">unita_misura</span><span class="header-tag">comune</span><span class="header-tag">provincia</span><span class="header-tag">lat</span><span class="header-tag">lon</span><span class="header-tag">tipo_stazione</span><span class="header-tag">superamenti</span>
-      </div>
-      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
-      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">85%</span></div>
-      <div class="score-bar"><div class="score-bar-fill" style="width:85%"></div></div>
-    
-<div class="card-footer">
-<span class="card-url">dati.gov.it · sensori-IoT</span>
-<a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=sensori+ambientali+IoT+misurazioni" target="_blank" rel="noopener noreferrer">↗ Apri</a>
-</div>
-</div>
-
-    <!-- SMAPIT — edifici scolastici Firenze -->
-    <div class="card" data-onto="SMAPIT">
-      <div class="card-top"><span class="card-onto" style="background:#34d399;color:#fff">SMAPIT</span><span class="card-tipo">REGIONE · EDILIZIA SCOLASTICA</span></div>
-      <div class="card-title">Anagrafe strutture edilizie scuole secondarie — Città Metropolitana di Firenze</div>
-      <div class="card-ente">Regione Toscana / Città Metropolitana di Firenze</div>
-      <div class="card-note">Censimento edifici scolastici con codice scuola, denominazione, indirizzo, anno costruzione, superficie, piani, tipo struttura e proprietà. Dataset complementare all'anagrafe MIUR per la gestione del patrimonio edilizio scolastico.</div>
-      <div class="card-headers">
-        <span class="header-tag key">codice_scuola</span><span class="header-tag key">denominazione</span><span class="header-tag key">tipo_struttura</span><span class="header-tag">indirizzo</span><span class="header-tag">comune</span><span class="header-tag">provincia</span><span class="header-tag">lat</span><span class="header-tag">lon</span><span class="header-tag">anno_costruzione</span><span class="header-tag">superficie_mq</span><span class="header-tag">proprietà</span>
-      </div>
-      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
-      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">80%</span></div>
-      <div class="score-bar"><div class="score-bar-fill" style="width:80%"></div></div>
-    
-<div class="card-footer">
-<span class="card-url">dati.gov.it · scuole</span>
-<a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=scuole+geolocalizzate+istruzione" target="_blank" rel="noopener noreferrer">↗ Apri</a>
-</div>
-</div>
-
-  
-    <!-- PublicOrganization — IPA -->
-    <div class="card" data-onto="PublicOrganization">
-      <div class="card-top"><span class="card-onto" style="background:#22d3ee;color:#fff">PublicOrganization</span><span class="card-tipo">AGID · ELENCO ENTI PA</span></div>
-      <div class="card-title">IPA — Indice delle Pubbliche Amministrazioni (23.677 enti)</div>
-      <div class="card-ente">AgID — Agenzia per l'Italia Digitale (indicepa.gov.it)</div>
-      <div class="card-note">Il registro ufficiale di tutte le PA italiane: Comuni, Regioni, Ministeri, ASL, Università, enti strumentali. Include codice IPA, tipologia ISTAT, CF, indirizzi, email PEC, siti istituzionali e responsabili. Ontologia org:Organization + foaf:Agent.</div>
-      <div class="card-headers">
-        <span class="header-tag key">cod_amm</span><span class="header-tag key">des_amm</span><span class="header-tag key">tipologia_istat</span><span class="header-tag key">cf</span><span class="header-tag">Comune</span><span class="header-tag">Provincia</span><span class="header-tag">Regione</span><span class="header-tag">Indirizzo</span><span class="header-tag">Cap</span><span class="header-tag">sito_istituzionale</span><span class="header-tag">mail1</span><span class="header-tag">acronimo</span>
-      </div>
-      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
-      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">92%</span></div>
-      <div class="score-bar"><div class="score-bar-fill" style="width:92%"></div></div>
-    
-<div class="card-footer">
-<span class="card-url">dati.gov.it · enti-PA</span>
-<a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=enti+pubblici+IPA+registro" target="_blank" rel="noopener noreferrer">↗ Apri</a>
-</div>
-</div>
-
-    <!-- ADMS + CLV — comuni ISTAT -->
-    <div class="card" data-onto="ADMS">
-      <div class="card-top"><span class="card-onto" style="background:#94a3b8;color:#fff">ADMS + CLV</span><span class="card-tipo">ISTAT · VOCABOLARIO CONTROLLATO</span></div>
-      <div class="card-title">Comuni italiani — codici ISTAT, codice catastale, NUTS e province</div>
-      <div class="card-ente">ISTAT — Istituto Nazionale di Statistica</div>
-      <div class="card-note">Vocabolario controllato ufficiale di tutti i Comuni italiani con codici ISTAT alfanumerici e numerici, codice catastale, sigla automobilistica, codici NUTS 2021/2024, denominazione in italiano e in altra lingua. Fondamentale per allineamento URIs.</div>
-      <div class="card-headers">
-        <span class="header-tag key">Codice Comune formato alfanumerico</span><span class="header-tag key">Denominazione in italiano</span><span class="header-tag key">Codice Catastale del Comune</span><span class="header-tag key">Codice NUTS3 2021</span><span class="header-tag">Sigla automobilistica</span><span class="header-tag">Denominazione Regione</span><span class="header-tag">Codice NUTS2 2021</span><span class="header-tag">Codice Regione</span>
-      </div>
-      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
-      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">88%</span></div>
-      <div class="score-bar"><div class="score-bar-fill" style="width:88%"></div></div>
-    
-<div class="card-footer">
-<span class="card-url">dati.gov.it · ADMS</span>
-<a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=asset+catalogo+software+soluzione" target="_blank" rel="noopener noreferrer">↗ Apri</a>
-</div>
-</div>
-
-    <!-- COV-AP_IT + CPSV — PNRR PA Digitale 2026 -->
-    <div class="card" data-onto="COV-AP_IT">
-      <div class="card-top"><span class="card-onto" style="background:#f59e0b;color:#fff">COV-AP_IT + CPSV</span><span class="card-tipo">PNRR · TRASFORMAZIONE DIGITALE</span></div>
-      <div class="card-title">PA Digitale 2026 — candidature finanziate PNRR (3.055 enti)</div>
-      <div class="card-ente">Dipartimento per la Trasformazione Digitale — github.com/teamdigitale</div>
-      <div class="card-note">Enti finanziati dal PNRR per digitalizzazione PA: codice IPA, tipologia ente, importo finanziamento, avviso, CUP, decreto, stato candidatura. Dataset aggiornato in tempo reale su GitHub. Copre COV-AP_IT (ente) + CPSV (servizio/finanziamento).</div>
-      <div class="card-headers">
-        <span class="header-tag key">codice_ipa</span><span class="header-tag key">ente</span><span class="header-tag key">importo_finanziamento</span><span class="header-tag key">codice_cup</span><span class="header-tag key">stato_candidatura</span><span class="header-tag">tipologia_ente</span><span class="header-tag">comune</span><span class="header-tag">provincia</span><span class="header-tag">regione</span><span class="header-tag">avviso</span><span class="header-tag">decreto_finanziamento</span>
-      </div>
-      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
-      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">86%</span></div>
-      <div class="score-bar"><div class="score-bar-fill" style="width:86%"></div></div>
-    
-<div class="card-footer">
-<span class="card-url">dati.gov.it · personale-PA</span>
-<a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=personale+organizzazioni+PA+dotazione" target="_blank" rel="noopener noreferrer">↗ Apri</a>
-</div>
-</div>
-
-  
-    <!-- SMAPIT — anagrafe scuole codice istituto -->
-    <div class="card" data-onto="SMAPIT">
-      <div class="card-top"><span class="card-onto" style="background:#34d399;color:#fff">SMAPIT</span><span class="card-tipo">PROVINCIA · ANAGRAFE SCOLASTICA</span></div>
-      <div class="card-title">Anagrafe scuole — codice istituto, tipologia, autonomia e organico</div>
-      <div class="card-ente">Provincia di Monza Brianza / MIUR</div>
-      <div class="card-note">Anagrafe completa degli istituti scolastici con codice meccanografico ufficiale, tipologia (primaria, IC, liceo, ITC...), indirizzo, classificazione autonomia e dotazione organico. Il codice scuola è la chiave per allineare con le banche dati MIUR e NoiPA.</div>
-      <div class="card-headers">
-        <span class="header-tag key">Codice</span><span class="header-tag key">Tipologia</span><span class="header-tag key">Denominazione</span><span class="header-tag">Indirizzo</span><span class="header-tag">Comune</span><span class="header-tag">Provincia</span><span class="header-tag">CAP</span><span class="header-tag">Classificazione Autonomia</span><span class="header-tag">Organico Autonomia</span>
-      </div>
-      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
-      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">85%</span></div>
-      <div class="score-bar"><div class="score-bar-fill" style="width:85%"></div></div>
-    
-<div class="card-footer">
-<span class="card-url">dati.gov.it · scuole</span>
-<a class="card-link" href="https://www.dati.gov.it/view-dataset?Cerca=scuole+geolocalizzate+istruzione" target="_blank" rel="noopener noreferrer">↗ Apri</a>
-</div>
-</div>
-
-    <!-- MUAPIT — Lombardia opere d'arte ICCD -->
-    <div class="card" data-onto="MUAPIT">
-      <div class="card-top"><span class="card-onto" style="background:#e879f9;color:#fff">MUAPIT + Cultural-ON</span><span class="card-tipo">REGIONE · CATALOGO ARTE</span></div>
-      <div class="card-title">Opere d'arte catalogate ICCD — Lombardia, Bolzano e schede nazionali</div>
-      <div class="card-ente">Ministero della Cultura / ICCD — dati.cultura.gov.it/sparql</div>
-      <div class="card-note">Tre grafi SPARQL con beni culturali mobili: Lombardia (98.943 schede OA), Bolzano (162.950 oggetti bilingue), ICCD schede nazionali (758.858 schede). Proprietà ArCo: autore, datazione, localizzazione, tecnica, materiale, numero inventario.</div>
-      <div class="card-headers">
-        <span class="header-tag key">id_catalogo</span><span class="header-tag key">tipo_bene</span><span class="header-tag key">label</span><span class="header-tag">autore</span><span class="header-tag">datazione</span><span class="header-tag">comune</span><span class="header-tag">provincia</span><span class="header-tag">regione</span><span class="header-tag">tecnica</span><span class="header-tag">numero_inventario</span>
-      </div>
-      <div class="headers-legend"><div class="headers-legend-item"><div class="legend-swatch key"></div>Colonna chiave</div><div class="headers-legend-item"><div class="legend-swatch"></div>Colonna utile</div></div>
-      <div class="score-bar-label"><span>Match corpus</span><span style="color:#10b981">85%</span></div>
-      <div class="score-bar"><div class="score-bar-fill" style="width:85%"></div></div>
-    
-<div class="card-footer">
-<span class="card-url">dati.cultura.gov.it · sparql</span>
-<a class="card-link" href="https://dati.cultura.gov.it/sparql" target="_blank" rel="noopener noreferrer">↗ Apri</a>
-</div>
-</div>
-
-    </div><!-- /cards-grid -->
-
-  <!-- Footer -->
-  <div class="footer">
-    <div class="footer-left">
-      piersoft.github.io/CSV-to-RDF · Corpus v11 · 274 dataset · 18 ontologie
-    </div>
-    <div class="footer-right">
-      Generato: 2026-03-20 · dati-semantic-assets / DCAT-AP_IT / schema.gov.it
-    </div>
   </div>
 
-</div><!-- /container -->
+  <div class="section-title">📍 Ontologie geografiche e luoghi</div>
+  <div class="grid">
 
-<script>
-// Filter logic
-const btns = document.querySelectorAll('.filter-btn');
-const cards = document.querySelectorAll('.card');
+    <div class="card">
+      <div class="card-head"><div class="badge prio-base">📍</div>
+        <div><h3>CLV — Core Location Vocabulary</h3><div class="ns">clv: &lt;https://w3id.org/italia/onto/CLV/&gt;</div></div>
+      </div>
+      <p>Indirizzi, strade, toponimi, numeri civici. Ontologia base per qualunque dataset con colonne geografiche testuali.</p>
+      <div class="triggers"><span class="trig">indirizzo</span><span class="trig">comune</span><span class="trig">via</span><span class="trig">cap</span><span class="trig">provincia</span></div>
+    </div>
 
-btns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    btns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
-    btn.classList.add('active'); btn.setAttribute('aria-pressed', 'true');
-    const onto = btn.dataset.onto;
-    cards.forEach(card => {
-      if (onto === 'ALL' || card.dataset.onto === onto) {
-        card.classList.remove('hidden');
-      } else {
-        card.classList.add('hidden');
-      }
-    });
-  });
-});
+    <div class="card">
+      <div class="card-head"><div class="badge prio-alta">📌</div>
+        <div><h3>POI — Point Of Interest</h3><div class="ns">poi: &lt;https://w3id.org/italia/onto/POI/&gt;</div></div>
+      </div>
+      <p>Punti di interesse geolocalizzati (lat/lon): DAE, defibrillatori, fontanelle, colonnine, servizi. Rilevato automaticamente quando ci sono coordinate.</p>
+      <div class="triggers"><span class="trig">lat</span><span class="trig">lon</span><span class="trig">tipo_poi</span><span class="trig">nome_poi</span><span class="trig">accessibile_h24</span></div>
+    </div>
 
-// Animate score bars on load
-window.addEventListener('load', () => {
-  const fills = document.querySelectorAll('.score-bar-fill');
-  fills.forEach(f => {
-    const w = f.style.width;
-    f.style.width = '0';
-    setTimeout(() => { f.style.width = w; }, 200);
-  });
-});
-</script>
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">🚌</div>
+        <div><h3>GTFS — Trasporto pubblico</h3><div class="ns">gtfs: &lt;http://vocab.gtfs.org/terms#&gt;</div></div>
+      </div>
+      <p>Fermate, linee e orari del trasporto pubblico locale secondo lo standard GTFS (General Transit Feed Specification).</p>
+      <div class="triggers"><span class="trig">stop_id</span><span class="trig">stop_name</span><span class="trig">route_id</span><span class="trig">zone_id</span><span class="trig">location_type</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">🚗</div>
+        <div><h3>PARK — Parcheggi</h3><div class="ns">park: &lt;https://w3id.org/italia/onto/PARK/&gt;</div></div>
+      </div>
+      <p>Parcheggi pubblici e privati: numero stalli, posti disabili, tariffa oraria, tipo (coperto/scoperto), accessibilità h24.</p>
+      <div class="triggers"><span class="trig">stalli</span><span class="trig">posti_auto</span><span class="trig">tariffa_oraria</span><span class="trig">tipo_parcheggio</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">🗺</div>
+        <div><h3>Route — Percorsi/Itinerari</h3><div class="ns">route: &lt;https://w3id.org/italia/onto/Route/&gt;</div></div>
+      </div>
+      <p>Itinerari, sentieri, ciclovie, strade: lunghezza, difficoltà, dislivello, durata stimata, numero tappe, coordinate di partenza/arrivo.</p>
+      <div class="triggers"><span class="trig">lunghezza_km</span><span class="trig">difficolta</span><span class="trig">tipo_percorso</span><span class="trig">lat_start</span><span class="trig">numero_tappe</span></div>
+    </div>
+
+  </div>
+
+  <div class="section-title">🏢 Ontologie per organizzazioni e persone</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-alta">🏛</div>
+        <div><h3>COV — Core Organization Vocabulary</h3><div class="ns">cov: &lt;https://w3id.org/italia/onto/COV/&gt;</div></div>
+      </div>
+      <p>Enti pubblici, organizzazioni, codice IPA, partita IVA, forma giuridica, settore ATECO, acronimo, sede legale.</p>
+      <div class="triggers"><span class="trig">codice_ipa</span><span class="trig">cf_ente</span><span class="trig">partita_iva</span><span class="trig">ragione_sociale</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-alta">👤</div>
+        <div><h3>CPV — Core Person Vocabulary</h3><div class="ns">cpv: &lt;https://w3id.org/italia/onto/CPV/&gt;</div></div>
+      </div>
+      <p>Persone fisiche: nome, cognome, codice fiscale, data di nascita, sesso, cittadinanza, grado di istruzione.</p>
+      <div class="triggers"><span class="trig">cognome</span><span class="trig">codice_fiscale</span><span class="trig">data_nascita</span><span class="trig">sesso</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">👔</div>
+        <div><h3>RO — Role Ontology</h3><div class="ns">ro: &lt;https://w3id.org/italia/onto/RO/&gt;</div></div>
+      </div>
+      <p>Ruoli istituzionali: sindaci, consiglieri, amministratori. Collega persona, ente e periodo di mandato.</p>
+      <div class="triggers"><span class="trig">ruolo</span><span class="trig">tipo_nomina</span><span class="trig">legislatura</span><span class="trig">voti_validi</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">👷</div>
+        <div><h3>RPO — Role in Public Organization</h3><div class="ns">rpo: &lt;https://w3id.org/italia/onto/RPO/&gt;</div></div>
+      </div>
+      <p>Personale PA: qualifica, tipo contratto, CCNL, livello contrattuale, ore settimanali.</p>
+      <div class="triggers"><span class="trig">qualifica_dipendente</span><span class="trig">contratto_lavoro</span><span class="trig">ccnl</span><span class="trig">ore_settimanali</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">🏫</div>
+        <div><h3>SMAPIT — Scuole</h3><div class="ns">smapit: &lt;https://w3id.org/italia/onto/SMAPIT/&gt;</div></div>
+      </div>
+      <p>Istituti scolastici italiani: codice scuola MIUR, tipo istituto, ciclo, indirizzo, organico autonomia.</p>
+      <div class="triggers"><span class="trig">codice_scuola</span><span class="trig">tipo_scuola</span><span class="trig">denominazione_istituto</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">🎓</div>
+        <div><h3>Learning — Corsi e formazione</h3><div class="ns">learn: &lt;https://w3id.org/italia/onto/Learning/&gt;</div></div>
+      </div>
+      <p>Corsi di formazione PA: titolo, ente erogatore, durata, ore, ECTS, titolo rilasciato, modalità (presenza/webinar/misto).</p>
+      <div class="triggers"><span class="trig">titolo_corso</span><span class="trig">ore_formazione</span><span class="trig">crediti</span><span class="trig">titolo_rilasciato</span></div>
+    </div>
+
+  </div>
+
+  <div class="section-title">🕐 Ontologie temporali e servizi</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-alta">⏱</div>
+        <div><h3>TI — Time Indexed</h3><div class="ns">ti: &lt;https://w3id.org/italia/onto/TI/&gt;</div></div>
+      </div>
+      <p>Entità con dimensione temporale: eventi con data inizio/fine, periodi, istanti. Usato in combinazione con altre ontologie.</p>
+      <div class="triggers"><span class="trig">data_inizio</span><span class="trig">data_fine</span><span class="trig">data_evento</span><span class="trig">inizio</span><span class="trig">termine</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-alta">🏛</div>
+        <div><h3>CPSV / CPSV-AP — Servizi pubblici</h3><div class="ns">cpsv: &lt;http://purl.org/vocab/cpsv#&gt;</div></div>
+      </div>
+      <p>Servizi della PA al cittadino: SUAP, anagrafe, certificati. Nome, descrizione, canale erogazione (sportello/online), requisiti accesso.</p>
+      <div class="triggers"><span class="trig">nome_servizio</span><span class="trig">ente_erogatore</span><span class="trig">canale_erogazione</span><span class="trig">requisiti_accesso</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">📜</div>
+        <div><h3>Transparency — Obblighi trasparenza</h3><div class="ns">tr: &lt;https://w3id.org/italia/onto/Transparency/&gt;</div></div>
+      </div>
+      <p>Obblighi di pubblicazione D.Lgs 33/2013: categoria trasparenza, norma riferimento, dato obbligatorio, anno pubblicazione.</p>
+      <div class="triggers"><span class="trig">obbligo_trasparenza</span><span class="trig">categoria_trasparenza</span><span class="trig">dato_obbligatorio</span><span class="trig">norma_riferimento</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">💶</div>
+        <div><h3>PublicContract — Appalti pubblici</h3><div class="ns">pc: &lt;https://w3id.org/italia/onto/PublicContract/&gt;</div></div>
+      </div>
+      <p>Contratti pubblici: CIG, CUP, oggetto, importo aggiudicazione, stazione appaltante, aggiudicatario, CPV, modalità di scelta.</p>
+      <div class="triggers"><span class="trig">cig</span><span class="trig">importo_aggiudicazione</span><span class="trig">stazione_appaltante</span><span class="trig">aggiudicatario</span></div>
+    </div>
+
+  </div>
+
+  <div class="section-title">📊 Ontologie per dati e misure</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-alta">📡</div>
+        <div><h3>IoT — Internet of Things</h3><div class="ns">iot: &lt;https://w3id.org/italia/onto/IoT/&gt;</div></div>
+      </div>
+      <p>Sensori, rilevazioni ambientali (qualità aria, temperatura, traffico): ID sensore, tipo, proprietà osservata, valore, unità di misura.</p>
+      <div class="triggers"><span class="trig">id_sensore</span><span class="trig">tipo_sensore</span><span class="trig">proprieta_osservata</span><span class="trig">valore</span><span class="trig">unita_misura</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-alta">📈</div>
+        <div><h3>QB — RDF Data Cube</h3><div class="ns">qb: &lt;http://purl.org/linked-data/cube#&gt;</div></div>
+      </div>
+      <p>Dataset statistici multidimensionali: popolazioni, residenti, indicatori economici. Segue lo standard W3C RDF Data Cube.</p>
+      <div class="triggers"><span class="trig">anno</span><span class="trig">valore_indicatore</span><span class="trig">numero_residenti</span><span class="trig">fascia_eta</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">🎯</div>
+        <div><h3>Indicator — Indicatori/KPI</h3><div class="ns">indicator: &lt;https://w3id.org/italia/onto/Indicator/&gt;</div></div>
+      </div>
+      <p>KPI e indicatori di performance PA: tipo, valore rilevato, baseline, target, fonte, periodo di riferimento, unità di misura.</p>
+      <div class="triggers"><span class="trig">tipo_indicatore</span><span class="trig">valore_indicatore</span><span class="trig">baseline</span><span class="trig">target</span><span class="trig">fonte_indicatore</span></div>
+    </div>
+
+  </div>
+
+  <div class="section-title">🎨 Ontologie per cultura e turismo</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-alta">🏺</div>
+        <div><h3>Cultural-ON — Istituti culturali</h3><div class="ns">cis: &lt;https://w3id.org/italia/onto/Cultural-ON/&gt;</div></div>
+      </div>
+      <p>Musei, biblioteche, archivi, istituti culturali MiC: tipo istituto, disciplina, tipo bene culturale, orari, accessibilità.</p>
+      <div class="triggers"><span class="trig">tipo_istituto</span><span class="trig">tipo_bene_culturale</span><span class="trig">disciplina</span><span class="trig">data_apertura</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">🛏</div>
+        <div><h3>ACCO — Strutture ricettive</h3><div class="ns">acco: &lt;https://w3id.org/italia/onto/ACCO/&gt;</div></div>
+      </div>
+      <p>Hotel, B&B, campeggi, agriturismi: numero camere, posti letto, stelle, codice struttura, classificazione.</p>
+      <div class="triggers"><span class="trig">posti_letto</span><span class="trig">stelle</span><span class="trig">numero_camere</span><span class="trig">tipo_struttura</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">🎟</div>
+        <div><h3>POT — Prezzi e tariffe</h3><div class="ns">pot: &lt;https://w3id.org/italia/onto/POT/&gt;</div></div>
+      </div>
+      <p>Listini prezzi, tariffe di accesso: prezzo intero, ridotto, gratuito, età ridotto, valuta. Teatri, musei, trasporti.</p>
+      <div class="triggers"><span class="trig">prezzo_intero</span><span class="trig">prezzo_ridotto</span><span class="trig">biglietto</span><span class="trig">eta_ridotto</span></div>
+    </div>
+
+  </div>
+
+  <div class="section-title">🔧 Ontologie tecnico/amministrative</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-base">🧱</div>
+        <div><h3>L0 — Level-0 / Top Ontology</h3><div class="ns">l0: &lt;https://w3id.org/italia/onto/l0/&gt;</div></div>
+      </div>
+      <p>Ontologia di base sempre presente: classi radice come <code>l0:Object</code>, <code>l0:EventOrSituation</code>. Aggiunta automaticamente a ogni output TTL.</p>
+      <div class="triggers"><span class="trig">(sempre aggiunta)</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-base">📡</div>
+        <div><h3>SM — Social Media / Contatti</h3><div class="ns">sm: &lt;https://w3id.org/italia/onto/SM/&gt;</div></div>
+      </div>
+      <p>Informazioni di contatto e canali digitali: email, sito web, telefono, fax. Sempre incluso quando presenti colonne contatto.</p>
+      <div class="triggers"><span class="trig">email</span><span class="trig">sitoweb</span><span class="trig">telefono</span><span class="trig">fax</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-base">🏷</div>
+        <div><h3>ADMS — Asset Description Metadata Schema</h3><div class="ns">adms: &lt;http://www.w3.org/ns/adms#&gt;</div></div>
+      </div>
+      <p>Asset semantici PA: ontologie, vocabolari, schemi. Versione, stato, licenza, formato, URL distribuzione, editore.</p>
+      <div class="triggers"><span class="trig">versione</span><span class="trig">stato</span><span class="trig">licenza</span><span class="trig">tipo_asset</span><span class="trig">data_rilascio</span></div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:2.5rem;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem 1.6rem;">
+    <h2 style="font-size:1.1rem;margin-bottom:.8rem;">⚙️ Come funziona il rilevamento automatico</h2>
+    <p style="font-size:.9rem;color:#374151;">Il motore deterministico analizza gli <strong>header CSV normalizzati</strong> e un campione di valori (prime 5 righe). Ogni ontologia ha trigger specifici — colonne esatte o combinazioni logiche. L'ordine di precedenza:</p>
+    <ol style="font-size:.85rem;color:#374151;margin-top:.6rem;padding-left:1.4rem;line-height:2;">
+      <li>Trigger forti (colonne dominanti del dominio)</li>
+      <li>Schema OSM (<code>osm_id</code>+<code>osm_type</code>+coordinate)</li>
+      <li>Trigger deboli + guardie anti-falso-positivo</li>
+      <li>Cleanup post-rilevamento (rimozione ontologie spurie)</li>
+      <li>Aggiunta automatica ontologie dipendenti (es. <code>PublicContract→COV</code>, <code>Indicator→QB</code>)</li>
+    </ol>
+    <p style="margin-top:.8rem;font-size:.85rem;">📖 <a href="https://github.com/piersoft/CSV-to-RDF">Sorgente su GitHub</a> · 🔗 <a href="https://piersoft.github.io/CSV-to-RDF/">Tool online</a> · 📋 <a href="https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html">Questa pagina</a></p>
+  </div>
+</div>
+<footer>CSV→RDF PA Italiana · piersoft · v2026.03.23.186 · 29 ontologie · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
 </body>
 </html>

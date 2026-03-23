@@ -1,4 +1,5 @@
 const window = { _corpusIndex: null };
+const _workerState = { _corpusIndex: null };
 
 function detectOntologiesDeterministic(headers, rows) {
   var norm = headers.map(function(h){
@@ -71,6 +72,14 @@ function detectOntologiesDeterministic(headers, rows) {
       result.add('POI');
   }
 
+  // OSM schema puro: rimuovi ontologie sbagliate triggerate da valori nel campo name
+  if(_hasOSMschema) {
+    result.delete('SMAPIT');
+    result.delete('Cultural-ON');
+    result.delete('ACCO');
+    if(result.has('TI') && !has(['data_inizio','data_fine','data_evento','quando','inizio','termine','tipo_evento','nome_evento','titolo_evento','manifestazione'])) result.delete('TI');
+  }
+
   // COV — organizzazioni: FIX1 esclude codice_ipa quando accompagnato da colonne di altri domini
   var _hasCOVStrong = has(['codice_ipa','codice_ente','partita_iva','codice_fiscale_ente','ragione_sociale']) &&
                       !has(['qualifica_dipendente','obbligo_trasparenza','titolo_corso','ore_formazione',
@@ -83,6 +92,18 @@ function detectOntologiesDeterministic(headers, rows) {
             'incidenti','sinistri','importo_liquidato','spesa_corrente']) &&
       !result.has('QB')))) {
     result.add('COV');
+  }
+
+  // CLV toponomastica pura: stradari/civici senza coordinate né trigger forti → rimuovi spurii
+  // (deve stare DOPO il blocco COV perché 'Comune' come header triggera COV)
+  if(result.has('CLV') && !_hasPOIcoord &&
+     !has(['codice_ipa','codice_ente','partita_iva','tipo_poi','nome_poi','dae',
+           'data_inizio','data_fine','data_evento','importo','valore','obs_value',
+           'qualifica','contratto','ccnl','cig','cup','obbligo_trasparenza'])) {
+    if(result.has('COV') && !has(['codice_ipa','cf_ente','ragione_sociale','tipo_ente'])) result.delete('COV');
+    if(result.has('TI')  && !has(['data_inizio','data_fine','data_evento','quando','inizio','termine'])) result.delete('TI');
+    if(result.has('POI') && !has(['tipo_poi','nome_poi','dae','lat','lon'])) result.delete('POI');
+    if(result.has('CPV') && !has(['cognome','codice_fiscale','nome_completo','data_nascita'])) result.delete('CPV');
   }
 
   // QB statistico: anno + aggregati numerici senza anagrafica = dati demografici
@@ -160,7 +181,7 @@ function detectOntologiesDeterministic(headers, rows) {
     result.add('ADMS');
 
   // Arricchisci con il corpus se disponibile
-  if(window._corpusIndex) {
+  if(_workerState._corpusIndex) {
     var _corpusOntos = detectFromCorpus(headers);
     _corpusOntos.forEach(function(o){if((o==='CulturalON'||o==='Cultural-ON')&&result.has('SMAPIT'))return;if(o==='QB'&&(result.has('ACCO')||result.has('POI')||result.has('SMAPIT')))return;result.add(o);});
   }
@@ -176,50 +197,49 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['cig','cup','importo_aggiudicazione','stazione_appaltante','oggetto_contratto','aggiudicatario','cpv_codice'])) result.add('PublicContract');
   if(has(['tipo_percorso','lunghezza_km','difficolta','dislivello','numero_tappe','sentiero','percorso_ciclabile','itinerario','tracciato','lat_start','lon_start','durata_stimata','nome_breve_percorso','nome_esteso_percorso'])) result.add('Route');
   if(has(['qualifica_dipendente','contratto_lavoro','ccnl','livello_contrattuale','ore_settimanali'])) result.add('RPO');
-  // FIX7: MU solo con colonne scientifiche specifiche, non 'unita_misura' generico
-  if(has(['grandezza_fisica','conversione_si','unita_si','fattore_conversione'])&&!result.has('IoT')) result.add('MU');
-  if(has(['crediti','ects','ore_formazione','titolo_rilasciato','durata_corso']) ||
-     (has(['titolo_corso']) && has(['durata_corso','ore_formazione','crediti'])))
-    result.add('Learning'); // M5
-  if(has(['evento_civico','tipo_evento_civico'])&&result.has('TI')) result.add('CPEV');
-  if(has(['obbligo_trasparenza','categoria_trasparenza','dato_obbligatorio','d_lgs_33'])) result.add('Transparency');
-  if(has(['tipo_indicatore','baseline','target','fonte_indicatore'])&&!result.has('QB')) result.add('Indicator');
-  result.add('L0');
-  // Cleanup: ontologie più specifiche escludono quelle generiche sovrapposte
-  if(result.has('Route')){
-    result.delete('GTFS');   // Route più specifico di GTFS per percorsi non TPL
-    result.delete('SMAPIT'); // Route non è una scuola
-    // Route non implica POI a meno che non ci siano colonne POI esplicite
-    if(!has(['nome_poi','tipo_poi','categoria_poi','id_poi'])) result.delete('POI');
-  }
-  if(result.has('QB') && result.has('POI') && !has(['tipo_poi','dae','defibrillatore','nome_poi','idelem','id_elem'])) result.delete('POI');
-  if(result.has('QB') && result.has('COV') && !_hasCOVStrong) result.delete('COV');
-  if(result.has('QB') && result.has('TI') && !_tiEvent && !_tiStrong) result.delete('TI'); // R6
-  if(result.has('POT') && result.has('CPV') && !has(['cognome','codice_fiscale','data_nascita']))
-    result.delete('CPV'); // POT: tariffe non implicano persone fisiche // P2: QB+ente ≠ COV strutturale
-  if(result.has('PublicContract')){
-    result.delete('CPSV-AP');
-    result.add('CPSV'); // compatibilità corpus
-    result.add('COV'); // B4: stazione appaltante è sempre COV
-  }
-  if(result.has('RPO')){result.delete('RO');result.delete('SMAPIT');}  // RPO (risorse umane) è diverso da scuole
-  if(result.has('RO') && result.has('TI') && !_tiEvent) result.delete('TI'); // B2
-  if(result.has('Indicator'))   result.add('QB');   // Indicator estende QB per le osservazioni
-  if(result.has('Transparency')&&result.has('CPSV')) result.delete('CPSV');
-  if(result.has('Learning')&&result.has('TI')&&!has(['data_inizio','data_fine','orario'])) result.delete('TI');
-  if(result.has('PARK')&&result.has('SMAPIT')) result.delete('SMAPIT'); // parcheggio non è scuola
-  if(result.has('POT')&&result.has('SMAPIT')) result.delete('SMAPIT');  // prezzi non è scuola
+  if(has(['titolo_corso','ore_formazione','crediti','ects','titolo_rilasciato','durata_corso'])) result.add('Learning');
+  if(has(['obbligo_trasparenza','categoria_trasparenza','dato_obbligatorio','norma_riferimento'])) result.add('Transparency');
+  if(has(['tipo_indicatore','valore_indicatore','baseline','target','fonte_indicatore'])) result.add('Indicator');
 
-  // CLV toponomastica pura: stradari/civici senza coordinate né trigger forti di altri domini
-  // (es. codvia/specie/descrizione/cap/comune) → rimuovi POI, COV, TI spurii
-  if(result.has('CLV') && !_hasPOIcoord &&
-     !has(['codice_ipa','codice_ente','partita_iva','ragione_sociale',
-           'tipo_poi','nome_poi','dae','defibrillatore',
-           'data_inizio','data_fine','data_evento','quando',
-           'tipo_evento','nome_evento','manifestazione'])) {
-    if(result.has('POI') && !has(['tipo_poi','nome_poi','dae','defibrillatore','idelem'])) result.delete('POI');
-    if(result.has('COV') && !_hasCOVStrong) result.delete('COV');
-    if(result.has('TI') && !_tiStrong && !_tiEvent) result.delete('TI');
+  // ── cleanup post-trigger ─────────────────────────────────────────────────
+  if(result.has('RO')&&result.has('TI')&&!has(['data_evento','titolo_evento','nome_evento','manifestazione','tipo_evento_pubblico'])) result.delete('TI'); // RO: data mandato ≠ evento
+  if(result.has('PublicContract')&&!result.has('COV')) result.add('COV'); // appalti → sempre ente PA
+  if(result.has('Route')&&result.has('GTFS')) result.delete('GTFS'); // percorso ≠ TPL
+  if(result.has('Indicator')&&!result.has('QB')) result.add('QB'); // indicatori → sempre dati statistici
+  if(result.has('POT')&&result.has('CPV')&&!has(['cognome','codice_fiscale','nome_completo','data_nascita'])) result.delete('CPV'); // tariffe ≠ persone fisiche
+
+  // ── MU — unità di misura
+  if(has(['grandezza','tipo_misura','sistema_misura'])||has(['simbolo_misura','measurement_unit','measure_type'])) result.add('MU'); // MU anche con IoT
+  if(!result.has('MU')&&!result.has('IoT')&&!result.has('QB')&&
+     (has(['grandezza','tipo_misura','sistema_misura'])||
+      has(['simbolo_misura','measurement_unit','measure_type']))){
+    result.add('MU');
+  }
+
+  // ── AtlasOfPaths
+  if(has(['numero_percorso','numero_tappa','pavimentazione','segnaletica','livello_sicurezza','tipo_servizio_percorso','atlas_path','path_number','stage_number'])){result.add('AtlasOfPaths');}
+
+  // ── CulturalHeritage
+  if(has(['codice_bene','tutela','vincolo','stato_conservazione','ente_tutela','cultural_heritage'])||(has(['denominazione_bene'])&&has(['tipo_bene'])&&has(['tutela','vincolo']))){result.add('CulturalHeritage');}
+
+  // ── Project
+  if(has(['acronimo_progetto','programma_finanziamento','work_package','costo_totale_progetto','titolo_progetto','unique_project_code'])||(has(['cup'])&&has(['programma_finanziamento','finanziatore']))){result.add('Project');}
+
+  // ── NDC
+  if(has(['concetto_chiave','key_concept','endpoint_url','tipo_risorsa','formato_distribuzione','data_service','ndc'])||(has(['titolo_risorsa'])&&has(['tipo_risorsa','endpoint_url']))){result.add('NDC');}
+
+  // ── CPEV — eventi pubblici (richiede titolo_evento o colonne CPEV specifiche)
+  if(has(['titolo_evento','evento_pubblico','tipo_evento_pubblico','public_event',
+          'format_evento','pubblico_target','abstract_evento'])){
+    result.add('CPEV');
+    if(!result.has('TI')) result.add('TI');
+  }
+
+  // ── AccessCondition — condizioni di accesso a luoghi
+  if(has(['orario_apertura','orario_chiusura','tipo_ammissione',
+          'condizione_accesso','motivazione_chiusura','giorno_chiusura',
+          'accesso_libero','tipo_accesso','admission_type'])){
+    result.add('AccessCondition');
   }
 
   return Array.from(result);
@@ -278,6 +298,28 @@ for(const s of sacri){
 console.log(`\n${'='.repeat(55)}`);
 console.log(`✅ OK: ${ok}/22  ❌ Problemi: ${issues.length}`);
 if(issues.length===0) console.log('🎉 TUTTI I 22 CSV SACRI PASSANO IL TEST!');
+
+
+// ── NUOVE ONTOLOGIE v186 ─────────────────────────────────────────────────────
+const nuoveOnto = [
+  {key:'cpev',        h:['id','titolo_evento','tipo_evento','data_inizio','data_fine','luogo','comune','lat','lon','organizzatore','pubblico_target','format_evento'], exp:['CPEV','TI']},
+  {key:'accesscondition', h:['id','nome_luogo','tipo_luogo','orario_apertura','orario_chiusura','tipo_ammissione','motivazione_chiusura','condizione_accesso','lat','lon'], exp:['AccessCondition']},
+  {key:'atlasofpaths',h:['id','numero_percorso','nome_percorso','lunghezza_km','dislivello_m','pavimentazione','segnaletica','livello_sicurezza','difficolta','comune_partenza'], exp:['AtlasOfPaths']},
+  {key:'culturalheritage',h:['id','codice_bene','denominazione_bene','tipo_bene','tutela','vincolo','epoca','stato_conservazione','ente_tutela','lat','lon'], exp:['CulturalHeritage']},
+  {key:'project',     h:['id','titolo_progetto','acronimo_progetto','cup','codice_progetto','programma_finanziamento','finanziatore','costo_totale_progetto','work_package','parola_chiave_progetto'], exp:['Project']},
+  {key:'mu',          h:['id','grandezza','valore','unita_misura','tipo_misura','simbolo','sistema_misura','descrizione','data_rilevazione'], exp:['MU']},
+  {key:'ndc',         h:['id','concetto_chiave','titolo_risorsa','tipo_risorsa','endpoint_url','formato_distribuzione','versione','editore'], exp:['NDC']},
+];
+
+let n_ok=0, n_ko=0;
+for(const t of nuoveOnto) {
+  const det = detectOntologiesDeterministic(t.h, [{}]);
+  const pass = t.exp.every(e => det.includes(e));
+  if(pass) { n_ok++; console.log('✅ '+t.key.padEnd(20)+' ['+det.filter(d=>!['L0','SM'].includes(d)).join(',')+']'); }
+  else { n_ko++; console.log('❌ '+t.key.padEnd(20)+' ['+det.filter(d=>!['L0','SM'].includes(d)).join(',')+']	(atteso: '+t.exp.join(',')+')'); }
+}
+if(n_ko > 0) { console.error('❌ '+n_ko+' nuove ontologie FALLITE'); process.exit(1); }
+console.log('✅ Tutte '+n_ok+'/'+nuoveOnto.length+' nuove ontologie OK');
 
 // ── TEST REGRESSIONE PATCH v2026.03.23.171 ─────────────────────────────────
 // CLV toponomastica pura: nessun lat/lon, nessun trigger forte → solo CLV,L0

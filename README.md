@@ -6,15 +6,9 @@ Converte CSV della Pubblica Amministrazione italiana in **RDF/Turtle** conforme 
 
 ---
 
-## 📋 CSV di riferimento — dataset di riferimento
+## 📋 CSV di riferimento per ontologia
 
-Il tool include **29 CSV di riferimento** (22 storici + 7 nuovi) validati per verificare il rilevamento corretto delle ontologie:
-
-```
-22/22 sacri storici ✅
- 7/7 nuovi ontologie v186 ✅
- 2/2 regressioni (stradario CLV, DAE OSM) ✅
-```
+Il tool include **29 CSV di riferimento**, uno per ciascuna ontologia supportata. Selezionabili dal menu "Carica esempio" nell'interfaccia.
 
 ---
 

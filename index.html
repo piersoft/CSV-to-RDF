@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.20.168 -->
+  <!-- build:v2026.03.20.169 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -527,6 +527,39 @@
       </div>
       <div class="status-bar" id="status-bar"></div>
 
+      <!-- ── ENDPOINT DINAMICO ────────────────────────────── -->
+      <div id="api-endpoint-box" style="display:none;margin-top:1rem;border:2px solid #1a6b35;border-radius:6px;overflow:hidden;">
+        <div style="background:#1a6b35;padding:.5rem 1rem;display:flex;align-items:center;justify-content:space-between;">
+          <span style="color:#fff;font-size:.75rem;font-weight:700;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;">
+            🔗 Endpoint TTL dinamico
+          </span>
+          <span style="color:rgba(255,255,255,.7);font-size:.68rem;font-family:var(--mono)">
+            Usa questo URL per avere il TTL sempre aggiornato
+          </span>
+        </div>
+        <div style="background:#f0faf4;padding:.75rem 1rem;">
+          <div style="font-size:.72rem;color:#555;font-family:var(--mono);margin-bottom:.4rem;">
+            Se il tuo CSV è pubblicato a un URL pubblico, incollalo qui:
+          </div>
+          <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;">
+            <input type="text" id="api-csv-url" class="inp" placeholder="https://miaPA.it/opendata/dati.csv"
+              style="font-family:var(--mono);font-size:.72rem;flex:1;min-width:280px;"
+              oninput="updateApiEndpoint()"/>
+            <button class="btn-sec" style="font-size:.72rem;padding:.3rem .7rem" onclick="copyApiEndpoint()">
+              📋 Copia endpoint
+            </button>
+          </div>
+          <div id="api-endpoint-url" style="margin-top:.5rem;padding:.5rem .75rem;background:#fff;border:1px solid #c3dfc9;border-radius:4px;font-family:var(--mono);font-size:.7rem;color:#1a6b35;word-break:break-all;display:none;"></div>
+          <div style="margin-top:.6rem;font-size:.68rem;color:#777;font-family:var(--mono);line-height:1.5">
+            <strong>Parametri opzionali:</strong>
+            &nbsp;<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px">&ipa=c_a662</code> codice IPA
+            &nbsp;<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px">&pa=Comune+di+Bari</code> nome ente
+            &nbsp;<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px">&onto=POI,CLV,L0</code> forzare ontologie
+            &nbsp;<code style="background:#e8f5e9;padding:1px 4px;border-radius:3px">&fmt=json</code> formato JSON
+          </div>
+        </div>
+      </div>
+
     </div><!-- fine SX -->
 
     <!-- ══ COLONNA DX ══ -->
@@ -603,7 +636,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.20.168</span>
+<span id="app-version">v2026.03.20.169</span>
 </footer>
 
 <script>
@@ -1751,6 +1784,41 @@ S003,Porta San Vitale,44.4881,11.3521,2,0,2`,
     if (out) out.value = sacredTTL[tipo];
   }
   setTimeout(function(){ window._exampleLocked = false; }, 3000);
+}
+
+// ── ENDPOINT API DINAMICO ────────────────────────────
+const WORKER_BASE = 'https://csv2rdf.piersoft.workers.dev';
+
+function updateApiEndpoint() {
+  const csvUrl = document.getElementById('api-csv-url').value.trim();
+  const ipa = (document.getElementById('meta-ipa')?.value || '').trim();
+  const pa  = (document.getElementById('meta-paname')?.value || '').trim();
+  const urlEl = document.getElementById('api-endpoint-url');
+  if (!csvUrl) { urlEl.style.display='none'; return; }
+  let endpoint = WORKER_BASE + '?url=' + encodeURIComponent(csvUrl);
+  if (ipa) endpoint += '&ipa=' + encodeURIComponent(ipa);
+  if (pa)  endpoint += '&pa='  + encodeURIComponent(pa);
+  urlEl.textContent = endpoint;
+  urlEl.style.display = 'block';
+}
+
+function copyApiEndpoint() {
+  const urlEl = document.getElementById('api-endpoint-url');
+  if (!urlEl.textContent) { showStatus('Inserisci prima l'URL del tuo CSV', 'error'); return; }
+  navigator.clipboard.writeText(urlEl.textContent)
+    .then(() => showStatus('✅ Endpoint copiato negli appunti!', 'success'))
+    .catch(() => showStatus('Copia manuale: ' + urlEl.textContent, 'info'));
+}
+
+function showApiEndpointBox() {
+  const box = document.getElementById('api-endpoint-box');
+  if (box) box.style.display = 'block';
+  // Pre-compila il campo CSV URL se l'utente aveva già incollato un CSV da file
+  const fileNameEl = document.getElementById('file-name');
+  if (fileNameEl && fileNameEl.dataset.url) {
+    document.getElementById('api-csv-url').value = fileNameEl.dataset.url;
+    updateApiEndpoint();
+  }
 }
 
 function clearAll() {
@@ -2951,6 +3019,7 @@ async function startDeterministicConversion() {
     updateStats(ttl);
     var _tripleCount = (ttl.match(/\./g)||[]).length;
     showStatus('✅ TTL generato: ' + _nRows + ' soggetti, ~' + _tripleCount + ' triple (' + ontos.join(', ') + ')');
+    showApiEndpointBox(); // mostra endpoint dinamico dopo generazione
   } catch(e) {
     showStatus('Errore deterministico: '+e.message);
   } finally {
@@ -3731,6 +3800,7 @@ async function startConversion() {
     ttl = forceMainClassInTTL(ttl, ontos, entityBase);
     updateStats(ttl);
     showStatus(`✓ Completato! ${allRows.length} righe trasformate in ${chunks.length} chunk.`, 'success');
+    showApiEndpointBox();
 
   } catch (err) {
     showStatus(`✕ ${err.message}`, 'error');

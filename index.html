@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.205 -->
+  <!-- build:v2026.03.23.206 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -659,7 +659,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.205</span>
+<span id="app-version">v2026.03.23.206</span>
 </footer>
 
 <script>
@@ -975,7 +975,7 @@ function detectOntologiesDeterministic(headers, rows) {
            'data_inizio','data_fine','data_evento','importo','valore','obs_value',
            'qualifica','contratto','ccnl','cig','cup','obbligo_trasparenza'])) {
     if(result.has('COV') && !has(['codice_ipa','cf_ente','ragione_sociale','tipo_ente'])) result.delete('COV');
-    if(result.has('TI')  && !has(['data_inizio','data_fine','data_evento','quando','inizio','termine'])) result.delete('TI');
+    if(result.has('TI')  && !has(['data_inizio','data_fine','data_da','data_a','data_evento','quando','inizio','termine'])) result.delete('TI');
     if(result.has('POI') && !has(['tipo_poi','nome_poi','dae','lat','lon'])) result.delete('POI');
     if(result.has('CPV') && !has(['cognome','codice_fiscale','nome_completo','data_nascita'])) result.delete('CPV');
   }
@@ -1016,12 +1016,11 @@ function detectOntologiesDeterministic(headers, rows) {
     result.add('QB');
 
   // TI — R6-FIX: richiede date esplicite O combo evento+luogo (non solo titolo/tipo)
-  var _tiStrong = has(['data_inizio','data_fine','inizio','termine','quando','orario_inizio',
+  var _tiStrong = has(['data_inizio','data_fine','data_da','data_a','data_inizio_evento','data_fine_evento','inizio','termine','quando','orario_inizio',
                        'orario_fine','data_evento','ora_inizio','ora_fine','data_ora',
                        'data_rilevazione','data_apertura','data_chiusura']);
   var _tiEvent  = has(['tipo_evento','nome_iniziativa','nome_evento','manifestazione','data_da','data_a','data_inizio_evento','data_fine_evento',
-                       'spettacolo','concerto','rassegna','stagione','programmazione']) &&
-                  has(['luogo','dove','sede','periodo','durata','orario']);
+                       'spettacolo','concerto','rassegna','stagione','programmazione']);
   if(_tiStrong || _tiEvent)
     result.add('TI');
 

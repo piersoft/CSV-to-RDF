@@ -1358,7 +1358,7 @@ export default {
     const reqUrl = new URL(request.url);
 
     if (reqUrl.pathname === '/health') {
-      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.23.240' }), {
+      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.23.241' }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
     }
@@ -1434,7 +1434,7 @@ export default {
       const meta = {
         csvUrl, ipa, pa: paName, ontologie: ontos,
         righe: parsed.rows.length, colonne: parsed.headers,
-        generato: new Date().toISOString(), versione: 'v2026.03.23.240'
+        generato: new Date().toISOString(), versione: 'v2026.03.23.241'
       };
 
       if (fmtReq === 'json') {

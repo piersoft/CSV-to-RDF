@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.210 -->
+  <!-- build:v2026.03.23.212 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -684,7 +684,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.210</span>
+<span id="app-version">v2026.03.23.212</span>
 </footer>
 
 <script>
@@ -1987,10 +1987,21 @@ async function fetchDatiGovContext() {
   res.innerHTML='⏳ Lettura metadati da dati.gov.it...';
 
   try {
-    const apiUrl = 'https://csv2rdf.datigovit.workers.dev/ckan-proxy?id=' + encodeURIComponent(datasetId);
-    const resp = await fetch(apiUrl);
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const data = await resp.json();
+    // Prova prima senza www, poi con www — URL corretto è /3/action/
+    let data = null;
+    const urls = [
+      'https://dati.gov.it/opendata/api/3/action/package_show?id=' + encodeURIComponent(datasetId),
+      'https://www.dati.gov.it/opendata/api/3/action/package_show?id=' + encodeURIComponent(datasetId),
+    ];
+    let lastErr = '';
+    for (const apiUrl of urls) {
+      try {
+        const resp = await fetch(apiUrl, { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(8000) });
+        if (resp.ok) { data = await resp.json(); break; }
+        lastErr = 'HTTP ' + resp.status;
+      } catch(e) { lastErr = e.message; }
+    }
+    if (!data) throw new Error(lastErr || 'Failed to fetch');
     if (!data.success || !data.result) throw new Error('Dataset non trovato');
 
     const pkg = data.result;

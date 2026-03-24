@@ -499,19 +499,25 @@ function detectOntologiesDeterministic(headers, rows) {
   var vals = (rows||[]).slice(0,5).map(function(r){
     return Object.values(r).join(' ').toLowerCase();
   }).join(' ');
+  // Se il CSV ha testo narrativo lungo (celle >80 chars in media), usa solo header
+  // per evitare falsi positivi da parole nel testo libero
   var _avgCellLen = 0;
   if((rows||[]).length > 0) {
     var _allVals = (rows||[]).slice(0,5).flatMap(function(r){return Object.values(r).map(function(v){return String(v||'');});});
     _avgCellLen = _allVals.reduce(function(a,b){return a+b.length;},0) / Math.max(_allVals.length,1);
   }
+  // CSV narrativo se: media celle > 40 chars O almeno una cella > 120 chars
   var _maxCellLen = 0;
   if((rows||[]).length > 0) {
     var _allVals2 = (rows||[]).slice(0,5).flatMap(function(r){return Object.values(r).map(function(v){return String(v||'');});});
     _maxCellLen = Math.max.apply(null, _allVals2.map(function(v){return v.length;}));
   }
   var _narrativeCSV = _avgCellLen > 40 || _maxCellLen > 120;
+  // Per CSV narrativi: usa solo gli header ma solo come parole intere (non substring)
+  // Questo evita che "popolazione_target" faccia match su "popolazione"
   var allText;
   if(_narrativeCSV) {
+    // Match solo su header normalizzati esatti — non substring parziali
     allText = ' ' + norm.join(' ') + ' ';
   } else {
     allText = norm.join(' ') + ' ' + vals;
@@ -552,14 +558,15 @@ function detectOntologiesDeterministic(headers, rows) {
                          'struttura_ricettiva','rta','affittacamere','casa_vacanze','tipo_esercizio','codice_struttura_acco']);
   var _accoCtx    = has(['stelle','posti_letto','numero_posti_letto','camere','letti',
                          'check_in','check_out','classificazione_struttura','categoria_struttura']);
-  if(_accoStrong || _accoCtx)
+  if((_accoStrong || _accoCtx) && !_narrativeCSV)
     result.add('ACCO');
 
   // IOT — sensori fisici: richiede identificatore sensore O proprietà misurata specifica
   // P5-FIX: "valore/misura" generici NON sono IoT senza id_sensore o proprieta_osservata
   if(has(['id_sensore','idsensore','id_sensore2','iot:sensor','proprieta_osservata','tipo_misura','data_ricezione','avgspeed',
           'enterococchi','escherichia','coliformi','parametro_chimico','parametro_biologico',
-          'valore_misurato','concentrazione','pm10','pm25','no2','co2','so2','ozono']) ||
+          'valore_misurato','concentrazione','turbidita','ph_acqua','ossigeno_disciolto',
+          'pm10','pm25','no2','co2','so2','ozono','benzene']) ||
      (has(['sensore','sensor']) && has(['valore','misura','unita'])) ||
      (has(['temperatura','umidita','pressione','precipitazioni','velocita_vento','valore_medio']) && has(['lat','lon'])) ||
      (has(['unita_misura','limite']) && has(['lat','lon','longitude','latitude'])))
@@ -612,13 +619,13 @@ function detectOntologiesDeterministic(headers, rows) {
            'data_inizio','data_fine','data_evento','importo','valore','obs_value',
            'qualifica','contratto','ccnl','cig','cup','obbligo_trasparenza'])) {
     if(result.has('COV') && !has(['codice_ipa','cf_ente','ragione_sociale','tipo_ente'])) result.delete('COV');
-    if(result.has('TI')  && !has(['data_inizio','data_fine','data_evento','quando','inizio','termine'])) result.delete('TI');
+    if(result.has('TI')  && !has(['data_inizio','data_fine','data_da','data_a','data_evento','quando','inizio','termine'])) result.delete('TI');
     if(result.has('POI') && !has(['tipo_poi','nome_poi','dae','lat','lon'])) result.delete('POI');
     if(result.has('CPV') && !has(['cognome','codice_fiscale','nome_completo','data_nascita'])) result.delete('CPV');
   }
 
   // QB statistico: anno + aggregati numerici senza anagrafica = dati demografici
-  if(!result.has('CPV') && has(['anno']) && (has(['sesso']) || has(['cittadinanza'])) &&
+  if(!_narrativeCSV && !result.has('CPV') && has(['anno']) && (has(['sesso']) || has(['cittadinanza'])) &&
      !has(['cognome','nome_completo','codice_fiscale','data_nascita']))
     result.add('QB');
   // CPV — persone fisiche: richiede cognome O CF O data_nascita+sesso (P3-FIX: esclude QB puro)
@@ -650,18 +657,15 @@ function detectOntologiesDeterministic(headers, rows) {
      !has(['nome_dataset','nome_risorsa','numero_righe','distribution_url']) &&
      !has(['tratta','capolinea','fermata_origine','fermata_arrivo']) &&
      !has(['codice_istat','codice_civico','cod_civico','numero_civico']))  // B3: codici geo ≠ QB
-    result.add('QB');
+    if(!_narrativeCSV) result.add('QB');
 
   // TI — R6-FIX: richiede date esplicite O combo evento+luogo (non solo titolo/tipo)
-  var _tiStrong = has(['data_inizio','data_fine','inizio','termine','quando','orario_inizio',
+  var _tiStrong = has(['data_inizio','data_fine','data_da','data_a','data_inizio_evento','data_fine_evento','inizio','termine','quando','orario_inizio',
                        'orario_fine','data_evento','ora_inizio','ora_fine','data_ora',
-                       'data_rilevazione','data_apertura','data_chiusura','data_campionamento',
-                       'data_rilevamento','data_misura','data_monitoraggio']) ||
-                     (hasH(['data']) && has(['valore','misura','rilevazione','monitoraggio',
-                       'campione','sensore','enterococchi','unita_misura']));
-  var _tiEvent  = has(['tipo_evento','nome_iniziativa','nome_evento','manifestazione',
-                       'spettacolo','concerto','rassegna','stagione','programmazione']) &&
-                  has(['luogo','dove','sede','periodo','durata','orario']);
+                       'data_rilevazione','data_apertura','data_chiusura','data_campionamento','data_rilevamento','data_misura','data_monitoraggio']) ||
+                     (hasH(['data']) && has(['valore','misura','rilevazione','monitoraggio','campione','sensore','iot','misura']));
+  var _tiEvent  = has(['tipo_evento','nome_iniziativa','nome_evento','manifestazione','data_da','data_a','data_inizio_evento','data_fine_evento',
+                       'spettacolo','concerto','rassegna','stagione','programmazione']);
   if(_tiStrong || _tiEvent)
     result.add('TI');
 
@@ -713,7 +717,7 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['qualifica_dipendente','contratto_lavoro','ccnl','livello_contrattuale','ore_settimanali'])) result.add('RPO');
   if(has(['titolo_corso','ore_formazione','crediti','ects','titolo_rilasciato','durata_corso'])) result.add('Learning');
   if(has(['obbligo_trasparenza','categoria_trasparenza','dato_obbligatorio','norma_riferimento'])) result.add('Transparency');
-  if(has(['tipo_indicatore','valore_indicatore','baseline','target','fonte_indicatore'])) result.add('Indicator');
+  if(!_narrativeCSV && has(['tipo_indicatore','valore_indicatore','baseline','target','fonte_indicatore'])) result.add('Indicator');
 
   // ── cleanup post-trigger ─────────────────────────────────────────────────
   if(result.has('RO')&&result.has('TI')&&!has(['data_evento','titolo_evento','nome_evento','manifestazione','tipo_evento_pubblico'])) result.delete('TI'); // RO: data mandato ≠ evento
@@ -757,6 +761,152 @@ function detectOntologiesDeterministic(headers, rows) {
   }
 
   return Array.from(result);
+}
+
+async function autoDetectOntoAI() {
+  const text = document.getElementById('csv-input').value.trim();
+  if (!text) return;
+  const parsed = parseCSV(text);
+    if (!parsed) return;
+  
+    // SE nessuna API key: usa rilevamento deterministico (no AI)
+    if (!hasApiKey()) {
+      var detOntos = detectOntologiesDeterministic(
+        parsed.headers,
+        parsed.rows
+      );
+      showStatus('Ontologie rilevate (deterministico): ' + detOntos.join(', '));
+      setExampleOntos(detOntos);
+      return;
+    }
+  
+
+  // Costruisci campione: header + prime 5 righe
+  const sample = [
+    parsed.headers.join(','),
+    ...parsed.rows.slice(0, 5).map(r => parsed.headers.map(h => r[h] || '').join(','))
+  ].join('\n');
+
+  const prompt = `Sei un esperto di Linked Open Data per la PA italiana.
+Le ontologie ufficiali sono su https://github.com/italia/dati-semantic-assets
+
+Analizza queste intestazioni CSV e le prime righe di dati:
+${sample}
+
+Rispondi SOLO con una lista JSON dei prefissi ontologici più appropriati tra questi valori esatti:
+CLV, COV, CPV, L0, POI, SM, RO, TI, ADMS, ACCO, PARK, GTFS, Cultural-ON, CPSV-AP, QB, SKOS, PublicContract, Route, RPO, Learning, Transparency, Indicator, POT
+
+REGOLE IMPORTANTI:
+- QB: includi SOLO se ci sono colonne con valori numerici aggregati (conteggi, importi, percentuali, misurazioni). QB serve per statistiche, non per dati anagrafici generici.
+- SKOS: includi SOLO se ci sono colonne con codici/categorie testuali espliciti (es. "tipologia", "codice_categoria", "classificazione", "tipo_ente") che rappresentano un vocabolario controllato. NON includere SKOS solo perché i dati sono demografici o sanitari.
+- L0: includi sempre quando includi QB o SKOS come ontologia di supporto.
+- Se il CSV ha solo colonne Anno/Anno-Mese + valori numerici: suggerisci QB e L0, NON SKOS.
+- Se le colonne o i valori contengono "CulturalInstituteOrSite", "beniculturali", "mibact", "museo", "biblioteca", "monumento", "patrimonio" → includi SEMPRE "Cultural-ON"
+- ACCO: includi se i dati riguardano strutture ricettive (hotel, albergo, B&B, ostello, stelle). COV NON va usato per strutture ricettive.
+- COV: includi SOLO per enti/organizzazioni pubbliche o private. NON per strutture ricettive o luoghi fisici.
+- Se i valori contengono "albergo", "hotel", "B&B", "stelle", "letti": usa ACCO + CLV + L0, NON COV.
+- POI: includi SEMPRE se ci sono colonne lat/lon con luoghi fisici (dae, defibrillatore, tipo_poi). COV NON va usato per luoghi fisici con coordinate.
+- Se colonne "tipo_poi","dae","defibrillatore" presenti: usa POI + CLV + L0, NON COV.
+- CPV: includi se ci sono colonne nome/cognome/codice_fiscale/data_nascita che riguardano persone fisiche. NON usare COV per persone fisiche.
+- GTFS: includi se ci sono colonne stop_id/stop_name/stop_lat/stop_lon/zone_id/route_id/trip_id che riguardano trasporto pubblico locale (fermate, linee, corse).
+- Route: includi se ci sono colonne tipo_percorso/lunghezza_km/difficolta/dislivello/numero_tappe/lat_start/lon_start che riguardano percorsi/itinerari escursionistici o ciclabili. NON usare GTFS per percorsi non TPL.
+- IoT: includi se ci sono colonne sensore/sensor/misura/valore/timestamp/proprieta_osservata che riguardano dati da sensori o dispositivi.
+- SMAPIT: includi SOLO se ci sono colonne codice_scuola/denominazione_istituto/tipo_scuola/ciclo_scolastico. NON usarlo per percorsi o parcheggi.
+- CLV: includi SEMPRE se ci sono colonne indirizzo/lat/lon/cap/comune/via/civico.
+- PublicContract: includi se ci sono colonne cig/cup/importo_aggiudicazione/stazione_appaltante/aggiudicatario (appalti pubblici). NON usare CPSV-AP per gli appalti.
+- RPO: includi se ci sono colonne qualifica_dipendente/contratto_lavoro/ccnl/ore_settimanali (risorse umane PA). NON usare RO per dipendenti.
+- Learning: includi se ci sono colonne crediti/ects/ore_formazione/titolo_rilasciato/durata_corso (corsi/formazione).
+- Transparency: includi se ci sono colonne obbligo_trasparenza/categoria_trasparenza/dato_obbligatorio/d_lgs_33 (dati D.Lgs. 33/2013).
+- Indicator: includi se ci sono colonne tipo_indicatore/baseline/target/valore_indicatore (KPI e indicatori di performance).
+- POT: includi se ci sono colonne prezzo_intero/prezzo_ridotto/biglietto/tariffa_ingresso (prezzi e tariffe servizi). NON usare ACCO per tariffe generiche.
+- Se il CSV ha colonna "subject" con URI di istituti culturali → includi "Cultural-ON"
+
+Esempio di risposta valida: ["ACCO", "CLV", "L0"]
+Non aggiungere spiegazioni, solo il JSON.`;
+
+  const btn = document.getElementById('btn-ai-onto');
+  btn.disabled = true;
+  btn.textContent = '⏳ Analisi...';
+
+  // EARLY EXIT AI-DETECT: se il deterministico ha già rilevato un catalogo ADMS
+  // non chiamare l'AI — il CSV è un registro di file, non dati ontologici
+  {
+    const csvText = document.getElementById('csv-input')?.value || '';
+    const parsed2 = parseCSV(csvText);
+    if (parsed2) {
+      const cols2 = parsed2.headers || [];
+      const catalogMatch = ['nome_dataset','nome_risorsa','numero_righe','formato'].filter(k => cols2.includes(k)).length >= 2;
+      const sampleV2 = (parsed2.rows?.slice(0,2) || []).flatMap(r => Object.values(r)).map(v=>String(v).toLowerCase()).join(' ');
+      const catalogVal = /\b(csv|json|ttl|xlsx|xml)\b/.test(sampleV2) && /\b\d{4,}\b/.test(sampleV2) && cols2.some(c => /formato|identifier|nome_dataset|nome_risorsa/i.test(c));
+      if (catalogMatch || catalogVal) {
+        // Forza SOLO ADMS e termina senza chiamare l'AI
+if (!window._exampleLocked) {
+        document.querySelectorAll('#onto-selector .pill, #onto-selector-adv .pill').forEach(p => {
+          p.classList.toggle('active', p.dataset.onto === 'ADMS');
+        });
+  }
+        const msgEl = document.getElementById('auto-onto-msg');
+        if (msgEl) { msgEl.textContent = '🤖 CSV catalogo: ADMS (AI-detect saltato)'; msgEl.style.display='block'; }
+        btn.disabled = false;
+        btn.textContent = '🤖 AI-detect';
+        return;
+      }
+    }
+  }
+
+  try {
+    // Per l'AI-detect usa sempre il modello più leggero disponibile per provider
+  const AI_DETECT_MODELS = {
+    'mistral':   'open-mistral-7b',
+    'groq':      'llama-3.1-8b-instant',
+    'ollama':    'gpt-oss:20b',
+    'anthropic': 'claude-haiku-4-5-20251001',
+  };
+  let raw;
+  const lightModel = AI_DETECT_MODELS[currentProvider];
+  if (lightModel) {
+    const modelEl = document.getElementById(`${currentProvider}-model`);
+    const savedModel = modelEl?.value;
+    if (modelEl) modelEl.value = lightModel;
+    raw = await callAI(prompt);
+    if (modelEl && savedModel) modelEl.value = savedModel; // ripristina
+  } else {
+    raw = await callAI(prompt); // gemini: usa il modello configurato
+  }
+    // Estrai il JSON dalla risposta
+    const match = raw.match(/\[.*?\]/s);
+    if (!match) throw new Error('Risposta non valida');
+    const ontos = JSON.parse(match[0]);
+
+    // Attiva le pillole suggerite — UNIONE con quelle già attive dal deterministico
+    const alreadyActive = new Set([...document.querySelectorAll('#onto-selector .pill.active, #onto-selector-adv .pill.active')]
+      .map(p => p.dataset.onto.toUpperCase()));
+    const aiOntos = new Set(ontos.map(o => o.toUpperCase()));
+    const merged = new Set([...alreadyActive, ...aiOntos]);
+if (!window._exampleLocked) {
+    document.querySelectorAll('#onto-selector .pill, #onto-selector-adv .pill').forEach(p => {
+      p.classList.toggle('active', merged.has(p.dataset.onto.toUpperCase()));
+    });
+  }
+
+    // Apri avanzate se necessario
+    const advActive = [...document.querySelectorAll('#onto-selector-adv .pill.active')].length > 0;
+    if (advActive) {
+      document.getElementById('onto-advanced').style.display = 'block';
+      document.getElementById('btn-adv').textContent = '▼ Nascondi ontologie avanzate';
+    }
+
+    const msg = document.getElementById('auto-onto-msg');
+    msg.textContent = `🤖 AI suggerisce: ${ontos.join(', ')}`;
+    msg.style.display = 'block';
+    window._aiDetectDone = true; // segnala che l'AI ha già completato
+
+  } catch(e) {
+    showStatus('✕ AI-detect fallito: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🤖 AI-detect';
+  }
 }
 
 function getMainClass(ontos) {
@@ -942,34 +1092,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       if(!val||normH==='id')return;
       var rule=detFindRule(normH,ontos);
       if(!rule){var _n=detNormH(origH);if(_n==='_skip'||_n.startsWith('_'))return;if(val)triples.push({pred:'rdfs:comment',val:origH+': '+val,type:'langlit',lang:'it',unmapped:true});return;}
-      if(rule.type==='skip')return;
-function detFormatLit(rule,val){
-  if(!val&&val!==0)return null;
-  val=String(val).trim();if(!val)return null;
-  var BQ='\\"'; // backslash + virgoletta per Turtle
-  if(rule.type==='skip')return null;
-  if(rule.type==='langlit')return'"'+val.replace(/"/g,BQ)+'"@'+(rule.lang||'it');
-  if(rule.type==='literal')return'"'+val.replace(/"/g,BQ)+'"^^xsd:string';
-  if(rule.type==='decimal'){var n=parseFloat(val);return isNaN(n)?null:'"'+n+'"^^xsd:decimal';}
-  if(rule.type==='integer'){var n2=parseInt(val);return isNaN(n2)?null:'"'+n2+'"^^xsd:integer';}
-  if(rule.type==='boolean'){var b=val.toLowerCase();return(b==='si'||b==='true'||b==='1'||b==='yes')?'"true"^^xsd:boolean':'"false"^^xsd:boolean';}
-  if(rule.type==='date'){var d=val.replace(/\//g,'-');return'"'+d+'"^^xsd:date';}
-  if(rule.type==='datetime')return'"'+val+'"^^xsd:dateTime';
-  if(rule.type==='typed'){
-    var xsdType=rule.xsd||'xsd:string';
-    if(xsdType==='xsd:decimal'){var nd=parseFloat(val);return isNaN(nd)?null:'"'+nd+'"^^xsd:decimal';}
-    if(xsdType==='xsd:integer'){var ni=parseInt(val);return isNaN(ni)?null:'"'+ni+'"^^xsd:integer';}
-    if(xsdType==='xsd:date'){return'"'+val.replace(/\//g,'-')+'"^^xsd:date';}
-    if(xsdType==='xsd:dateTime')return'"'+val+'"^^xsd:dateTime';
-    return'"'+val.replace(/"/g,'\\"')+'"^^'+xsdType;
-  }
-  if(rule.type==='mailto'){var em=sanitizeEmailValue(val);if(!em)return null;return'"'+em+'"^^xsd:string';}
-  if(rule.type==='url'){var u=val.replace(/^<|>$/g,'').trim();if(!u||/[\s()<>"@]/.test(u)||/^\(/.test(u))return null;if(!u.startsWith('http')&&!u.startsWith('ftp'))u='https://'+u;return'<'+u+'>';}
-  if(rule.type==='phone')return'"'+val+'"^^xsd:string';
-  return'"'+val.replace(/"/g,'\"')+'"@it';
-}
-
-      var litVal=detFormatLit(rule,val);
+      if(rule.type==='skip')return;      var litVal=detFormatLit(rule,val);
       if(litVal)triples.push({pred:rule.pred,val:litVal,raw:true});
     });
     var addrURI=base+'address/'+idVal;
@@ -1232,7 +1355,7 @@ export default {
     const reqUrl = new URL(request.url);
 
     if (reqUrl.pathname === '/health') {
-      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.23.237' }), {
+      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.23.238' }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
     }
@@ -1308,7 +1431,7 @@ export default {
       const meta = {
         csvUrl, ipa, pa: paName, ontologie: ontos,
         righe: parsed.rows.length, colonne: parsed.headers,
-        generato: new Date().toISOString(), versione: 'v2026.03.23.237'
+        generato: new Date().toISOString(), versione: 'v2026.03.23.238'
       };
 
       if (fmtReq === 'json') {

@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.207 -->
+  <!-- build:v2026.03.23.208 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -289,6 +289,31 @@
           </div>
         </div>
       </div>
+
+      <!-- STEP 1 BIS — URL dati.gov.it (opzionale) -->
+      <details class="card-pa" id="step1bis-accordion">
+        <summary class="card-head" style="background:#4a90d9;cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;">
+          <span>🔗 STEP 1 BIS — Contesto da dati.gov.it <span style="font-weight:400;font-size:.8em;opacity:.8;">(opzionale)</span></span>
+          <span id="step1bis-arrow" style="font-size:.7em;opacity:.8;">▶</span>
+        </summary>
+        <div class="card-body-pa">
+          <p style="font-size:.78rem;color:var(--dg-muted);margin:.2rem 0 .8rem;">
+            Per migliorare la comprensione del contenuto e ridurre i falsi positivi nel rilevamento delle ontologie,
+            incolla il link del dataset su <strong>dati.gov.it</strong> nella forma:<br>
+            <code style="font-size:.72rem;background:#f0f4f8;padding:2px 6px;border-radius:3px;">https://www.dati.gov.it/view-dataset/dataset?id=nome-del-dataset</code>
+          </p>
+          <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;">
+            <input type="text" id="dati-gov-url" class="inp"
+              placeholder="https://www.dati.gov.it/view-dataset/dataset?id=..."
+              style="font-family:var(--mono);font-size:.72rem;flex:1;min-width:280px;"
+              oninput="clearDatiGovContext()"/>
+            <button class="btn-sec" style="font-size:.72rem;padding:.35rem .8rem;" onclick="fetchDatiGovContext()">
+              🔍 Leggi metadati
+            </button>
+          </div>
+          <div id="dati-gov-result" style="display:none;margin-top:.7rem;padding:.6rem .8rem;border-radius:4px;font-size:.75rem;font-family:var(--mono);"></div>
+        </div>
+      </details>
 
       <!-- ONTOLOGIE — sezione separata dagli step, auto-rilevata -->
       <div class="card-pa" id="onto-card" style="border:2px solid transparent;transition:border-color .4s">
@@ -659,7 +684,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.207</span>
+<span id="app-version">v2026.03.23.208</span>
 </footer>
 
 <script>
@@ -1697,6 +1722,8 @@ function parseAndPreviewCSV() {
       showStatus('✓ ' + parsed.headers.length + ' colonne · ' + parsed.rows.length + ' righe', 'success');
       if(typeof showPanel==='function') showPanel(parsed.headers);
     }
+    // Applica contesto dati.gov.it se presente
+    if (window._datiGovContext) applyDatiGovContext();
   } else {
     // Esempio caricato: mostra status con le ontologie già impostate da ontoMap
     var activePills = Array.from(document.querySelectorAll('.pill[data-onto].active')).map(p=>p.dataset.onto).filter(o=>o!=='L0'&&o!=='SM');
@@ -1886,6 +1913,161 @@ S003,Porta San Vitale,44.4881,11.3521,2,0,2`,
 
 // ── ENDPOINT API DINAMICO ────────────────────────────
 const WORKER_BASE = 'https://csv2rdf.datigovit.workers.dev';
+
+// ── MAPPA THEME DCAT → ontologie da ESCLUDERE (falsi positivi) ──────────
+// Non decide le ontologie — filtra solo quelle chiaramente incompatibili
+const THEME_EXCLUDE = {
+  'HEAL': ['GTFS','SMAPIT','PARK','ACCO','Route','AtlasOfPaths','Learning','PublicContract','NDC'],
+  'TRAN': ['QB','SMAPIT','ADMS','Transparency','RPO','CulturalHeritage'],
+  'EDUC': ['GTFS','PARK','ACCO','IoT','PARK','Route','AtlasOfPaths'],
+  'ENVI': ['SMAPIT','ACCO','PublicContract','RPO','Learning','CulturalHeritage'],
+  'GOVE': ['GTFS','IoT','ACCO','PARK','AtlasOfPaths','CulturalHeritage'],
+  'ECON': ['GTFS','SMAPIT','ACCO','PARK','IoT','Route','AtlasOfPaths','CulturalHeritage'],
+  'REGI': ['SMAPIT','ADMS','Transparency','QB'],
+  'AGRI': ['SMAPIT','PublicContract','RPO','Learning','CulturalHeritage'],
+  'JUST': ['GTFS','ACCO','PARK','IoT','AtlasOfPaths','CulturalHeritage'],
+  'SOCI': ['GTFS','ACCO','PARK','IoT','Route','AtlasOfPaths','CulturalHeritage'],
+  'TECH': ['SMAPIT','ACCO','PARK','Route','AtlasOfPaths','CulturalHeritage'],
+  'CULT': ['GTFS','SMAPIT','PARK','IoT','PublicContract','RPO','Learning','QB'],
+  'TOUR': ['SMAPIT','PublicContract','RPO','Learning','QB'],
+};
+
+// Mappa TAG → ontologie da INCLUDERE (suggerimenti positivi forti)
+const TAG_SUGGEST = {
+  'gtfs': ['GTFS'], 'fermata': ['GTFS'], 'trasporto-pubblico': ['GTFS'],
+  'beni-culturali': ['Cultural-ON'], 'museo': ['Cultural-ON','POI'], 'patrimonio': ['Cultural-ON'],
+  'cammini': ['Route','AtlasOfPaths'], 'percorsi': ['Route'], 'sentieri': ['Route','AtlasOfPaths'],
+  'scuola': ['SMAPIT'], 'istruzione': ['SMAPIT'], 'scuole': ['SMAPIT'],
+  'dispositivi-medici': ['ADMS'], 'hta': ['ADMS'], 'farmaci': ['ADMS'],
+  'parcheggi': ['PARK'], 'sosta': ['PARK'],
+  'appalti': ['PublicContract'], 'gare': ['PublicContract'], 'contratti': ['PublicContract'],
+  'personale': ['RPO'], 'dipendenti': ['RPO'],
+  'formazione': ['Learning'], 'corsi': ['Learning'],
+  'trasparenza': ['Transparency'],
+  'sensori': ['IoT'], 'iot': ['IoT'], 'inquinamento': ['IoT'],
+  'eventi': ['TI','CPEV'], 'manifestazioni': ['TI','CPEV'],
+  'turismo': ['POI','ACCO'], 'alberghi': ['ACCO'],
+  'statistica': ['QB'], 'indicatori': ['Indicator'],
+};
+
+// Stato globale contesto dati.gov.it
+window._datiGovContext = null;
+
+function clearDatiGovContext() {
+  window._datiGovContext = null;
+  const res = document.getElementById('dati-gov-result');
+  if (res) { res.style.display = 'none'; res.innerHTML = ''; }
+}
+
+async function fetchDatiGovContext() {
+  const urlEl = document.getElementById('dati-gov-url');
+  const res = document.getElementById('dati-gov-result');
+  if (!urlEl || !res) return;
+
+  const raw = urlEl.value.trim();
+  if (!raw) { res.style.display='block'; res.style.background='#fff3cd'; res.innerHTML='⚠️ Inserisci un URL dati.gov.it'; return; }
+
+  // Estrai l'id dal parametro ?id= oppure dall'ultimo segmento dell'URL
+  let datasetId = '';
+  const mId = raw.match(/[?&]id=([^&]+)/);
+  if (mId) {
+    datasetId = decodeURIComponent(mId[1]);
+  } else {
+    // Prova a prendere l'ultimo segmento non vuoto
+    datasetId = raw.replace(/\/$/, '').split('/').pop().split('?')[0];
+  }
+
+  if (!datasetId) {
+    res.style.display='block'; res.style.background='#fff3cd';
+    res.innerHTML='⚠️ Impossibile estrarre l\'id dal URL. Usa il formato: ...?id=nome-dataset';
+    return;
+  }
+
+  res.style.display='block'; res.style.background='#f0f4f8';
+  res.innerHTML='⏳ Lettura metadati da dati.gov.it...';
+
+  try {
+    const apiUrl = 'https://www.dati.gov.it/opendata/api/action/package_show?id=' + encodeURIComponent(datasetId);
+    const resp = await fetch(apiUrl);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    if (!data.success || !data.result) throw new Error('Dataset non trovato');
+
+    const pkg = data.result;
+    const title = pkg.title || datasetId;
+    const tags = (pkg.tags || []).map(t => t.name.toLowerCase());
+    const groups = (pkg.groups || []).map(g => g.name.toLowerCase());
+    const extras = pkg.extras || [];
+    const themeRaw = extras.find(e => e.key === 'theme');
+    let themes = [];
+    try { themes = JSON.parse(themeRaw?.value || '[]'); } catch(e) { themes = []; }
+
+    // Calcola ontologie da escludere (unione di tutte le exclusion per i temi trovati)
+    const exclude = new Set();
+    themes.forEach(function(th) {
+      (THEME_EXCLUDE[th] || []).forEach(function(o) { exclude.add(o); });
+    });
+
+    // Calcola ontologie suggerite dai tag
+    const suggested = new Set();
+    tags.forEach(function(tag) {
+      (TAG_SUGGEST[tag] || []).forEach(function(o) { suggested.add(o); });
+    });
+
+    // Salva il contesto globale
+    window._datiGovContext = { title, tags, groups, themes, exclude: [...exclude], suggested: [...suggested] };
+
+    // Mostra risultato
+    const themeStr = themes.length ? themes.join(', ') : 'n/d';
+    const tagStr = tags.length ? tags.slice(0,6).join(', ') : 'n/d';
+    const exclStr = exclude.size ? [...exclude].join(', ') : 'nessuna';
+    const suggStr = suggested.size ? [...suggested].join(', ') : 'nessuna';
+
+    res.style.background = '#e8f5e9';
+    res.innerHTML =
+      '✅ <strong>' + escTTL_safe(title) + '</strong><br>' +
+      '📂 Temi: <strong>' + themeStr + '</strong> &nbsp;|&nbsp; ' +
+      '🏷️ Tag: ' + tagStr + '<br>' +
+      '🚫 Escludo ontologie spurie: <strong style="color:#c00">' + exclStr + '</strong><br>' +
+      '💡 Suggerite dai tag: <strong style="color:#1a6b35">' + suggStr + '</strong>';
+
+    // Applica immediatamente se il CSV è già caricato
+    if (document.getElementById('csv-input').value.trim()) {
+      applyDatiGovContext();
+    }
+
+  } catch(err) {
+    res.style.background = '#fdecea';
+    res.innerHTML = '❌ Errore: ' + err.message + '<br><small>Verifica che l\'URL sia corretto e il dataset sia pubblico su dati.gov.it</small>';
+  }
+}
+
+function escTTL_safe(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// Applica il contesto dati.gov.it alle pill — rimuove i falsi positivi, aggiunge i suggeriti
+function applyDatiGovContext() {
+  const ctx = window._datiGovContext;
+  if (!ctx) return;
+
+  const pills = document.querySelectorAll('#onto-selector .pill[data-onto], #onto-selector-adv .pill[data-onto]');
+  pills.forEach(function(pill) {
+    const onto = pill.dataset.onto;
+    if (ctx.exclude.includes(onto)) {
+      pill.classList.remove('active');
+    }
+    if (ctx.suggested.includes(onto) && !pill.classList.contains('active')) {
+      pill.classList.add('active');
+    }
+  });
+
+  const msg = document.getElementById('auto-onto-msg');
+  if (msg) {
+    msg.textContent = '🔗 Contesto dati.gov.it applicato — temi: ' + ctx.themes.join(',');
+    msg.style.display = 'block';
+  }
+}
 
 function updateApiEndpoint() {
   const csvUrl = document.getElementById('api-csv-url').value.trim();

@@ -557,10 +557,13 @@ function detectOntologiesDeterministic(headers, rows) {
 
   // IOT — sensori fisici: richiede identificatore sensore O proprietà misurata specifica
   // P5-FIX: "valore/misura" generici NON sono IoT senza id_sensore o proprieta_osservata
-  if(has(['id_sensore','idsensore','id_sensore2','iot:sensor','proprieta_osservata','tipo_misura','data_ricezione','avgspeed']) ||
+  if(has(['id_sensore','idsensore','id_sensore2','iot:sensor','proprieta_osservata','tipo_misura','data_ricezione','avgspeed',
+          'enterococchi','escherichia','coliformi','parametro_chimico','parametro_biologico',
+          'valore_misurato','concentrazione','pm10','pm25','no2','co2','so2','ozono']) ||
      (has(['sensore','sensor']) && has(['valore','misura','unita'])) ||
-     (has(['temperatura','umidita','pressione','precipitazioni','velocita_vento','valore_medio']) && has(['lat','lon'])))
-    result.add('IoT');
+     (has(['temperatura','umidita','pressione','precipitazioni','velocita_vento','valore_medio']) && has(['lat','lon'])) ||
+     (has(['unita_misura','limite']) && has(['lat','lon','longitude','latitude'])))
+    if(!_narrativeCSV || has(['id_sensore','idsensore','proprieta_osservata','valore_medio'])) result.add('IoT');
 
   // POI — R3-FIX: LATITUDINE/LONGITUDINE MAIUSCOLE + UTMX/UTMY
   var _hasPOIcoord = hasH(['lat','lon','latitudine','longitudine','utmx','utmy',
@@ -569,10 +572,11 @@ function detectOntologiesDeterministic(headers, rows) {
   // OSM schema: osm_id + lat/lon → POI forte (defibrillatori, punti interesse OSM)
   var _hasOSMschema = has(['osm_id','osm_type']) && _hasPOIcoord;
   if(has(['tipo_poi','dae','defibrillatore','punto_di_interesse','punto_interesse',
-          'point_of_interest','idelem','id_elem']) || _hasOSMschema) {
+          'point_of_interest','idelem','id_elem',
+          'id_area','id_punto','codice_stazione','stazione_monitoraggio','punto_monitoraggio']) || _hasOSMschema) {
     result.add('POI');
   } else if(_hasPOIcoord && !result.has('GTFS') &&  // B1: ACCO+lat/lon = anche POI
-            !result.has('SMAPIT') && !result.has('IoT') && !result.has('QB') &&
+            !result.has('SMAPIT') && !result.has('QB') &&
             !result.has('Cultural-ON')) { // non aggiungere POI su istituti culturali
     if(has(['nome','denominazione','tipo','categoria','descrizione']) &&
        !has(['mortali','feriti','deceduti','incidenti','importo','spesa','entrata']))
@@ -588,7 +592,7 @@ function detectOntologiesDeterministic(headers, rows) {
   }
 
   // COV — organizzazioni: FIX1 esclude codice_ipa quando accompagnato da colonne di altri domini
-  var _hasCOVStrong = has(['codice_ipa','codice_ente','partita_iva','codice_fiscale_ente','ragione_sociale']) &&
+  var _hasCOVStrong = has(['codice_ipa','codice_ente','partita_iva','codice_fiscale_ente','ragione_sociale','segnalatore','ente_segnalatore','soggetto_segnalante','amministrazione_titolare']) &&
                       !has(['qualifica_dipendente','obbligo_trasparenza','titolo_corso','ore_formazione',
                              'cig','importo_aggiudicazione','tipo_percorso','valore_indicatore']);
   var _hasCOVWeak   = hasH(['amministrazione','ente','pubblica_amministrazione','organizzazione',
@@ -651,7 +655,10 @@ function detectOntologiesDeterministic(headers, rows) {
   // TI — R6-FIX: richiede date esplicite O combo evento+luogo (non solo titolo/tipo)
   var _tiStrong = has(['data_inizio','data_fine','inizio','termine','quando','orario_inizio',
                        'orario_fine','data_evento','ora_inizio','ora_fine','data_ora',
-                       'data_rilevazione','data_apertura','data_chiusura']);
+                       'data_rilevazione','data_apertura','data_chiusura','data_campionamento',
+                       'data_rilevamento','data_misura','data_monitoraggio']) ||
+                     (hasH(['data']) && has(['valore','misura','rilevazione','monitoraggio',
+                       'campione','sensore','enterococchi','unita_misura']));
   var _tiEvent  = has(['tipo_evento','nome_iniziativa','nome_evento','manifestazione',
                        'spettacolo','concerto','rassegna','stagione','programmazione']) &&
                   has(['luogo','dove','sede','periodo','durata','orario']);
@@ -716,7 +723,7 @@ function detectOntologiesDeterministic(headers, rows) {
   if(result.has('POT')&&result.has('CPV')&&!has(['cognome','codice_fiscale','nome_completo','data_nascita'])) result.delete('CPV'); // tariffe ≠ persone fisiche
 
   // ── MU — unità di misura
-  if(has(['grandezza','tipo_misura','sistema_misura'])||has(['simbolo_misura','measurement_unit','measure_type'])) result.add('MU'); // MU anche con IoT
+  if(has(['grandezza','tipo_misura','sistema_misura','unita_misura','unita_di_misura','unit_of_measure'])||has(['simbolo_misura','measurement_unit','measure_type'])) result.add('MU'); // MU anche con IoT
   if(!result.has('MU')&&!result.has('IoT')&&!result.has('QB')&&
      (has(['grandezza','tipo_misura','sistema_misura'])||
       has(['simbolo_misura','measurement_unit','measure_type']))){
@@ -1225,7 +1232,7 @@ export default {
     const reqUrl = new URL(request.url);
 
     if (reqUrl.pathname === '/health') {
-      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.23.236' }), {
+      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.23.237' }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
     }
@@ -1301,7 +1308,7 @@ export default {
       const meta = {
         csvUrl, ipa, pa: paName, ontologie: ontos,
         righe: parsed.rows.length, colonne: parsed.headers,
-        generato: new Date().toISOString(), versione: 'v2026.03.23.194'
+        generato: new Date().toISOString(), versione: 'v2026.03.23.237'
       };
 
       if (fmtReq === 'json') {

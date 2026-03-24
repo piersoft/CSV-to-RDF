@@ -1154,7 +1154,7 @@ export default {
     const reqUrl = new URL(request.url);
 
     if (reqUrl.pathname === '/health') {
-      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.23.210' }), {
+      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.23.232' }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
     }
@@ -1187,7 +1187,11 @@ export default {
       }
     }
 
-    const csvUrl = reqUrl.searchParams.get('url');
+    // Ricostruisce l'URL del CSV dalla raw query string per gestire URL con query string propri
+    // es: /?url=https://host.it/api?year=2024&month=6 → url=https://host.it/api?year=2024&month=6
+    const rawSearch = reqUrl.search; // es: "?url=https://...?year=2024&month=6&ipa=xxx"
+    const urlParamMatch = rawSearch.match(/[?&]url=([^]*?)(?:&ipa=|&pa=|&fmt=|&ontos=|$)/);
+    const csvUrl = urlParamMatch ? decodeURIComponent(urlParamMatch[1]) : reqUrl.searchParams.get('url');
     if (!csvUrl) {
       return new Response(JSON.stringify({
         error: 'Parametro ?url= obbligatorio',

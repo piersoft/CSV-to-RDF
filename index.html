@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.237 -->
+  <!-- build:v2026.03.23.238 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -685,7 +685,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.237</span>
+<span id="app-version">v2026.03.23.238</span>
 </footer>
 
 <script>
@@ -2999,7 +2999,18 @@ function fillMissingConnectedResources(ttl,ontos,rows,ipa){
         var la=row.lat||row.stop_lat||"";
         var lo=row.lon||row.stop_lon||row.lng||"";
         if(st||ct||la){
-          var be=ttl.indexOf(" ."+nl,ttl.indexOf(su));
+          // Trova il punto di chiusura della tripla del soggetto (non dei @prefix)
+          var suIdx2=ttl.indexOf(su);
+          var be=-1;
+          if(suIdx2>=0){
+            var candidate2=ttl.indexOf(" ."+nl,suIdx2);
+            while(candidate2>=0){
+              var lineStart2=ttl.lastIndexOf('\n',candidate2)+1;
+              var lineContent2=ttl.slice(lineStart2,candidate2+3);
+              if(!lineContent2.trim().startsWith('@prefix')){be=candidate2;break;}
+              candidate2=ttl.indexOf(" ."+nl,candidate2+1);
+            }
+          }
           if(be>=0)ttl=ttl.slice(0,be)+" ;"+nl+sp+"clv:hasAddress <"+au+">"+ttl.slice(be);
           var dq=String.fromCharCode(34);
           var ad="<"+au+"> a clv:Address";

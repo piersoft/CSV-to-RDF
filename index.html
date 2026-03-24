@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.214 -->
+  <!-- build:v2026.03.23.215 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -684,7 +684,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.214</span>
+<span id="app-version">v2026.03.23.215</span>
 </footer>
 
 <script>
@@ -1917,7 +1917,7 @@ const WORKER_BASE = 'https://csv2rdf.datigovit.workers.dev';
 // ── MAPPA THEME DCAT → ontologie da ESCLUDERE (falsi positivi) ──────────
 // Non decide le ontologie — filtra solo quelle chiaramente incompatibili
 const THEME_EXCLUDE = {
-  'HEAL': ['GTFS','SMAPIT','PARK','ACCO','Route','AtlasOfPaths','Learning','PublicContract','NDC'],
+  'HEAL': ['GTFS','SMAPIT','PARK','ACCO','Route','AtlasOfPaths','Learning','PublicContract','NDC','IoT','Indicator','QB','CPEV','CulturalHeritage','MU'],
   'TRAN': ['QB','SMAPIT','ADMS','Transparency','RPO','CulturalHeritage'],
   'EDUC': ['GTFS','PARK','ACCO','IoT','PARK','Route','AtlasOfPaths'],
   'ENVI': ['SMAPIT','ACCO','PublicContract','RPO','Learning','CulturalHeritage'],

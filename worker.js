@@ -345,6 +345,13 @@ function detNormH(h){var n=h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-
 function detParseCSV(text){
   // Normalizza fine riga
   text=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  // Rileva separatore dalla prima riga
+  var firstLine=text.trim().split('\n')[0]||'';
+  var sep=',';
+  var counts={',':0,';':0,'\t':0,'|':0};
+  for(var ci=0;ci<firstLine.length;ci++){var ch=firstLine[ci];if(counts[ch]!==undefined)counts[ch]++;}
+  var best=0;
+  [';','\t','|',','].forEach(function(s){if(counts[s]>best){best=counts[s];sep=s;}});
   return text.trim().split('\n').map(function(line){
     var res=[],cur='',inQ=false;
     for(var i=0;i<line.length;i++){
@@ -354,7 +361,7 @@ function detParseCSV(text){
         // controlla se è una doppia virgoletta escaped ("")
         if(i+1<line.length&&line[i+1]==='"'){cur+='"';i++;}
         else{inQ=false;}
-      }else if(ch===','&&!inQ){res.push(cur.trim());cur='';}
+      }else if(ch===sep&&!inQ){res.push(cur.trim());cur='';}
       else{cur+=ch;}
     }
     res.push(cur.trim());return res;

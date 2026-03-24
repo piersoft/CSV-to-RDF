@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.225 -->
+  <!-- build:v2026.03.23.226 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -684,7 +684,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.225</span>
+<span id="app-version">v2026.03.23.226</span>
 </footer>
 
 <script>
@@ -3145,6 +3145,47 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
     if(timeVal&&ontos.indexOf('TI')>=0){
       ttl+='<'+timeURI+'> a ti:TimeInstant ;'+nl;
       ttl+=sp+'ti:inDateTime '+dq+timeVal+dq+'^^xsd:dateTime .'+nl+nl;
+    }
+    // ── POI: nodo punto di interesse separato se IoT è mainOnto ──────────
+    if(ontos.indexOf('POI')>=0 && mainOnto!=='POI') {
+      var poiURI=base+'point-of-interest/'+idVal;
+      var poiTriples=[];
+      var labelI2=nh.indexOf('denominazione');if(labelI2<0)labelI2=nh.indexOf('nome');
+      if(labelI2>=0&&row[labelI2])poiTriples.push({pred:'rdfs:label',val:dq+(row[labelI2]||'').trim().replace(/"/g,"'")+dq+'@it'});
+      var idAreaI=nh.indexOf('id_area');if(idAreaI<0)idAreaI=nh.indexOf('id_punto');if(idAreaI<0)idAreaI=nh.indexOf('codice_stazione');
+      if(idAreaI>=0&&row[idAreaI])poiTriples.push({pred:'dct:identifier',val:dq+(row[idAreaI]||'').trim()+dq});
+      var latIp=nh.indexOf('lat');if(latIp<0)latIp=nh.indexOf('latitude');
+      var lonIp=nh.indexOf('lon');if(lonIp<0)lonIp=nh.indexOf('longitude');
+      if(latIp>=0&&row[latIp])poiTriples.push({pred:'geo:lat',val:dq+(row[latIp]||'').trim()+dq+'^^xsd:decimal'});
+      if(lonIp>=0&&row[lonIp])poiTriples.push({pred:'geo:long',val:dq+(row[lonIp]||'').trim()+dq+'^^xsd:decimal'});
+      if(poiTriples.length>0){
+        ttl+='<'+poiURI+'> a poi:PointOfInterest ;'+nl;
+        poiTriples.forEach(function(t,ti){var sep=ti===poiTriples.length-1?' .':' ;';ttl+=sp+t.pred+' '+t.val+sep+nl;});
+        ttl+=nl;
+        used.add('poi');
+        ttl+='<'+subURI+'> iot:hasFeatureOfInterest <'+poiURI+'> .'+nl+nl;
+      }
+    }
+    // ── MU: nodo valore di misura se presente unita_misura ───────────────
+    if(ontos.indexOf('MU')>=0) {
+      var unitaI=nh.indexOf('unita_misura');if(unitaI<0)unitaI=nh.indexOf('unita_di_misura');if(unitaI<0)unitaI=nh.indexOf('unit_of_measure');
+      if(unitaI>=0&&row[unitaI]&&row[unitaI].trim()) {
+        var unitaV=(row[unitaI]||'').trim().replace(/"/g,"'");
+        var numVal2='';
+        nh.forEach(function(h,i){
+          if(numVal2)return;
+          var v=(row[i]||'').trim();
+          if(!isNaN(parseFloat(v))&&isFinite(v)&&!['lat','lon','latitude','longitude'].includes(h)){
+            numVal2=v;
+          }
+        });
+        var muURI=base+'measurement/'+idVal;
+        ttl+='<'+muURI+'> a mu:Value ;'+nl;
+        ttl+=sp+'mu:hasMeasurementUnit '+dq+unitaV+dq+'@it ;'+nl;
+        if(numVal2)ttl+=sp+'mu:value '+dq+numVal2+dq+'^^xsd:decimal ;'+nl;
+        ttl+=sp+'dct:isPartOf <'+subURI+'> .'+nl+nl;
+        used.add('mu');
+      }
     }
     if(ontos.indexOf('RO')>=0){
       var nomeI=nh.indexOf('nome'),cognomeI=nh.indexOf('cognome'),ammI=nh.indexOf('denominazione');

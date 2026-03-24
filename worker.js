@@ -1154,7 +1154,7 @@ export default {
     const reqUrl = new URL(request.url);
 
     if (reqUrl.pathname === '/health') {
-      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.23.209' }), {
+      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.23.210' }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
     }
@@ -1168,7 +1168,7 @@ export default {
         });
       }
       try {
-        const ckanUrl = 'https://www.dati.gov.it/opendata/api/action/package_show?id=' + encodeURIComponent(datasetId);
+        const ckanUrl = 'https://dati.gov.it/opendata/api/action/package_show?id=' + encodeURIComponent(datasetId);
         const ckanResp = await fetch(ckanUrl, { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(8000) });
         const ckanData = await ckanResp.json();
         return new Response(JSON.stringify(ckanData), {

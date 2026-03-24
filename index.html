@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.235 -->
+  <!-- build:v2026.03.23.236 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -685,7 +685,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.235</span>
+<span id="app-version">v2026.03.23.236</span>
 </footer>
 
 <script>
@@ -2969,6 +2969,18 @@ function fillMissingConnectedResources(ttl,ontos,rows,ipa){
   var up=ontos.map(function(x){return x.toUpperCase();});
   var hasClv=up.indexOf("CLV")>=0,hasTi=up.indexOf("TI")>=0;
   if(!hasClv&&!hasTi)return ttl;
+  // Assicura che i prefissi necessari siano dichiarati in testa
+  var missingPfx=[];
+  if(hasTi&&!ttl.includes('@prefix ti:'))missingPfx.push('@prefix ti: <https://w3id.org/italia/onto/TI/> .');
+  if(hasClv&&!ttl.includes('@prefix clv:'))missingPfx.push('@prefix clv: <https://w3id.org/italia/onto/CLV/> .');
+  if(missingPfx.length>0){
+    // Inserisci dopo l'ultimo @prefix esistente
+    var lastPfxEnd=0;
+    var lines=ttl.split('\n');
+    for(var li=0;li<lines.length;li++){if(lines[li].startsWith('@prefix'))lastPfxEnd=li;}
+    lines.splice(lastPfxEnd+1,0,...missingPfx);
+    ttl=lines.join('\n');
+  }
   var base="https://w3id.org/italia/data/"+(ipa||"ipa")+"/";
   var seg=getEntityTypeSegment(ontos);
   var keys=rows[0]?Object.keys(rows[0]):[];

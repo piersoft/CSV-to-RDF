@@ -1154,9 +1154,31 @@ export default {
     const reqUrl = new URL(request.url);
 
     if (reqUrl.pathname === '/health') {
-      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.23.194' }), {
+      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.23.209' }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
+    }
+
+    // ── CKAN PROXY — package_show per dati.gov.it ─────────────────────
+    if (reqUrl.pathname === '/ckan-proxy') {
+      const datasetId = reqUrl.searchParams.get('id');
+      if (!datasetId) {
+        return new Response(JSON.stringify({ error: 'Parametro ?id= obbligatorio' }), {
+          status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
+        });
+      }
+      try {
+        const ckanUrl = 'https://www.dati.gov.it/opendata/api/action/package_show?id=' + encodeURIComponent(datasetId);
+        const ckanResp = await fetch(ckanUrl, { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(8000) });
+        const ckanData = await ckanResp.json();
+        return new Response(JSON.stringify(ckanData), {
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
+        });
+      } catch(e) {
+        return new Response(JSON.stringify({ error: 'CKAN fetch failed: ' + e.message }), {
+          status: 502, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
+        });
+      }
     }
 
     const csvUrl = reqUrl.searchParams.get('url');

@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.215 -->
+  <!-- build:v2026.03.23.216 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -684,7 +684,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.215</span>
+<span id="app-version">v2026.03.23.216</span>
 </footer>
 
 <script>
@@ -2034,9 +2034,9 @@ async function fetchDatiGovContext() {
       '🚫 Escludo ontologie spurie: <strong style="color:#c00">' + exclStr + '</strong><br>' +
       '💡 Suggerite dai tag: <strong style="color:#1a6b35">' + suggStr + '</strong>';
 
-    // Applica immediatamente se il CSV è già caricato
+    // Ri-esegui il detect con il contesto attivo se il CSV è già caricato
     if (document.getElementById('csv-input').value.trim()) {
-      applyDatiGovContext();
+      parseAndPreviewCSV(); // ri-detect con contesto CKAN attivo — applyDatiGovContext viene chiamata dentro
     }
 
   } catch(err) {

@@ -1168,8 +1168,14 @@ export default {
         });
       }
       try {
-        const ckanUrl = 'https://dati.gov.it/opendata/api/action/package_show?id=' + encodeURIComponent(datasetId);
-        const ckanResp = await fetch(ckanUrl, { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(8000) });
+        const ckanUrl = 'https://dati.gov.it/opendata/api/3/action/package_show?id=' + encodeURIComponent(datasetId);
+        const ckanResp = await fetch(ckanUrl, {
+          headers: {
+            'Accept': 'application/json',
+            'User-Agent': 'CSV2RDF-PA/1.0 (https://github.com/piersoft/CSV-to-RDF)'
+          },
+          signal: AbortSignal.timeout(10000)
+        });
         const ckanData = await ckanResp.json();
         return new Response(JSON.stringify(ckanData), {
           headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }

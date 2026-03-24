@@ -341,33 +341,6 @@ function parseCSV(text) {
 }
 
 function detNormH(h){var n=h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');return DET_COL_NORM[n]||n;}
-
-function detParseCSV(text){
-  // Normalizza fine riga
-  text=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
-  // Rileva separatore dalla prima riga
-  var firstLine=text.trim().split('\n')[0]||'';
-  var sep=',';
-  var counts={',':0,';':0,'\t':0,'|':0};
-  for(var ci=0;ci<firstLine.length;ci++){var ch=firstLine[ci];if(counts[ch]!==undefined)counts[ch]++;}
-  var best=0;
-  [';','\t','|',','].forEach(function(s){if(counts[s]>best){best=counts[s];sep=s;}});
-  return text.trim().split('\n').map(function(line){
-    var res=[],cur='',inQ=false;
-    for(var i=0;i<line.length;i++){
-      var ch=line[i];
-      if(ch==='"'&&!inQ&&cur.trim()===''){inQ=true;}
-      else if(ch==='"'&&inQ){
-        // controlla se è una doppia virgoletta escaped ("")
-        if(i+1<line.length&&line[i+1]==='"'){cur+='"';i++;}
-        else{inQ=false;}
-      }else if(ch===sep&&!inQ){res.push(cur.trim());cur='';}
-      else{cur+=ch;}
-    }
-    res.push(cur.trim());return res;
-  });
-}
-
 function detGetMainOnto(ontos){var priority=['GTFS','SMAPIT','ACCO','IoT','CulturalON','Cultural-ON','CulturalHeritage','PublicContract','RPO','Route','AtlasOfPaths','Learning','Transparency','Indicator','PARK','POT','CPEV','AccessCondition','Project','MU','NDC','CPSV-AP','RO','ADMS','TI','CPV','COV','POI','QB','CLV','L0'];for(var i=0;i<priority.length;i++){if(ontos.indexOf(priority[i])>=0)return priority[i];}return ontos[0]||'L0';}
 
 function detFindColIdx(nh,cands){for(var i=0;i<cands.length;i++){var x=nh.indexOf(cands[i]);if(x>=0)return x;}return-1;}
@@ -1428,7 +1401,7 @@ export default {
     const reqUrl = new URL(request.url);
 
     if (reqUrl.pathname === '/health') {
-      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.23.233' }), {
+      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.23.234' }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
     }

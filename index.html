@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.216 -->
+  <!-- build:v2026.03.23.221 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -684,7 +684,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.216</span>
+<span id="app-version">v2026.03.23.221</span>
 </footer>
 
 <script>
@@ -907,7 +907,29 @@ function detectOntologiesDeterministic(headers, rows) {
   var vals = (rows||[]).slice(0,5).map(function(r){
     return Object.values(r).join(' ').toLowerCase();
   }).join(' ');
-  var allText = norm.join(' ') + ' ' + vals;
+  // Se il CSV ha testo narrativo lungo (celle >80 chars in media), usa solo header
+  // per evitare falsi positivi da parole nel testo libero
+  var _avgCellLen = 0;
+  if((rows||[]).length > 0) {
+    var _allVals = (rows||[]).slice(0,5).flatMap(function(r){return Object.values(r).map(function(v){return String(v||'');});});
+    _avgCellLen = _allVals.reduce(function(a,b){return a+b.length;},0) / Math.max(_allVals.length,1);
+  }
+  // CSV narrativo se: media celle > 40 chars O almeno una cella > 120 chars
+  var _maxCellLen = 0;
+  if((rows||[]).length > 0) {
+    var _allVals2 = (rows||[]).slice(0,5).flatMap(function(r){return Object.values(r).map(function(v){return String(v||'');});});
+    _maxCellLen = Math.max.apply(null, _allVals2.map(function(v){return v.length;}));
+  }
+  var _narrativeCSV = _avgCellLen > 40 || _maxCellLen > 120;
+  // Per CSV narrativi: usa solo gli header ma solo come parole intere (non substring)
+  // Questo evita che "popolazione_target" faccia match su "popolazione"
+  var allText;
+  if(_narrativeCSV) {
+    // Match solo su header normalizzati esatti — non substring parziali
+    allText = ' ' + norm.join(' ') + ' ';
+  } else {
+    allText = norm.join(' ') + ' ' + vals;
+  }
   var has = function(cols) {
     if(typeof cols === 'string') return allText.includes(cols);
     return cols.some(function(c){ return allText.includes(c); });
@@ -944,7 +966,7 @@ function detectOntologiesDeterministic(headers, rows) {
                          'struttura_ricettiva','rta','affittacamere','casa_vacanze','tipo_esercizio','codice_struttura_acco']);
   var _accoCtx    = has(['stelle','posti_letto','numero_posti_letto','camere','letti',
                          'check_in','check_out','classificazione_struttura','categoria_struttura']);
-  if(_accoStrong || _accoCtx)
+  if((_accoStrong || _accoCtx) && !_narrativeCSV)
     result.add('ACCO');
 
   // IOT — sensori fisici: richiede identificatore sensore O proprietà misurata specifica
@@ -952,7 +974,7 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['id_sensore','idsensore','id_sensore2','iot:sensor','proprieta_osservata','tipo_misura','data_ricezione','avgspeed']) ||
      (has(['sensore','sensor']) && has(['valore','misura','unita'])) ||
      (has(['temperatura','umidita','pressione','precipitazioni','velocita_vento','valore_medio']) && has(['lat','lon'])))
-    result.add('IoT');
+    if(!_narrativeCSV || has(['id_sensore','idsensore','proprieta_osservata','valore_medio'])) result.add('IoT');
 
   // POI — R3-FIX: LATITUDINE/LONGITUDINE MAIUSCOLE + UTMX/UTMY
   var _hasPOIcoord = hasH(['lat','lon','latitudine','longitudine','utmx','utmy',
@@ -980,7 +1002,7 @@ function detectOntologiesDeterministic(headers, rows) {
   }
 
   // COV — organizzazioni: FIX1 esclude codice_ipa quando accompagnato da colonne di altri domini
-  var _hasCOVStrong = has(['codice_ipa','codice_ente','partita_iva','codice_fiscale_ente','ragione_sociale']) &&
+  var _hasCOVStrong = has(['codice_ipa','codice_ente','partita_iva','codice_fiscale_ente','ragione_sociale','segnalatore','ente_segnalatore','soggetto_segnalante','amministrazione_titolare']) &&
                       !has(['qualifica_dipendente','obbligo_trasparenza','titolo_corso','ore_formazione',
                              'cig','importo_aggiudicazione','tipo_percorso','valore_indicatore']);
   var _hasCOVWeak   = has(['amministrazione','ente','pubblica_amministrazione','organizzazione',
@@ -1006,7 +1028,7 @@ function detectOntologiesDeterministic(headers, rows) {
   }
 
   // QB statistico: anno + aggregati numerici senza anagrafica = dati demografici
-  if(!result.has('CPV') && has(['anno']) && (has(['sesso']) || has(['cittadinanza'])) &&
+  if(!_narrativeCSV && !result.has('CPV') && has(['anno']) && (has(['sesso']) || has(['cittadinanza'])) &&
      !has(['cognome','nome_completo','codice_fiscale','data_nascita']))
     result.add('QB');
   // CPV — persone fisiche: richiede cognome O CF O data_nascita+sesso (P3-FIX: esclude QB puro)
@@ -1038,7 +1060,7 @@ function detectOntologiesDeterministic(headers, rows) {
      !has(['nome_dataset','nome_risorsa','numero_righe','distribution_url']) &&
      !has(['tratta','capolinea','fermata_origine','fermata_arrivo']) &&
      !has(['codice_istat','codice_civico','cod_civico','numero_civico']))  // B3: codici geo ≠ QB
-    result.add('QB');
+    if(!_narrativeCSV) result.add('QB');
 
   // TI — R6-FIX: richiede date esplicite O combo evento+luogo (non solo titolo/tipo)
   var _tiStrong = has(['data_inizio','data_fine','data_da','data_a','data_inizio_evento','data_fine_evento','inizio','termine','quando','orario_inizio',
@@ -1097,7 +1119,7 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['qualifica_dipendente','contratto_lavoro','ccnl','livello_contrattuale','ore_settimanali'])) result.add('RPO');
   if(has(['titolo_corso','ore_formazione','crediti','ects','titolo_rilasciato','durata_corso'])) result.add('Learning');
   if(has(['obbligo_trasparenza','categoria_trasparenza','dato_obbligatorio','norma_riferimento'])) result.add('Transparency');
-  if(has(['tipo_indicatore','valore_indicatore','baseline','target','fonte_indicatore'])) result.add('Indicator');
+  if(!_narrativeCSV && has(['tipo_indicatore','valore_indicatore','baseline','target','fonte_indicatore'])) result.add('Indicator');
 
   // ── cleanup post-trigger ─────────────────────────────────────────────────
   if(result.has('RO')&&result.has('TI')&&!has(['data_evento','titolo_evento','nome_evento','manifestazione','tipo_evento_pubblico'])) result.delete('TI'); // RO: data mandato ≠ evento

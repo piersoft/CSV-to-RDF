@@ -649,7 +649,8 @@ function detectOntologiesDeterministic(headers, rows) {
   // FIX5: include incidenti/feriti/mortali come dati statistici aggregati
   if(has(['anno','mese','occorrenze','totale','numero','valore','indice',
           'popolazione_residente','numero_famiglie',
-          'incidenti','feriti','mortali','deceduti','sinistri']) &&
+          'incidenti','feriti','mortali','deceduti','sinistri',
+          'count','total','amount','value','measure']) &&
      !result.has('ACCO') && !result.has('GTFS') && !result.has('IoT') &&
      !result.has('COV') && !result.has('CPV') && !result.has('SMAPIT') &&
      !result.has('CPSV') && !result.has('ADMS') && !result.has('RO') &&
@@ -662,7 +663,8 @@ function detectOntologiesDeterministic(headers, rows) {
   // TI — R6-FIX: richiede date esplicite O combo evento+luogo (non solo titolo/tipo)
   var _tiStrong = has(['data_inizio','data_fine','data_da','data_a','data_inizio_evento','data_fine_evento','inizio','termine','quando','orario_inizio',
                        'orario_fine','data_evento','ora_inizio','ora_fine','data_ora',
-                       'data_rilevazione','data_apertura','data_chiusura','data_campionamento','data_rilevamento','data_misura','data_monitoraggio']) ||
+                       'data_rilevazione','data_apertura','data_chiusura','data_campionamento','data_rilevamento','data_misura','data_monitoraggio',
+                       'date','datetime','timestamp','start_date','end_date','created_at','updated_at','time']) ||
                      (hasH(['data']) && has(['valore','misura','rilevazione','monitoraggio','campione','sensore','iot','misura']));
   var _tiEvent  = has(['tipo_evento','nome_iniziativa','nome_evento','manifestazione','data_da','data_a','data_inizio_evento','data_fine_evento',
                        'spettacolo','concerto','rassegna','stagione','programmazione']);
@@ -705,7 +707,7 @@ function detectOntologiesDeterministic(headers, rows) {
   }
     var _hasAnagrafica=norm.some(function(n){return n==='cognome'||n==='codice_fiscale'||n==='cf';});
     if(result.has('QB')&&result.has('CPV')&&!_hasAnagrafica) result.delete('CPV'); // QB stats senza cognome
-    if(result.has('QB') && (result.has('TI')||result.has('CulturalON')||result.has('ACCO')||result.has('GTFS'))) result.delete('QB'); // QB non su eventi/strutture
+    if(result.has('QB') && (result.has('CulturalON')||result.has('ACCO')||result.has('GTFS'))) result.delete('QB'); // QB non su strutture/trasporti
   // Se SMAPIT rilevato, rimuovi ontologie incompatibili
   if(result.has('SMAPIT')){result.delete('CulturalON');result.delete('Cultural-ON');result.delete('QB');result.delete('CPV');}
   if(result.has('Cultural-ON')) result.add('CulturalON'); // alias retrocompatibilità
@@ -1355,7 +1357,7 @@ export default {
     const reqUrl = new URL(request.url);
 
     if (reqUrl.pathname === '/health') {
-      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.23.238' }), {
+      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.23.239' }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
     }
@@ -1431,7 +1433,7 @@ export default {
       const meta = {
         csvUrl, ipa, pa: paName, ontologie: ontos,
         righe: parsed.rows.length, colonne: parsed.headers,
-        generato: new Date().toISOString(), versione: 'v2026.03.23.238'
+        generato: new Date().toISOString(), versione: 'v2026.03.23.239'
       };
 
       if (fmtReq === 'json') {

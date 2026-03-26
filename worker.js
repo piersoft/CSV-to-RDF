@@ -340,7 +340,7 @@ function parseCSV(text) {
   return { headers, rows, sep };
 }
 
-function detNormH(h){var n=h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');return DET_COL_NORM[n]||n;}
+function detNormH(h){var n=h.toLowerCase().trim().replace(/[àáâä]/g,'a').replace(/[èéêë]/g,'e').replace(/[ìíîï]/g,'i').replace(/[òóôö]/g,'o').replace(/[ùúûü]/g,'u').replace(/ñ/g,'n').replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');return DET_COL_NORM[n]||n;}
 
 function detParseCSV(text){
   // Normalizza fine riga
@@ -651,7 +651,9 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['anno','mese','occorrenze','totale','numero','valore','indice',
           'popolazione_residente','numero_famiglie',
           'incidenti','feriti','mortali','deceduti','sinistri',
-          'count','total','amount','value','measure']) &&
+          'count','total','amount','value','measure',
+          'dipendenti','personale','addetti','lavoratori','occupati',
+          'maschi','femmine','fascia_eta','classe_eta']) &&
      !result.has('ACCO') && !result.has('GTFS') && !result.has('IoT') &&
      !result.has('COV') && !result.has('CPV') && !result.has('SMAPIT') &&
      !result.has('CPSV') && !result.has('ADMS') && !result.has('RO') &&
@@ -1358,7 +1360,7 @@ export default {
     const reqUrl = new URL(request.url);
 
     if (reqUrl.pathname === '/health') {
-      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.23.241' }), {
+      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.23.242' }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
     }
@@ -1434,7 +1436,7 @@ export default {
       const meta = {
         csvUrl, ipa, pa: paName, ontologie: ontos,
         righe: parsed.rows.length, colonne: parsed.headers,
-        generato: new Date().toISOString(), versione: 'v2026.03.23.241'
+        generato: new Date().toISOString(), versione: 'v2026.03.23.242'
       };
 
       if (fmtReq === 'json') {

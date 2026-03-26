@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.23.238 -->
+  <!-- build:v2026.03.23.239 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -685,7 +685,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.23.238</span>
+<span id="app-version">v2026.03.23.239</span>
 </footer>
 
 <script>
@@ -1059,7 +1059,9 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['anno','mese','occorrenze','totale','numero','valore','indice',
           'popolazione_residente','numero_famiglie',
           'incidenti','feriti','mortali','deceduti','sinistri',
-          'count','total','amount','value','measure']) &&
+          'count','total','amount','value','measure',
+          'dipendenti','personale','addetti','lavoratori','occupati',
+          'maschi','femmine','fascia_eta','classe_eta']) &&
      !result.has('ACCO') && !result.has('GTFS') && !result.has('IoT') &&
      !result.has('COV') && !result.has('CPV') && !result.has('SMAPIT') &&
      !result.has('CPSV') && !result.has('ADMS') && !result.has('RO') &&
@@ -3057,7 +3059,7 @@ var DET_COL_NORM={'osm_id':'id','osm_type':'_skip','osm_url':'sitoweb','indoor':
 var DET_URI_SEG={ACCO:'accommodation-facility',GTFS:'stop',POI:'point-of-interest','IoT':'sensor',COV:'public-organization',CPV:'person',RO:'role',SMAPIT:'school',QB:'observation',CLV:'address',TI:'event',CulturalON:'cultural-institute',ADMS:'asset',CPSV:'service',PARK:'parking-facility',PublicContract:'public-contract',Route:'route',RPO:'role-in-organization',Learning:'course',Transparency:'transparency-obligation',Indicator:'indicator',POT:'price-specification',CPEV:'public-event',AccessCondition:'access-condition',AtlasOfPaths:'path',CulturalHeritage:'cultural-heritage',Project:'project',MU:'measurement',NDC:'data-service'};
 var DET_CLASS={ACCO:'acco:Accommodation',GTFS:'gtfs:Stop',POI:'poi:PointOfInterest','IoT':'iot:Sensor',COV:'cov:PublicOrganization',CPV:'cpv:Person',RO:'ro:Role',SMAPIT:'smapit:School',QB:'qb:Observation',CLV:'clv:Address',TI:'l0:EventOrSituation',CulturalON:'cis:CulturalInstituteOrSite','Cultural-ON':'cis:CulturalInstituteOrSite',ADMS:'adms:SemanticAsset',CPSV:'cpsv:PublicService','CPSV-AP':'cpsv:PublicService',PARK:'park:ParkingFacility',PublicContract:'pc:Contract',Route:'route:Route',RPO:'rpo:RoleInOrganization',Learning:'learn:Course',Transparency:'tr:TransparencyObligation',Indicator:'indicator:Indicator',POT:'pot:PriceSpecification',CPEV:'cpev:PublicEvent',AccessCondition:'ac:AccessCondition',AtlasOfPaths:'aop:Path',CulturalHeritage:'ch:CulturalHeritage',Project:'prj:PublicInvestmentProject',MU:'mu:Value',NDC:'ndc:DataService'};
 function detGetMainOnto(ontos){var priority=['GTFS','SMAPIT','ACCO','IoT','CulturalON','Cultural-ON','CulturalHeritage','PublicContract','RPO','Route','AtlasOfPaths','Learning','Transparency','Indicator','PARK','POT','CPEV','AccessCondition','Project','MU','NDC','CPSV-AP','RO','ADMS','QB','CPV','COV','POI','TI','CLV','L0'];for(var i=0;i<priority.length;i++){if(ontos.indexOf(priority[i])>=0)return priority[i];}return ontos[0]||'L0';}
-function detNormH(h){var n=h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');return DET_COL_NORM[n]||n;}
+function detNormH(h){var n=h.toLowerCase().trim().replace(/[àáâä]/g,'a').replace(/[èéêë]/g,'e').replace(/[ìíîï]/g,'i').replace(/[òóôö]/g,'o').replace(/[ùúûü]/g,'u').replace(/ñ/g,'n').replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');return DET_COL_NORM[n]||n;}
 function detFindColIdx(nh,cands){for(var i=0;i<cands.length;i++){var x=nh.indexOf(cands[i]);if(x>=0)return x;}return-1;}
 function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat','lon'].some(function(c){return nh.indexOf(c)>=0;});}
 function detHasTime(nh,ontos){return ontos.indexOf('TI')>=0&&['inizio','termine','data','quando'].some(function(c){return nh.indexOf(c)>=0;});}

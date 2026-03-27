@@ -24936,6 +24936,112 @@
         "RPO"
       ],
       "note": "Halley Boxxapps - altri_oneri"
+    },
+    {
+      "seq": 312,
+      "id": "esercizi-commerciali-poi-cov-clv-0312",
+      "name": "esercizi-commerciali-ristorazione",
+      "title": "Esercizi di ristorazione e attività commerciali - Comuni italiani",
+      "org": "comune-italiano",
+      "ente": "Comune italiano",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "ECON"
+      ],
+      "tema_onto": [
+        "POI",
+        "COV",
+        "CLV"
+      ],
+      "tema_target": [
+        "POI",
+        "COV",
+        "CLV"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "RAGIONE_SOCIALE",
+        "INSEGNA",
+        "ATTIVITA",
+        "UBICAZIONE_ESERCIZIO",
+        "N_Civico"
+      ],
+      "sample_rows": [
+        {
+          "RAGIONE_SOCIALE": "MARIO ROSSI SRL",
+          "INSEGNA": "LA PIAZZA",
+          "ATTIVITA": "ristorante",
+          "UBICAZIONE_ESERCIZIO": "via Roma",
+          "N_Civico": "1"
+        }
+      ],
+      "n_cols": 5,
+      "holder_name": "Comune italiano",
+      "validation": "ok",
+      "confirmed_temi": [
+        "POI",
+        "COV",
+        "CLV"
+      ],
+      "note": "Esercizi commerciali: RAGIONE_SOCIALE(COV)+INSEGNA/ATTIVITA(POI)+UBICAZIONE/N_Civico(CLV)"
+    },
+    {
+      "seq": 313,
+      "id": "attivita-produttive-suap-poi-cov-clv-0313",
+      "name": "attivita-produttive-suap",
+      "title": "Attività produttive SUAP - esercizi con indirizzo",
+      "org": "comune-italiano",
+      "ente": "Comune italiano",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "ECON"
+      ],
+      "tema_onto": [
+        "POI",
+        "COV",
+        "CLV"
+      ],
+      "tema_target": [
+        "POI",
+        "COV",
+        "CLV"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "",
+      "datastore": false,
+      "source": "upload",
+      "headers": [
+        "ragione_sociale",
+        "insegna",
+        "tipo_esercizio",
+        "indirizzo",
+        "civico",
+        "comune"
+      ],
+      "sample_rows": [
+        {
+          "ragione_sociale": "ALFA SRL",
+          "insegna": "BAR CENTRALE",
+          "tipo_esercizio": "bar",
+          "indirizzo": "via Roma",
+          "civico": "1",
+          "comune": "Milano"
+        }
+      ],
+      "n_cols": 6,
+      "holder_name": "Comune italiano",
+      "validation": "ok",
+      "confirmed_temi": [
+        "POI",
+        "COV",
+        "CLV"
+      ],
+      "note": "SUAP: ragione_sociale+insegna+tipo_esercizio+indirizzo"
     }
   ]
 }

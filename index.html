@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.27.55 -->
+  <!-- build:v2026.03.27.56 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -717,7 +717,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.27.55</span>
+<span id="app-version">v2026.03.27.56</span>
 </footer>
 
 <script>
@@ -1023,6 +1023,11 @@ function detectOntologiesDeterministic(headers, rows) {
           'point_of_interest','idelem','id_elem',
           'id_area','id_punto','codice_stazione','stazione_monitoraggio','punto_monitoraggio']) || _hasOSMschema) {
     result.add('POI');
+  } else if(has(['insegna','nome_esercizio','insegna_commerciale']) &&
+            has(['attivita','tipo_esercizio','categoria_esercizio']) &&
+            has(['ubicazione_esercizio','indirizzo_esercizio','n_civico','numero_civico'])) {
+    // Esercizi commerciali senza coordinate: insegna + tipo attività + indirizzo → POI
+    result.add('POI');
   } else if(_hasPOIcoord && !result.has('GTFS') &&  // B1: ACCO+lat/lon = anche POI
             !result.has('SMAPIT') && !result.has('QB') &&
             !result.has('Cultural-ON')) { // non aggiungere POI su istituti culturali
@@ -1063,7 +1068,7 @@ function detectOntologiesDeterministic(headers, rows) {
            'qualifica','contratto','ccnl','cig','cup','obbligo_trasparenza'])) {
     if(result.has('COV') && !has(['codice_ipa','cf_ente','ragione_sociale','tipo_ente'])) result.delete('COV');
     if(result.has('TI')  && !has(['data_inizio','data_fine','data_da','data_a','data_evento','quando','inizio','termine'])) result.delete('TI');
-    if(result.has('POI') && !has(['tipo_poi','nome_poi','dae','lat','lon'])) result.delete('POI');
+    if(result.has('POI') && !has(['tipo_poi','nome_poi','dae','lat','lon','insegna','insegna_commerciale'])) result.delete('POI');
     if(result.has('CPV') && !has(['cognome','codice_fiscale','nome_completo','data_nascita'])) result.delete('CPV');
   }
 

@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.27.50 -->
+  <!-- build:v2026.03.27.51 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -717,7 +717,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.27.50</span>
+<span id="app-version">v2026.03.27.51</span>
 </footer>
 
 <script>
@@ -3517,6 +3517,8 @@ function enforceOntologies(ttl, ontos) {
 }
 
 async function startDeterministicConversion() {
+  var _gp = document.getElementById('graph-panel');
+  if (_gp) _gp.style.display = 'none';
   window._exampleLocked = false;
   var csvText = (document.getElementById('csv-input')||{value:''}).value.trim();
   var ipa = (document.getElementById('meta-ipa')||{value:''}).value.trim();
@@ -4225,6 +4227,10 @@ async function callGemini(prompt) {
 const CHUNK_SIZE = 25;
 
 async function startConversion() {
+  // Chiude il pannello grafo: il TTL sta per essere rigenerato
+  var _gp = document.getElementById('graph-panel');
+  if (_gp) _gp.style.display = 'none';
+
   var _ipaCheck=(document.getElementById('meta-ipa')||{value:''}).value.trim();if(!_ipaCheck){showStatus('? Inserisci il Codice IPA dell\'ente titolare (STEP 3).', 'error');return;}
   if (!hasApiKey()) { startDeterministicConversion(); return; }
   const csvText = document.getElementById('csv-input').value.trim();

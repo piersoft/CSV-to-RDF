@@ -9,7 +9,7 @@ const ONTO_RULES = [
   { keys: ['indirizzo','address','via','strada','civico','cap','comune'],  ontos: ['CLV'] },
   { keys: ['telefono','phone','tel','email','mail','sito','web','url'],    ontos: ['SM'] },
   { keys: ['nome','name','denominazione','titolo'],                        ontos: ['L0'] },
-  { keys: ['organizzazione','ente','comune','provincia','regione'],        ontos: ['COV'] },
+  { keys: ['organizzazione','ente','comune','provincia','regione','ragione_sociale','insegna_commerciale'],        ontos: ['COV'] },
   { keys: ['persona','cognome','responsabile','referente','inventore','inventori','autore','ricercatore','lista','candidato','sezione_elettorale'], ontos: ['CPV'] },
   { keys: ['ruolo','qualifica','mansione','incarico'],                     ontos: ['RO'] },
   { keys: ['nome_dataset','nome_risorsa','dataset_name','resource_name','numero_righe','numero_record','formato','identifier'], ontos: ['ADMS'] },
@@ -1360,7 +1360,7 @@ export default {
     const reqUrl = new URL(request.url);
 
     if (reqUrl.pathname === '/health') {
-      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.27.44' }), {
+      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.03.27.53' }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
     }
@@ -1436,7 +1436,7 @@ export default {
       const meta = {
         csvUrl, ipa, pa: paName, ontologie: ontos,
         righe: parsed.rows.length, colonne: parsed.headers,
-        generato: new Date().toISOString(), versione: 'v2026.03.27.44'
+        generato: new Date().toISOString(), versione: 'v2026.03.27.53'
       };
 
       if (fmtReq === 'json') {

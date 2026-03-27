@@ -368,7 +368,7 @@ function detParseCSV(text){
   });
 }
 
-function detGetMainOnto(ontos){var priority=['GTFS','SMAPIT','ACCO','IoT','CulturalON','Cultural-ON','CulturalHeritage','PublicContract','RPO','Route','AtlasOfPaths','Learning','Transparency','Indicator','PARK','POT','CPEV','AccessCondition','Project','MU','NDC','CPSV-AP','RO','ADMS','QB','CPV','COV','POI','TI','CLV','L0'];for(var i=0;i<priority.length;i++){if(ontos.indexOf(priority[i])>=0)return priority[i];}return ontos[0]||'L0';}
+function detGetMainOnto(ontos){var priority=['GTFS','SMAPIT','ACCO','IoT','CulturalON','Cultural-ON','CulturalHeritage','PublicContract','RPO','Route','AtlasOfPaths','Learning','Transparency','Indicator','PARK','POT','CPEV','AccessCondition','Project','MU','NDC','CPSV-AP','RO','ADMS','QB','CPV','POI','COV','TI','CLV','L0'];for(var i=0;i<priority.length;i++){if(ontos.indexOf(priority[i])>=0)return priority[i];}return ontos[0]||'L0';}
 
 function detFindColIdx(nh,cands){for(var i=0;i<cands.length;i++){var x=nh.indexOf(cands[i]);if(x>=0)return x;}return-1;}
 
@@ -934,7 +934,7 @@ function getMainClass(ontos) {
 }
 
 function getEntityTypeSegment(ontos) {
-  const priority = ['GTFS','SMAPIT','IOT','ACCO','PARK','PUBLICCONTRACT','RPO','ROUTE','LEARNING','TRANSPARENCY','INDICATOR','POT','CULTURAL-ON','CULTURALON','CPSV-AP','QB','CPV','COV','RO','TI','POI','CLV','ADMS','L0'];
+  const priority = ['GTFS','SMAPIT','IOT','ACCO','PARK','PUBLICCONTRACT','RPO','ROUTE','LEARNING','TRANSPARENCY','INDICATOR','POT','CULTURAL-ON','CULTURALON','CPSV-AP','QB','CPV','POI','COV','RO','TI','CLV','ADMS','L0'];
   const up = ontos.map(o => o.toUpperCase());
   for (const onto of priority) {
     if (up.includes(onto)) {

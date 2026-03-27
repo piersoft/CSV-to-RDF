@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.27.43 -->
+  <!-- build:v2026.03.27.44 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -589,6 +589,7 @@
             <button class="btn-primary" id="btn-download-rdf" onclick="downloadRDF()" disabled style="background:#1a6b35">⬇ Scarica .rdf</button>
             <button class="btn-sec" onclick="copyTTL()">📋 Copia TTL</button>
             <button id="btn-validate" class="btn-sec" disabled onclick="validateTTL()" style="border-color:#f90;color:#f90">🔍 Valida</button>
+            <button id="btn-show-graph" class="btn-sec" disabled onclick="showGraphPanel()" style="border-color:var(--dg-blue);color:var(--dg-blue)">🕸 Grafo</button>
           </div>
           <div id="validation-report" style="display:none; margin-top:12px; padding:12px; background:#1a1a2e; border-radius:8px; font-family:monospace; font-size:12px; max-height:200px; overflow-y:auto"></div>
           <div id="output-stats" style="display:none;margin-top:0.9rem;">
@@ -631,6 +632,37 @@
       </div>
     </div><!-- fine DX -->
 
+  </div>
+</div>
+
+<!-- ── GRAFO RDF VISUALE ────────────────────────────────────────────── -->
+<div class="container mt-3 mb-2" id="graph-panel" style="display:none">
+  <div class="card-pa" style="border:2px solid var(--dg-blue)">
+    <div class="card-head dark" style="display:flex;align-items:center;justify-content:space-between;">
+      <span>🕸 Anteprima Grafo RDF</span>
+      <div style="display:flex;gap:.5rem;align-items:center;">
+        <label style="font-size:.72rem;color:rgba(255,255,255,.8);font-weight:400">
+          <input type="checkbox" id="graph-labels" checked onchange="renderGraph()" style="margin-right:3px"> Etichette
+        </label>
+        <label style="font-size:.72rem;color:rgba(255,255,255,.8);font-weight:400">
+          Max entità:
+          <select id="graph-max-nodes" onchange="renderGraph()" style="font-size:.72rem;padding:1px 4px;border-radius:3px;border:none;margin-left:3px">
+            <option value="10">10</option>
+            <option value="25" selected>25</option>
+            <option value="50">50</option>
+          </select>
+        </label>
+        <button onclick="document.getElementById('graph-panel').style.display='none'" style="background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:.8rem">✕</button>
+      </div>
+    </div>
+    <div class="card-body-pa" style="padding:.6rem">
+      <div id="graph-legend" style="font-size:.7rem;color:var(--dg-muted);margin-bottom:.5rem;display:flex;gap:.8rem;flex-wrap:wrap"></div>
+      <div id="graph-canvas-wrap" style="position:relative;background:#f8fafc;border:1px solid var(--dg-border);border-radius:6px;overflow:hidden">
+        <svg id="rdf-graph-svg" width="100%" height="460" style="display:block"></svg>
+        <div id="graph-tooltip" style="display:none;position:absolute;background:#17324d;color:#fff;font-size:.7rem;font-family:var(--mono);padding:5px 9px;border-radius:5px;pointer-events:none;max-width:280px;word-break:break-all;z-index:10"></div>
+      </div>
+      <div id="graph-stats" style="margin-top:.5rem;font-size:.72rem;color:var(--dg-muted);font-family:var(--mono)"></div>
+    </div>
   </div>
 </div>
 
@@ -685,7 +717,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.27.43</span>
+<span id="app-version">v2026.03.27.44</span>
 </footer>
 
 <script>
@@ -5060,6 +5092,310 @@ window.showPanel=showPanel;
 window.corpusMatch=function(h){return matchCorpus(h);};
 })();
 </script>
+<!-- ===== GRAFO RDF v1 ===== -->
+<script>
+(function(){
+'use strict';
+
+/* ── palette per tipo nodo ── */
+var PALETTE = {
+  subject:   { fill:'#0066cc', stroke:'#004a99', r:12 },
+  object:    { fill:'#1a6b35', stroke:'#0f4020', r:9  },
+  literal:   { fill:'#f07b05', stroke:'#c45e00', r:7  },
+  prefix:    { fill:'#8e44ad', stroke:'#6c3483', r:10 },
+  blank:     { fill:'#5c6f82', stroke:'#3a4f60', r:8  }
+};
+
+/* ── parse TTL leggero (nodi + archi) ── */
+function parseTTL(ttl, maxNodes) {
+  var lines = ttl.split('\n');
+  var prefixes = {};
+  var nodes = {}, edges = [], nodeId = 0;
+  var lastSubj = null;
+
+  function getNode(uri, type) {
+    if (!nodes[uri]) {
+      nodes[uri] = { id: nodeId++, label: shortenURI(uri, prefixes), uri: uri, type: type };
+    }
+    return nodes[uri];
+  }
+
+  function shortenURI(u, px) {
+    u = u.replace(/^<|>$/g,'');
+    for (var p in px) {
+      if (u.startsWith(px[p])) return p + ':' + u.slice(px[p].length);
+    }
+    var parts = u.split(/[#\/]/);
+    return parts[parts.length-1] || u;
+  }
+
+  // Raccoglie prefissi
+  lines.forEach(function(l) {
+    var m = l.match(/^@prefix\s+(\w*):\s+<([^>]+)>/);
+    if (m) prefixes[m[1]] = m[2];
+  });
+
+  // Raccoglie triple (soggetto predicato oggetto .)
+  var ttlClean = ttl.replace(/@prefix[^\n]+\n/g,'').replace(/#[^\n]*/g,'');
+  // Ricostruisce le triple collassando multiriga
+  var triples = [];
+  var buf = '';
+  ttlClean.split('\n').forEach(function(l){
+    buf += ' ' + l.trim();
+    if (buf.trim().endsWith('.')) {
+      triples.push(buf.trim()); buf = '';
+    }
+  });
+
+  triples.forEach(function(block) {
+    // Gestisce ; per predicati multipli sullo stesso soggetto
+    var dot = block.replace(/\.\s*$/, '').trim();
+    // Estrae soggetto (prima parte fino al primo predicato)
+    var subjMatch = dot.match(/^(<[^>]+>|_:\w+)/);
+    if (!subjMatch) return;
+    var subjURI = subjMatch[1];
+    var subjNode = getNode(subjURI, subjURI.startsWith('_:') ? 'blank' : 'subject');
+    // Predicati
+    var rest = dot.slice(subjMatch[0].length).trim();
+    var stmts = rest.split(/\s*;\s*/);
+    stmts.forEach(function(stmt) {
+      stmt = stmt.trim();
+      if (!stmt) return;
+      var parts = stmt.match(/^(<[^>]+>|\w+:\w+)\s+([\s\S]+)$/);
+      if (!parts) return;
+      var pred = parts[1];
+      var objRaw = parts[2].trim();
+      var objType, objLabel, objURI;
+      if (objRaw.startsWith('"') || objRaw.match(/^[0-9\-]/) || objRaw.match(/^"?[0-9]/)) {
+        // Letterale
+        objLabel = objRaw.replace(/\^\^[^\s,]+/,'').replace(/^"|"$/g,'').replace(/@\w+$/,'').slice(0,40);
+        objURI = 'lit_' + nodeId;
+        objType = 'literal';
+      } else if (objRaw.startsWith('_:')) {
+        objURI = objRaw; objType = 'blank'; objLabel = objRaw;
+      } else {
+        objURI = objRaw.replace(/^<|>$/,'');
+        objType = 'object';
+        objLabel = shortenURI(objURI, prefixes);
+      }
+      if (!nodes[objURI]) {
+        nodes[objURI] = { id: nodeId++, label: objLabel, uri: objURI, type: objType };
+      }
+      var predLabel = shortenURI(pred, prefixes);
+      edges.push({ s: subjNode.id, t: nodes[objURI].id, label: predLabel });
+    });
+  });
+
+  var allNodes = Object.values(nodes).slice(0, maxNodes);
+  var nodeSet = new Set(allNodes.map(function(n){return n.id;}));
+  var filtEdges = edges.filter(function(e){ return nodeSet.has(e.s) && nodeSet.has(e.t); }).slice(0, 200);
+  return { nodes: allNodes, edges: filtEdges, prefixes: prefixes };
+}
+
+/* ── force layout semplice ── */
+function forceLayout(nodes, edges, W, H, steps) {
+  var k = Math.sqrt((W * H) / (nodes.length || 1));
+  nodes.forEach(function(n, i) {
+    n.x = W/2 + Math.cos(2*Math.PI*i/nodes.length)*Math.min(W,H)*0.35;
+    n.y = H/2 + Math.sin(2*Math.PI*i/nodes.length)*Math.min(W,H)*0.35;
+    n.vx = 0; n.vy = 0;
+  });
+  for (var step = 0; step < steps; step++) {
+    var cool = 1 - step/steps;
+    // Repulsione
+    for (var i = 0; i < nodes.length; i++) {
+      var fx = 0, fy = 0;
+      for (var j = 0; j < nodes.length; j++) {
+        if (i === j) continue;
+        var dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y;
+        var d = Math.sqrt(dx*dx+dy*dy) || 0.1;
+        var f = (k*k) / d;
+        fx += f*dx/d; fy += f*dy/d;
+      }
+      // Attrazione verso il centro
+      fx -= (nodes[i].x - W/2)*0.005;
+      fy -= (nodes[i].y - H/2)*0.005;
+      nodes[i].vx = (nodes[i].vx + fx)*0.5;
+      nodes[i].vy = (nodes[i].vy + fy)*0.5;
+    }
+    // Attrazione archi
+    edges.forEach(function(e) {
+      var s = nodes.find(function(n){return n.id===e.s;}),
+          t = nodes.find(function(n){return n.id===e.t;});
+      if (!s||!t) return;
+      var dx=s.x-t.x, dy=s.y-t.y, d=Math.sqrt(dx*dx+dy*dy)||0.1;
+      var f = (d-k)*0.15;
+      s.vx -= f*dx/d; s.vy -= f*dy/d;
+      t.vx += f*dx/d; t.vy += f*dy/d;
+    });
+    // Aggiorna posizioni
+    nodes.forEach(function(n) {
+      n.x = Math.max(20, Math.min(W-20, n.x + n.vx*cool));
+      n.y = Math.max(20, Math.min(H-20, n.y + n.vy*cool));
+    });
+  }
+}
+
+/* ── SVG helpers ── */
+function svgEl(tag, attrs) {
+  var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  Object.keys(attrs).forEach(function(k){ el.setAttribute(k, attrs[k]); });
+  return el;
+}
+
+/* ── rendering principale ── */
+function renderGraph() {
+  var ttl = document.getElementById('ttl-output').value;
+  if (!ttl || ttl.length < 20) return;
+  var maxNodes = parseInt(document.getElementById('graph-max-nodes').value) || 25;
+  var showLabels = document.getElementById('graph-labels').checked;
+
+  var data = parseTTL(ttl, maxNodes);
+  if (!data.nodes.length) { document.getElementById('graph-stats').textContent = 'Nessun nodo trovato nel TTL.'; return; }
+
+  var svg = document.getElementById('rdf-graph-svg');
+  var W = svg.parentElement.clientWidth || 800;
+  var H = 460;
+  svg.setAttribute('viewBox', '0 0 '+W+' '+H);
+  svg.innerHTML = '';
+
+  // Frecce arrowhead
+  var defs = svgEl('defs',{});
+  var marker = svgEl('marker',{id:'arrow',markerWidth:'8',markerHeight:'8',refX:'16',refY:'3',orient:'auto'});
+  var path = svgEl('path',{d:'M0,0 L0,6 L8,3 z',fill:'#5c6f82',opacity:'0.7'});
+  marker.appendChild(path); defs.appendChild(marker); svg.appendChild(defs);
+
+  forceLayout(data.nodes, data.edges, W, H, 120);
+
+  var nodeById = {};
+  data.nodes.forEach(function(n){ nodeById[n.id]=n; });
+
+  // Archi
+  var edgeG = svgEl('g',{});
+  data.edges.forEach(function(e) {
+    var s = nodeById[e.s], t = nodeById[e.t];
+    if (!s||!t) return;
+    var line = svgEl('line',{
+      x1:s.x, y1:s.y, x2:t.x, y2:t.y,
+      stroke:'#b0bec5', 'stroke-width':'1.2', 'marker-end':'url(#arrow)', opacity:'0.7'
+    });
+    edgeG.appendChild(line);
+    if (showLabels) {
+      var mx=(s.x+t.x)/2, my=(s.y+t.y)/2;
+      var lt = svgEl('text',{
+        x:mx, y:my-4, 'text-anchor':'middle',
+        'font-size':'8', fill:'#5c6f82', 'font-family':'Roboto Mono,monospace',
+        style:'pointer-events:none'
+      });
+      lt.textContent = e.label.length > 22 ? e.label.slice(0,20)+'…' : e.label;
+      edgeG.appendChild(lt);
+    }
+  });
+  svg.appendChild(edgeG);
+
+  // Tooltip
+  var tip = document.getElementById('graph-tooltip');
+
+  // Nodi
+  var nodeG = svgEl('g',{});
+  data.nodes.forEach(function(n) {
+    var p = PALETTE[n.type] || PALETTE.object;
+    var g = svgEl('g',{transform:'translate('+n.x+','+n.y+')', style:'cursor:pointer'});
+
+    var drag = {active:false, ox:0, oy:0};
+    g.addEventListener('mousedown', function(ev){
+      drag.active=true; drag.ox=ev.clientX-n.x; drag.oy=ev.clientY-n.y;
+      ev.preventDefault();
+    });
+    document.addEventListener('mousemove', function(ev){
+      if(!drag.active) return;
+      var svgRect = svg.getBoundingClientRect();
+      var scaleX = W / svgRect.width;
+      n.x = (ev.clientX - svgRect.left)*scaleX;
+      n.y = (ev.clientY - svgRect.top)*(H/svgRect.height);
+      n.x = Math.max(20,Math.min(W-20,n.x));
+      n.y = Math.max(20,Math.min(H-20,n.y));
+      g.setAttribute('transform','translate('+n.x+','+n.y+')');
+      // Aggiorna archi
+      edgeG.querySelectorAll('line').forEach(function(ln,i){
+        var e=data.edges[i];if(!e)return;
+        var s=nodeById[e.s],t=nodeById[e.t];if(!s||!t)return;
+        ln.setAttribute('x1',s.x);ln.setAttribute('y1',s.y);
+        ln.setAttribute('x2',t.x);ln.setAttribute('y2',t.y);
+      });
+    });
+    document.addEventListener('mouseup',function(){ drag.active=false; });
+
+    g.addEventListener('mouseenter', function(ev){
+      var svgRect = svg.getBoundingClientRect();
+      tip.style.display='block';
+      tip.style.left = (n.x / W * svgRect.width + svgRect.left - svg.parentElement.getBoundingClientRect().left + 14) + 'px';
+      tip.style.top  = (n.y / H * svgRect.height + 6) + 'px';
+      tip.textContent = n.uri.replace(/^lit_\d+$/,'(letterale)');
+    });
+    g.addEventListener('mouseleave', function(){ tip.style.display='none'; });
+
+    var circle = svgEl('circle',{ r:p.r, fill:p.fill, stroke:p.stroke, 'stroke-width':'1.5' });
+    g.appendChild(circle);
+
+    if (showLabels) {
+      var lbl = svgEl('text',{
+        'text-anchor':'middle', 'dominant-baseline':'middle',
+        'font-size':'8.5', fill:'#17324d', 'font-family':'Titillium Web,sans-serif',
+        y: p.r + 10, style:'pointer-events:none'
+      });
+      var lab = n.label.length > 20 ? n.label.slice(0,18)+'…' : n.label;
+      lbl.textContent = lab;
+      g.appendChild(lbl);
+    }
+    nodeG.appendChild(g);
+  });
+  svg.appendChild(nodeG);
+
+  // Legenda
+  var legEl = document.getElementById('graph-legend');
+  legEl.innerHTML = Object.keys(PALETTE).map(function(t){
+    return '<span style="display:inline-flex;align-items:center;gap:4px">'
+      +'<svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="'+PALETTE[t].fill+'"/></svg>'
+      +'<span>'+t+'</span></span>';
+  }).join('');
+
+  // Stats
+  document.getElementById('graph-stats').textContent =
+    '⬤ '+data.nodes.length+' nodi  →  '+data.edges.length+' archi'
+    + (data.nodes.length >= maxNodes ? '  (limite '+maxNodes+' — aumenta per vedere di più)' : '');
+}
+
+/* ── entry point pubblico ── */
+window.showGraphPanel = function() {
+  var panel = document.getElementById('graph-panel');
+  panel.style.display = 'block';
+  panel.scrollIntoView({behavior:'smooth', block:'start'});
+  setTimeout(renderGraph, 80);
+};
+
+/* ── abilita pulsante Grafo quando c'è output ── */
+var _origShowStats = window.showOutputStats;
+var _graphObserver = new MutationObserver(function(){
+  var ttl = document.getElementById('ttl-output');
+  var btn = document.getElementById('btn-show-graph');
+  if (ttl && btn) btn.disabled = !ttl.value.trim();
+});
+document.addEventListener('DOMContentLoaded', function(){
+  var ttlOut = document.getElementById('ttl-output');
+  if (ttlOut) _graphObserver.observe(ttlOut, {attributes:true, attributeFilter:['value'], characterData:true, subtree:true});
+  // Polling leggero (il textarea viene scritto via .value = ... non via DOM)
+  setInterval(function(){
+    var btn = document.getElementById('btn-show-graph');
+    var ttl = document.getElementById('ttl-output');
+    if (btn && ttl) btn.disabled = !ttl.value.trim();
+  }, 1200);
+});
+
+})();
+</script>
+<!-- ===== FINE GRAFO RDF v1 ===== -->
+
 <!-- ===== FINE CORPUS MATCHER v7 ===== -->
 
 </body>

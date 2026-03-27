@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.27.44 -->
+  <!-- build:v2026.03.27.45 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -717,7 +717,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.27.44</span>
+<span id="app-version">v2026.03.27.45</span>
 </footer>
 
 <script>
@@ -5161,14 +5161,14 @@ function parseTTL(ttl, maxNodes) {
     stmts.forEach(function(stmt) {
       stmt = stmt.trim();
       if (!stmt) return;
-      var parts = stmt.match(/^(<[^>]+>|\w+:\w+)\s+([\s\S]+)$/);
+      var parts = stmt.match(/^(<[^>]+>|\w+:\w+|\ba\b)\s+([\s\S]+)$/);
       if (!parts) return;
-      var pred = parts[1];
+      var pred = parts[1] === 'a' ? 'rdf:type' : parts[1];
       var objRaw = parts[2].trim();
       var objType, objLabel, objURI;
       if (objRaw.startsWith('"') || objRaw.match(/^[0-9\-]/) || objRaw.match(/^"?[0-9]/)) {
         // Letterale
-        objLabel = objRaw.replace(/\^\^[^\s,]+/,'').replace(/^"|"$/g,'').replace(/@\w+$/,'').slice(0,40);
+        objLabel = objRaw.replace(/\^\^[^\s,]+/,'').replace(/^"|"@?\w*$/g,'').slice(0,40);
         objURI = 'lit_' + nodeId;
         objType = 'literal';
       } else if (objRaw.startsWith('_:')) {

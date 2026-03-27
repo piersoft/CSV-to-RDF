@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.27.53 -->
+  <!-- build:v2026.03.27.54 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -717,7 +717,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.27.53</span>
+<span id="app-version">v2026.03.27.54</span>
 </footer>
 
 <script>
@@ -1419,7 +1419,7 @@ if (!window._exampleLocked) {
     suggested.add('L0');
 
   // Applica le regole — CLV SOLO su match esatto di colonna, non substring sui valori
-  const CLV_HEADER_KEYS = new Set(['lat','lon','lng','latitudine','longitudine','coord','indirizzo','address','via','strada','civico','cap','comune','stop_lat','stop_lon','lat_wgs84','lon_wgs84']);
+  const CLV_HEADER_KEYS = new Set(['lat','lon','lng','latitudine','longitudine','coord','indirizzo','address','via','strada','civico','cap','comune','stop_lat','stop_lon','lat_wgs84','lon_wgs84','ubicazione_esercizio','n_civico','insegna_commerciale']);
   if (cols.some(c => CLV_HEADER_KEYS.has(c.toLowerCase().trim()))) suggested.add('CLV');
 
   ONTO_RULES.forEach(rule => {

@@ -1,6 +1,6 @@
-// âââ COSTANTI GLOBALI âââ
+// ——— COSTANTI GLOBALI ———
 
-// Stub: nel Worker Cloudflare non esiste window nÃ© DOM
+// Stub: nel Worker Cloudflare non esiste window né DOM
 const _workerState = { _corpusIndex: null };
 
 
@@ -13,7 +13,7 @@ const ONTO_RULES = [
   { keys: ['persona','cognome','responsabile','referente','inventore','inventori','autore','ricercatore','lista','candidato','sezione_elettorale'], ontos: ['CPV'] },
   { keys: ['ruolo','qualifica','mansione','incarico'],                     ontos: ['RO'] },
   { keys: ['nome_dataset','nome_risorsa','dataset_name','resource_name','numero_righe','numero_record','formato','identifier'], ontos: ['ADMS'] },
-  { keys: ['brevetto','patent','pi','proprietÃ _intellettuale','tipo_pi','n_dom','deposito'], ontos: ['ADMS'] },
+  { keys: ['brevetto','patent','pi','proprietà_intellettuale','tipo_pi','n_dom','deposito'], ontos: ['ADMS'] },
   { keys: ['data_evento','data_inizio','data_fine','startDate','endDate','ora','inizio','fine','apertura','scadenza'], ontos: ['TI'] },
   { keys: ['punto','poi','luogo','location','sede','struttura','dae','aed','defibrillatore','accessibile_h24','presenza_aed'], ontos: ['POI'] },
   { keys: ['lista','partito','candidato','sezione','voti','preferenze','ballottaggio','circoscrizione','sindaco'], ontos: ['COV','CPV'] },
@@ -36,19 +36,19 @@ const ONTO_RULES = [
 
 const ONTO_CLASSES = {
   'CLV': {
-    classes: ['clv:Address (Indirizzo)', 'clv:Feature (Caratteristica geografica)', 'clv:Geometry (Geometria)', 'clv:AdminUnit (UnitÃ  amministrativa)', 'clv:Road (Strada)', 'clv:StreetNumber (Numero civico)', 'clv:Identifier (Identificativo)', 'clv:GeographicalDistribution (Ripartizione geografica)'],
+    classes: ['clv:Address (Indirizzo)', 'clv:Feature (Caratteristica geografica)', 'clv:Geometry (Geometria)', 'clv:AdminUnit (Unità amministrativa)', 'clv:Road (Strada)', 'clv:StreetNumber (Numero civico)', 'clv:Identifier (Identificativo)', 'clv:GeographicalDistribution (Ripartizione geografica)'],
     props:   ['clv:hasAddress', 'clv:hasGeometry', 'clv:hasAdminUnit', 'clv:hasRoad', 'clv:hasStreetNumber', 'clv:hasSpatialCoverage', 'clv:lat', 'clv:long']
   },
   'COV': {
-    classes: ['cov:Organization (Organizzazione)', 'cov:PublicOrganization (Organizzazione pubblica)', 'cov:Company (Impresa)', 'cov:ActivityType (Tipo attivitÃ )', 'cov:ContactPoint (Punto di contatto)', 'cov:Email (Email)', 'cov:Telephone (Telefono)'],
+    classes: ['cov:Organization (Organizzazione)', 'cov:PublicOrganization (Organizzazione pubblica)', 'cov:Company (Impresa)', 'cov:ActivityType (Tipo attività)', 'cov:ContactPoint (Punto di contatto)', 'cov:Email (Email)', 'cov:Telephone (Telefono)'],
     props:   ['cov:hasContactPoint', 'cov:hasActivityType', 'cov:hasLegalStatus', 'cov:hasSubOrganization', 'cov:isPartOf']
   },
   'CPV': {
-    classes: ['cpv:Person (Persona â SOLO persone fisiche)', 'cpv:Adult (Adulto)', 'cpv:Minor (Minore)', 'cpv:Senior (Anziano)'],
+    classes: ['cpv:Person (Persona — SOLO persone fisiche)', 'cpv:Adult (Adulto)', 'cpv:Minor (Minore)', 'cpv:Senior (Anziano)'],
     props:   ['cpv:givenName', 'cpv:familyName', 'cpv:taxCode', 'cpv:dateOfBirth', 'cpv:hasResidenceAddress']
   },
   'POI': {
-    classes: ['poi:PointOfInterest (Punto di interesse â classe generica per luoghi fisici)'],
+    classes: ['poi:PointOfInterest (Punto di interesse — classe generica per luoghi fisici)'],
     props:   ['poi:hasPointOfInterest']
   },
   'RO': {
@@ -72,11 +72,11 @@ const ONTO_CLASSES = {
     props:   ['sm:hasEmail', 'sm:hasTelephone', 'sm:hasWebSite', 'sm:hasSocialNetworkAccount']
   },
   'L0': {
-    classes: ['l0:Agent (Agente â persona/organizzazione)', 'l0:Object (Oggetto fisico)', 'l0:EventOrSituation (Evento/Situazione)', 'l0:Collection (Collezione)', 'l0:Location (Luogo)', 'l0:Characteristic (Caratteristica)', 'l0:Description (Descrizione)'],
+    classes: ['l0:Agent (Agente — persona/organizzazione)', 'l0:Object (Oggetto fisico)', 'l0:EventOrSituation (Evento/Situazione)', 'l0:Collection (Collezione)', 'l0:Location (Luogo)', 'l0:Characteristic (Caratteristica)', 'l0:Description (Descrizione)'],
     props:   ['l0:name', 'l0:identifier', 'l0:hasDescription', 'l0:isPartOf', 'l0:hasLocation']
   },
   'ADMS': {
-    classes: ['adms:SemanticAsset (Asset semantico â brevetti, documenti, software)', 'adms:AssetRepository (Repository di asset)', 'adms:SemanticAssetDistribution (Distribuzione asset)'],
+    classes: ['adms:SemanticAsset (Asset semantico — brevetti, documenti, software)', 'adms:AssetRepository (Repository di asset)', 'adms:SemanticAssetDistribution (Distribuzione asset)'],
     props:   ['adms:status', 'adms:identifier', 'adms:schemaAgency', 'adms:representationTechnique']
   },
   'PARK': {
@@ -88,7 +88,7 @@ const ONTO_CLASSES = {
     props:   ['acco:hasRoom', 'acco:hasStar', 'acco:checkIn', 'acco:checkOut', 'acco:hasAmenity']
   },
   'CULTURAL-ON': {
-    classes: ['cis:CulturalInstituteOrSite (Istituto/luogo culturale)', 'cis:Museum (Museo)', 'cis:Library (Biblioteca â NON clv:Biblioteca)', 'cultural-on:Archive (Archivio)', 'cultural-on:Site (Sito)', 'cultural-on:CollectionItem (Oggetto della collezione)'],
+    classes: ['cis:CulturalInstituteOrSite (Istituto/luogo culturale)', 'cis:Museum (Museo)', 'cis:Library (Biblioteca — NON clv:Biblioteca)', 'cultural-on:Archive (Archivio)', 'cultural-on:Site (Sito)', 'cultural-on:CollectionItem (Oggetto della collezione)'],
     props:   ['cultural-on:hasCollection', 'cultural-on:hasOpeningHours', 'cultural-on:hasSubject']
   },
   'GTFS': {
@@ -108,7 +108,7 @@ const ONTO_CLASSES = {
     props:   ['rpo:hasRole', 'rpo:contractType', 'rpo:contractLevel', 'rpo:weeklyHours', 'rpo:hasCCNL']
   },
   'LEARNING': {
-    classes: ['learn:Course (Corso/Percorso formativo)', 'learn:LearningActivity (AttivitÃ  formativa)', 'learn:Qualification (Titolo rilasciato)'],
+    classes: ['learn:Course (Corso/Percorso formativo)', 'learn:LearningActivity (Attività formativa)', 'learn:Qualification (Titolo rilasciato)'],
     props:   ['learn:ects', 'learn:hours', 'learn:duration', 'learn:awardedTitle']
   },
   'TRANSPARENCY': {
@@ -214,7 +214,7 @@ var ONTO_URI={'acco':'https://w3id.org/italia/onto/ACCO/','gtfs':'http://vocab.g
     'clv':'https://w3id.org/italia/onto/CLV/'};
 
 
-// âââ FUNZIONI ENGINE âââ
+// ——— FUNZIONI ENGINE ———
 
 function detectSeparator(firstLine) {
   // Conta occorrenze dei separatori candidati nella prima riga
@@ -340,7 +340,7 @@ function parseCSV(text) {
   return { headers, rows, sep };
 }
 
-function detNormH(h){var n=h.toLowerCase().trim().replace(/[Ã Ã¡Ã¢Ã¤]/g,'a').replace(/[Ã¨Ã©ÃªÃ«]/g,'e').replace(/[Ã¬Ã­Ã®Ã¯]/g,'i').replace(/[Ã²Ã³Ã´Ã¶]/g,'o').replace(/[Ã¹ÃºÃ»Ã¼]/g,'u').replace(/Ã±/g,'n').replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');return DET_COL_NORM[n]||n;}
+function detNormH(h){var n=h.toLowerCase().trim().replace(/[àÃ¡Ã¢Ã¤]/g,'a').replace(/[èéÃªÃ«]/g,'e').replace(/[ìÃ­Ã®Ã¯]/g,'i').replace(/[òÃ³Ã´Ã¶]/g,'o').replace(/[ùÃºÃ»Ã¼]/g,'u').replace(/Ã±/g,'n').replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');return DET_COL_NORM[n]||n;}
 
 function detParseCSV(text){
   // Normalizza fine riga
@@ -358,7 +358,7 @@ function detParseCSV(text){
       var ch=line[i];
       if(ch==='"'&&!inQ&&cur.trim()===''){inQ=true;}
       else if(ch==='"'&&inQ){
-        // controlla se Ã¨ una doppia virgoletta escaped ("")
+        // controlla se è una doppia virgoletta escaped ("")
         if(i+1<line.length&&line[i+1]==='"'){cur+='"';i++;}
         else{inQ=false;}
       }else if(ch===sep&&!inQ){res.push(cur.trim());cur='';}
@@ -377,7 +377,7 @@ function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat
 function detHasTime(nh,ontos){return ontos.indexOf('TI')>=0&&['inizio','termine','data','quando'].some(function(c){return nh.indexOf(c)>=0;});}
 
 function detFindRule(normH,ontos){
-  if(ontos.indexOf('QB')>=0&&normH==='nome')return null; // QB: nome non Ã¨ un'entitÃ 
+  if(ontos.indexOf('QB')>=0&&normH==='nome')return null; // QB: nome non è un'entità
   if(ontos.indexOf('CPV')>=0&&normH==='nome')return{pred:'cpv:givenName',type:'langlit',lang:'it',onto:'CPV'};
   if(ontos.indexOf('QB')>=0&&(normH==='valore'||normH==='obs_value'||normH==='osservazione'||normH==='numero'||normH==='valore_assoluto'||normH==='frequenza'||normH==='count'||normH==='total'||normH==='amount'))return{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'};
   if(ontos.indexOf('QB')>=0&&normH==='date')return{pred:'sdmx-dimension:refPeriod',type:'typed',xsd:'xsd:date',onto:'QB'};
@@ -419,12 +419,12 @@ function detFormatLit(rule,val){
 }
 
 function detectDeterministicMappings(cols, rows) {
-  const mappings = {}; // col â {prop, type}
+  const mappings = {}; // col → {prop, type}
   const sampleRow = rows[0] || {};
 
   for (const col of cols) {
     // Salta colonne con prefisso numerico: "1-FRATELLI D'ITALIA", "9-+EUROPA"
-    if (/^\d+[-â]/.test(col)) continue;
+    if (/^\d+[-—]/.test(col)) continue;
     const normalizedCol = normalizeColName(col);
     const val = String(sampleRow[col] || '').trim();
     for (const rule of COLUMN_RULES) {
@@ -453,7 +453,7 @@ function detectFromCorpus(headers) {
   // Normalizza i nomi ontologia
   var ontoMap = {'IOT-AP_IT':'IoT','COV-AP_IT':'COV','RO-AP_IT':'RO',
     'CULTURAL-ON':'CulturalON','CPSV-AP':'CPSV','CPVAPIT':'CPV'};
-  // Prende le ontologie con score piÃ¹ alto â top 3 + CLV se presente
+  // Prende le ontologie con score più alto — top 3 + CLV se presente
   var sorted = Object.keys(scores).sort(function(a,b){return scores[b]-scores[a];});
   var top = sorted.slice(0,5).filter(function(o){return scores[o]>=5;});
   var result = top.map(function(o){return ontoMap[o]||o;}).filter(function(o){
@@ -477,9 +477,9 @@ function detectFromCorpus(headers) {
     'RO':    ['ruolo','tipo_nomina','legislatura','voti_validi','qualifica_dipendente','contratto_lavoro','ccnl','data_assunzione'],
     'ADMS':  ['tipo_asset','versione','stato','formato','licenza','titolo_corso','ore_formazione','crediti','titolo_rilasciato','ente_erogatore'],
     'CPSV':  ['cig','cup','oggetto_contratto','importo_aggiudicazione','stazione_appaltante','aggiudicatario'],
-    // TI, POI, COV, CulturalON: nessun gate â possono comparire in molti contesti
+    // TI, POI, COV, CulturalON: nessun gate — possono comparire in molti contesti
   };
-  // Filtra: tieni solo ontologie il cui gate Ã¨ soddisfatto (o non hanno gate)
+  // Filtra: tieni solo ontologie il cui gate è soddisfatto (o non hanno gate)
   var result2 = result.filter(function(o){
     var gate = CORPUS_GATE[o];
     if(!gate) return true;
@@ -518,7 +518,7 @@ function detectOntologiesDeterministic(headers, rows) {
   // Questo evita che "popolazione_target" faccia match su "popolazione"
   var allText;
   if(_narrativeCSV) {
-    // Match solo su header normalizzati esatti â non substring parziali
+    // Match solo su header normalizzati esatti — non substring parziali
     allText = ' ' + norm.join(' ') + ' ';
   } else {
     allText = norm.join(' ') + ' ' + vals;
@@ -535,7 +535,7 @@ function detectOntologiesDeterministic(headers, rows) {
     return cols.some(function(c){ return norm.indexOf(c)>=0; });
   };
 
-  // CLV â SOLO se nelle intestazioni ci sono campi indirizzo/coordinate strutturati
+  // CLV — SOLO se nelle intestazioni ci sono campi indirizzo/coordinate strutturati
   if(hasH(['lat','lon','indirizzo','via','civico','comune','cap','latitudine','longitudine','stop_lat','stop_lon',
             'lat_wgs84','lon_wgs84','coord_lat','coord_lon','georef_lat','georef_lon',
             'ubicazione_esercizio','n_civico','indirizzo_esercizio']))
@@ -546,16 +546,16 @@ function detectOntologiesDeterministic(headers, rows) {
           'codice_fermata','nome_fermata','linea','capolinea','percorso','corsa','fermata_id']))
     result.add('GTFS');
 
-  // SMAPIT â scuole: richiede colonne specifiche istruzione
-  // P4-FIX: "istituto" generico (banche, sanitÃ , cultura) NON Ã¨ SMAPIT
+  // SMAPIT — scuole: richiede colonne specifiche istruzione
+  // P4-FIX: "istituto" generico (banche, sanità, cultura) NON è SMAPIT
   if(has(['codice_scuola','codicescuola','denominazione_scuola','tipo_scuola','ciclo_scolastico',
           'ordine_scuola','grado_scolastico','codice_meccanografico']) ||
      (has(['scuola','liceo','comprensivo','istruzione']) && !has(['cig','importo','appalto','museo','biblioteca','ospedale','banca'])))
     result.add('SMAPIT');
 
-  // ACCO â strutture ricettive con varianti PA regionali
+  // ACCO — strutture ricettive con varianti PA regionali
   // FN-ACCO FIX: aggiunge "classificazione/categoria_struttura/RTA/B&B" comuni
-  // ACCO â R5-FIX: trigger forti sempre; trigger deboli richiedono contesto
+  // ACCO — R5-FIX: trigger forti sempre; trigger deboli richiedono contesto
   var _accoStrong = has(['albergo','hotel','b&b','ostello','agriturismo','accommodation',
                          'struttura_ricettiva','rta','affittacamere','casa_vacanze','tipo_esercizio','codice_struttura_acco']);
   var _accoCtx    = has(['stelle','posti_letto','numero_posti_letto','camere','letti',
@@ -563,7 +563,7 @@ function detectOntologiesDeterministic(headers, rows) {
   if((_accoStrong || _accoCtx) && !_narrativeCSV)
     result.add('ACCO');
 
-  // IOT â sensori fisici: richiede identificatore sensore O proprietÃ  misurata specifica
+  // IOT — sensori fisici: richiede identificatore sensore O proprietà misurata specifica
   // P5-FIX: "valore/misura" generici NON sono IoT senza id_sensore o proprieta_osservata
   if(has(['id_sensore','idsensore','id_sensore2','iot:sensor','proprieta_osservata','tipo_misura','data_ricezione','avgspeed',
           'enterococchi','escherichia','coliformi','parametro_chimico','parametro_biologico',
@@ -574,11 +574,11 @@ function detectOntologiesDeterministic(headers, rows) {
      (has(['unita_misura','limite']) && has(['lat','lon','longitude','latitude'])))
     if(!_narrativeCSV || has(['id_sensore','idsensore','proprieta_osservata','valore_medio'])) result.add('IoT');
 
-  // POI â R3-FIX: LATITUDINE/LONGITUDINE MAIUSCOLE + UTMX/UTMY
+  // POI — R3-FIX: LATITUDINE/LONGITUDINE MAIUSCOLE + UTMX/UTMY
   var _hasPOIcoord = hasH(['lat','lon','latitudine','longitudine','utmx','utmy',
                             'x_wgs84','y_wgs84','coord_x','coord_y','longitude','latitude',
                             'coordx','coordy','x_coord','y_coord']);
-  // OSM schema: osm_id + lat/lon â POI forte (defibrillatori, punti interesse OSM)
+  // OSM schema: osm_id + lat/lon → POI forte (defibrillatori, punti interesse OSM)
   var _hasOSMschema = has(['osm_id','osm_type']) && _hasPOIcoord;
   if(has(['tipo_poi','dae','defibrillatore','punto_di_interesse','punto_interesse',
           'point_of_interest','idelem','id_elem',
@@ -605,7 +605,7 @@ function detectOntologiesDeterministic(headers, rows) {
     if(result.has('TI') && !has(['data_inizio','data_fine','data_da','data_a','data_evento','quando','inizio','termine','tipo_evento','nome_evento','titolo_evento','manifestazione'])) result.delete('TI');
   }
 
-  // COV â organizzazioni: FIX1 esclude codice_ipa quando accompagnato da colonne di altri domini
+  // COV — organizzazioni: FIX1 esclude codice_ipa quando accompagnato da colonne di altri domini
   var _hasCOVStrong = has(['codice_ipa','codice_ente','partita_iva','codice_fiscale_ente','ragione_sociale','segnalatore','ente_segnalatore','soggetto_segnalante','amministrazione_titolare']) &&
                       !has(['qualifica_dipendente','obbligo_trasparenza','titolo_corso','ore_formazione',
                              'cig','importo_aggiudicazione','tipo_percorso','valore_indicatore']);
@@ -621,8 +621,8 @@ function detectOntologiesDeterministic(headers, rows) {
     result.add('COV');
   }
 
-  // CLV toponomastica pura: stradari/civici senza coordinate nÃ© trigger forti â rimuovi spurii
-  // (deve stare DOPO il blocco COV perchÃ© 'Comune' come header triggera COV)
+  // CLV toponomastica pura: stradari/civici senza coordinate né trigger forti → rimuovi spurii
+  // (deve stare DOPO il blocco COV perché 'Comune' come header triggera COV)
   if(result.has('CLV') && !_hasPOIcoord &&
      !has(['codice_ipa','codice_ente','partita_iva','tipo_poi','nome_poi','dae',
            'data_inizio','data_fine','data_evento','importo','valore','obs_value',
@@ -638,10 +638,10 @@ function detectOntologiesDeterministic(headers, rows) {
   if(!_narrativeCSV && !result.has('CPV') && has(['anno']) && (has(['sesso']) || has(['cittadinanza'])) &&
      !has(['cognome','nome_completo','codice_fiscale','data_nascita']))
     result.add('QB');
-  // CPV â persone fisiche: richiede cognome O CF O data_nascita+sesso (P3-FIX: esclude QB puro)
+  // CPV — persone fisiche: richiede cognome O CF O data_nascita+sesso (P3-FIX: esclude QB puro)
   // FN-CPV FIX: aggiunge alias MAIUSCOLI e varianti comuni nei dataset PA
-  // CPV â R4-FIX: fascia_eta/tipo_capofamiglia per dataset demografici
-  // FIX2: codice_fiscale_sa Ã¨ della stazione appaltante, non di una persona fisica
+  // CPV — R4-FIX: fascia_eta/tipo_capofamiglia per dataset demografici
+  // FIX2: codice_fiscale_sa è della stazione appaltante, non di una persona fisica
   var _hasAnag = has(['cognome','nome_completo','codice_fiscale',
                       'nome_cognome','nominativo','intestatario','titolare','beneficiario',
                       'data_nascita','luogo_nascita','comune_nascita',
@@ -650,12 +650,12 @@ function detectOntologiesDeterministic(headers, rows) {
   if(!result.has('SMAPIT') && !result.has('IoT') && _hasAnag)
     result.add('CPV');
 
-  // RO â ruoli
+  // RO — ruoli
   if(has(['ruolo','incarico','mandato','consigliere','assessore','sindaco','dirigente',
           'id_consigliere','legislatura','voti_validi']))
     result.add('RO');
 
-  // QB â dati statistici aggregati (R2-FIX: blocca su cataloghi ADMS e dataset trasporto)
+  // QB — dati statistici aggregati (R2-FIX: blocca su cataloghi ADMS e dataset trasporto)
   // FIX5: include incidenti/feriti/mortali come dati statistici aggregati
   if(has(['anno','mese','occorrenze','totale','numero','valore','indice',
           'popolazione_residente','numero_famiglie',
@@ -669,10 +669,10 @@ function detectOntologiesDeterministic(headers, rows) {
      !result.has('CulturalON') &&
      !has(['nome_dataset','nome_risorsa','numero_righe','distribution_url']) &&
      !has(['tratta','capolinea','fermata_origine','fermata_arrivo']) &&
-     !has(['codice_istat','codice_civico','cod_civico','numero_civico']))  // B3: codici geo â  QB
+     !has(['codice_istat','codice_civico','cod_civico','numero_civico']))  // B3: codici geo —  QB
     if(!_narrativeCSV) result.add('QB');
 
-  // TI â R6-FIX: richiede date esplicite O combo evento+luogo (non solo titolo/tipo)
+  // TI — R6-FIX: richiede date esplicite O combo evento+luogo (non solo titolo/tipo)
   var _tiStrong = has(['data_inizio','data_fine','data_da','data_a','data_inizio_evento','data_fine_evento','inizio','termine','quando','orario_inizio',
                        'orario_fine','data_evento','ora_inizio','ora_fine','data_ora',
                        'data_rilevazione','data_apertura','data_chiusura','data_campionamento','data_rilevamento','data_misura','data_monitoraggio',
@@ -683,28 +683,28 @@ function detectOntologiesDeterministic(headers, rows) {
   if(_tiStrong || _tiEvent)
     result.add('TI');
 
-  // CulturalON â solo se colonne specifiche, non valori casuali in indirizzi
+  // CulturalON — solo se colonne specifiche, non valori casuali in indirizzi
   var _cultHdr = norm.filter(function(h){
     return h==='tipo_bene'||h==='datazione'||h==='numero_inventario'||h==='autore'||h==='luoghistorico';
   });
-  // FIX3: 'museo'/'teatro' nei valori non bastano â richiede colonne specifiche beni culturali
+  // FIX3: 'museo'/'teatro' nei valori non bastano — richiede colonne specifiche beni culturali
   if(_cultHdr.length>0 || has(['beniculturali','mibact','mibac','cis:','luoghicultura',
       'nome_museo','mostra','pinacoteca','galleria','sito_archeologico','tipo_bene_culturale']))
     if(!result.has('SMAPIT')&&!result.has('GTFS')&&!result.has('IoT')){
       result.add('Cultural-ON'); result.add('CulturalON'); }
   if(result.has('Cultural-ON') && result.has('POI') && !has(['tipo_poi','dae','defibrillatore']))
-    result.delete('POI'); // istituto culturale geolocalizzato â  POI generico
-  // CPSV â servizi pubblici / appalti con varianti PA reali
+    result.delete('POI'); // istituto culturale geolocalizzato —  POI generico
+  // CPSV — servizi pubblici / appalti con varianti PA reali
   // FN-CPSV FIX: aggiunge "procedura/licitazione/affidamento" comuni nei dati PA
   if(has(['cig','cup','aggiudicatario','appalto','gara','oggetto_appalto',
           'servizio_pubblico','cpsv','procedura','licitazione','affidamento',
           'scelta_contraente','oggetto_gara','struttura_proponente']))
     result.add('CPSV');
-  // M4: servizi pubblici puri (senza CIG) â CPSV-AP
+  // M4: servizi pubblici puri (senza CIG) → CPSV-AP
   if(has(['nome_servizio','canale_erogazione','requisiti_accesso','url_servizio']) && !has(['cig','appalto','gara']))
     result.add('CPSV-AP');
 
-  // ADMS â cataloghi / asset semantici
+  // ADMS — cataloghi / asset semantici
   // FIX4: ADMS richiede contesto specifico, non solo 'versione'
   if(has(['slug','version','creation_date','last_edit_date','api_url',
           'distribution_url','asset','ontologia','vocabolario']) ||
@@ -722,8 +722,8 @@ function detectOntologiesDeterministic(headers, rows) {
     if(result.has('QB') && (result.has('CulturalON')||result.has('ACCO')||result.has('GTFS'))) result.delete('QB'); // QB non su strutture/trasporti
   // Se SMAPIT rilevato, rimuovi ontologie incompatibili
   if(result.has('SMAPIT')){result.delete('CulturalON');result.delete('Cultural-ON');result.delete('QB');result.delete('CPV');}
-  if(result.has('Cultural-ON')) result.add('CulturalON'); // alias retrocompatibilitÃ 
-  // L0 â sempre aggiunto come base
+  if(result.has('Cultural-ON')) result.add('CulturalON'); // alias retrocompatibilità
+  // L0 — sempre aggiunto come base
   if(has(['parcheggio','parking','stalli','posti_auto','capacita_posti','tariffa_oraria','posti_disabili'])) result.add('PARK');
   if(has(['prezzo_intero','prezzo_ridotto','biglietto','tariffa_ingresso','costo_biglietto'])&&!result.has('ACCO')) result.add('POT');
   if(has(['cig','cup','importo_aggiudicazione','stazione_appaltante','oggetto_contratto','aggiudicatario','cpv_codice'])) result.add('PublicContract');
@@ -733,14 +733,14 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['obbligo_trasparenza','categoria_trasparenza','dato_obbligatorio','norma_riferimento'])) result.add('Transparency');
   if(!_narrativeCSV && has(['tipo_indicatore','valore_indicatore','baseline','target','fonte_indicatore'])) result.add('Indicator');
 
-  // ââ cleanup post-trigger âââââââââââââââââââââââââââââââââââââââââââââââââ
-  if(result.has('RO')&&result.has('TI')&&!has(['data_evento','titolo_evento','nome_evento','manifestazione','tipo_evento_pubblico'])) result.delete('TI'); // RO: data mandato â  evento
-  if(result.has('PublicContract')&&!result.has('COV')) result.add('COV'); // appalti â sempre ente PA
-  if(result.has('Route')&&result.has('GTFS')) result.delete('GTFS'); // percorso â  TPL
-  if(result.has('Indicator')&&!result.has('QB')) result.add('QB'); // indicatori â sempre dati statistici
-  if(result.has('POT')&&result.has('CPV')&&!has(['cognome','codice_fiscale','nome_completo','data_nascita'])) result.delete('CPV'); // tariffe â  persone fisiche
+  // —— cleanup post-trigger —————————————————————————————————————————————————
+  if(result.has('RO')&&result.has('TI')&&!has(['data_evento','titolo_evento','nome_evento','manifestazione','tipo_evento_pubblico'])) result.delete('TI'); // RO: data mandato —  evento
+  if(result.has('PublicContract')&&!result.has('COV')) result.add('COV'); // appalti → sempre ente PA
+  if(result.has('Route')&&result.has('GTFS')) result.delete('GTFS'); // percorso —  TPL
+  if(result.has('Indicator')&&!result.has('QB')) result.add('QB'); // indicatori → sempre dati statistici
+  if(result.has('POT')&&result.has('CPV')&&!has(['cognome','codice_fiscale','nome_completo','data_nascita'])) result.delete('CPV'); // tariffe —  persone fisiche
 
-  // ââ MU â unitÃ  di misura
+  // —— MU — unità di misura
   if(has(['grandezza','tipo_misura','sistema_misura','unita_misura','unita_di_misura','unit_of_measure'])||has(['simbolo_misura','measurement_unit','measure_type'])) result.add('MU'); // MU anche con IoT
   if(!result.has('MU')&&!result.has('IoT')&&!result.has('QB')&&
      (has(['grandezza','tipo_misura','sistema_misura'])||
@@ -748,26 +748,26 @@ function detectOntologiesDeterministic(headers, rows) {
     result.add('MU');
   }
 
-  // ââ AtlasOfPaths
+  // —— AtlasOfPaths
   if(has(['numero_percorso','numero_tappa','pavimentazione','segnaletica','livello_sicurezza','tipo_servizio_percorso','atlas_path','path_number','stage_number'])){result.add('AtlasOfPaths');}
 
-  // ââ CulturalHeritage
+  // —— CulturalHeritage
   if(has(['codice_bene','tutela','vincolo','stato_conservazione','ente_tutela','cultural_heritage'])||(has(['denominazione_bene'])&&has(['tipo_bene'])&&has(['tutela','vincolo']))){result.add('CulturalHeritage');}
 
-  // ââ Project
+  // —— Project
   if(has(['acronimo_progetto','programma_finanziamento','work_package','costo_totale_progetto','titolo_progetto','unique_project_code'])||(has(['cup'])&&has(['programma_finanziamento','finanziatore']))){result.add('Project');}
 
-  // ââ NDC
+  // —— NDC
   if(has(['concetto_chiave','key_concept','endpoint_url','tipo_risorsa','formato_distribuzione','data_service','ndc'])||(has(['titolo_risorsa'])&&has(['tipo_risorsa','endpoint_url']))){result.add('NDC');}
 
-  // ââ CPEV â eventi pubblici (richiede titolo_evento o colonne CPEV specifiche)
+  // —— CPEV — eventi pubblici (richiede titolo_evento o colonne CPEV specifiche)
   if(has(['titolo_evento','evento_pubblico','tipo_evento_pubblico','public_event',
           'format_evento','pubblico_target','abstract_evento'])){
     result.add('CPEV');
     if(!result.has('TI')) result.add('TI');
   }
 
-  // ââ AccessCondition â condizioni di accesso a luoghi
+  // —— AccessCondition — condizioni di accesso a luoghi
   if(has(['orario_apertura','orario_chiusura','tipo_ammissione',
           'condizione_accesso','motivazione_chiusura','giorno_chiusura',
           'accesso_libero','tipo_accesso','admission_type'])){
@@ -807,15 +807,15 @@ Le ontologie ufficiali sono su https://github.com/italia/dati-semantic-assets
 Analizza queste intestazioni CSV e le prime righe di dati:
 ${sample}
 
-Rispondi SOLO con una lista JSON dei prefissi ontologici piÃ¹ appropriati tra questi valori esatti:
+Rispondi SOLO con una lista JSON dei prefissi ontologici più appropriati tra questi valori esatti:
 CLV, COV, CPV, L0, POI, SM, RO, TI, ADMS, ACCO, PARK, GTFS, Cultural-ON, CPSV-AP, QB, SKOS, PublicContract, Route, RPO, Learning, Transparency, Indicator, POT
 
 REGOLE IMPORTANTI:
 - QB: includi SOLO se ci sono colonne con valori numerici aggregati (conteggi, importi, percentuali, misurazioni). QB serve per statistiche, non per dati anagrafici generici.
-- SKOS: includi SOLO se ci sono colonne con codici/categorie testuali espliciti (es. "tipologia", "codice_categoria", "classificazione", "tipo_ente") che rappresentano un vocabolario controllato. NON includere SKOS solo perchÃ© i dati sono demografici o sanitari.
+- SKOS: includi SOLO se ci sono colonne con codici/categorie testuali espliciti (es. "tipologia", "codice_categoria", "classificazione", "tipo_ente") che rappresentano un vocabolario controllato. NON includere SKOS solo perché i dati sono demografici o sanitari.
 - L0: includi sempre quando includi QB o SKOS come ontologia di supporto.
 - Se il CSV ha solo colonne Anno/Anno-Mese + valori numerici: suggerisci QB e L0, NON SKOS.
-- Se le colonne o i valori contengono "CulturalInstituteOrSite", "beniculturali", "mibact", "museo", "biblioteca", "monumento", "patrimonio" â includi SEMPRE "Cultural-ON"
+- Se le colonne o i valori contengono "CulturalInstituteOrSite", "beniculturali", "mibact", "museo", "biblioteca", "monumento", "patrimonio" → includi SEMPRE "Cultural-ON"
 - ACCO: includi se i dati riguardano strutture ricettive (hotel, albergo, B&B, ostello, stelle). COV NON va usato per strutture ricettive.
 - COV: includi SOLO per enti/organizzazioni pubbliche o private. NON per strutture ricettive o luoghi fisici.
 - Se i valori contengono "albergo", "hotel", "B&B", "stelle", "letti": usa ACCO + CLV + L0, NON COV.
@@ -833,17 +833,17 @@ REGOLE IMPORTANTI:
 - Transparency: includi se ci sono colonne obbligo_trasparenza/categoria_trasparenza/dato_obbligatorio/d_lgs_33 (dati D.Lgs. 33/2013).
 - Indicator: includi se ci sono colonne tipo_indicatore/baseline/target/valore_indicatore (KPI e indicatori di performance).
 - POT: includi se ci sono colonne prezzo_intero/prezzo_ridotto/biglietto/tariffa_ingresso (prezzi e tariffe servizi). NON usare ACCO per tariffe generiche.
-- Se il CSV ha colonna "subject" con URI di istituti culturali â includi "Cultural-ON"
+- Se il CSV ha colonna "subject" con URI di istituti culturali → includi "Cultural-ON"
 
 Esempio di risposta valida: ["ACCO", "CLV", "L0"]
 Non aggiungere spiegazioni, solo il JSON.`;
 
   const btn = document.getElementById('btn-ai-onto');
   btn.disabled = true;
-  btn.textContent = 'â³ Analisi...';
+  btn.textContent = '—³ Analisi...';
 
-  // EARLY EXIT AI-DETECT: se il deterministico ha giÃ  rilevato un catalogo ADMS
-  // non chiamare l'AI â il CSV Ã¨ un registro di file, non dati ontologici
+  // EARLY EXIT AI-DETECT: se il deterministico ha già rilevato un catalogo ADMS
+  // non chiamare l'AI — il CSV è un registro di file, non dati ontologici
   {
     const csvText = document.getElementById('csv-input')?.value || '';
     const parsed2 = parseCSV(csvText);
@@ -869,7 +869,7 @@ if (!window._exampleLocked) {
   }
 
   try {
-    // Per l'AI-detect usa sempre il modello piÃ¹ leggero disponibile per provider
+    // Per l'AI-detect usa sempre il modello più leggero disponibile per provider
   const AI_DETECT_MODELS = {
     'mistral':   'open-mistral-7b',
     'groq':      'llama-3.1-8b-instant',
@@ -892,7 +892,7 @@ if (!window._exampleLocked) {
     if (!match) throw new Error('Risposta non valida');
     const ontos = JSON.parse(match[0]);
 
-    // Attiva le pillole suggerite â UNIONE con quelle giÃ  attive dal deterministico
+    // Attiva le pillole suggerite — UNIONE con quelle già attive dal deterministico
     const alreadyActive = new Set([...document.querySelectorAll('#onto-selector .pill.active, #onto-selector-adv .pill.active')]
       .map(p => p.dataset.onto.toUpperCase()));
     const aiOntos = new Set(ontos.map(o => o.toUpperCase()));
@@ -907,16 +907,16 @@ if (!window._exampleLocked) {
     const advActive = [...document.querySelectorAll('#onto-selector-adv .pill.active')].length > 0;
     if (advActive) {
       document.getElementById('onto-advanced').style.display = 'block';
-      document.getElementById('btn-adv').textContent = 'â¼ Nascondi ontologie avanzate';
+      document.getElementById('btn-adv').textContent = '—¼ Nascondi ontologie avanzate';
     }
 
     const msg = document.getElementById('auto-onto-msg');
     msg.textContent = `ð¤ AI suggerisce: ${ontos.join(', ')}`;
     msg.style.display = 'block';
-    window._aiDetectDone = true; // segnala che l'AI ha giÃ  completato
+    window._aiDetectDone = true; // segnala che l'AI ha già completato
 
   } catch(e) {
-    showStatus('â AI-detect fallito: ' + e.message, 'error');
+    showStatus('— AI-detect fallito: ' + e.message, 'error');
   } finally {
     btn.disabled = false;
     btn.textContent = 'ð¤ AI-detect';
@@ -947,8 +947,8 @@ function getEntityTypeSegment(ontos) {
 function sanitizeEmailValue(v){
   if(!v)return v;
   v=v.trim().split(/[;\s]/)[0]; // prende solo prima email
-  v=v.replace(/,/g,"."); // virgolaâpunto (errore comune nei CSV PA)
-  if(v.indexOf("@")<0)return ""; // non Ã¨ un email
+  v=v.replace(/,/g,"."); // virgola→punto (errore comune nei CSV PA)
+  if(v.indexOf("@")<0)return ""; // non è un email
   var parts=v.split("@");
   if(parts.length!==2||parts[1].indexOf(".")<0)return ""; // dominio malformato
   return v;
@@ -1010,7 +1010,7 @@ function buildDeterministicTriples(cols, rows, entityBase, deterMappings, typeSe
 
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
-    // URI entitÃ : usa id/codice se disponibile, altrimenti indice
+    // URI entità: usa id/codice se disponibile, altrimenti indice
     const idCol = cols.find(c => /^(id|codice|cod|n_enea|numero|num|pk)$/i.test(c));
     const entityId = idCol ? String(row[idCol]).trim().replace(/[^a-zA-Z0-9_-]/g, '_') : String(i + 1);
     const uri = `<${entityBase}${typeSegment}/${entityId}>`;
@@ -1021,7 +1021,7 @@ function buildDeterministicTriples(cols, rows, entityBase, deterMappings, typeSe
     triples.push(`    a ${mainClass}`);
     for (const col of cols) {
       // Salta colonne con prefisso numerico: "1-LISTA", "9-+EUROPA"
-      if (/^\d+[-â]/.test(col)) continue;
+      if (/^\d+[-—]/.test(col)) continue;
       const m = deterMappings[col];
       if (!m) continue;
       if (m.prop === '_SKIP_') continue; // colonna pivot non mappabile
@@ -1062,8 +1062,8 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
   var headers=rows[0];
   var dataRows=rows.slice(1).filter(function(r){return r.some(function(v){return v&&v.trim();});});
   if(!dataRows.length)return'';
-  // Auto-correzione shift: se i dati hanno una colonna in piÃ¹ degli header,
-  // probabilmente Ã¨ una colonna _id implicita (numero di riga) â aggiungila all'header
+  // Auto-correzione shift: se i dati hanno una colonna in più degli header,
+  // probabilmente è una colonna _id implicita (numero di riga) → aggiungila all'header
   if(dataRows.length>0 && dataRows[0].length===headers.length+1){
     headers=['_id'].concat(headers);
   }
@@ -1142,7 +1142,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       ttl+='<'+timeURI+'> a ti:TimeInstant ;'+nl;
       ttl+=sp+'ti:inDateTime '+dq+timeVal+dq+'^^xsd:dateTime .'+nl+nl;
     }
-    // ââ POI nodo separato se IoT Ã¨ mainOnto
+    // —— POI nodo separato se IoT è mainOnto
     if(ontos.indexOf('POI')>=0 && mainOnto!=='POI') {
       var poiURI=base+'point-of-interest/'+idVal;
       var poiTriples=[];
@@ -1162,7 +1162,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         ttl+='<'+subURI+'> iot:hasFeatureOfInterest <'+poiURI+'> .'+nl+nl;
       }
     }
-    // ââ MU nodo valore di misura
+    // —— MU nodo valore di misura
     if(ontos.indexOf('MU')>=0) {
       var unitaI=nh.indexOf('unita_misura');if(unitaI<0)unitaI=nh.indexOf('unita_di_misura');if(unitaI<0)unitaI=nh.indexOf('unit_of_measure');
       if(unitaI>=0&&row[unitaI]&&row[unitaI].trim()) {
@@ -1199,7 +1199,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         }
       }
     }
-    // ââ RPO: nodo persona + organizzazione collegati al ruolo ââââââââââââââ
+    // —— RPO: nodo persona + organizzazione collegati al ruolo ——————————————
     if(ontos.indexOf('RPO')>=0){
       var nI=nh.indexOf('nome'),cI=nh.indexOf('cognome'),cfI=nh.indexOf('codice_fiscale');
       var enteI=nh.indexOf('ente'),ipaI2=nh.indexOf('codice_ipa');
@@ -1220,7 +1220,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         }
       }
     }
-    // ââ PublicContract: nodo stazione appaltante + aggiudicatario ââââââââââ
+    // —— PublicContract: nodo stazione appaltante + aggiudicatario ——————————
     if(ontos.indexOf('PublicContract')>=0){
       var saI=nh.indexOf('stazione_appaltante'),ipaI3=nh.indexOf('codice_ipa');
       var aggI=nh.indexOf('aggiudicatario');
@@ -1244,7 +1244,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         }
       }
     }
-    // ââ Route: nodo geografico start/end ââââââââââââââââââââââââââââââââââ
+    // —— Route: nodo geografico start/end ——————————————————————————————————
     if(ontos.indexOf('Route')>=0){
       var latSI=nh.indexOf('lat_start'),lonSI=nh.indexOf('lon_start');
       if(latSI>=0&&lonSI>=0&&row[latSI]&&row[lonSI]){
@@ -1255,7 +1255,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         used.add('clv');used.add('geo');
       }
     }
-    // ââ POT: nodo prezzo con valuta ââââââââââââââââââââââââââââââââââââââââ
+    // —— POT: nodo prezzo con valuta ————————————————————————————————————————
     if(ontos.indexOf('POT')>=0){
       var prezzoI=nh.indexOf('prezzo_intero'),ridottoI=nh.indexOf('prezzo_ridotto');
       if(prezzoI>=0&&row[prezzoI]&&row[prezzoI].trim()){
@@ -1266,7 +1266,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         used.add('pot');
       }
     }
-    // ââ Indicator: nodo osservazione statistica ââââââââââââââââââââââââââââ
+    // —— Indicator: nodo osservazione statistica ————————————————————————————
     if(ontos.indexOf('Indicator')>=0){
       var valIndI=nh.indexOf('valore_indicatore');
       if(valIndI>=0&&row[valIndI]&&row[valIndI].trim()){
@@ -1277,7 +1277,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         used.add('qb');used.add('sdmx-measure');
       }
     }
-    // ââ Learning: nodo ente erogatore âââââââââââââââââââââââââââââââââââââ
+    // —— Learning: nodo ente erogatore —————————————————————————————————————
     if(ontos.indexOf('Learning')>=0){
       var entErogI=nh.indexOf('ente_erogatore'),ipaErogI=nh.indexOf('codice_ipa');
       if(entErogI>=0&&row[entErogI]&&row[entErogI].trim()){
@@ -1290,7 +1290,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         }
       }
     }
-    // ââ Transparency: nodo ente referente âââââââââââââââââââââââââââââââââ
+    // —— Transparency: nodo ente referente —————————————————————————————————
     if(ontos.indexOf('Transparency')>=0){
       var enteTransI=nh.indexOf('ente'),ipaTransI=nh.indexOf('codice_ipa');
       if(enteTransI>=0&&row[enteTransI]&&row[enteTransI].trim()){
@@ -1308,12 +1308,12 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
   // Auto-correzione lat/lon invertite: se geo:long ha valore nel range lat-Italia (35-48)
   // scambia geo:lat e geo:long su quella riga/soggetto
   ttl = ttl.split('\n').map(function(line) {
-    // Sostituisce geo:long "40.xx" con il valore corretto se Ã¨ nel range latitudine
+    // Sostituisce geo:long "40.xx" con il valore corretto se è nel range latitudine
     var mLon = line.match(/geo:long\s+"([\d.]+)"/);
     if (mLon) {
       var lonVal = parseFloat(mLon[1]);
       if (lonVal >= 35 && lonVal <= 48) {
-        // Questo valore sembra una latitudine â cerca la riga geo:lat vicina
+        // Questo valore sembra una latitudine — cerca la riga geo:lat vicina
         // Non possiamo fare swap riga per riga, segniamo per post-swap
         line = line.replace('geo:long', 'GEO_LONG_SWAP');
       }
@@ -1333,7 +1333,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
 }
 
 
-// âââ CLOUDFLARE WORKER HANDLER âââââââââââââââââââââââââââââââââââ
+// ——— CLOUDFLARE WORKER HANDLER ———————————————————————————————————
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -1374,7 +1374,7 @@ export default {
       });
     }
 
-    // ââ CKAN PROXY â package_show per dati.gov.it âââââââââââââââââââââ
+    // —— CKAN PROXY — package_show per dati.gov.it —————————————————————
     if (reqUrl.pathname === '/ckan-proxy') {
       const datasetId = reqUrl.searchParams.get('id');
       if (!datasetId) {
@@ -1403,7 +1403,7 @@ export default {
     }
 
     // Ricostruisce l'URL del CSV dalla raw query string per gestire URL con query string propri
-    // es: /?url=https://host.it/api?year=2024&month=6 â url=https://host.it/api?year=2024&month=6
+    // es: /?url=https://host.it/api?year=2024&month=6 → url=https://host.it/api?year=2024&month=6
     const rawSearch = reqUrl.search; // es: "?url=https://...?year=2024&month=6&ipa=xxx"
     const urlParamMatch = rawSearch.match(/[?&]url=([^]*?)(?:&ipa=|&pa=|&fmt=|&ontos=|$)/);
     const csvUrl = urlParamMatch ? decodeURIComponent(urlParamMatch[1]) : reqUrl.searchParams.get('url');
@@ -1455,7 +1455,7 @@ export default {
       }
 
       const header = [
-        `# CSVâRDF â ${meta.generato}`,
+        `# CSV→RDF — ${meta.generato}`,
         `# Sorgente: ${csvUrl}`,
         `# Ente: ${paName} (${ipa})`,
         `# Ontologie: ${ontos.join(', ')}`,

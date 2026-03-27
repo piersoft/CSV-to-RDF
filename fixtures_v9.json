@@ -23558,6 +23558,1384 @@
       "tema_onto": [
         "NDC"
       ]
+    },
+    {
+      "seq": 290,
+      "id": "halley-boxxapps-costo-personale-0290",
+      "name": "costo-personale-halley",
+      "title": "Costo del personale - TREGNAGO",
+      "org": "tregnago",
+      "ente": "Comune di Tregnago",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "ECON"
+      ],
+      "tema_onto": [
+        "QB",
+        "RPO"
+      ],
+      "tema_target": [
+        "QB",
+        "RPO"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/cf41d981-28a7-4bc4-8d58-aaa37a1b913d/resource/3498ca23-3882-4b3f-99ef-0ac6c26ac036/download/1683_20260327_pc_costo.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "ANNO",
+        "MESE",
+        "TOTALE_COSTO"
+      ],
+      "sample_rows": [
+        {
+          "ANNO": "2023",
+          "MESE": "3",
+          "TOTALE_COSTO": "38476.64"
+        },
+        {
+          "ANNO": "2023",
+          "MESE": "2",
+          "TOTALE_COSTO": "36592.05"
+        },
+        {
+          "ANNO": "2023",
+          "MESE": "1",
+          "TOTALE_COSTO": "49046.67"
+        }
+      ],
+      "n_cols": 3,
+      "holder_name": "Comune di Tregnago",
+      "validation": "ok",
+      "confirmed_temi": [
+        "QB",
+        "RPO"
+      ],
+      "note": "Halley Boxxapps - costo_personale"
+    },
+    {
+      "seq": 291,
+      "id": "halley-boxxapps-personale-titolo-studio-0291",
+      "name": "personale-titolo-studio-halley",
+      "title": "Conto annuale: Personale a tempo indeterminato e personale dirigente distribuito per titolo di studio - TREGNAGO",
+      "org": "tregnago",
+      "ente": "Comune di Tregnago",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "ECON"
+      ],
+      "tema_onto": [
+        "QB",
+        "RPO"
+      ],
+      "tema_target": [
+        "QB",
+        "RPO"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/88216dd8-d481-4eb0-9c84-66bb0efe3ac5/resource/60e091d9-4820-4b99-9a28-b6cc6bf2c64d/download/1683_20260327_pc_titolo_studio.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "ANNO",
+        "QUALIFICA",
+        "TITOLO_DI_STUDIO",
+        "TOTALE_UOMINI",
+        "TOTALE_DONNE"
+      ],
+      "sample_rows": [
+        {
+          "ANNO": "2024",
+          "QUALIFICA": "FUNZIONARI ED ELEVATA QUALIFICAZIONE",
+          "TITOLO_DI_STUDIO": "2",
+          "TOTALE_UOMINI": "1",
+          "TOTALE_DONNE": "0"
+        },
+        {
+          "ANNO": "2024",
+          "QUALIFICA": "FUNZIONARI ED ELEVATA QUALIFICAZIONE",
+          "TITOLO_DI_STUDIO": "3",
+          "TOTALE_UOMINI": "1",
+          "TOTALE_DONNE": "4"
+        },
+        {
+          "ANNO": "2024",
+          "QUALIFICA": "FUNZIONARI ED ELEVATA QUALIFICAZIONE",
+          "TITOLO_DI_STUDIO": "5",
+          "TOTALE_UOMINI": "1",
+          "TOTALE_DONNE": "0"
+        }
+      ],
+      "n_cols": 5,
+      "holder_name": "Comune di Tregnago",
+      "validation": "ok",
+      "confirmed_temi": [
+        "QB",
+        "RPO"
+      ],
+      "note": "Halley Boxxapps - personale_titolo_studio"
+    },
+    {
+      "seq": 292,
+      "id": "halley-boxxapps-distacco-comando-0292",
+      "name": "distacco-comando-halley",
+      "title": "Conto annuale: Personale in posizione di comando/distacco, fuori ruolo e in convenzione - TREGNAGO",
+      "org": "tregnago",
+      "ente": "Comune di Tregnago",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "ECON"
+      ],
+      "tema_onto": [
+        "QB",
+        "RPO"
+      ],
+      "tema_target": [
+        "QB",
+        "RPO"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/0343ff8d-e6a3-4d02-8d4a-235e07da2b2f/resource/57ed5ecb-9526-4826-8b53-d955be21fd9f/download/1683_20260327_pc_distacco.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "ANNO",
+        "QUALIFICA",
+        "TIPO_DISTACCO",
+        "TOTALE_UOMINI",
+        "TOTALE_DONNE"
+      ],
+      "sample_rows": [
+        {
+          "ANNO": "2022",
+          "QUALIFICA": "POSIZIONE ECONOMICA C1",
+          "TIPO_DISTACCO": "8",
+          "TOTALE_UOMINI": "1",
+          "TOTALE_DONNE": "0"
+        },
+        {
+          "ANNO": "2022",
+          "QUALIFICA": "POSIZIONE ECONOMICA C3",
+          "TIPO_DISTACCO": "8",
+          "TOTALE_UOMINI": "1",
+          "TOTALE_DONNE": "0"
+        },
+        {
+          "ANNO": "2022",
+          "QUALIFICA": "SEGRETARIO A",
+          "TIPO_DISTACCO": "8",
+          "TOTALE_UOMINI": "1",
+          "TOTALE_DONNE": "0"
+        }
+      ],
+      "n_cols": 5,
+      "holder_name": "Comune di Tregnago",
+      "validation": "ok",
+      "confirmed_temi": [
+        "QB",
+        "RPO"
+      ],
+      "note": "Halley Boxxapps - distacco_comando"
+    },
+    {
+      "seq": 293,
+      "id": "halley-boxxapps-voci-retributive-0293",
+      "name": "voci-retributive-halley",
+      "title": "Conto annuale: Oneri annui per voci retributive a carattere stipendiale corrisposte al personale in servizio - TREGNAGO",
+      "org": "tregnago",
+      "ente": "Comune di Tregnago",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "ECON"
+      ],
+      "tema_onto": [
+        "QB",
+        "RPO"
+      ],
+      "tema_target": [
+        "QB",
+        "RPO"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/99e843ef-d6e5-403b-bf93-8982f41f8ba1/resource/13beca5b-2dc1-44f8-8a4f-1037b2b5ea0c/download/1683_20260327_pc_voci_retributive.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "ANNO",
+        "VOCE_RETRIBUTIVA",
+        "TOTALE_RETRIBUZIONE"
+      ],
+      "sample_rows": [
+        {
+          "ANNO": "2024",
+          "VOCE_RETRIBUTIVA": "1",
+          "TOTALE_RETRIBUZIONE": "309873"
+        },
+        {
+          "ANNO": "2024",
+          "VOCE_RETRIBUTIVA": "4",
+          "TOTALE_RETRIBUZIONE": "33127"
+        },
+        {
+          "ANNO": "2024",
+          "VOCE_RETRIBUTIVA": "5",
+          "TOTALE_RETRIBUZIONE": "33993"
+        }
+      ],
+      "n_cols": 3,
+      "holder_name": "Comune di Tregnago",
+      "validation": "ok",
+      "confirmed_temi": [
+        "QB",
+        "RPO"
+      ],
+      "note": "Halley Boxxapps - voci_retributive"
+    },
+    {
+      "seq": 294,
+      "id": "halley-boxxapps-compensi-accessori-0294",
+      "name": "compensi-accessori-halley",
+      "title": "Conto annuale: Indennità e compensi accessori corrisposti al personale in servizio - TREGNAGO",
+      "org": "tregnago",
+      "ente": "Comune di Tregnago",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "ECON"
+      ],
+      "tema_onto": [
+        "QB",
+        "RPO"
+      ],
+      "tema_target": [
+        "QB",
+        "RPO"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/ea40b85f-26d6-47fa-878b-b475b43c1557/resource/6e3a838d-ef0c-4589-b2fe-5cb47397a74c/download/1683_20260327_pc_voci_accessorie.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "ANNO",
+        "VOCE_ACCESSORIA",
+        "TOTALE_COMPENSI"
+      ],
+      "sample_rows": [
+        {
+          "ANNO": "2024",
+          "VOCE_ACCESSORIA": "3",
+          "TOTALE_COMPENSI": "40215"
+        },
+        {
+          "ANNO": "2024",
+          "VOCE_ACCESSORIA": "4",
+          "TOTALE_COMPENSI": "7524"
+        },
+        {
+          "ANNO": "2024",
+          "VOCE_ACCESSORIA": "5",
+          "TOTALE_COMPENSI": "7957"
+        }
+      ],
+      "n_cols": 3,
+      "holder_name": "Comune di Tregnago",
+      "validation": "ok",
+      "confirmed_temi": [
+        "QB",
+        "RPO"
+      ],
+      "note": "Halley Boxxapps - compensi_accessori"
+    },
+    {
+      "seq": 295,
+      "id": "halley-boxxapps-analisi-dipendenti-0295",
+      "name": "analisi-dipendenti-halley",
+      "title": "Analisi dipendenti dell'Ente - TREGNAGO",
+      "org": "tregnago",
+      "ente": "Comune di Tregnago",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "ECON"
+      ],
+      "tema_onto": [
+        "QB",
+        "RPO"
+      ],
+      "tema_target": [
+        "QB",
+        "RPO"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/39c361b1-db01-4aad-a149-8322cffb1379/resource/e5746a62-6724-47f3-b972-ef91907cd2fd/download/1683_20260327_pc_eta_media.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "ANNO",
+        "MESE",
+        "TOTALE_UOMINI",
+        "TOTALE_DONNE",
+        "ETA_MEDIA_UOMINI",
+        "ETA_MEDIA_DONNE"
+      ],
+      "sample_rows": [
+        {
+          "ANNO": "2026",
+          "MESE": "1",
+          "TOTALE_UOMINI": "18",
+          "TOTALE_DONNE": "14",
+          "ETA_MEDIA_UOMINI": "50.055556",
+          "ETA_MEDIA_DONNE": "51.642857"
+        },
+        {
+          "ANNO": "2026",
+          "MESE": "2",
+          "TOTALE_UOMINI": "10",
+          "TOTALE_DONNE": "13",
+          "ETA_MEDIA_UOMINI": "51.1",
+          "ETA_MEDIA_DONNE": "52.307692"
+        },
+        {
+          "ANNO": "2026",
+          "MESE": "3",
+          "TOTALE_UOMINI": "10",
+          "TOTALE_DONNE": "12",
+          "ETA_MEDIA_UOMINI": "51.1",
+          "ETA_MEDIA_DONNE": "51.583333"
+        }
+      ],
+      "n_cols": 6,
+      "holder_name": "Comune di Tregnago",
+      "validation": "ok",
+      "confirmed_temi": [
+        "QB",
+        "RPO"
+      ],
+      "note": "Halley Boxxapps - analisi_dipendenti"
+    },
+    {
+      "seq": 296,
+      "id": "halley-boxxapps-andamento-demografico-0296",
+      "name": "andamento-demografico-halley",
+      "title": "Andamento demografico - CANDIANA",
+      "org": "candiana",
+      "ente": "Comune di Candiana",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "DEMO"
+      ],
+      "tema_onto": [
+        "QB"
+      ],
+      "tema_target": [
+        "QB",
+        "CPV"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/e44c6f3b-6a5c-4749-83e6-24ed5b9c6af3/resource/9a98734d-f1e4-4c75-9db7-5686dd2098f2/download/6629_20260327_an_andamento_demografico.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "ANNO",
+        "NATI",
+        "DECESSI",
+        "IMMIGRATI",
+        "EMIGRATI",
+        "TOTALE"
+      ],
+      "sample_rows": [
+        {
+          "ANNO": "2026",
+          "NATI": "4",
+          "DECESSI": "7",
+          "IMMIGRATI": "24",
+          "EMIGRATI": "12",
+          "TOTALE": "2139"
+        },
+        {
+          "ANNO": "2025",
+          "NATI": "4",
+          "DECESSI": "27",
+          "IMMIGRATI": "66",
+          "EMIGRATI": "78",
+          "TOTALE": "2130"
+        },
+        {
+          "ANNO": "2024",
+          "NATI": "11",
+          "DECESSI": "21",
+          "IMMIGRATI": "46",
+          "EMIGRATI": "66",
+          "TOTALE": "2165"
+        }
+      ],
+      "n_cols": 6,
+      "holder_name": "Comune di Candiana",
+      "validation": "ok",
+      "confirmed_temi": [
+        "QB"
+      ],
+      "note": "Halley Boxxapps - andamento_demografico"
+    },
+    {
+      "seq": 297,
+      "id": "halley-boxxapps-famiglie-composizione-0297",
+      "name": "famiglie-composizione-halley",
+      "title": "Composizione famiglie, numero componenti e minori presenti nel nucleo - LENDINARA",
+      "org": "lendinara",
+      "ente": "Comune di Lendinara",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "DEMO"
+      ],
+      "tema_onto": [
+        "QB",
+        "CPV"
+      ],
+      "tema_target": [
+        "QB",
+        "CPV"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/e8c7872c-1fce-4581-b928-84a73563381d/resource/aca53d44-3fff-4afc-ab68-1058fea47ea9/download/658_20260327_an_famiglie.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "NUMERO_COMPONENTI",
+        "DI_CUI_MINORENNI",
+        "TOTALE_FAMIGLIE"
+      ],
+      "sample_rows": [
+        {
+          "NUMERO_COMPONENTI": "1",
+          "DI_CUI_MINORENNI": "0",
+          "TOTALE_FAMIGLIE": "1612"
+        },
+        {
+          "NUMERO_COMPONENTI": "1",
+          "DI_CUI_MINORENNI": "1",
+          "TOTALE_FAMIGLIE": "9"
+        },
+        {
+          "NUMERO_COMPONENTI": "2",
+          "DI_CUI_MINORENNI": "0",
+          "TOTALE_FAMIGLIE": "1520"
+        }
+      ],
+      "n_cols": 3,
+      "holder_name": "Comune di Lendinara",
+      "validation": "ok",
+      "confirmed_temi": [
+        "QB",
+        "CPV"
+      ],
+      "note": "Halley Boxxapps - famiglie_composizione"
+    },
+    {
+      "seq": 298,
+      "id": "halley-boxxapps-bilancio-residui-0298",
+      "name": "bilancio-residui-halley",
+      "title": "Residui finali per esercizio - CAZZANO DI TRAMIGNA",
+      "org": "cazzano-di-tramigna",
+      "ente": "Comune di Cazzano di Tramigna",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "ECON"
+      ],
+      "tema_onto": [
+        "QB"
+      ],
+      "tema_target": [
+        "QB"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/b8bdf629-9803-424d-b5ff-ff08a3df865c/resource/fc3a02c3-660c-4c64-b78c-b7ba6206e9eb/download/491_20260327_pf_bilancio_residui.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "ANNO",
+        "TOTALE_ENTRATE",
+        "TOTALE_USCITE",
+        "ACCERTATO",
+        "INCASSATO",
+        "IMPEGNATO",
+        "PAGATO",
+        "RESIDUI_ATTIVI",
+        "RESIDUI_PASSIVI"
+      ],
+      "sample_rows": [
+        {
+          "ANNO": "2026",
+          "TOTALE_ENTRATE": "680049.47",
+          "TOTALE_USCITE": "481661.33",
+          "ACCERTATO": "680049.47",
+          "INCASSATO": "97420.48",
+          "IMPEGNATO": "481661.33",
+          "PAGATO": "166248.52",
+          "RESIDUI_ATTIVI": "1056823.09",
+          "RESIDUI_PASSIVI": "935095"
+        },
+        {
+          "ANNO": "2025",
+          "TOTALE_ENTRATE": "591033.67",
+          "TOTALE_USCITE": "558668.8",
+          "ACCERTATO": "591145.56",
+          "INCASSATO": "284709.63",
+          "IMPEGNATO": "532362.45",
+          "PAGATO": "451115.21",
+          "RESIDUI_ATTIVI": "680049.47",
+          "RESIDUI_PASSIVI": "481661.33"
+        },
+        {
+          "ANNO": "2024",
+          "TOTALE_ENTRATE": "506732.34",
+          "TOTALE_USCITE": "537069.95",
+          "ACCERTATO": "492109.47",
+          "INCASSATO": "241273",
+          "IMPEGNATO": "475100.76",
+          "PAGATO": "399517.26",
+          "RESIDUI_ATTIVI": "591033.67",
+          "RESIDUI_PASSIVI": "558668.8"
+        }
+      ],
+      "n_cols": 9,
+      "holder_name": "Comune di Cazzano di Tramigna",
+      "validation": "ok",
+      "confirmed_temi": [
+        "QB"
+      ],
+      "note": "Halley Boxxapps - bilancio_residui"
+    },
+    {
+      "seq": 299,
+      "id": "halley-boxxapps-atti-amministrativi-0299",
+      "name": "atti-amministrativi-halley",
+      "title": "Atti amministrativi - LENDINARA",
+      "org": "lendinara",
+      "ente": "Comune di Lendinara",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "GOVE"
+      ],
+      "tema_onto": [
+        "QB"
+      ],
+      "tema_target": [
+        "QB"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/78559f85-3175-4b82-9c80-c7ed73a6033a/resource/2a6bb8cc-c05a-4622-967b-aa96665759f2/download/658_20260327_at_atti_amministrativi.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "ANNO",
+        "MESE",
+        "TIPO_ATTO",
+        "TOTALE",
+        "MEDIA_GG_APPROVAZIONE",
+        "TOTALE_IMPEGNATO",
+        "TOTALE_MANDATI_COLLEGATI"
+      ],
+      "sample_rows": [
+        {
+          "ANNO": "2026",
+          "MESE": "3",
+          "TIPO_ATTO": "ATTI DI LIQUIDAZIONE",
+          "TOTALE": "111",
+          "MEDIA_GG_APPROVAZIONE": "",
+          "TOTALE_IMPEGNATO": "0",
+          "TOTALE_MANDATI_COLLEGATI": "0"
+        },
+        {
+          "ANNO": "2026",
+          "MESE": "3",
+          "TIPO_ATTO": "DELIBERA DI GIUNTA",
+          "TOTALE": "12",
+          "MEDIA_GG_APPROVAZIONE": "5.1666667",
+          "TOTALE_IMPEGNATO": "0",
+          "TOTALE_MANDATI_COLLEGATI": "0"
+        },
+        {
+          "ANNO": "2026",
+          "MESE": "3",
+          "TIPO_ATTO": "DETERMINAZIONI",
+          "TOTALE": "83",
+          "MEDIA_GG_APPROVAZIONE": "",
+          "TOTALE_IMPEGNATO": "538261.57",
+          "TOTALE_MANDATI_COLLEGATI": "305016.12"
+        }
+      ],
+      "n_cols": 7,
+      "holder_name": "Comune di Lendinara",
+      "validation": "ok",
+      "confirmed_temi": [
+        "QB"
+      ],
+      "note": "Halley Boxxapps - atti_amministrativi"
+    },
+    {
+      "seq": 300,
+      "id": "halley-boxxapps-pratiche-edilizie-0300",
+      "name": "pratiche-edilizie-halley",
+      "title": "Pratiche edilizie rilasciate - CAZZANO DI TRAMIGNA",
+      "org": "cazzano-di-tramigna",
+      "ente": "Comune di Cazzano di Tramigna",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "REGI"
+      ],
+      "tema_onto": [
+        "QB"
+      ],
+      "tema_target": [
+        "QB"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/d72eeae9-054c-49a6-bc4b-f013b0d2de93/resource/11cbc905-c6e4-4132-baca-82c664f37d3c/download/491_20260327_ut_pratiche_rilasciate.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "ANNO",
+        "MESE",
+        "TIPOLOGIA",
+        "PERMESSI_RILASCIATI",
+        "ENTRO_TERMINI",
+        "FUORI_TERMINI"
+      ],
+      "sample_rows": [
+        {
+          "ANNO": "2026",
+          "MESE": "2",
+          "TIPOLOGIA": "PERMESSO DI COSTRUIRE",
+          "PERMESSI_RILASCIATI": "1",
+          "ENTRO_TERMINI": "1",
+          "FUORI_TERMINI": "0"
+        },
+        {
+          "ANNO": "2025",
+          "MESE": "12",
+          "TIPOLOGIA": "PERMESSO DI COSTRUIRE",
+          "PERMESSI_RILASCIATI": "1",
+          "ENTRO_TERMINI": "1",
+          "FUORI_TERMINI": "0"
+        },
+        {
+          "ANNO": "2025",
+          "MESE": "11",
+          "TIPOLOGIA": "PERMESSO DI COSTRUIRE",
+          "PERMESSI_RILASCIATI": "1",
+          "ENTRO_TERMINI": "1",
+          "FUORI_TERMINI": "0"
+        }
+      ],
+      "n_cols": 6,
+      "holder_name": "Comune di Cazzano di Tramigna",
+      "validation": "ok",
+      "confirmed_temi": [
+        "QB"
+      ],
+      "note": "Halley Boxxapps - pratiche_edilizie"
+    },
+    {
+      "seq": 301,
+      "id": "halley-boxxapps-protocollo-0301",
+      "name": "protocollo-halley",
+      "title": "Elenco dei protocolli suddivisi per anno e tipologia - LENDINARA",
+      "org": "lendinara",
+      "ente": "Comune di Lendinara",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "GOVE"
+      ],
+      "tema_onto": [
+        "QB"
+      ],
+      "tema_target": [
+        "QB"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/0b62a32a-f65f-461a-bf24-425cdd39c98c/resource/3a31d3fb-ad8c-4b9b-8213-887c10f382a4/download/658_20260327_pi_protocolli.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "ANNO_PROTOCOLLO",
+        "TIPO_PROTOCOLLO",
+        "TIPO_SPEDIZIONE",
+        "NUMERO_PROTOCOLLI"
+      ],
+      "sample_rows": [
+        {
+          "ANNO_PROTOCOLLO": "2026",
+          "TIPO_PROTOCOLLO": "ARRIVO",
+          "TIPO_SPEDIZIONE": "COLLEGAMENTO GESTIONALE",
+          "NUMERO_PROTOCOLLI": "12"
+        },
+        {
+          "ANNO_PROTOCOLLO": "2026",
+          "TIPO_PROTOCOLLO": "ARRIVO",
+          "TIPO_SPEDIZIONE": "E-MAIL",
+          "NUMERO_PROTOCOLLI": "4018"
+        },
+        {
+          "ANNO_PROTOCOLLO": "2026",
+          "TIPO_PROTOCOLLO": "ARRIVO",
+          "TIPO_SPEDIZIONE": "LETTERA",
+          "NUMERO_PROTOCOLLI": "1"
+        }
+      ],
+      "n_cols": 4,
+      "holder_name": "Comune di Lendinara",
+      "validation": "ok",
+      "confirmed_temi": [
+        "QB"
+      ],
+      "note": "Halley Boxxapps - protocollo"
+    },
+    {
+      "seq": 302,
+      "id": "halley-boxxapps-servizi-cimiteriali-0302",
+      "name": "servizi-cimiteriali-halley",
+      "title": "Servizi cimiteriali - TREGNAGO",
+      "org": "tregnago",
+      "ente": "Comune di Tregnago",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "SOCI"
+      ],
+      "tema_onto": [
+        "QB"
+      ],
+      "tema_target": [
+        "QB"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/84c19338-2f5e-42e5-b213-6a2a0ec7a704/resource/0c9fa44b-4669-43e2-975e-3d89c5a7ae49/download/1683_20260327_tc_pratiche_cimiteriali.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "ANNO",
+        "TIPOLOGIA",
+        "TOTALE"
+      ],
+      "sample_rows": [
+        {
+          "ANNO": "2023",
+          "TIPOLOGIA": "Altro comune",
+          "TOTALE": "3"
+        },
+        {
+          "ANNO": "2023",
+          "TIPOLOGIA": "Cremazione",
+          "TOTALE": "1"
+        },
+        {
+          "ANNO": "2023",
+          "TIPOLOGIA": "Inumazione",
+          "TOTALE": "14"
+        }
+      ],
+      "n_cols": 3,
+      "holder_name": "Comune di Tregnago",
+      "validation": "ok",
+      "confirmed_temi": [
+        "QB"
+      ],
+      "note": "Halley Boxxapps - servizi_cimiteriali"
+    },
+    {
+      "seq": 303,
+      "id": "halley-boxxapps-concorsi-pa-0303",
+      "name": "concorsi-pa-halley",
+      "title": "Concorsi - CAZZANO DI TRAMIGNA",
+      "org": "cazzano-di-tramigna",
+      "ente": "Comune di Cazzano di Tramigna",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "GOVE"
+      ],
+      "tema_onto": [
+        "CPSV"
+      ],
+      "tema_target": [
+        "CPSV"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/427153ca-c11e-43b3-8e9e-8425b93aebdb/resource/b3c1a162-641b-4cd7-9cde-1c4ded06631d/download/491_20260327_eg_concorsi.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "BANDITO_DA",
+        "OGGETTO",
+        "DATA_SCADENZA",
+        "DATA_PUBBLICAZIONE",
+        "GAZZETTA_UFFICIALE",
+        "NUMERO_POSTI",
+        "NUMERO_POSTI_RISERVATI"
+      ],
+      "sample_rows": [
+        {
+          "BANDITO_DA": "",
+          "OGGETTO": "Avviso di mobilit&agrave; volontaria per la copertura",
+          "DATA_SCADENZA": "con contratto a tempo parziale part-time 18 ore settimanali ed indeterminato",
+          "DATA_PUBBLICAZIONE": "di n. 1 posto di istruttore tecnico area tecnica C1.",
+          "GAZZETTA_UFFICIALE": "25/06/2018",
+          "NUMERO_POSTI": "23/05/2018",
+          "NUMERO_POSTI_RISERVATI": ""
+        },
+        {
+          "BANDITO_DA": "",
+          "OGGETTO": "Nomina componente esterno nucleo di valutazione. Avviso Pubblico",
+          "DATA_SCADENZA": "12/06/2018",
+          "DATA_PUBBLICAZIONE": "06/06/2018",
+          "GAZZETTA_UFFICIALE": "",
+          "NUMERO_POSTI": "0",
+          "NUMERO_POSTI_RISERVATI": "0"
+        },
+        {
+          "BANDITO_DA": "",
+          "OGGETTO": "Avviso di mobilit&agrave; volontaria per la copertura",
+          "DATA_SCADENZA": "con contratto a tempo parziale part-time 18 ore settimanali ed indeterminato",
+          "DATA_PUBBLICAZIONE": "di n. 1 posto di istruttore tecnico area tecnica C1. Secondo Avviso.",
+          "GAZZETTA_UFFICIALE": "28/09/2018",
+          "NUMERO_POSTI": "29/08/2018",
+          "NUMERO_POSTI_RISERVATI": ""
+        }
+      ],
+      "n_cols": 7,
+      "holder_name": "Comune di Cazzano di Tramigna",
+      "validation": "ok",
+      "confirmed_temi": [
+        "CPSV"
+      ],
+      "note": "Halley Boxxapps - concorsi_pa"
+    },
+    {
+      "seq": 304,
+      "id": "halley-boxxapps-incarichi-politici-0304",
+      "name": "incarichi-politici-halley",
+      "title": "Titolari di incarichi politici, di amministrazione, di direzione o di governo - LENDINARA",
+      "org": "lendinara",
+      "ente": "Comune di Lendinara",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "GOVE"
+      ],
+      "tema_onto": [
+        "CPV",
+        "RO-AP_IT"
+      ],
+      "tema_target": [
+        "CPV",
+        "RO-AP_IT"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/79c6d4f5-bccc-46de-8a53-5997699910bb/resource/c55dd903-85b1-479d-abf4-5ec458ebfefb/download/658_20260327_eg_incarichi.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "COGNOME",
+        "NOME",
+        "GRUPPO_POLITICO",
+        "ORARIO_RICEVIMENTO",
+        "ORGANO",
+        "RUOLO"
+      ],
+      "sample_rows": [
+        {
+          "COGNOME": "Zeggio",
+          "NOME": "Francesca",
+          "GRUPPO_POLITICO": "OBIETTIVI COMUNI - ZEGGIO SINDACO",
+          "ORARIO_RICEVIMENTO": "",
+          "ORGANO": "GIUNTA",
+          "RUOLO": "SINDACO"
+        },
+        {
+          "COGNOME": "Dallaga'",
+          "NOME": "Natale",
+          "GRUPPO_POLITICO": "OBIETTIVI COMUNI - ZEGGIO SINDACO",
+          "ORARIO_RICEVIMENTO": "",
+          "ORGANO": "GIUNTA",
+          "RUOLO": "VICE SINDACO"
+        },
+        {
+          "COGNOME": "FERRARESE",
+          "NOME": "GUGLIELMO",
+          "GRUPPO_POLITICO": "OBIETTIVI COMUNI - ZEGGIO SINDACO",
+          "ORARIO_RICEVIMENTO": "",
+          "ORGANO": "GIUNTA",
+          "RUOLO": "ASSESSORE"
+        }
+      ],
+      "n_cols": 6,
+      "holder_name": "Comune di Lendinara",
+      "validation": "ok",
+      "confirmed_temi": [
+        "CPV",
+        "RO-AP_IT"
+      ],
+      "note": "Halley Boxxapps - incarichi_politici"
+    },
+    {
+      "seq": 305,
+      "id": "halley-boxxapps-mercati-fiere-0305",
+      "name": "mercati-fiere-halley",
+      "title": "Posteggi mercati e fiere - CAZZANO DI TRAMIGNA",
+      "org": "cazzano-di-tramigna",
+      "ente": "Comune di Cazzano di Tramigna",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "ECON"
+      ],
+      "tema_onto": [
+        "TI",
+        "POI"
+      ],
+      "tema_target": [
+        "TI",
+        "POI",
+        "CLV"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/7e6ffc35-c249-4692-85c9-62270557b36e/resource/8ed8a72d-43ca-4250-a3d5-f0c44ce523f0/download/491_20260327_cm_posteggi_mercati.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "NOME_MERCATO",
+        "FIERA_MERCATO",
+        "GIORNO",
+        "INIZIO_PERIODO",
+        "FINE_PERIODO",
+        "TIPO_POSTEGGIO",
+        "TOTALE_POSTEGGI"
+      ],
+      "sample_rows": [
+        {
+          "NOME_MERCATO": "Mercato settimanale",
+          "FIERA_MERCATO": "MERCATO",
+          "GIORNO": "Giovedi",
+          "INIZIO_PERIODO": "01/01/2022",
+          "FINE_PERIODO": "31/12/2099",
+          "TIPO_POSTEGGIO": "Alimentare",
+          "TOTALE_POSTEGGI": "3"
+        },
+        {
+          "NOME_MERCATO": "Mercato settimanale",
+          "FIERA_MERCATO": "MERCATO",
+          "GIORNO": "Giovedi",
+          "INIZIO_PERIODO": "01/01/2022",
+          "FINE_PERIODO": "31/12/2099",
+          "TIPO_POSTEGGIO": "Non alimentare",
+          "TOTALE_POSTEGGI": "2"
+        }
+      ],
+      "n_cols": 7,
+      "holder_name": "Comune di Cazzano di Tramigna",
+      "validation": "ok",
+      "confirmed_temi": [
+        "TI",
+        "POI"
+      ],
+      "note": "Halley Boxxapps - mercati_fiere"
+    },
+    {
+      "seq": 306,
+      "id": "halley-boxxapps-associazioni-0306",
+      "name": "associazioni-halley",
+      "title": "Elenco associazioni - SAN PIETRO IN GU",
+      "org": "san-pietro-in-gu",
+      "ente": "Comune di San Pietro in Gu",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "SOCI"
+      ],
+      "tema_onto": [
+        "COV-AP_IT",
+        "CLV",
+        "SM"
+      ],
+      "tema_target": [
+        "COV-AP_IT",
+        "CLV",
+        "SM"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/e684a1ad-8ef7-4900-b887-57255791d4d6/resource/ee3162b7-798c-480c-8fd2-8bd9f8365b25/download/1275_20260326_eg_associazioni.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "NOME_ASSOCIAZIONE",
+        "INDIRIZZO",
+        "CIVICO",
+        "LATITUDINE",
+        "LONGITUDINE",
+        "TELEFONO",
+        "EMAIL",
+        "FAX",
+        "CELLULARE",
+        "CATEGORIA"
+      ],
+      "sample_rows": [
+        {
+          "NOME_ASSOCIAZIONE": "A.T.C. Ambito territoriale di caccia",
+          "INDIRIZZO": "",
+          "CIVICO": "",
+          "LATITUDINE": "0",
+          "LONGITUDINE": "0",
+          "TELEFONO": "",
+          "EMAIL": "",
+          "FAX": "",
+          "CELLULARE": "",
+          "CATEGORIA": "AMBIENTE/CACCIA E PESCA"
+        },
+        {
+          "NOME_ASSOCIAZIONE": "Caccia A.C.V.",
+          "INDIRIZZO": "",
+          "CIVICO": "",
+          "LATITUDINE": "0",
+          "LONGITUDINE": "0",
+          "TELEFONO": "",
+          "EMAIL": "",
+          "FAX": "",
+          "CELLULARE": "",
+          "CATEGORIA": "AMBIENTE/CACCIA E PESCA"
+        },
+        {
+          "NOME_ASSOCIAZIONE": "Pescatori \"\"La Sorgente",
+          "INDIRIZZO": "",
+          "CIVICO": "",
+          "LATITUDINE": "0",
+          "LONGITUDINE": "0",
+          "TELEFONO": "",
+          "EMAIL": "",
+          "FAX": "",
+          "CELLULARE": "",
+          "CATEGORIA": "AMBIENTE/CACCIA E PESCA"
+        }
+      ],
+      "n_cols": 10,
+      "holder_name": "Comune di San Pietro in Gu",
+      "validation": "ok",
+      "confirmed_temi": [
+        "COV-AP_IT",
+        "CLV",
+        "SM"
+      ],
+      "note": "Halley Boxxapps - associazioni"
+    },
+    {
+      "seq": 307,
+      "id": "halley-boxxapps-trasporto-scolastico-0307",
+      "name": "trasporto-scolastico-halley",
+      "title": "Servizio trasporto scolastico - CAZZANO DI TRAMIGNA",
+      "org": "cazzano-di-tramigna",
+      "ente": "Comune di Cazzano di Tramigna",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "EDUC"
+      ],
+      "tema_onto": [
+        "QB"
+      ],
+      "tema_target": [
+        "QB"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/3363cd1e-501e-44d1-8a0c-fcf03ae2d8b2/resource/f610edcf-4688-4c1f-b553-f61585ac250b/download/491_20260327_ss_trasporto.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "ANNO",
+        "TRAGITTO",
+        "TOTALE_ALUNNI",
+        "TOTALE_RETTE_TRASPORTO",
+        "TOTALE_PAGAMENTI_TRASPORTO"
+      ],
+      "sample_rows": [
+        {
+          "ANNO": "2011",
+          "TRAGITTO": "PRIMO TRAGITTO",
+          "TOTALE_ALUNNI": "2",
+          "TOTALE_RETTE_TRASPORTO": "330",
+          "TOTALE_PAGAMENTI_TRASPORTO": "0"
+        },
+        {
+          "ANNO": "2013",
+          "TRAGITTO": "PRIMO TRAGITTO",
+          "TOTALE_ALUNNI": "1",
+          "TOTALE_RETTE_TRASPORTO": "210",
+          "TOTALE_PAGAMENTI_TRASPORTO": "210"
+        },
+        {
+          "ANNO": "2014",
+          "TRAGITTO": "PRIMO TRAGITTO",
+          "TOTALE_ALUNNI": "54",
+          "TOTALE_RETTE_TRASPORTO": "7210",
+          "TOTALE_PAGAMENTI_TRASPORTO": "5740"
+        }
+      ],
+      "n_cols": 5,
+      "holder_name": "Comune di Cazzano di Tramigna",
+      "validation": "ok",
+      "confirmed_temi": [
+        "QB"
+      ],
+      "note": "Halley Boxxapps - trasporto_scolastico"
+    },
+    {
+      "seq": 308,
+      "id": "halley-boxxapps-personale-anzianita-0308",
+      "name": "personale-anzianita-halley",
+      "title": "Conto annuale: Personale a tempo indeterminato e personale dirigente distribuito per classi di anzianità - TREGNAGO",
+      "org": "tregnago",
+      "ente": "Comune di Tregnago",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "ECON"
+      ],
+      "tema_onto": [
+        "QB",
+        "RPO"
+      ],
+      "tema_target": [
+        "QB",
+        "RPO"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/c0167e01-478e-4c9a-bf5c-598628b5cdac/resource/e7469e0b-8985-4a0b-925c-ac0ade0ae29a/download/1683_20260327_pc_anzianita.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "ANNO",
+        "QUALIFICA",
+        "ANZIANITA",
+        "TOTALE_UOMINI",
+        "TOTALE_DONNE"
+      ],
+      "sample_rows": [
+        {
+          "ANNO": "2024",
+          "QUALIFICA": "FUNZIONARI ED ELEVATA QUALIFICAZIONE",
+          "ANZIANITA": "1",
+          "TOTALE_UOMINI": "2",
+          "TOTALE_DONNE": "2"
+        },
+        {
+          "ANNO": "2024",
+          "QUALIFICA": "FUNZIONARI ED ELEVATA QUALIFICAZIONE",
+          "ANZIANITA": "4",
+          "TOTALE_UOMINI": "0",
+          "TOTALE_DONNE": "2"
+        },
+        {
+          "ANNO": "2024",
+          "QUALIFICA": "FUNZIONARI ED ELEVATA QUALIFICAZIONE",
+          "ANZIANITA": "5",
+          "TOTALE_UOMINI": "1",
+          "TOTALE_DONNE": "0"
+        }
+      ],
+      "n_cols": 5,
+      "holder_name": "Comune di Tregnago",
+      "validation": "ok",
+      "confirmed_temi": [
+        "QB",
+        "RPO"
+      ],
+      "note": "Halley Boxxapps - personale_anzianita"
+    },
+    {
+      "seq": 309,
+      "id": "halley-boxxapps-personale-qualifica-0309",
+      "name": "personale-qualifica-halley",
+      "title": "Conto annuale: Personale dipendente a tempo indeterminato e personale dirigente in servizio - TREGNAGO",
+      "org": "tregnago",
+      "ente": "Comune di Tregnago",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "ECON"
+      ],
+      "tema_onto": [
+        "QB",
+        "RPO"
+      ],
+      "tema_target": [
+        "QB",
+        "RPO"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/d3c04b5d-75b1-48a3-ac08-5c16c03abf3d/resource/4a6ab9af-78e5-4050-adb8-031c8b4443a5/download/1683_20260327_pc_personale.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "ANNO",
+        "QUALIFICA",
+        "TOTALE_UOMINI",
+        "TOTALE_DONNE"
+      ],
+      "sample_rows": [
+        {
+          "ANNO": "2024",
+          "QUALIFICA": "FUNZIONARI ED ELEVATA QUALIFICAZIONE",
+          "TOTALE_UOMINI": "3",
+          "TOTALE_DONNE": "4"
+        },
+        {
+          "ANNO": "2024",
+          "QUALIFICA": "ISTRUTTORI",
+          "TOTALE_UOMINI": "1",
+          "TOTALE_DONNE": "6"
+        },
+        {
+          "ANNO": "2024",
+          "QUALIFICA": "OPERATORI ESPERTI",
+          "TOTALE_UOMINI": "2",
+          "TOTALE_DONNE": "0"
+        }
+      ],
+      "n_cols": 4,
+      "holder_name": "Comune di Tregnago",
+      "validation": "ok",
+      "confirmed_temi": [
+        "QB",
+        "RPO"
+      ],
+      "note": "Halley Boxxapps - personale_qualifica"
+    },
+    {
+      "seq": 310,
+      "id": "halley-boxxapps-personale-eta-0310",
+      "name": "personale-eta-halley",
+      "title": "Conto annuale: Personale a tempo indeterminato e personale dirigente distribuito per classi di età - TREGNAGO",
+      "org": "tregnago",
+      "ente": "Comune di Tregnago",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "ECON"
+      ],
+      "tema_onto": [
+        "QB",
+        "RPO"
+      ],
+      "tema_target": [
+        "QB",
+        "RPO"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/f504bb59-d9cd-47ca-b47e-2efb758b933a/resource/1aa7cdef-1c0f-4aee-adc8-d650c7048989/download/1683_20260327_pc_eta.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "ANNO",
+        "QUALIFICA",
+        "ETA",
+        "TOTALE_UOMINI",
+        "TOTALE_DONNE"
+      ],
+      "sample_rows": [
+        {
+          "ANNO": "2024",
+          "QUALIFICA": "FUNZIONARI ED ELEVATA QUALIFICAZIONE",
+          "ETA": "5",
+          "TOTALE_UOMINI": "1",
+          "TOTALE_DONNE": "0"
+        },
+        {
+          "ANNO": "2024",
+          "QUALIFICA": "FUNZIONARI ED ELEVATA QUALIFICAZIONE",
+          "ETA": "7",
+          "TOTALE_UOMINI": "0",
+          "TOTALE_DONNE": "1"
+        },
+        {
+          "ANNO": "2024",
+          "QUALIFICA": "FUNZIONARI ED ELEVATA QUALIFICAZIONE",
+          "ETA": "9",
+          "TOTALE_UOMINI": "2",
+          "TOTALE_DONNE": "3"
+        }
+      ],
+      "n_cols": 5,
+      "holder_name": "Comune di Tregnago",
+      "validation": "ok",
+      "confirmed_temi": [
+        "QB",
+        "RPO"
+      ],
+      "note": "Halley Boxxapps - personale_eta"
+    },
+    {
+      "seq": 311,
+      "id": "halley-boxxapps-altri-oneri-0311",
+      "name": "altri-oneri-halley",
+      "title": "Conto annuale: Altri oneri che concorrono a formare il costo del lavoro - TREGNAGO",
+      "org": "tregnago",
+      "ente": "Comune di Tregnago",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "ECON"
+      ],
+      "tema_onto": [
+        "QB",
+        "RPO"
+      ],
+      "tema_target": [
+        "QB",
+        "RPO"
+      ],
+      "score": 85,
+      "resource_id": "",
+      "csv_url": "https://opendata.boxxapps.com/dataset/c2223be4-a575-4f1a-8146-c28e571af8a3/resource/ce33b8db-6df6-40af-ae2a-f09c9fb0857d/download/1683_20260327_pc_altri_oneri.csv",
+      "datastore": false,
+      "source": "halley_boxxapps",
+      "headers": [
+        "ANNO",
+        "VOCE_COSTO",
+        "TOTALE_COSTO"
+      ],
+      "sample_rows": [
+        {
+          "ANNO": "2024",
+          "VOCE_COSTO": "3",
+          "TOTALE_COSTO": "2800"
+        },
+        {
+          "ANNO": "2024",
+          "VOCE_COSTO": "12",
+          "TOTALE_COSTO": "1804"
+        },
+        {
+          "ANNO": "2024",
+          "VOCE_COSTO": "16",
+          "TOTALE_COSTO": "137219"
+        }
+      ],
+      "n_cols": 3,
+      "holder_name": "Comune di Tregnago",
+      "validation": "ok",
+      "confirmed_temi": [
+        "QB",
+        "RPO"
+      ],
+      "note": "Halley Boxxapps - altri_oneri"
     }
   ]
 }

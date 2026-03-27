@@ -537,7 +537,8 @@ function detectOntologiesDeterministic(headers, rows) {
 
   // CLV â SOLO se nelle intestazioni ci sono campi indirizzo/coordinate strutturati
   if(hasH(['lat','lon','indirizzo','via','civico','comune','cap','latitudine','longitudine','stop_lat','stop_lon',
-            'lat_wgs84','lon_wgs84','coord_lat','coord_lon','georef_lat','georef_lon']))
+            'lat_wgs84','lon_wgs84','coord_lat','coord_lon','georef_lat','georef_lon',
+            'ubicazione_esercizio','n_civico','indirizzo_esercizio']))
     result.add('CLV');
 
   // GTFS
@@ -583,6 +584,11 @@ function detectOntologiesDeterministic(headers, rows) {
           'point_of_interest','idelem','id_elem',
           'id_area','id_punto','codice_stazione','stazione_monitoraggio','punto_monitoraggio']) || _hasOSMschema) {
     result.add('POI');
+  } else if(has(['insegna','nome_esercizio','insegna_commerciale']) &&
+            has(['attivita','tipo_esercizio','categoria_esercizio']) &&
+            has(['ubicazione_esercizio','indirizzo_esercizio','n_civico','numero_civico'])) {
+    // Esercizi commerciali senza coordinate: insegna + tipo attività + indirizzo → POI
+    result.add('POI');
   } else if(_hasPOIcoord && !result.has('GTFS') &&  // B1: ACCO+lat/lon = anche POI
             !result.has('SMAPIT') && !result.has('QB') &&
             !result.has('Cultural-ON')) { // non aggiungere POI su istituti culturali
@@ -605,7 +611,9 @@ function detectOntologiesDeterministic(headers, rows) {
                              'cig','importo_aggiudicazione','tipo_percorso','valore_indicatore']);
   var _hasCOVWeak   = hasH(['amministrazione','ente','pubblica_amministrazione','organizzazione',
                            'comparto','inquadramento','codice_istituzione','codice_ente_bdap']);
-  if(!result.has('ACCO') && !result.has('POI') && !result.has('GTFS') &&
+  // COV: permesso anche con POI se ragione_sociale presente (esercizi commerciali)
+  if(!result.has('ACCO') && !result.has('GTFS') &&
+     (!result.has('POI') || _hasCOVStrong) &&
      (_hasCOVStrong || (_hasCOVWeak &&
       !has(['popolazione_residente','numero_famiglie','numero_residenti','nati','morti',
             'incidenti','sinistri','importo_liquidato','spesa_corrente']) &&
@@ -618,10 +626,11 @@ function detectOntologiesDeterministic(headers, rows) {
   if(result.has('CLV') && !_hasPOIcoord &&
      !has(['codice_ipa','codice_ente','partita_iva','tipo_poi','nome_poi','dae',
            'data_inizio','data_fine','data_evento','importo','valore','obs_value',
-           'qualifica','contratto','ccnl','cig','cup','obbligo_trasparenza'])) {
+           'qualifica','contratto','ccnl','cig','cup','obbligo_trasparenza',
+           'ubicazione_esercizio','n_civico','insegna','ragione_sociale'])) {
     if(result.has('COV') && !has(['codice_ipa','cf_ente','ragione_sociale','tipo_ente'])) result.delete('COV');
     if(result.has('TI')  && !has(['data_inizio','data_fine','data_da','data_a','data_evento','quando','inizio','termine'])) result.delete('TI');
-    if(result.has('POI') && !has(['tipo_poi','nome_poi','dae','lat','lon'])) result.delete('POI');
+    if(result.has('POI') && !has(['tipo_poi','nome_poi','dae','lat','lon','insegna','insegna_commerciale'])) result.delete('POI');
     if(result.has('CPV') && !has(['cognome','codice_fiscale','nome_completo','data_nascita'])) result.delete('CPV');
   }
 

@@ -43,11 +43,11 @@
 <body>
 <header>
   <h1>🔗 Ontologie PA Italiana — CSV→RDF</h1>
-  <p>Guida alle 29 ontologie supportate dal convertitore CSV→RDF/Turtle per la Pubblica Amministrazione italiana, basate sulla repo ufficiale <a href="https://github.com/italia/dati-semantic-assets" style="color:#c7d2fe">dati-semantic-assets</a>.</p>
+  <p>Guida alle 29 ontologie supportate dal convertitore CSV→RDF/Turtle per la Pubblica Amministrazione italiana, basate sulla repo ufficiale <a href="https://github.com/italia/dati-semantic-assets" style="color:#c7d2fe">dati-semantic-assets</a>. Il corpus include ora dataset reali da <strong>Halley Boxxapps</strong> (Veneto e multiregionale).</p>
   <div class="meta">
-    <span>📦 v2026.03.27.43</span>
+    <span>📦 v2026.03.27.52</span>
     <span>🗂 29 ontologie</span>
-    <span>📋 289 dataset PA reali</span>
+    <span>📋 311 dataset PA reali</span>
     <span>🧪 22+7 CSV sacri testati</span>
     <span>🔗 <a href="https://piersoft.github.io/CSV-to-RDF/" style="color:#c7d2fe">Apri il tool</a></span>
   </div>
@@ -267,8 +267,8 @@
       <div class="card-head"><div class="badge prio-media">👷</div>
         <div><h3>RPO — Role in Public Organization</h3><div class="ns">rpo: &lt;https://w3id.org/italia/onto/RPO/&gt;</div></div>
       </div>
-      <p>Personale PA: qualifica, tipo contratto, CCNL, livello contrattuale, ore settimanali.</p>
-      <div class="triggers"><span class="trig">qualifica_dipendente</span><span class="trig">contratto_lavoro</span><span class="trig">ccnl</span><span class="trig">ore_settimanali</span></div>
+      <p>Personale PA: qualifica, tipo contratto, CCNL, ore settimanali, voci retributive, compensi accessori, costo del lavoro, distacco/comando, anzianità di servizio. Riconosce i dataset conto annuale Halley.</p>
+      <div class="triggers"><span class="trig">qualifica_dipendente</span><span class="trig">contratto_lavoro</span><span class="trig">ccnl</span><span class="trig">qualifica</span><span class="trig">voce_retributiva</span><span class="trig">voce_accessoria</span><span class="trig">voce_costo</span><span class="trig">tipo_distacco</span><span class="trig">anzianita</span><span class="trig">totale_uomini</span><span class="trig">totale_donne</span></div>
     </div>
 
     <div class="card">
@@ -304,8 +304,8 @@
       <div class="card-head"><div class="badge prio-alta">🏛</div>
         <div><h3>CPSV / CPSV-AP — Servizi pubblici</h3><div class="ns">cpsv: &lt;http://purl.org/vocab/cpsv#&gt;</div></div>
       </div>
-      <p>Servizi della PA al cittadino: SUAP, anagrafe, certificati. Nome, descrizione, canale erogazione (sportello/online), requisiti accesso.</p>
-      <div class="triggers"><span class="trig">nome_servizio</span><span class="trig">ente_erogatore</span><span class="trig">canale_erogazione</span><span class="trig">requisiti_accesso</span></div>
+      <p>Servizi della PA al cittadino e concorsi pubblici: SUAP, anagrafe, certificati, bandi. Nome servizio/bando, ente bandente, posti disponibili, data scadenza, Gazzetta Ufficiale.</p>
+      <div class="triggers"><span class="trig">nome_servizio</span><span class="trig">ente_erogatore</span><span class="trig">canale_erogazione</span><span class="trig">bandito_da</span><span class="trig">numero_posti</span><span class="trig">data_scadenza</span><span class="trig">gazzetta_ufficiale</span></div>
     </div>
 
     <div class="card">
@@ -341,8 +341,8 @@
       <div class="card-head"><div class="badge prio-alta">📈</div>
         <div><h3>QB — RDF Data Cube</h3><div class="ns">qb: &lt;http://purl.org/linked-data/cube#&gt;</div></div>
       </div>
-      <p>Dataset statistici multidimensionali: popolazioni, residenti, indicatori economici. Segue lo standard W3C RDF Data Cube.</p>
-      <div class="triggers"><span class="trig">anno</span><span class="trig">valore_indicatore</span><span class="trig">numero_residenti</span><span class="trig">fascia_eta</span></div>
+      <p>Dataset statistici multidimensionali: popolazioni, bilanci, indicatori, costi PA. Riconosce tutti i dataset Halley (demografici, bilancio, pratiche, protocollo, atti, cimiteri, trasporto). Segue lo standard W3C RDF Data Cube.</p>
+      <div class="triggers"><span class="trig">anno</span><span class="trig">nati</span><span class="trig">decessi</span><span class="trig">immigrati</span><span class="trig">totale_entrate</span><span class="trig">totale_uscite</span><span class="trig">permessi_rilasciati</span><span class="trig">numero_protocolli</span><span class="trig">totale_costo</span><span class="trig">fascia_eta</span></div>
     </div>
 
     <div class="card">
@@ -400,7 +400,7 @@
         <div><h3>SM — Social Media / Contatti</h3><div class="ns">sm: &lt;https://w3id.org/italia/onto/SM/&gt;</div></div>
       </div>
       <p>Informazioni di contatto e canali digitali: email, sito web, telefono, fax. Sempre incluso quando presenti colonne contatto.</p>
-      <div class="triggers"><span class="trig">email</span><span class="trig">sitoweb</span><span class="trig">telefono</span><span class="trig">fax</span></div>
+      <div class="triggers"><span class="trig">email</span><span class="trig">sitoweb</span><span class="trig">telefono</span><span class="trig">fax</span><span class="trig">cellulare</span></div>
     </div>
 
     <div class="card">
@@ -409,6 +409,156 @@
       </div>
       <p>Asset semantici PA: ontologie, vocabolari, schemi. Versione, stato, licenza, formato, URL distribuzione, editore.</p>
       <div class="triggers"><span class="trig">versione</span><span class="trig">stato</span><span class="trig">licenza</span><span class="trig">tipo_asset</span><span class="trig">data_rilascio</span></div>
+    </div>
+
+  </div>
+
+
+  <div class="section-title">🏘 Dataset Halley Boxxapps — Comuni italiani</div>
+  <p style="font-size:.85rem;color:#374151;margin-bottom:1rem;">22 nuovi dataset reali da <strong>opendata.boxxapps.com</strong> e <strong>opendata2.boxxapps.com</strong> (Gruppo Halley), che raccolgono i dati aperti di centinaia di Comuni italiani tramite applicativi verticali standardizzati. Tutti i dataset seguono schemi CSV fissi e replicati su ogni Comune.</p>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-alta">👷</div>
+        <div><h3>Personale PA — 9 sotto-tipi</h3><div class="ns">RPO + QB · Conto annuale</div></div>
+      </div>
+      <p>Costo personale, qualifica, titolo di studio, classi di età, anzianità, distacco/comando, voci retributive, compensi accessori, altri oneri. Tutti i sotto-tipi del conto annuale del personale comunale.</p>
+      <div class="triggers">
+        <span class="trig">ANNO, QUALIFICA, TOTALE_UOMINI, TOTALE_DONNE</span>
+        <span class="trig">VOCE_RETRIBUTIVA, TOTALE_RETRIBUZIONE</span>
+        <span class="trig">TIPO_DISTACCO</span>
+        <span class="trig">TITOLO_DI_STUDIO</span>
+        <span class="trig">ANZIANITA</span>
+        <span class="trig">ETA_MEDIA_UOMINI</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-alta">👨‍👩‍👧</div>
+        <div><h3>Demografici e famiglie</h3><div class="ns">QB · Anagrafe comunale</div></div>
+      </div>
+      <p>Andamento demografico annuale (nati, decessi, immigrati, emigrati, totale) e composizione delle famiglie per numero di componenti e minori.</p>
+      <div class="triggers">
+        <span class="trig">ANNO, NATI, DECESSI, IMMIGRATI, EMIGRATI, TOTALE</span>
+        <span class="trig">NUMERO_COMPONENTI, DI_CUI_MINORENNI, TOTALE_FAMIGLIE</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-alta">💰</div>
+        <div><h3>Bilancio — residui e competenza</h3><div class="ns">QB · Contabilità comunale</div></div>
+      </div>
+      <p>Andamento entrate e uscite: stanziato, accertato, incassato, impegnato, pagato, residui attivi e passivi per esercizio.</p>
+      <div class="triggers">
+        <span class="trig">ANNO, TOTALE_ENTRATE, TOTALE_USCITE</span>
+        <span class="trig">ACCERTATO, INCASSATO, IMPEGNATO, PAGATO</span>
+        <span class="trig">RESIDUI_ATTIVI, RESIDUI_PASSIVI</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">📜</div>
+        <div><h3>Atti amministrativi</h3><div class="ns">QB · Delibere e determine</div></div>
+      </div>
+      <p>Delibere di giunta/consiglio e determine dirigenziali: tipo atto, totale mensile, media giorni di approvazione, importo impegnato, mandati collegati.</p>
+      <div class="triggers">
+        <span class="trig">ANNO, MESE, TIPO_ATTO, TOTALE</span>
+        <span class="trig">MEDIA_GG_APPROVAZIONE</span>
+        <span class="trig">TOTALE_IMPEGNATO, TOTALE_MANDATI_COLLEGATI</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">🏗</div>
+        <div><h3>Pratiche edilizie</h3><div class="ns">QB · Sportello edilizio</div></div>
+      </div>
+      <p>Permessi di costruire e atti edilizi rilasciati mensilmente: tipologia, permessi rilasciati, rispetto dei termini (entro/fuori).</p>
+      <div class="triggers">
+        <span class="trig">ANNO, MESE, TIPOLOGIA</span>
+        <span class="trig">PERMESSI_RILASCIATI, ENTRO_TERMINI, FUORI_TERMINI</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">📮</div>
+        <div><h3>Protocollo</h3><div class="ns">QB · Gestione documentale</div></div>
+      </div>
+      <p>Volumi di protocollo per anno, tipo (entrata/uscita/interno) e tipo spedizione. Indicatore del carico documentale dell'ente.</p>
+      <div class="triggers">
+        <span class="trig">ANNO_PROTOCOLLO, TIPO_PROTOCOLLO</span>
+        <span class="trig">TIPO_SPEDIZIONE, NUMERO_PROTOCOLLI</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">⚰️</div>
+        <div><h3>Servizi cimiteriali</h3><div class="ns">QB · Stato civile</div></div>
+      </div>
+      <p>Servizi erogati dal cimitero comunale per anno e tipologia: inumazioni, tumulazioni, esumazioni, estumulazioni.</p>
+      <div class="triggers">
+        <span class="trig">ANNO, TIPOLOGIA, TOTALE</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">🏆</div>
+        <div><h3>Concorsi pubblici</h3><div class="ns">CPSV · Reclutamento PA</div></div>
+      </div>
+      <p>Bandi di concorso dell'ente: oggetto, ente bandente, posti disponibili (totali e riservati), data scadenza, pubblicazione in Gazzetta Ufficiale.</p>
+      <div class="triggers">
+        <span class="trig">BANDITO_DA, OGGETTO</span>
+        <span class="trig">DATA_SCADENZA, DATA_PUBBLICAZIONE</span>
+        <span class="trig">GAZZETTA_UFFICIALE, NUMERO_POSTI</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">🏛</div>
+        <div><h3>Incarichi politici e amministrativi</h3><div class="ns">CPV + RO · Organi istituzionali</div></div>
+      </div>
+      <p>Titolari di incarichi politici (sindaco, assessori, consiglieri): cognome, nome, gruppo politico, organo di appartenenza, ruolo, orario di ricevimento.</p>
+      <div class="triggers">
+        <span class="trig">COGNOME, NOME, GRUPPO_POLITICO</span>
+        <span class="trig">ORGANO, RUOLO</span>
+        <span class="trig">ORARIO_RICEVIMENTO</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">🛒</div>
+        <div><h3>Mercati e fiere</h3><div class="ns">TI + POI · Commercio ambulante</div></div>
+      </div>
+      <p>Posteggi per mercati settimanali e fiere: nome mercato, tipo (fiera/mercato), giorno, periodo di svolgimento, tipo posteggio, totale stalli.</p>
+      <div class="triggers">
+        <span class="trig">NOME_MERCATO, FIERA_MERCATO</span>
+        <span class="trig">GIORNO, INIZIO_PERIODO, FINE_PERIODO</span>
+        <span class="trig">TIPO_POSTEGGIO, TOTALE_POSTEGGI</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">🤝</div>
+        <div><h3>Elenco associazioni</h3><div class="ns">COV + CLV + SM · Terzo settore</div></div>
+      </div>
+      <p>Associazioni del territorio: nome, indirizzo, coordinate geografiche (latitudine/longitudine), contatti (telefono, email, fax, cellulare), categoria di attività.</p>
+      <div class="triggers">
+        <span class="trig">NOME_ASSOCIAZIONE, INDIRIZZO</span>
+        <span class="trig">LATITUDINE, LONGITUDINE</span>
+        <span class="trig">TELEFONO, EMAIL, CELLULARE</span>
+        <span class="trig">CATEGORIA</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="badge prio-media">🚌</div>
+        <div><h3>Trasporto scolastico</h3><div class="ns">QB · Servizi scolastici</div></div>
+      </div>
+      <p>Servizio di trasporto scolastico per tragitto: totale alunni trasportati, rette emesse e pagamenti ricevuti per anno.</p>
+      <div class="triggers">
+        <span class="trig">ANNO, TRAGITTO</span>
+        <span class="trig">TOTALE_ALUNNI</span>
+        <span class="trig">TOTALE_RETTE_TRASPORTO, TOTALE_PAGAMENTI_TRASPORTO</span>
+      </div>
     </div>
 
   </div>
@@ -426,6 +576,6 @@
     <p style="margin-top:.8rem;font-size:.85rem;">📖 <a href="https://github.com/piersoft/CSV-to-RDF">Sorgente su GitHub</a> · 🔗 <a href="https://piersoft.github.io/CSV-to-RDF/">Tool online</a> · 📋 <a href="https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html">Questa pagina</a></p>
   </div>
 </div>
-<footer>CSV→RDF PA Italiana · piersoft · v2026.03.27.43 · 29 ontologie · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
+<footer>CSV→RDF PA Italiana · piersoft · v2026.03.27.52 · 29 ontologie · 311 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
 </body>
 </html>

@@ -55,11 +55,12 @@ curl "https://csv2rdf.datigovit.workers.dev/" \
 
 ## 📚 Riferimenti
 
+- [Catalog Nazionale Dati Aperti](https://www.dati.gov.it) — L'unico catalogo ufficiale per Legge per i dati aperti della PA italiana
 - [dati-semantic-assets](https://github.com/italia/dati-semantic-assets) — Ontologie ufficiali PA italiana
 - [schema.gov.it](https://schema.gov.it) — National Data Catalog
 - [W3C RDF/Turtle](https://www.w3.org/TR/turtle/) — Specifiche formato
 - [RDF Data Cube](https://www.w3.org/TR/vocab-data-cube/) — Dati statistici
-- [ckan-mcp-server](https://github.com/ondata/ckan-mcp-server/) — MCP server per CKAN, sviluppato da [ondata](https://github.com/ondata) — usato per il proxy SPARQL verso schema.gov.it
+- [ckan-mcp-server](https://github.com/ondata/ckan-mcp-server/) — MCP server per CKAN, sviluppato da [ondata](https://github.com/ondata) — usato per il proxy SPARQL verso schema.gov.it e per l'addestramento dai CSV presenti su dati.gov.it
 
 ---
 

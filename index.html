@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.27.62 -->
+  <!-- build:v2026.03.27.63 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -718,7 +718,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.27.62</span>
+<span id="app-version">v2026.03.27.63</span>
 </footer>
 
 <script>
@@ -3271,6 +3271,65 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         ttl+='<'+subURI+'> iot:hasFeatureOfInterest <'+poiURI+'> .'+nl+nl;
       }
     }
+    // ── POI+COV+CLV: esercizi commerciali — genera nodi separati ──────────
+    // Pattern: poi:PointOfInterest + cov:Company + clv:Address come nodi distinti
+    if(ontos.indexOf('POI')>=0 && ontos.indexOf('COV')>=0 && ontos.indexOf('CLV')>=0 && mainOnto==='POI') {
+      // Colonne chiave per esercizi commerciali
+      var insegnaI=nh.indexOf('insegna');if(insegnaI<0)insegnaI=nh.indexOf('nome_esercizio');if(insegnaI<0)insegnaI=nh.indexOf('insegna_commerciale');
+      var attivitaI=nh.indexOf('attivita');if(attivitaI<0)attivitaI=nh.indexOf('tipo_esercizio');if(attivitaI<0)attivitaI=nh.indexOf('categoria_esercizio');
+      var ragioneSocialeI=nh.indexOf('ragione_sociale');
+      var ubicazioneI=nh.indexOf('ubicazione_esercizio');if(ubicazioneI<0)ubicazioneI=nh.indexOf('indirizzo_esercizio');if(ubicazioneI<0)ubicazioneI=nh.indexOf('indirizzo');
+      var civI=nh.indexOf('n_civico');if(civI<0)civI=nh.indexOf('numero_civico');if(civI<0)civI=nh.indexOf('civico');
+
+      var insegnaV=insegnaI>=0?(row[insegnaI]||'').trim():'';
+      var attivitaV=attivitaI>=0?(row[attivitaI]||'').trim():'';
+      var ragioneSocialeV=ragioneSocialeI>=0?(row[ragioneSocialeI]||'').trim():'';
+      var ubicazioneV=ubicazioneI>=0?(row[ubicazioneI]||'').trim():'';
+      var civV=civI>=0?(row[civI]||'').trim():'';
+
+      // Solo se abbiamo almeno insegna o attività (è davvero un esercizio)
+      if(insegnaV || attivitaV) {
+        var escURI=base+'point-of-interest/'+idVal;
+        var orgURI_esc=base+'organization/'+idVal;
+        var addrURI_esc=base+'address/'+idVal;
+
+        // Nodo principale: poi:PointOfInterest (se non già emesso sopra come mainClass)
+        // Il nodo principale viene già emesso come mainClass=poi:PointOfInterest
+        // Aggiungiamo solo il collegamento all'organizzazione e aggiorniamo clv:hasAddress
+        // con proprietà strutturate
+        if(ragioneSocialeV) {
+          // Nodo cov:Company separato per la ragione sociale
+          ttl+='<'+orgURI_esc+'> a cov:Company ;'+nl;
+          ttl+=sp+'rdfs:label '+dq+ragioneSocialeV.replace(/"/g,"'")+dq+'@it';
+          if(attivitaV) {
+            var actTypeId=attivitaV.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
+            ttl+=' ;'+nl;
+            ttl+=sp+'cov:hasActivityType <'+base+'activity-type/'+actTypeId+'>';
+          }
+          ttl+=' .'+nl+nl;
+          used.add('cov');
+          // Aggiunge dct:publisher → organizzazione al soggetto principale
+          // (lo facciamo aggiungendo una tripla separata per non riscrivere il blocco principale)
+          ttl+='<'+subURI+'>'+nl;
+          ttl+=sp+'dct:publisher <'+orgURI_esc+'> .'+nl+nl;
+        }
+
+        // Nodo clv:Address strutturato (sovrascrive quello piatto già generato sopra se presente)
+        if(ubicazioneV || civV) {
+          var fullAddr=[ubicazioneV,civV].filter(Boolean).join(' ');
+          ttl+='<'+addrURI_esc+'> a clv:Address ;'+nl;
+          if(fullAddr)ttl+=sp+'clv:fullAddress '+dq+fullAddr.replace(/"/g,"'")+dq+'@it ;'+nl;
+          if(ubicazioneV)ttl+=sp+'clv:streetName '+dq+ubicazioneV.replace(/"/g,"'")+dq+'@it';
+          if(civV){
+            ttl+=' ;'+nl;
+            ttl+=sp+'clv:streetNumber '+dq+civV.replace(/"/g,"'")+dq+'@it';
+          }
+          ttl+=' .'+nl+nl;
+          used.add('clv');
+        }
+      }
+    }
+
     // ── MU: nodo valore di misura se presente unita_misura ───────────────
     if(ontos.indexOf('MU')>=0) {
       var unitaI=nh.indexOf('unita_misura');if(unitaI<0)unitaI=nh.indexOf('unita_di_misura');if(unitaI<0)unitaI=nh.indexOf('unit_of_measure');

@@ -557,7 +557,7 @@ function detectOntologiesDeterministic(headers, rows) {
   // FN-ACCO FIX: aggiunge "classificazione/categoria_struttura/RTA/B&B" comuni
   // ACCO — R5-FIX: trigger forti sempre; trigger deboli richiedono contesto
   var _accoStrong = has(['albergo','hotel','b&b','ostello','agriturismo','accommodation',
-                         'struttura_ricettiva','rta','affittacamere','casa_vacanze','tipo_esercizio','codice_struttura_acco']);
+                         'struttura_ricettiva','rta','affittacamere','casa_vacanze','codice_struttura_acco']);
   var _accoCtx    = has(['stelle','posti_letto','numero_posti_letto','camere','letti',
                          'check_in','check_out','classificazione_struttura','categoria_struttura']);
   if((_accoStrong || _accoCtx) && !_narrativeCSV)

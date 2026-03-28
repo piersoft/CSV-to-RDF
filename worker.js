@@ -392,6 +392,12 @@ function detGetTimeVal(nh,row){var tc=['inizio','data','quando','published','dat
 
 function detAddPrefix(onto,set){var m={ACCO:'acco',GTFS:'gtfs',POI:'poi','IoT':'iot',COV:'cov',CPV:'cpv',RO:'ro',SMAPIT:'smapit',QB:'qb',CLV:'clv',TI:'ti',PARK:'park',POT:'pot',PublicContract:'pc',Route:'route',RPO:'rpo',MU:'mu',Learning:'learn',CPEV:'cpev',Transparency:'tr',Indicator:'indicator',CulturalON:'cis',ADMS:'adms',CPSV:'cpsv',L0:'l0'};if(m[onto])set.add(m[onto]);if(onto==='RO'){set.add('cov');set.add('cpv');}if(onto==='CPSV-AP'||onto==='CPSV'){set.add('cpsv');}if(onto==='QB'){set.add('sdmx-dimension');set.add('sdmx-measure');set.add('sdmx-attribute');}if(onto==='CulturalON'){set.add('schema');}if(onto==='TI'){set.add('schema');}if(onto==='PARK'){set.add('park');}if(onto==='POT'){set.add('pot');}if(onto==='PublicContract'){set.add('pc');set.add('cov');}if(onto==='Route'){set.add('route');}if(onto==='RPO'){set.add('rpo');set.add('cov');set.add('cpv');}if(onto==='MU'){set.add('mu');}if(onto==='Learning'){set.add('learn');}if(onto==='CPEV'){set.add('cpev');}if(onto==='Transparency'){set.add('tr');}if(onto==='Indicator'){set.add('indicator');set.add('qb');}if(onto==='AtlasOfPaths'){set.add('aop');}if(onto==='CulturalHeritage'){set.add('ch');}if(onto==='Project'){set.add('prj');}if(onto==='NDC'){set.add('ndc');set.add('dcat');}}
 
+function sanitizeEmailValue(v){
+  v=(v||'').trim();if(!v)return null;
+  v=v.replace(/^mailto:/i,'');
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v))return null;
+  return v;
+}
 function detFormatLit(rule,val){
   if(!val&&val!==0)return null;
   val=String(val).trim();if(!val)return null;
@@ -412,7 +418,7 @@ function detFormatLit(rule,val){
     if(xsdType==='xsd:dateTime')return'"'+val+'"^^xsd:dateTime';
     return'"'+val.replace(/"/g,'\\"')+'"^^'+xsdType;
   }
-  if(rule.type==='mailto'){var em=sanitizeEmailValue(val);if(!em)return null;return'"'+em+'"^^xsd:string';}
+  if(rule.type==='mailto'){var em=sanitizeEmailValue(val);if(!em)return null;return'<mailto:'+em+'>';}
   if(rule.type==='url'){var u=val.replace(/^<|>$/g,'').trim();if(!u||/[\s()<>"@]/.test(u)||/^\(/.test(u))return null;if(!u.startsWith('http')&&!u.startsWith('ftp'))u='https://'+u;return'<'+u+'>';}
   if(rule.type==='phone')return'"'+val+'"^^xsd:string';
   return'"'+val.replace(/"/g,'\"')+'"@it';

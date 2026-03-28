@@ -37,7 +37,7 @@ const ONTO_RULES = [
 const ONTO_CLASSES = {
   'CLV': {
     classes: ['clv:Address (Indirizzo)', 'clv:Feature (Caratteristica geografica)', 'clv:Geometry (Geometria)', 'clv:AdminUnitComponent (Unità amministrativa)', 'clv:StreetToponym (Strada)', 'clv:CivicNumbering (Numero civico)', 'clv:Identifier (Identificativo)', 'clv:GeographicalDistribution (Ripartizione geografica)'],
-    props:   ['clv:hasAddress', 'clv:hasGeometry', 'clv:hasSpatialCoverage', 'clv:hasStreetToponym', 'clv:hasNumber', 'clv:hasSpatialCoverage', 'clv:lat', 'clv:long']
+    props:   ['clv:hasAddress', 'clv:hasGeometry', 'clv:hasSpatialCoverage', 'clv:hasStreetToponym', 'clv:hasNumber', 'clv:fullAddress', 'clv:postCode', 'clv:lat', 'clv:long']
   },
   'COV': {
     classes: ['cov:Organization (Organizzazione)', 'cov:PublicOrganization (Organizzazione pubblica)', 'cov:Organization (Impresa)', 'cov:ActivityType (Tipo attività)', 'sm:ContactPoint (Punto di contatto)', 'sm:Email (Email)', 'sm:Telephone (Telefono)'],

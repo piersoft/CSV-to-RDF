@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.27.70 -->
+  <!-- build:v2026.03.27.71 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -718,7 +718,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.27.70</span>
+<span id="app-version">v2026.03.27.71</span>
 </footer>
 
 <script>
@@ -3112,7 +3112,7 @@ var DET_CLASS={ACCO:'acco:Accommodation',GTFS:'gtfs:Stop',POI:'poi:PointOfIntere
 function detGetMainOnto(ontos){var priority=['GTFS','SMAPIT','ACCO','IoT','CulturalON','Cultural-ON','CulturalHeritage','PublicContract','RPO','Route','AtlasOfPaths','Learning','Transparency','Indicator','PARK','POT','CPEV','AccessCondition','Project','MU','NDC','CPSV-AP','RO','ADMS','QB','CPV','POI','COV','TI','CLV','L0'];for(var i=0;i<priority.length;i++){if(ontos.indexOf(priority[i])>=0)return priority[i];}return ontos[0]||'L0';}
 function detNormH(h){var n=h.toLowerCase().trim().replace(/[àáâä]/g,'a').replace(/[èéêë]/g,'e').replace(/[ìíîï]/g,'i').replace(/[òóôö]/g,'o').replace(/[ùúûü]/g,'u').replace(/ñ/g,'n').replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');return DET_COL_NORM[n]||n;}
 function detFindColIdx(nh,cands){for(var i=0;i<cands.length;i++){var x=nh.indexOf(cands[i]);if(x>=0)return x;}return-1;}
-function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat','lon'].some(function(c){return nh.indexOf(c)>=0;});}
+function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat','lon','ubicazione_esercizio','indirizzo_esercizio','n_civico','numero_civico'].some(function(c){return nh.indexOf(c)>=0;});}
 function detHasTime(nh,ontos){return ontos.indexOf('TI')>=0&&['inizio','termine','data','quando'].some(function(c){return nh.indexOf(c)>=0;});}
 function detGetTimeVal(nh,row){var tc=['inizio','data','quando','published','data_inizio','periodo','stagione','programmazione'];for(var i=0;i<tc.length;i++){var x=nh.indexOf(tc[i]);if(x>=0&&row[x]&&row[x].trim())return row[x].trim();}return null;}
 function detFindRule(normH,ontos){

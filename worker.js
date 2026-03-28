@@ -372,7 +372,7 @@ function detGetMainOnto(ontos){var priority=['GTFS','SMAPIT','ACCO','IoT','Cultu
 
 function detFindColIdx(nh,cands){for(var i=0;i<cands.length;i++){var x=nh.indexOf(cands[i]);if(x>=0)return x;}return-1;}
 
-function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat','lon'].some(function(c){return nh.indexOf(c)>=0;});}
+function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat','lon','ubicazione_esercizio','indirizzo_esercizio','n_civico','numero_civico'].some(function(c){return nh.indexOf(c)>=0;});}
 
 function detHasTime(nh,ontos){return ontos.indexOf('TI')>=0&&['inizio','termine','data','quando'].some(function(c){return nh.indexOf(c)>=0;});}
 

@@ -1107,7 +1107,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       var val=(row[i]||'').trim();
       if(!val||normH==='id')return;
       var rule=detFindRule(normH,ontos);
-      if(!rule){var _n=detNormH(origH);if(_n==='_skip'||_n.startsWith('_'))return;if(val)triples.push({pred:'rdfs:comment',val:origH+': '+val,type:'langlit',lang:'it',unmapped:true});return;}
+      if(!rule){var _n=detNormH(origH);if(_n==='_skip'||_n.startsWith('_'))return;if(val)triples.push({pred:'rdfs:comment',val:'"'+origH+': '+val.replace(/"/g,"'")+('"@it'),raw:true,unmapped:true});return;}
       if(rule.type==='skip')return;      var litVal=detFormatLit(rule,val);
       if(litVal)triples.push({pred:rule.pred,val:litVal,raw:true});
     });

@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.27.59 -->
+  <!-- build:v2026.03.27.60 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -717,7 +717,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.27.59</span>
+<span id="app-version">v2026.03.27.60</span>
 </footer>
 
 <script>
@@ -1109,7 +1109,7 @@ function detectOntologiesDeterministic(headers, rows) {
      !result.has('CulturalON') &&
      !has(['nome_dataset','nome_risorsa','numero_righe','distribution_url']) &&
      !has(['tratta','capolinea','fermata_origine','fermata_arrivo']) &&
-     !has(['codice_istat','codice_civico','cod_civico','numero_civico']))  // B3: codici geo ≠ QB
+     !has(['codice_istat','codice_civico','cod_civico','numero_civico']))  // B3: codici geo —  QB
     if(!_narrativeCSV) result.add('QB');
 
   // TI — R6-FIX: richiede date esplicite O combo evento+luogo (non solo titolo/tipo)
@@ -1133,7 +1133,7 @@ function detectOntologiesDeterministic(headers, rows) {
     if(!result.has('SMAPIT')&&!result.has('GTFS')&&!result.has('IoT')){
       result.add('Cultural-ON'); result.add('CulturalON'); }
   if(result.has('Cultural-ON') && result.has('POI') && !has(['tipo_poi','dae','defibrillatore']))
-    result.delete('POI'); // istituto culturale geolocalizzato ≠ POI generico
+    result.delete('POI'); // istituto culturale geolocalizzato —  POI generico
   // CPSV — servizi pubblici / appalti con varianti PA reali
   // FN-CPSV FIX: aggiunge "procedura/licitazione/affidamento" comuni nei dati PA
   if(has(['cig','cup','aggiudicatario','appalto','gara','oggetto_appalto',
@@ -1168,19 +1168,19 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['prezzo_intero','prezzo_ridotto','biglietto','tariffa_ingresso','costo_biglietto'])&&!result.has('ACCO')) result.add('POT');
   if(has(['cig','cup','importo_aggiudicazione','stazione_appaltante','oggetto_contratto','aggiudicatario','cpv_codice'])) result.add('PublicContract');
   if(has(['tipo_percorso','lunghezza_km','difficolta','dislivello','numero_tappe','sentiero','percorso_ciclabile','itinerario','tracciato','lat_start','lon_start','durata_stimata','nome_breve_percorso','nome_esteso_percorso'])) result.add('Route');
-  if(has(['qualifica_dipendente','contratto_lavoro','ccnl','livello_contrattuale','ore_settimanali','qualifica','voce_retributiva','voce_accessoria','voce_costo','tipo_distacco','anzianita','totale_uomini','totale_donne'])) result.add('RPO');
+  if(has(['qualifica_dipendente','contratto_lavoro','ccnl','livello_contrattuale','ore_settimanali'])) result.add('RPO');
   if(has(['titolo_corso','ore_formazione','crediti','ects','titolo_rilasciato','durata_corso'])) result.add('Learning');
   if(has(['obbligo_trasparenza','categoria_trasparenza','dato_obbligatorio','norma_riferimento'])) result.add('Transparency');
   if(!_narrativeCSV && has(['tipo_indicatore','valore_indicatore','baseline','target','fonte_indicatore'])) result.add('Indicator');
 
-  // ── cleanup post-trigger ─────────────────────────────────────────────────
-  if(result.has('RO')&&result.has('TI')&&!has(['data_evento','titolo_evento','nome_evento','manifestazione','tipo_evento_pubblico'])) result.delete('TI'); // RO: data mandato ≠ evento
+  // —— cleanup post-trigger —————————————————————————————————————————————————
+  if(result.has('RO')&&result.has('TI')&&!has(['data_evento','titolo_evento','nome_evento','manifestazione','tipo_evento_pubblico'])) result.delete('TI'); // RO: data mandato —  evento
   if(result.has('PublicContract')&&!result.has('COV')) result.add('COV'); // appalti → sempre ente PA
-  if(result.has('Route')&&result.has('GTFS')) result.delete('GTFS'); // percorso ≠ TPL
+  if(result.has('Route')&&result.has('GTFS')) result.delete('GTFS'); // percorso —  TPL
   if(result.has('Indicator')&&!result.has('QB')) result.add('QB'); // indicatori → sempre dati statistici
-  if(result.has('POT')&&result.has('CPV')&&!has(['cognome','codice_fiscale','nome_completo','data_nascita'])) result.delete('CPV'); // tariffe ≠ persone fisiche
+  if(result.has('POT')&&result.has('CPV')&&!has(['cognome','codice_fiscale','nome_completo','data_nascita'])) result.delete('CPV'); // tariffe —  persone fisiche
 
-  // ── MU — unità di misura
+  // —— MU — unità di misura
   if(has(['grandezza','tipo_misura','sistema_misura','unita_misura','unita_di_misura','unit_of_measure'])||has(['simbolo_misura','measurement_unit','measure_type'])) result.add('MU'); // MU anche con IoT
   if(!result.has('MU')&&!result.has('IoT')&&!result.has('QB')&&
      (has(['grandezza','tipo_misura','sistema_misura'])||
@@ -1188,26 +1188,26 @@ function detectOntologiesDeterministic(headers, rows) {
     result.add('MU');
   }
 
-  // ── AtlasOfPaths
+  // —— AtlasOfPaths
   if(has(['numero_percorso','numero_tappa','pavimentazione','segnaletica','livello_sicurezza','tipo_servizio_percorso','atlas_path','path_number','stage_number'])){result.add('AtlasOfPaths');}
 
-  // ── CulturalHeritage
+  // —— CulturalHeritage
   if(has(['codice_bene','tutela','vincolo','stato_conservazione','ente_tutela','cultural_heritage'])||(has(['denominazione_bene'])&&has(['tipo_bene'])&&has(['tutela','vincolo']))){result.add('CulturalHeritage');}
 
-  // ── Project
+  // —— Project
   if(has(['acronimo_progetto','programma_finanziamento','work_package','costo_totale_progetto','titolo_progetto','unique_project_code'])||(has(['cup'])&&has(['programma_finanziamento','finanziatore']))){result.add('Project');}
 
-  // ── NDC
+  // —— NDC
   if(has(['concetto_chiave','key_concept','endpoint_url','tipo_risorsa','formato_distribuzione','data_service','ndc'])||(has(['titolo_risorsa'])&&has(['tipo_risorsa','endpoint_url']))){result.add('NDC');}
 
-  // ── CPEV — eventi pubblici (richiede titolo_evento o colonne CPEV specifiche)
+  // —— CPEV — eventi pubblici (richiede titolo_evento o colonne CPEV specifiche)
   if(has(['titolo_evento','evento_pubblico','tipo_evento_pubblico','public_event',
           'format_evento','pubblico_target','abstract_evento'])){
     result.add('CPEV');
     if(!result.has('TI')) result.add('TI');
   }
 
-  // ── AccessCondition — condizioni di accesso a luoghi
+  // —— AccessCondition — condizioni di accesso a luoghi
   if(has(['orario_apertura','orario_chiusura','tipo_ammissione',
           'condizione_accesso','motivazione_chiusura','giorno_chiusura',
           'accesso_libero','tipo_accesso','admission_type'])){

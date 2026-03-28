@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.27.71 -->
+  <!-- build:v2026.03.27.72 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -718,7 +718,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.27.71</span>
+<span id="app-version">v2026.03.27.72</span>
 </footer>
 
 <script>
@@ -3067,10 +3067,10 @@ function fillMissingConnectedResources(ttl,ontos,rows,ipa){
           if(be>=0)ttl=ttl.slice(0,be)+" ;"+nl+sp+"clv:hasAddress <"+au+">"+ttl.slice(be);
           var dq=String.fromCharCode(34);
           var ad="<"+au+"> a clv:Address";
-          if(st)ad+=" ;"+nl+sp+"clv:hasStreet "+dq+st.replace(/"/g,"'")+dq+"@it";
+          if(st)ad+=" ;"+nl+sp+"clv:fullAddress "+dq+st.replace(/"/g,"'")+dq+"@it";
           if(ct)ad+=" ;"+nl+sp+"clv:hasCity "+dq+ct.replace(/"/g,"'")+dq+"@it";
           if(pv)ad+=" ;"+nl+sp+"clv:hasProvince "+dq+pv+dq+"@it";
-          if(cp)ad+=" ;"+nl+sp+"clv:hasPostalCode "+dq+cp+dq+"@it";
+          if(cp)ad+=" ;"+nl+sp+"clv:postCode "+dq+cp+dq+"@it";
           if(la)ad+=" ;"+nl+sp+"geo:lat "+dq+la+dq+"^^xsd:decimal";
           if(lo)ad+=" ;"+nl+sp+"geo:long "+dq+lo+dq+"^^xsd:decimal";
           ttl+=nl+ad+" ."+nl;
@@ -3238,7 +3238,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
     }
     if(detHasAddr(nh)&&ontos.indexOf('CLV')>=0){
       var addrTriples=[];
-      var addrMap={indirizzo:'clv:hasStreet',via:'clv:hasStreet',strada:'clv:hasStreet',comune:'clv:hasCity',cap:'clv:hasPostalCode',provincia:'clv:hasProvince',regione:'clv:hasRegion',civico:'clv:hasNumber',numerocivico:'clv:hasNumber',ubicazione_esercizio:'clv:hasStreet',indirizzo_esercizio:'clv:hasStreet',n_civico:'clv:hasNumber',numero_civico:'clv:hasNumber'};
+      var addrMap={indirizzo:'clv:fullAddress',via:'clv:fullAddress',strada:'clv:fullAddress',comune:'clv:hasCity',cap:'clv:postCode',provincia:'clv:hasProvince',regione:'clv:hasRegion',civico:'clv:streetNumber',numerocivico:'clv:streetNumber',ubicazione_esercizio:'clv:fullAddress',indirizzo_esercizio:'clv:fullAddress',n_civico:'clv:streetNumber',numero_civico:'clv:streetNumber'};
       Object.keys(addrMap).forEach(function(col){
         var xi=nh.indexOf(col);
         if(xi>=0&&row[xi]&&row[xi].trim()){var v=row[xi].trim().replace(/"/g,"'");addrTriples.push({pred:addrMap[col],val:dq+v+dq+'@it'});}

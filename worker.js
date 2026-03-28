@@ -1128,7 +1128,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
     }
     if(detHasAddr(nh)&&ontos.indexOf('CLV')>=0){
       var addrTriples=[];
-      var addrMap={indirizzo:'clv:hasStreet',via:'clv:hasStreet',strada:'clv:hasStreet',comune:'clv:hasCity',cap:'clv:hasPostalCode',provincia:'clv:hasProvince',regione:'clv:hasRegion',civico:'clv:hasNumber',numerocivico:'clv:hasNumber',ubicazione_esercizio:'clv:hasStreet',indirizzo_esercizio:'clv:hasStreet',n_civico:'clv:hasNumber',numero_civico:'clv:hasNumber'};
+      var addrMap={indirizzo:'clv:fullAddress',via:'clv:fullAddress',strada:'clv:fullAddress',comune:'clv:hasCity',cap:'clv:postCode',provincia:'clv:hasProvince',regione:'clv:hasRegion',civico:'clv:streetNumber',numerocivico:'clv:streetNumber',ubicazione_esercizio:'clv:fullAddress',indirizzo_esercizio:'clv:fullAddress',n_civico:'clv:streetNumber',numero_civico:'clv:streetNumber'};
       Object.keys(addrMap).forEach(function(col){
         var xi=nh.indexOf(col);
         if(xi>=0&&row[xi]&&row[xi].trim()){var v=row[xi].trim().replace(/"/g,"'");addrTriples.push({pred:addrMap[col],val:dq+v+dq+'@it'});}

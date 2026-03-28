@@ -952,15 +952,6 @@ function getEntityTypeSegment(ontos) {
   return 'resource';
 }
 
-function sanitizeEmailValue(v){
-  if(!v)return v;
-  v=v.trim().split(/[;\s]/)[0]; // prende solo prima email
-  v=v.replace(/,/g,"."); // virgola→punto (errore comune nei CSV PA)
-  if(v.indexOf("@")<0)return ""; // non è un email
-  var parts=v.split("@");
-  if(parts.length!==2||parts[1].indexOf(".")<0)return ""; // dominio malformato
-  return v;
-}
 
 function forceMainClassInTTL(ttl, ontos, entityBase) {
   var mc = getMainClass(ontos); if(!mc||mc==="l0:Object") return ttl;

@@ -560,7 +560,9 @@ function detectOntologiesDeterministic(headers, rows) {
                          'struttura_ricettiva','rta','affittacamere','casa_vacanze','codice_struttura_acco']);
   var _accoCtx    = has(['stelle','posti_letto','numero_posti_letto','camere','letti',
                          'check_in','check_out','classificazione_struttura','categoria_struttura']);
-  if((_accoStrong || _accoCtx) && !_narrativeCSV)
+  // ACCO: escludi se contesto esercizi commerciali (insegna+ragione_sociale = bar/ristorante/ecc)
+  var _isEsercizioCommerciale = hasH(['insegna','insegna_commerciale']) && hasH(['ragione_sociale']);
+  if((_accoStrong || _accoCtx) && !_narrativeCSV && !_isEsercizioCommerciale)
     result.add('ACCO');
 
   // IOT — sensori fisici: richiede identificatore sensore O proprietà misurata specifica

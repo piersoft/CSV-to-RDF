@@ -68,7 +68,8 @@ function detectOntologiesDeterministic(headers, rows) {
                          'struttura_ricettiva','rta','affittacamere','casa_vacanze','codice_struttura_acco']);
   var _accoCtx    = has(['stelle','posti_letto','numero_posti_letto','camere','letti',
                          'check_in','check_out','classificazione_struttura','categoria_struttura']);
-  if((_accoStrong || _accoCtx) && !_narrativeCSV)
+  var _isEsercizioCommerciale = hasH(['insegna','insegna_commerciale']) && hasH(['ragione_sociale']);
+  if((_accoStrong || _accoCtx) && !_narrativeCSV && !_isEsercizioCommerciale)
     result.add('ACCO');
 
   // IOT — sensori fisici: richiede identificatore sensore O proprietà misurata specifica
@@ -309,6 +310,7 @@ const sacri = [
   { name: 'indicator', headers: ['id', 'denominazione', 'tipo_indicatore', 'anno', 'valore_indicatore', 'baseline', 'target', 'unita_misura', 'fonte_indicatore', 'ente', 'codice_ipa'], expected: ['Indicator', 'QB', 'COV', 'MU'] },
   { name: 'pot', headers: ['id', 'denominazione', 'tipo_servizio', 'prezzo_intero', 'prezzo_ridotto', 'biglietto', 'descrizione', 'comune', 'provincia', 'lat', 'lon', 'eta_ridotto'], expected: ['POT', 'POI'] },
   { name: 'esercizi_ristorazione', headers: ['RAGIONE_SOCIALE', 'INSEGNA', 'ATTIVITA', 'UBICAZIONE_ESERCIZIO', 'N_Civico'], expected: ['POI', 'COV', 'CLV'] },
+  { name: 'esercizi_ristorazione_latlon', headers: ['RAGIONE_SOCIALE', 'INSEGNA', 'ATTIVITA', 'UBICAZIONE_ESERCIZIO', 'N_Civico', 'Lat', 'Lon'], rows: [{RAGIONE_SOCIALE:'AGRITURISMO MASSERIA LA FAVOLA SRL', INSEGNA:'MASSERIA LA FAVOLA', ATTIVITA:'agriturismo', UBICAZIONE_ESERCIZIO:'s.s. 16', N_Civico:'3', Lat:'40.1', Lon:'16.9'}], expected: ['POI', 'COV', 'CLV'] },
 ];
 
 
@@ -337,8 +339,8 @@ for(const s of sacri){
 }
 
 console.log(`\n${'='.repeat(55)}`);
-console.log(`✅ OK: ${ok}/23  ❌ Problemi: ${issues.length}`);
-if(issues.length===0) console.log('🎉 TUTTI I 23 CSV SACRI PASSANO IL TEST!');
+console.log(`✅ OK: ${ok}/24  ❌ Problemi: ${issues.length}`);
+if(issues.length===0) console.log('🎉 TUTTI I 24 CSV SACRI PASSANO IL TEST!');
 
 
 // ── NUOVE ONTOLOGIE v186 ─────────────────────────────────────────────────────

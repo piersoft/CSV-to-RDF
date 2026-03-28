@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.27.61 -->
+  <!-- build:v2026.03.27.62 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -718,7 +718,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.27.61</span>
+<span id="app-version">v2026.03.27.62</span>
 </footer>
 
 <script>
@@ -4788,6 +4788,7 @@ function updateStats(ttl) {
     }
     if(_rows.length>0){_out.value=fillMissingConnectedResources(_out.value,_ontos,_rows,_ipa);ttl=_out.value;}
   }
+  const lines = ttl.split('\n');
   document.getElementById('stat-triples').textContent  =
     lines.filter(l => l.trim() && !l.trim().startsWith('#') && !l.trim().startsWith('@')).length;
   document.getElementById('stat-prefixes').textContent =

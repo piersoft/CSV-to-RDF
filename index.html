@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.27.78 -->
+  <!-- build:v2026.03.27.79 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -718,7 +718,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.27.78</span>
+<span id="app-version">v2026.03.27.79</span>
 </footer>
 
 <script>
@@ -1616,6 +1616,25 @@ function validateCSV(parsed) {
         issues.push({ level:'error', title:`"${col}": ${outRange.length} valori fuori range (-180/+180)`, hint:'La longitudine deve essere compresa tra -180 e +180.' });
     }
   });
+
+  // 5b. Colonna "Geo Point" con lat/lon nella stessa cella
+  const geoPointCols = headers.filter(h => /^(geo.?point|geopoint|geo_point|coordinate|coord)$/i.test(h.trim()));
+  if (geoPointCols.length > 0) {
+    issues.push({ level:'warning',
+      title:`Colonna "${geoPointCols[0]}" contiene lat e lon nella stessa cella`,
+      hint:'Il tool riconosce meglio coordinate separate. Dividi in due colonne: "lat" e "lon" (es. 44.562 e 11.271). Puoi farlo in Excel o LibreOffice con Dati → Testo in colonne.'
+    });
+  }
+
+  // 5c. Nessuna colonna lat/lon trovata ma ci sono dati spaziali potenziali
+  const hasGeoCol = headers.some(h => /^(lat|lon|lng|long|latitude|longitude|latitudine|longitudine|geo)/i.test(h.trim()));
+  const hasAddrCol = headers.some(h => /^(indirizzo|via|strada|luogo|address)/i.test(h.trim()));
+  if (!hasGeoCol && hasAddrCol) {
+    issues.push({ level:'info',
+      title:'Nessuna colonna coordinate rilevata',
+      hint:'Se hai lat/lon disponibili, aggiungile come colonne "lat" e "lon" separate per abilitare la geolocalizzazione POI.'
+    });
+  }
 
   // 5. Encoding strano (caratteri non ASCII/UTF-8 tipici di ISO-8859)
   const suspectPattern = /[\x80-\x9F]|Ã |Ã¨|Ã¹|Ã²|Ã |Ã¬/;

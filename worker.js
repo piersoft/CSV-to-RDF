@@ -491,8 +491,8 @@ function detFormatLit(rule,val){
   val=String(val).trim();if(!val)return null;
   var BQ='\\"'; // backslash + virgoletta per Turtle
   if(rule.type==='skip')return null;
-  if(rule.type==='langlit')return'"'+val.replace(/"/g,BQ)+'"@'+(rule.lang||'it');
-  if(rule.type==='literal')return'"'+val.replace(/"/g,BQ)+'"^^xsd:string';
+  if(rule.type==='langlit')return litQ(val,rule.lang||'it');
+  if(rule.type==='literal')return litQ(val);
   if(rule.type==='decimal'){var n=parseFloat(val);return isNaN(n)?null:'"'+n+'"^^xsd:decimal';}
   if(rule.type==='integer'){var n2=parseInt(val);return isNaN(n2)?null:'"'+n2+'"^^xsd:integer';}
   if(rule.type==='boolean'){var b=val.toLowerCase();return(b==='si'||b==='true'||b==='1'||b==='yes')?'"true"^^xsd:boolean':'"false"^^xsd:boolean';}
@@ -510,7 +510,7 @@ function detFormatLit(rule,val){
   if(rule.type==='mailto'){var em=sanitizeEmailValue(val);if(!em)return null;return'<mailto:'+em+'>';}
   if(rule.type==='url'){var u=val.replace(/^<|>$/g,'').trim();if(!u||/[\s()<>"@]/.test(u)||/^\(/.test(u))return null;if(!u.startsWith('http')&&!u.startsWith('ftp'))u='https://'+u;return'<'+u+'>';}
   if(rule.type==='phone')return'"'+val+'"^^xsd:string';
-  return'"'+val.replace(/"/g,'\"')+'"@it';
+  return litQ(val,'it');
 }
 
 function detectDeterministicMappings(cols, rows) {
@@ -1144,11 +1144,11 @@ function buildDeterministicTriples(cols, rows, entityBase, deterMappings, typeSe
       } else if (m.type === 'boolean') {
         // Per booleani si/no include il nome colonna per chiarezza
         const label = col.replace(/_/g, ' ').toLowerCase();
-        triples.push(`    ${m.prop} "${label}: ${val.replace(/"/g, '\\"')}"@it`);
+        triples.push(`    ${m.prop} """${tqe(label+': '+val)}"""@it`);
       } else if (m.type === '@it') {
-        triples.push(`    ${m.prop} "${val.replace(/"/g, '\\"')}"@it`);
+        triples.push(`    ${m.prop} """${tqe(val)}"""@it`);
       } else {
-        triples.push(`    ${m.prop} "${val.replace(/"/g, '\\"')}"^^xsd:string`);
+        triples.push(`    ${m.prop} """${tqe(val)}"""^^xsd:string`);
       }
     }
     if (triples.length > 0) {
@@ -1191,12 +1191,12 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
   var orgIpa=ipa||'ipa';
   var orgName=ente||ipa||'Ente';
   ttl+='<https://w3id.org/italia/data/'+orgIpa+'/ds> a foaf:Agent ;'+nl;
-  ttl+=sp+'foaf:name '+dq+orgName+dq+'@it ;'+nl;
+  ttl+=sp+'foaf:name '+litQ(orgName,'it')+' ;'+nl;
   ttl+=sp+'dct:identifier '+dq+orgIpa+dq+' .'+nl+nl;
   var dsUri=base+'dataset/ds-'+orgIpa;
   if(ontos.indexOf('QB')>=0||ontos.indexOf('Indicator')>=0){
     ttl+='<'+dsUri+'> a qb:DataSet ;'+nl;
-    ttl+=sp+'rdfs:label '+dq+'Dataset '+orgName+dq+'@it ;'+nl;
+    ttl+=sp+'rdfs:label '+litQ('Dataset '+orgName,'it')+' ;'+nl;
     ttl+=sp+'dct:publisher <https://w3id.org/italia/data/'+orgIpa+'/ds> .'+nl+nl;
     used.add('qb');used.add('sdmx-dimension');used.add('sdmx-measure');used.add('sdmx-attribute');
   }
@@ -1236,7 +1236,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       var addrMap={indirizzo:'clv:fullAddress',via:'clv:fullAddress',strada:'clv:fullAddress',cap:'clv:postCode',ubicazione_esercizio:'clv:fullAddress',indirizzo_esercizio:'clv:fullAddress'};
       Object.keys(addrMap).forEach(function(col){
         var xi=nh.indexOf(col);
-        if(xi>=0&&row[xi]&&row[xi].trim()){var v=row[xi].trim().replace(/"/g,'\\"');addrTriples.push({pred:addrMap[col],val:dq+v+dq+'@it'});}
+        if(xi>=0&&row[xi]&&row[xi].trim()){var v=row[xi].trim();addrTriples.push({pred:addrMap[col],val:litQ(v,'it')});}
       });
       var latI=nh.indexOf('lat'),lonI=nh.indexOf('lon');
       if(latI>=0&&row[latI])addrTriples.push({pred:'geo:lat',val:dq+row[latI].trim()+dq+'^^xsd:decimal'});
@@ -1256,7 +1256,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       var poiURI=base+'point-of-interest/'+idVal;
       var poiTriples=[];
       var labelI2=nh.indexOf('denominazione');if(labelI2<0)labelI2=nh.indexOf('nome');
-      if(labelI2>=0&&row[labelI2])poiTriples.push({pred:'rdfs:label',val:dq+(row[labelI2]||'').trim().replace(/"/g,'\\"')+dq+'@it'});
+      if(labelI2>=0&&row[labelI2])poiTriples.push({pred:'rdfs:label',val:litQ((row[labelI2]||'').trim(),'it')});
       var idAreaI=nh.indexOf('id_area');if(idAreaI<0)idAreaI=nh.indexOf('id_punto');if(idAreaI<0)idAreaI=nh.indexOf('codice_stazione');
       if(idAreaI>=0&&row[idAreaI])poiTriples.push({pred:'dct:identifier',val:dq+(row[idAreaI]||'').trim()+dq});
       var latIp=nh.indexOf('lat');if(latIp<0)latIp=nh.indexOf('latitude');
@@ -1275,7 +1275,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
     if(ontos.indexOf('MU')>=0) {
       var unitaI=nh.indexOf('unita_misura');if(unitaI<0)unitaI=nh.indexOf('unita_di_misura');if(unitaI<0)unitaI=nh.indexOf('unit_of_measure');
       if(unitaI>=0&&row[unitaI]&&row[unitaI].trim()) {
-        var unitaV=(row[unitaI]||'').trim().replace(/"/g,'\\"');
+        var unitaV=(row[unitaI]||'').trim();
         var numVal2='';
         nh.forEach(function(h,i){
           if(numVal2)return;
@@ -1284,7 +1284,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         });
         var muURI=base+'measurement/'+idVal;
         ttl+='<'+muURI+'> a mu:Value ;'+nl;
-        ttl+=sp+'mu:hasMeasurementUnit '+dq+unitaV+dq+'@it ;'+nl;
+        ttl+=sp+'mu:hasMeasurementUnit '+litQ(unitaV,'it')+' ;'+nl;
         if(numVal2)ttl+=sp+'mu:value '+dq+numVal2+dq+'^^xsd:decimal ;'+nl;
         ttl+=sp+'dct:isPartOf <'+subURI+'> .'+nl+nl;
         used.add('mu');
@@ -1297,14 +1297,14 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       var personLabel=[nomeV,cognomeV].filter(Boolean).join(' ');
       if(personLabel){
         var personURI=base+'person/'+idVal;
-        ttl+='<'+personURI+'> a cpv:Person ;'+nl+sp+'rdfs:label '+dq+personLabel+dq+'@it .'+nl+nl;
+        ttl+='<'+personURI+'> a cpv:Person ;'+nl+sp+'rdfs:label '+litQ(personLabel,'it')+' .'+nl+nl;
       }
       if(ammI>=0&&row[ammI]){
         var ammV=row[ammI].trim();
         var orgId2=ammV.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
         var orgURI2=base+'organization/'+orgId2;
         if(!ttl.includes('<'+orgURI2+'>')){
-          ttl+='<'+orgURI2+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+dq+ammV+dq+'@it .'+nl+nl;
+          ttl+='<'+orgURI2+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+litQ(ammV,'it')+' .'+nl+nl;
         }
       }
     }
@@ -1316,7 +1316,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       var personLabel2=[nV,cV].filter(Boolean).join(' ');
       if(personLabel2){
         var personURI2=base+'person/'+(cfI>=0&&row[cfI]?row[cfI].trim().toLowerCase():idVal);
-        ttl+='<'+personURI2+'> a cpv:Person ;'+nl+sp+'rdfs:label '+dq+personLabel2+dq+'@it .'+nl;
+        ttl+='<'+personURI2+'> a cpv:Person ;'+nl+sp+'rdfs:label '+litQ(personLabel2,'it')+' .'+nl;
         ttl+=sp+'rpo:holdsRole <'+base+'role-in-organization/'+idVal+'> .'+nl+nl;
       }
       var enteV=enteI>=0?(row[enteI]||'').trim():'';
@@ -1325,7 +1325,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         var orgKey=ipaV2||enteV.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
         var orgURI3=base+'organization/'+orgKey;
         if(!ttl.includes('<'+orgURI3+'>')){
-          ttl+='<'+orgURI3+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+dq+enteV+dq+'@it .'+nl+nl;
+          ttl+='<'+orgURI3+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+litQ(enteV,'it')+' .'+nl+nl;
         }
       }
     }
@@ -1339,7 +1339,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         var saKey=ipaV3||saV.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
         var saURI=base+'organization/'+saKey;
         if(!ttl.includes('<'+saURI+'>')){
-          ttl+='<'+saURI+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+dq+saV+dq+'@it ;'+nl;
+          ttl+='<'+saURI+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+litQ(saV,'it')+' ;'+nl;
           if(ipaV3)ttl+=sp+'cov:IPAcode '+dq+ipaV3+dq+' ;'+nl;
           ttl+=sp+'dct:identifier '+dq+saKey+dq+' .'+nl+nl;
         }
@@ -1349,7 +1349,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         var aggKey=aggV.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
         var aggURI=base+'organization/supplier-'+aggKey;
         if(!ttl.includes('<'+aggURI+'>')){
-          ttl+='<'+aggURI+'> a cov:Organization ;'+nl+sp+'rdfs:label '+dq+aggV+dq+'@it .'+nl+nl;
+          ttl+='<'+aggURI+'> a cov:Organization ;'+nl+sp+'rdfs:label '+litQ(aggV,'it')+' .'+nl+nl;
         }
       }
     }
@@ -1395,7 +1395,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         var entErogKey=ipaErogV||entErogV.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
         var entErogURI=base+'organization/'+entErogKey;
         if(!ttl.includes('<'+entErogURI+'>')){
-          ttl+='<'+entErogURI+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+dq+entErogV+dq+'@it .'+nl+nl;
+          ttl+='<'+entErogURI+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+litQ(entErogV,'it')+' .'+nl+nl;
         }
       }
     }
@@ -1408,7 +1408,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         var enteTransKey=ipaTransV||enteTransV.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
         var enteTransURI=base+'organization/'+enteTransKey;
         if(!ttl.includes('<'+enteTransURI+'>')){
-          ttl+='<'+enteTransURI+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+dq+enteTransV+dq+'@it .'+nl+nl;
+          ttl+='<'+enteTransURI+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+litQ(enteTransV,'it')+' .'+nl+nl;
         }
       }
     }

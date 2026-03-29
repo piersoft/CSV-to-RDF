@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.27.91 -->
+  <!-- build:v2026.03.27.92 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -740,7 +740,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.27.91</span>
+<span id="app-version">v2026.03.27.92</span>
 </footer>
 
 <script>
@@ -3114,11 +3114,11 @@ function buildDeterministicTriples(cols, rows, entityBase, deterMappings, typeSe
       } else if (m.type === 'boolean') {
         // Per booleani si/no include il nome colonna per chiarezza
         const label = col.replace(/_/g, ' ').toLowerCase();
-        triples.push(`    ${m.prop} "${label}: ${val.replace(/"/g, '\\"')}"@it`);
+        triples.push(`    ${m.prop} """${tqe(label+': '+val)}"""@it`);
       } else if (m.type === '@it') {
-        triples.push(`    ${m.prop} "${val.replace(/"/g, '\\"')}"@it`);
+        triples.push(`    ${m.prop} """${tqe(val)}"""@it`);
       } else {
-        triples.push(`    ${m.prop} "${val.replace(/"/g, '\\"')}"^^xsd:string`);
+        triples.push(`    ${m.prop} """${tqe(val)}"""^^xsd:string`);
       }
     }
     if (triples.length > 0) {
@@ -3196,7 +3196,7 @@ function fillMissingConnectedResources(ttl,ontos,rows,ipa){
           if(be>=0)ttl=ttl.slice(0,be)+" ;"+nl+sp+"clv:hasAddress <"+au+">"+ttl.slice(be);
           var dq=String.fromCharCode(34);
           var ad="<"+au+"> a clv:Address";
-          if(st)ad+=" ;"+nl+sp+"clv:fullAddress "+dq+st.replace(/"/g,'\\"')+dq+"@it";
+          if(st)ad+=" ;"+nl+sp+"clv:fullAddress "+litQ(st,'it');
           if(cp)ad+=" ;"+nl+sp+"clv:postCode "+dq+cp+dq;
           if(la)ad+=" ;"+nl+sp+"geo:lat "+dq+la+dq+"^^xsd:decimal";
           if(lo)ad+=" ;"+nl+sp+"geo:long "+dq+lo+dq+"^^xsd:decimal";
@@ -3269,8 +3269,8 @@ function detFormatLit(rule,val){
   val=String(val).trim();if(!val)return null;
   var BQ='\\"'; // backslash + virgoletta per Turtle
   if(rule.type==='skip')return null;
-  if(rule.type==='langlit')return'"'+val.replace(/"/g,BQ)+'"@'+(rule.lang||'it');
-  if(rule.type==='literal')return'"'+val.replace(/"/g,BQ)+'"^^xsd:string';
+  if(rule.type==='langlit')return litQ(val,rule.lang||'it');
+  if(rule.type==='literal')return litQ(val);
   if(rule.type==='decimal'){var n=parseFloat(val);return isNaN(n)?null:'"'+n+'"^^xsd:decimal';}
   if(rule.type==='integer'){var n2=parseInt(val);return isNaN(n2)?null:'"'+n2+'"^^xsd:integer';}
   if(rule.type==='boolean'){var b=val.toLowerCase();return(b==='si'||b==='true'||b==='1'||b==='yes')?'"true"^^xsd:boolean':'"false"^^xsd:boolean';}
@@ -3288,7 +3288,7 @@ function detFormatLit(rule,val){
   if(rule.type==='mailto'){var em=sanitizeEmailValue(val);if(!em)return null;return'<mailto:'+em+'>';}
   if(rule.type==='url'){var u=val.replace(/^<|>$/g,'').trim();if(!u||/[\s()<>"@]/.test(u)||/^\(/.test(u))return null;if(!u.startsWith('http')&&!u.startsWith('ftp'))u='https://'+u;return'<'+u+'>';}
   if(rule.type==='phone')return'"'+val+'"^^xsd:string';
-  return'"'+val.replace(/"/g,'\"')+'"@it';
+  return litQ(val,'it');
 }
 var DET_COL_RULES={denominazione:{pred:'rdfs:label',type:'langlit',lang:'it'},nome:{pred:'rdfs:label',type:'langlit',lang:'it'},nome_iniziativa:{pred:'rdfs:label',type:'langlit',lang:'it'},titolo_evento:{pred:'rdfs:label',type:'langlit',lang:'it'},titolo_manifestazione:{pred:'rdfs:label',type:'langlit',lang:'it'},descrizione:{pred:'dct:description',type:'langlit',lang:'it'},luogo:{pred:'schema:location',type:'langlit',lang:'it'},sede:{pred:'schema:location',type:'langlit',lang:'it'},dove:{pred:'l0:hasLocation',type:'langlit',lang:'it'},ingresso:{pred:'schema:isAccessibleForFree',type:'langlit',lang:'it'},biglietto:{pred:'schema:isAccessibleForFree',type:'langlit',lang:'it'},organizzatore:{pred:'dct:publisher',type:'langlit',lang:'it'},promotore:{pred:'dct:publisher',type:'langlit',lang:'it'},interpreti:{pred:'schema:performer',type:'langlit',lang:'it'},esecutori:{pred:'schema:performer',type:'langlit',lang:'it'},autore:{pred:'dct:creator',type:'langlit',lang:'it'},periodo:{pred:'dct:temporal',type:'langlit',lang:'it'},stagione:{pred:'dct:temporal',type:'langlit',lang:'it'},programmazione:{pred:'dct:temporal',type:'langlit',lang:'it'},stalli:{pred:'park:numberOfParkingSpaces',type:'integer'},posti_auto:{pred:'park:numberOfParkingSpaces',type:'integer'},capacita_posti:{pred:'park:numberOfParkingSpaces',type:'integer'},posti_disabili:{pred:'park:numberOfDisabledParkingSpaces',type:'integer'},tariffa_oraria:{pred:'park:ratePerHour',type:'decimal'},tipo_parcheggio:{pred:'park:parkingType',type:'langlit',lang:'it'},cig:{pred:'pc:hasCIG',type:'literal'},cup:{pred:'pc:hasCUP',type:'literal'},importo_aggiudicazione:{pred:'pc:hasAmount',type:'decimal'},importo_base:{pred:'pc:hasAmount',type:'decimal'},importo_contratto:{pred:'pc:hasAmount',type:'decimal'},oggetto_contratto:{pred:'pc:hasMainObject',type:'langlit',lang:'it'},oggetto_gara:{pred:'pc:hasMainObject',type:'langlit',lang:'it'},stazione_appaltante:{pred:'pc:contractingAuthority',type:'langlit',lang:'it'},aggiudicatario:{pred:'pc:awardedTo',type:'langlit',lang:'it'},cpv_codice:{pred:'pc:hasCPV',type:'literal'},modalita_scelta:{pred:'pc:selectionCriteria',type:'langlit',lang:'it'},data_aggiudicazione:{pred:'pc:awardDate',type:'date'},lunghezza_km:{pred:'route:routelLength',type:'literal'},numero_tappe:{pred:'route:numberOfStages',type:'integer'},durata_stimata:{pred:'route:routeEstDuration',type:'literal'},nome_breve_percorso:{pred:'route:routeShortName',type:'literal'},nome_esteso_percorso:{pred:'route:routeLongName',type:'literal'},difficolta:{pred:'route:difficulty',type:'langlit',lang:'it'},dislivello:{pred:'route:heightDifference',type:'decimal'},qualifica_dipendente:{pred:'rpo:hasRole',type:'langlit',lang:'it'},contratto_lavoro:{pred:'rpo:contractType',type:'langlit',lang:'it'},livello_contrattuale:{pred:'rpo:contractLevel',type:'literal'},ore_settimanali:{pred:'rpo:weeklyHours',type:'decimal'},ccnl:{pred:'rpo:hasCCNL',type:'langlit',lang:'it'},crediti:{pred:'learn:ects',type:'decimal'},ects:{pred:'learn:ects',type:'decimal'},ore_formazione:{pred:'learn:hours',type:'decimal'},durata_corso:{pred:'learn:duration',type:'langlit',lang:'it'},titolo_rilasciato:{pred:'learn:awardedTitle',type:'langlit',lang:'it'},titolo_corso:{pred:'rdfs:label',type:'langlit',lang:'it'},obbligo_trasparenza:{pred:'tr:hasTransparencyObligation',type:'langlit',lang:'it'},categoria_trasparenza:{pred:'tr:transparencyCategory',type:'langlit',lang:'it'},dato_obbligatorio:{pred:'tr:mandatoryData',type:'langlit',lang:'it'},norma_riferimento:{pred:'dct:source',type:'literal'},tipo_indicatore:{pred:'indicator:indicatorType',type:'langlit',lang:'it'},valore_indicatore:{pred:'sdmx-measure:obsValue',type:'decimal'},baseline:{pred:'indicator:baseline',type:'decimal'},target:{pred:'indicator:target',type:'decimal'},fonte_indicatore:{pred:'dct:source',type:'langlit',lang:'it'},partita_iva:{pred:'cov:VATnumber',type:'literal'},codice_ipa:{pred:'cov:IPAcode',type:'literal'},rea:{pred:'cov:REANumber',type:'literal'},data_costituzione:{pred:'cov:foundationDate',type:'date'},codice_univoco_ufficio:{pred:'cov:officeIdentifier',type:'literal'},oggetto_sociale:{pred:'cov:businessObjective',type:'langlit',lang:'it'},acronimo:{pred:'cov:orgAcronym',type:'literal'},cf:{pred:'cpv:taxCode',type:'literal'},codice_fiscale:{pred:'cpv:taxCode',type:'literal'},codice_sesso:{pred:'cpv:sexID',type:'literal'},grado_istruzione:{pred:'cpv:educationLevelID',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-people/education-level'},eta:{pred:'cpv:age',type:'integer'},nome_completo:{pred:'cpv:fullName',type:'literal'},numero_camere:{pred:'acco:totalRoom',type:'integer'},numero_bagni:{pred:'acco:totalToilet',type:'integer'},codice_struttura:{pred:'acco:accommodationCode',type:'literal'},codice_stelle:{pred:'acco:accoStarRatingID',type:'literal'},nome_ufficiale:{pred:'poi:POIofficialName',type:'langlit',lang:'it'},nome_alternativo:{pred:'poi:POIalternativeName',type:'langlit',lang:'it'},categoria_poi:{pred:'poi:POIcategoryName',type:'langlit',lang:'it'},id_poi:{pred:'poi:POIID',type:'literal'},forma_giuridica:{pred:'cov:hasLegalStatus',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-organizations/legal-status'},natura_giuridica:{pred:'cov:hasLegalStatus',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-organizations/legal-status'},codice_ateco:{pred:'cov:hasActivityType',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-organizations/ateco-2007'},settore_ateco:{pred:'cov:hasActivityType',type:'langlit',lang:'it'},licenza:{pred:'dct:license',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/licences'},tipo_licenza:{pred:'dct:license',type:'langlit',lang:'it'},numero_camere_totali:{pred:'acco:totalRoom',type:'integer'},tipo:{pred:'dct:type',type:'langlit',lang:'it'},categoria:{pred:'dct:type',type:'langlit',lang:'it'},email:{pred:'sm:hasEmail',type:'mailto'},sitoweb:{pred:'sm:hasWebSite',type:'url'},telefono:{pred:'sm:hasTelephone',type:'literal'},fax:{pred:'dct:description',type:'literal'},lat:{pred:'geo:lat',type:'typed',xsd:'xsd:decimal'},lon:{pred:'geo:long',type:'typed',xsd:'xsd:decimal'},modified:{pred:'dct:modified',type:'typed',xsd:'xsd:date'},numero_posti_letto:{pred:'acco:totalRoom',type:'typed',xsd:'xsd:integer',onto:'ACCO'},posti_letto:{pred:'acco:totalRoom',type:'typed',xsd:'xsd:integer',onto:'ACCO'},letti:{pred:'acco:totalBed',type:'typed',xsd:'xsd:integer',onto:'ACCO'},camere:{pred:'acco:totalRoom',type:'typed',xsd:'xsd:integer',onto:'ACCO'},stelle:{pred:'acco:accoStarRatingID',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-accommodation-facilities/accommodation-star-rating',onto:'ACCO'},stop_id:{pred:'dct:identifier',type:'literal',onto:'GTFS'},stop_code:{pred:'gtfs:code',type:'literal',onto:'GTFS'},zone_id:{pred:'gtfs:zone',type:'literal',onto:'GTFS'},location_type:{pred:'gtfs:locationType',type:'typed',xsd:'xsd:integer',onto:'GTFS'},parent_station:{pred:'gtfs:parentStation',type:'literal',onto:'GTFS'},route_id:{pred:'dct:identifier',type:'literal',onto:'GTFS'},route_short_name:{pred:'gtfs:shortName',type:'literal',onto:'GTFS'},route_long_name:{pred:'gtfs:longName',type:'langlit',lang:'it',onto:'GTFS'},route_type:{pred:'gtfs:routeType',type:'typed',xsd:'xsd:integer',onto:'GTFS'},agency_id:{pred:'gtfs:agency',type:'literal',onto:'GTFS'},arrival_time:{pred:'gtfs:arrivalTime',type:'literal',onto:'GTFS'},departure_time:{pred:'gtfs:departureTime',type:'literal',onto:'GTFS'},stop_sequence:{pred:'gtfs:stopSequence',type:'typed',xsd:'xsd:integer',onto:'GTFS'},valore:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},enterococchi_intestinali:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},escherichia_coli:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},limite_enterococchi:{pred:'iot:hasResultQuality',type:'typed',xsd:'xsd:decimal',onto:'IoT'},limite_escherichiacoli:{pred:'iot:hasResultQuality',type:'typed',xsd:'xsd:decimal',onto:'IoT'},conformita:{pred:'iot:hasQualityAnnotation',type:'langlit',lang:'it',onto:'IoT'},unita_misura:{pred:'mu:hasMeasurementUnit',type:'langlit',lang:'it',onto:'MU'},unita_di_misura:{pred:'mu:hasMeasurementUnit',type:'langlit',lang:'it',onto:'MU'},data:{pred:'ti:startTime',type:'typed',xsd:'xsd:date',onto:'TI'},id_area:{pred:'dct:identifier',type:'literal'},valore_medio:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},unita:{pred:'iot:hasUnitOfMeasure',type:'literal',onto:'IoT'},avgspeed:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},anno:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},mese:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},date:{pred:'sdmx-dimension:refPeriod',type:'typed',xsd:'xsd:date',onto:'QB'},datetime:{pred:'dct:date',type:'typed',xsd:'xsd:dateTime',onto:'QB'},timestamp:{pred:'dct:date',type:'typed',xsd:'xsd:dateTime',onto:'QB'},count:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},total:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},amount:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},value:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},asl:{pred:'sdmx-dimension:refArea',type:'langlit',lang:'it',onto:'QB'},azienda_sanitaria:{pred:'sdmx-dimension:refArea',type:'langlit',lang:'it',onto:'QB'},distretto:{pred:'sdmx-dimension:refArea',type:'langlit',lang:'it',onto:'QB'},eta:{pred:'sdmx-attribute:obsStatus',type:'langlit',lang:'it',onto:'QB'},fascia_eta:{pred:'sdmx-attribute:obsStatus',type:'langlit',lang:'it',onto:'QB'},classe_eta:{pred:'sdmx-attribute:obsStatus',type:'langlit',lang:'it',onto:'QB'},eta_:'skip',numero:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},valore_assoluto:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},frequenza:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},comparto:{pred:'dct:description',type:'langlit',lang:'it',onto:'COV'},inquadramento:{pred:'cov:hasLegalStatus',type:'langlit',lang:'it',onto:'COV'},cognome:{pred:'cpv:familyName',type:'langlit',lang:'it',onto:'CPV'},sesso:{pred:'cpv:sexID',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-people/sex',onto:'CPV'},cittadinanza:{pred:'dct:description',type:'langlit',lang:'it',onto:'CPV'},data_nascita:{pred:'cpv:dateOfBirth',type:'typed',xsd:'xsd:date',onto:'CPV'},ruolo:{pred:'rdfs:label',type:'langlit',lang:'it',onto:'RO'},legislatura:{pred:'dct:description',type:'langlit',lang:'it',onto:'RO'},voti_validi:{pred:'ro:votesObtained',type:'typed',xsd:'xsd:integer',onto:'RO'},gestore:{pred:'smapit:hasManager',type:'langlit',lang:'it',onto:'SMAPIT'},inizio:{pred:'ti:startTime',type:'typed',xsd:'xsd:dateTime',onto:'TI'},termine:{pred:'ti:endTime',type:'typed',xsd:'xsd:dateTime',onto:'TI'},durata:{pred:'ti:duration',type:'literal',onto:'TI'},dove:{pred:'l0:hasLocation',type:'langlit',lang:'it',onto:'TI'},accessibile:{pred:'dct:description',type:'literal',onto:'POI'},distr:{pred:'_skip',type:'skip'},location:{pred:'_skip',type:'skip'},s_comune_montano:{pred:'_skip',type:'skip'},organico_autonomia:{pred:'_skip',type:'skip'},organico_sede:{pred:'_skip',type:'skip'},accessibile:{pred:'dct:description',type:'literal',onto:'POI'},datazione:{pred:'dct:date',type:'literal',onto:'CulturalON'},numero_inventario:{pred:'dct:identifier',type:'literal',onto:'CulturalON'},version:{pred:'adms:version',type:'literal',onto:'ADMS'},versione:{pred:'adms:version',type:'literal',onto:'ADMS'},stato:{pred:'adms:status',type:'literal',onto:'ADMS'},formato:{pred:'dct:format',type:'literal',onto:'ADMS'},publisher:{pred:'dct:publisher',type:'langlit',lang:'it',onto:'ADMS'},aggiudicatario:{pred:'cpsv:hasParticipant',type:'langlit',lang:'it',onto:'CPSV'},cup:{pred:'dct:identifier',type:'literal',onto:'CPSV'},ufficio:{pred:'cpsv:isGroupedUnder',type:'langlit',lang:'it',onto:'CPSV'},indirizzo:{pred:'_skip',type:'skip'},comune:{pred:'_skip',type:'skip'},cap:{pred:'_skip',type:'skip'},provincia:{pred:'_skip',type:'skip'},civico:{pred:'_skip',type:'skip'},numerocivico:{pred:'_skip',type:'skip'},regione:{pred:'_skip',type:'skip'},via:{pred:'_skip',type:'skip'},strada:{pred:'_skip',type:'skip'},tipologia_provvedimento:{pred:'dct:type',type:'langlit',lang:'it'},numero_provvedimento:{pred:'dct:identifier',type:'literal'},data_approvazione:{pred:'dct:date',type:'date'},ufficio_proponente:{pred:'dct:publisher',type:'langlit',lang:'it'},uo_proponente:{pred:'dct:publisher',type:'langlit',lang:'it'},uo_responsabile:{pred:'dct:contributor',type:'langlit',lang:'it'},spesa_prevista:{pred:'sdmx-measure:obsValue',type:'decimal'},estremi_documenti_fascicolo:{pred:'dct:relation',type:'literal'},estremi_documenti_fascicoli:{pred:'dct:relation',type:'literal'},numero_atto:{pred:'dct:identifier',type:'literal'},data_atto:{pred:'dct:date',type:'date'},tipo_atto:{pred:'dct:type',type:'langlit',lang:'it'},norma:{pred:'dct:source',type:'langlit',lang:'it'},modalita:{pred:'dct:description',type:'langlit',lang:'it'},contenuto:{pred:'dct:description',type:'langlit',lang:'it'},occorrenze:{pred:'sdmx-measure:obsValue',type:'decimal'},iscrizioni_nascita:{pred:'sdmx-measure:obsValue',type:'decimal'},cancellazioni_morte:{pred:'sdmx-measure:obsValue',type:'decimal'},saldo_naturale:{pred:'sdmx-measure:obsValue',type:'decimal'},saldo_migratorio:{pred:'sdmx-measure:obsValue',type:'decimal'},saldo_totale:{pred:'sdmx-measure:obsValue',type:'decimal'},maschi:{pred:'sdmx-measure:obsValue',type:'decimal'},femmine:{pred:'sdmx-measure:obsValue',type:'decimal'},stranieri_maschi:{pred:'sdmx-measure:obsValue',type:'decimal'},stranieri_femmine:{pred:'sdmx-measure:obsValue',type:'decimal'},stranieri_totale:{pred:'sdmx-measure:obsValue',type:'decimal'},tasso_natalita:{pred:'sdmx-measure:obsValue',type:'decimal'},tasso_mortalita:{pred:'sdmx-measure:obsValue',type:'decimal'},numero_famiglie:{pred:'sdmx-measure:obsValue',type:'decimal'},sezione:{pred:'dct:identifier',type:'literal'},foglio:{pred:'dct:identifier',type:'literal'},particella:{pred:'dct:identifier',type:'literal'},subalterno:{pred:'dct:identifier',type:'literal'},rendita:{pred:'sdmx-measure:obsValue',type:'decimal'},consistenza:{pred:'dct:description',type:'literal'},qualita:{pred:'dct:type',type:'langlit',lang:'it'},ettari:{pred:'sdmx-measure:obsValue',type:'decimal'},reddito_dominicale:{pred:'sdmx-measure:obsValue',type:'decimal'},reddito_agrario:{pred:'sdmx-measure:obsValue',type:'decimal'},codice_via:{pred:'clv:hasStreetToponym',type:'literal'},descrizione_via:{pred:'rdfs:label',type:'langlit',lang:'it'},tipo_via:{pred:'dct:type',type:'langlit',lang:'it'},localita:{pred:'clv:hasSpatialCoverage',type:'langlit',lang:'it'},importo_aggiudicazione:{pred:'sdmx-measure:obsValue',type:'decimal'},aggiudicatario:{pred:'dct:publisher',type:'langlit',lang:'it'},data_aggiudicazione:{pred:'dct:date',type:'date'},scelta_contraente:{pred:'dct:description',type:'langlit',lang:'it'},codice_cpv:{pred:'dct:identifier',type:'literal'},richiedente:{pred:'dct:publisher',type:'langlit',lang:'it'},iniziativa:{pred:'rdfs:label',type:'langlit',lang:'it'},qualifica:{pred:'rpo:hasRole',type:'langlit',lang:'it',onto:'RPO'},totale_costo:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_retribuzione:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},voce_retributiva:{pred:'rpo:payComponent',type:'langlit',lang:'it',onto:'RPO'},totale_compensi:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},voce_accessoria:{pred:'rpo:allowanceComponent',type:'langlit',lang:'it',onto:'RPO'},voce_costo:{pred:'rpo:costComponent',type:'langlit',lang:'it',onto:'RPO'},totale_uomini:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_donne:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},eta_media_uomini:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},eta_media_donne:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},tipo_distacco:{pred:'rpo:contractType',type:'langlit',lang:'it',onto:'RPO'},titolo_di_studio:{pred:'cpv:educationLevelID',type:'langlit',lang:'it',onto:'CPV'},anzianita:{pred:'rpo:seniority',type:'langlit',lang:'it',onto:'RPO'},nati:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},decessi:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},immigrati:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},emigrati:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},numero_componenti:{pred:'sdmx-dimension:refArea',type:'literal',onto:'QB'},di_cui_minorenni:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_famiglie:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_entrate:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_uscite:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},residui_attivi:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},residui_passivi:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},media_gg_approvazione:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_impegnato:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_mandati_collegati:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},permessi_rilasciati:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},entro_termini:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},fuori_termini:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},tipologia:{pred:'dct:type',type:'langlit',lang:'it'},anno_protocollo:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},tipo_protocollo:{pred:'dct:type',type:'langlit',lang:'it'},tipo_spedizione:{pred:'dct:description',type:'langlit',lang:'it'},numero_protocolli:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},bandito_da:{pred:'dct:publisher',type:'langlit',lang:'it',onto:'CPSV'},oggetto:{pred:'dct:description',type:'langlit',lang:'it',onto:'CPSV'},data_scadenza:{pred:'ti:endTime',type:'typed',xsd:'xsd:date',onto:'CPSV'},data_pubblicazione:{pred:'dct:issued',type:'typed',xsd:'xsd:date',onto:'CPSV'},gazzetta_ufficiale:{pred:'dct:source',type:'literal',onto:'CPSV'},numero_posti:{pred:'cpsv:numberOfVacancies',type:'integer',onto:'CPSV'},numero_posti_riservati:{pred:'cpsv:numberOfVacancies',type:'integer',onto:'CPSV'},gruppo_politico:{pred:'ro:politicalGroup',type:'langlit',lang:'it',onto:'RO'},organo:{pred:'ro:memberOf',type:'langlit',lang:'it',onto:'RO'},orario_ricevimento:{pred:'ti:TimeInterval',type:'langlit',lang:'it'},nome_mercato:{pred:'rdfs:label',type:'langlit',lang:'it',onto:'POI'},fiera_mercato:{pred:'dct:type',type:'langlit',lang:'it',onto:'POI'},giorno:{pred:'ti:startTime',type:'langlit',lang:'it',onto:'TI'},inizio_periodo:{pred:'ti:startTime',type:'langlit',lang:'it',onto:'TI'},fine_periodo:{pred:'ti:endTime',type:'langlit',lang:'it',onto:'TI'},tipo_posteggio:{pred:'dct:type',type:'langlit',lang:'it'},totale_posteggi:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},nome_associazione:{pred:'rdfs:label',type:'langlit',lang:'it',onto:'COV'},latitudine:{pred:'geo:lat',type:'typed',xsd:'xsd:decimal'},longitudine:{pred:'geo:long',type:'typed',xsd:'xsd:decimal'},cellulare:{pred:'sm:hasTelephone',type:'literal',onto:'SM'},tragitto:{pred:'rdfs:label',type:'langlit',lang:'it'},totale_alunni:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_rette_trasporto:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_pagamenti_trasporto:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},insegna:{pred:'rdfs:label',type:'langlit',lang:'it'},attivita:{pred:'dct:type',type:'langlit',lang:'it'},ubicazione_esercizio:{pred:'_addr_fullAddress',type:'_clvnode'},n_civico:{pred:'_addr_streetNumber',type:'_clvnode'},tipo_esercizio:{pred:'dct:type',type:'langlit',lang:'it'},categoria_esercizio:{pred:'dct:type',type:'langlit',lang:'it'},ragione_sociale:{pred:'cov:legalName',type:'langlit',lang:'it'},
 nome_centro:{pred:'cov:legalName',type:'langlit',lang:'it'},
@@ -3415,12 +3415,12 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
   var orgIpa=ipa||'ipa';
   var orgName=ente||ipa||'Ente';
   ttl+='<https://w3id.org/italia/data/'+orgIpa+'/ds> a foaf:Agent ;'+nl;
-  ttl+=sp+'foaf:name '+dq+orgName+dq+'@it ;'+nl;
+  ttl+=sp+'foaf:name '+litQ(orgName,'it')+' ;'+nl;
   ttl+=sp+'dct:identifier '+dq+orgIpa+dq+' .'+nl+nl;
   var dsUri=base+'dataset/ds-'+orgIpa;
   if(ontos.indexOf('QB')>=0||ontos.indexOf('Indicator')>=0){
     ttl+='<'+dsUri+'> a qb:DataSet ;'+nl;
-    ttl+=sp+'rdfs:label '+dq+'Dataset '+orgName+dq+'@it ;'+nl;
+    ttl+=sp+'rdfs:label '+litQ('Dataset '+orgName,'it')+' ;'+nl;
     ttl+=sp+'dct:publisher <https://w3id.org/italia/data/'+orgIpa+'/ds> .'+nl+nl;
     used.add('qb');used.add('sdmx-dimension');used.add('sdmx-measure');used.add('sdmx-attribute');
   }
@@ -3441,7 +3441,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       if(!val||normH==='id')return;
       var rule=detFindRule(normH,ontos);
       if(rule&&rule.type==='_clvnode')return; // gestito da addrMap come nodo clv:Address
-      if(!rule){var _n=detNormH(origH);if(_n==='_skip'||_n.startsWith('_'))return;if(val)triples.push({pred:'rdfs:comment',val:'"'+origH+': '+val.replace(/"/g,'\\"')+('"@it'),raw:true,unmapped:true});return;}
+      if(!rule){var _n=detNormH(origH);if(_n==='_skip'||_n.startsWith('_'))return;if(val)triples.push({pred:'rdfs:comment',val:litQ(origH+': '+val,'it'),raw:true,unmapped:true});return;}
       if(rule.type==='skip')return;
       var litVal=detFormatLit(rule,val);
       if(litVal)triples.push({pred:rule.pred,val:litVal,raw:true});
@@ -3466,7 +3466,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       var addrMap={indirizzo:'clv:fullAddress',via:'clv:fullAddress',strada:'clv:fullAddress',cap:'clv:postCode',ubicazione_esercizio:'clv:fullAddress',indirizzo_esercizio:'clv:fullAddress'};
       Object.keys(addrMap).forEach(function(col){
         var xi=nh.indexOf(col);
-        if(xi>=0&&row[xi]&&row[xi].trim()){var v=row[xi].trim().replace(/"/g,'\\"');addrTriples.push({pred:addrMap[col],val:dq+v+dq+'@it'});}
+        if(xi>=0&&row[xi]&&row[xi].trim()){var v=row[xi].trim();addrTriples.push({pred:addrMap[col],val:litQ(v,'it')});}
       });
       var latI=nh.indexOf('lat'),lonI=nh.indexOf('lon');
       if(latI>=0&&row[latI])addrTriples.push({pred:'geo:lat',val:dq+row[latI].trim()+dq+'^^xsd:decimal'});
@@ -3486,7 +3486,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       var poiURI=base+'point-of-interest/'+idVal;
       var poiTriples=[];
       var labelI2=nh.indexOf('denominazione');if(labelI2<0)labelI2=nh.indexOf('nome');
-      if(labelI2>=0&&row[labelI2])poiTriples.push({pred:'rdfs:label',val:dq+(row[labelI2]||'').trim().replace(/"/g,'\\"')+dq+'@it'});
+      if(labelI2>=0&&row[labelI2])poiTriples.push({pred:'rdfs:label',val:litQ((row[labelI2]||'').trim(),'it')});
       var idAreaI=nh.indexOf('id_area');if(idAreaI<0)idAreaI=nh.indexOf('id_punto');if(idAreaI<0)idAreaI=nh.indexOf('codice_stazione');
       if(idAreaI>=0&&row[idAreaI])poiTriples.push({pred:'dct:identifier',val:dq+(row[idAreaI]||'').trim()+dq});
       var latIp=nh.indexOf('lat');if(latIp<0)latIp=nh.indexOf('latitude');
@@ -3530,7 +3530,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         if(ragioneSocialeV) {
           // Nodo cov:Organization separato per la ragione sociale
           ttl+='<'+orgURI_esc+'> a cov:Organization ;'+nl;
-          ttl+=sp+'rdfs:label '+dq+ragioneSocialeV.replace(/"/g,'\\"')+dq+'@it';
+          ttl+=sp+'rdfs:label '+litQ(ragioneSocialeV,'it');
           if(attivitaV) {
             var actTypeId=attivitaV.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
             ttl+=' ;'+nl;
@@ -3548,11 +3548,11 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         if(ubicazioneV || civV) {
           var fullAddr=[ubicazioneV,civV].filter(Boolean).join(' ');
           ttl+='<'+addrURI_esc+'> a clv:Address ;'+nl;
-          if(fullAddr)ttl+=sp+'clv:fullAddress '+dq+fullAddr.replace(/"/g,'\\"')+dq+'@it ;'+nl;
-          if(ubicazioneV)ttl+=sp+'clv:streetName '+dq+ubicazioneV.replace(/"/g,'\\"')+dq+'@it';
+          if(fullAddr)ttl+=sp+'clv:fullAddress '+litQ(fullAddr,'it')+' ;'+nl;
+          if(ubicazioneV)ttl+=sp+'clv:streetName '+litQ(ubicazioneV,'it');
           if(civV){
             ttl+=' ;'+nl;
-            ttl+=sp+'clv:streetNumber '+dq+civV.replace(/"/g,'\\"')+dq+'@it';
+            ttl+=sp+'clv:streetNumber '+litQ(civV,'it');
           }
           ttl+=' .'+nl+nl;
           used.add('clv');
@@ -3564,7 +3564,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
     if(ontos.indexOf('MU')>=0) {
       var unitaI=nh.indexOf('unita_misura');if(unitaI<0)unitaI=nh.indexOf('unita_di_misura');if(unitaI<0)unitaI=nh.indexOf('unit_of_measure');
       if(unitaI>=0&&row[unitaI]&&row[unitaI].trim()) {
-        var unitaV=(row[unitaI]||'').trim().replace(/"/g,'\\"');
+        var unitaV=(row[unitaI]||'').trim();
         var numVal2='';
         nh.forEach(function(h,i){
           if(numVal2)return;
@@ -3575,7 +3575,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         });
         var muURI=base+'measurement/'+idVal;
         ttl+='<'+muURI+'> a mu:Value ;'+nl;
-        ttl+=sp+'mu:hasMeasurementUnit '+dq+unitaV+dq+'@it ;'+nl;
+        ttl+=sp+'mu:hasMeasurementUnit '+litQ(unitaV,'it')+' ;'+nl;
         if(numVal2)ttl+=sp+'mu:value '+dq+numVal2+dq+'^^xsd:decimal ;'+nl;
         ttl+=sp+'dct:isPartOf <'+subURI+'> .'+nl+nl;
         used.add('mu');
@@ -3588,14 +3588,14 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       var personLabel=[nomeV,cognomeV].filter(Boolean).join(' ');
       if(personLabel){
         var personURI=base+'person/'+idVal;
-        ttl+='<'+personURI+'> a cpv:Person ;'+nl+sp+'rdfs:label '+dq+personLabel+dq+'@it .'+nl+nl;
+        ttl+='<'+personURI+'> a cpv:Person ;'+nl+sp+'rdfs:label '+litQ(personLabel,'it')+' .'+nl+nl;
       }
       if(ammI>=0&&row[ammI]){
         var ammV=row[ammI].trim();
         var orgId2=ammV.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
         var orgURI2=base+'organization/'+orgId2;
         if(!ttl.includes('<'+orgURI2+'>')){
-          ttl+='<'+orgURI2+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+dq+ammV+dq+'@it .'+nl+nl;
+          ttl+='<'+orgURI2+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+litQ(ammV,'it')+' .'+nl+nl;
         }
       }
     }
@@ -3607,7 +3607,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       var personLabel2=[nV,cV].filter(Boolean).join(' ');
       if(personLabel2){
         var personURI2=base+'person/'+(cfI>=0&&row[cfI]?row[cfI].trim().toLowerCase():idVal);
-        ttl+='<'+personURI2+'> a cpv:Person ;'+nl+sp+'rdfs:label '+dq+personLabel2+dq+'@it .'+nl;
+        ttl+='<'+personURI2+'> a cpv:Person ;'+nl+sp+'rdfs:label '+litQ(personLabel2,'it')+' .'+nl;
         ttl+=sp+'rpo:holdsRole <'+base+'role-in-organization/'+idVal+'> .'+nl+nl;
       }
       var enteV=enteI>=0?(row[enteI]||'').trim():'';
@@ -3616,7 +3616,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         var orgKey=ipaV2||enteV.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
         var orgURI3=base+'organization/'+orgKey;
         if(!ttl.includes('<'+orgURI3+'>')){
-          ttl+='<'+orgURI3+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+dq+enteV+dq+'@it .'+nl+nl;
+          ttl+='<'+orgURI3+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+litQ(enteV,'it')+' .'+nl+nl;
         }
       }
     }
@@ -3630,7 +3630,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         var saKey=ipaV3||saV.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
         var saURI=base+'organization/'+saKey;
         if(!ttl.includes('<'+saURI+'>')){
-          ttl+='<'+saURI+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+dq+saV+dq+'@it ;'+nl;
+          ttl+='<'+saURI+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+litQ(saV,'it')+' ;'+nl;
           if(ipaV3)ttl+=sp+'cov:IPAcode '+dq+ipaV3+dq+' ;'+nl;
           ttl+=sp+'dct:identifier '+dq+saKey+dq+' .'+nl+nl;
         }
@@ -3640,7 +3640,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         var aggKey=aggV.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
         var aggURI=base+'organization/supplier-'+aggKey;
         if(!ttl.includes('<'+aggURI+'>')){
-          ttl+='<'+aggURI+'> a cov:Organization ;'+nl+sp+'rdfs:label '+dq+aggV+dq+'@it .'+nl+nl;
+          ttl+='<'+aggURI+'> a cov:Organization ;'+nl+sp+'rdfs:label '+litQ(aggV,'it')+' .'+nl+nl;
         }
       }
     }
@@ -3686,7 +3686,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         var entErogKey=ipaErogV||entErogV.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
         var entErogURI=base+'organization/'+entErogKey;
         if(!ttl.includes('<'+entErogURI+'>')){
-          ttl+='<'+entErogURI+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+dq+entErogV+dq+'@it .'+nl+nl;
+          ttl+='<'+entErogURI+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+litQ(entErogV,'it')+' .'+nl+nl;
         }
       }
     }
@@ -3699,7 +3699,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         var enteTransKey=ipaTransV||enteTransV.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
         var enteTransURI=base+'organization/'+enteTransKey;
         if(!ttl.includes('<'+enteTransURI+'>')){
-          ttl+='<'+enteTransURI+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+dq+enteTransV+dq+'@it .'+nl+nl;
+          ttl+='<'+enteTransURI+'> a cov:PublicOrganization ;'+nl+sp+'rdfs:label '+litQ(enteTransV,'it')+' .'+nl+nl;
         }
       }
     }

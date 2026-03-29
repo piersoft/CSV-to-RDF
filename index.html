@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.27.81 -->
+  <!-- build:v2026.03.27.82 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -210,11 +210,12 @@
     <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1rem;">
       <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 1</div><div style="font-size:.9rem;">Incolla o <strong>carica il CSV</strong></div></div>
       <div style="background:rgba(255,255,255,0.18);border-radius:8px;padding:.6rem .9rem;min-width:130px;border:1px solid rgba(255,255,255,.35)"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">AUTO ✨</div><div style="font-size:.9rem;">Le <strong>ontologie</strong> si rilevano</div></div>
+      <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;border:1px dashed rgba(255,255,255,.4);" onclick="document.getElementById('step1bis-panel')?.scrollIntoView({behavior:'smooth'});document.getElementById('step1bis-panel')?.querySelector('details')?.setAttribute('open','');" title="Clicca per andare allo STEP 1 BIS" ><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 1 BIS <em style="font-weight:400;opacity:.7">(opz.)</em></div><div style="font-size:.9rem;">Link <strong>dati.gov.it</strong></div></div>
       <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 2 <em style="font-weight:400;opacity:.7">(opz.)</em></div><div style="font-size:.9rem;">API key <strong>AI-Detect</strong></div></div>
       <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 3</div><div style="font-size:.9rem;">Inserisci <strong>codice IPA</strong></div></div>
       <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 4</div><div style="font-size:.9rem;">Clicca <strong>Genera TTL</strong></div></div>
     </div>
-    <p style="margin-top:.5rem;font-size:.8rem;opacity:.75;">Le ontologie si rilevano <strong>automaticamente</strong>. L'AI (STEP 2) è opzionale — senza API key la generazione è istantanea.</p>
+    <p style="margin-top:.5rem;font-size:.8rem;opacity:.75;">Le ontologie si rilevano <strong>automaticamente</strong>. Lo STEP 1 BIS (link dati.gov.it) migliora il rilevamento. L'AI (STEP 2) è opzionale — senza API key la generazione è istantanea.</p>
     <p style="margin-top:.6rem;font-size:.82rem;opacity:.9;">📚 Vuoi sapere come strutturare i CSV rispetto alle ontologie? <a href="dataset-ottimali-PA.html" target="_blank" rel="noopener noreferrer" style="color:#fff;font-weight:600;text-decoration:underline;text-underline-offset:2px;">Consulta il catalogo dei dataset ottimali per la PA →</a></p>
   </div>
 </div>
@@ -293,6 +294,7 @@
       </div>
 
       <!-- STEP 1 BIS — URL dati.gov.it (opzionale) -->
+      <div id="step1bis-panel">
       <details class="card-pa" id="step1bis-accordion">
         <summary class="card-head" style="background:#4a90d9;cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;">
           <span>🔗 STEP 1 BIS — Contesto da dati.gov.it <span style="font-weight:400;font-size:.8em;opacity:.8;">(opzionale)</span></span>
@@ -718,7 +720,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.27.81</span>
+<span id="app-version">v2026.03.27.82</span>
 </footer>
 
 <script>

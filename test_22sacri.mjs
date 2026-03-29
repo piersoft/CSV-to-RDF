@@ -115,10 +115,10 @@ function detectOntologiesDeterministic(headers, rows) {
   }
 
   // COV — organizzazioni: FIX1 esclude codice_ipa quando accompagnato da colonne di altri domini
-  var _hasCOVStrong = has(['codice_ipa','codice_ente','partita_iva','codice_fiscale_ente','ragione_sociale','segnalatore','ente_segnalatore','soggetto_segnalante','amministrazione_titolare']) &&
+  var _hasCOVStrong = has(['codice_ipa','codice_ente','partita_iva','codice_fiscale_ente','ragione_sociale','segnalatore','ente_segnalatore','soggetto_segnalante','amministrazione_titolare','nome_centro','nome_struttura','nome_presidio']) &&
                       !has(['qualifica_dipendente','obbligo_trasparenza','titolo_corso','ore_formazione',
                              'cig','importo_aggiudicazione','tipo_percorso','valore_indicatore']);
-  var _hasCOVWeak   = hasH(['amministrazione','ente','pubblica_amministrazione','organizzazione',
+  var _hasCOVWeak   = hasH(['amministrazione','ente','pubblica_amministrazione','organizzazione','nome_centro','nome_struttura','unita_operativa','nome_presidio',
                            'comparto','inquadramento','codice_istituzione','codice_ente_bdap']);
   // COV: permesso anche con POI se ragione_sociale presente (esercizi commerciali)
   if(!result.has('ACCO') && !result.has('GTFS') &&
@@ -137,7 +137,7 @@ function detectOntologiesDeterministic(headers, rows) {
            'data_inizio','data_fine','data_evento','importo','valore','obs_value',
            'qualifica','contratto','ccnl','cig','cup','obbligo_trasparenza',
            'ubicazione_esercizio','n_civico','insegna','ragione_sociale'])) {
-    if(result.has('COV') && !has(['codice_ipa','cf_ente','ragione_sociale','tipo_ente'])) result.delete('COV');
+    if(result.has('COV') && !has(['codice_ipa','cf_ente','ragione_sociale','tipo_ente','nome_centro','nome_struttura','nome_presidio','unita_operativa'])) result.delete('COV');
     if(result.has('TI')  && !has(['data_inizio','data_fine','data_da','data_a','data_evento','quando','inizio','termine'])) result.delete('TI');
     if(result.has('POI') && !has(['tipo_poi','nome_poi','dae','lat','lon','insegna','insegna_commerciale'])) result.delete('POI');
     if(result.has('CPV') && !has(['cognome','codice_fiscale','nome_completo','data_nascita'])) result.delete('CPV');
@@ -310,6 +310,10 @@ const sacri = [
   { name: 'indicator', headers: ['id', 'denominazione', 'tipo_indicatore', 'anno', 'valore_indicatore', 'baseline', 'target', 'unita_misura', 'fonte_indicatore', 'ente', 'codice_ipa'], expected: ['Indicator', 'QB', 'COV', 'MU'] },
   { name: 'pot', headers: ['id', 'denominazione', 'tipo_servizio', 'prezzo_intero', 'prezzo_ridotto', 'biglietto', 'descrizione', 'comune', 'provincia', 'lat', 'lon', 'eta_ridotto'], expected: ['POT', 'POI'] },
   { name: 'esercizi_ristorazione', headers: ['RAGIONE_SOCIALE', 'INSEGNA', 'ATTIVITA', 'UBICAZIONE_ESERCIZIO', 'N_Civico'], expected: ['POI', 'COV', 'CLV'] },
+  { name: 'centri_sanitari_sma',
+    headers: ['CODICE_ESENZIONE','MALATTIA','NOME_CENTRO','UNITA_OPERATIVA','CITTA','LIVELLO_CENTRO','CENTRO_CAPOFILA_RIFERIMENTO'],
+    rows: [{'CODICE_ESENZIONE':'RFG050','MALATTIA':'Atrofie Muscolari Spinali','NOME_CENTRO':'AOU Policlinico Bari','UNITA_OPERATIVA':'Neurologia Pediatrica','CITTA':'Bari','LIVELLO_CENTRO':'Capofila','CENTRO_CAPOFILA_RIFERIMENTO':'AOU Policlinico Bari'}],
+    expected: ['COV','CLV'] },
   { name: 'esercizi_ristorazione_latlon', headers: ['RAGIONE_SOCIALE', 'INSEGNA', 'ATTIVITA', 'UBICAZIONE_ESERCIZIO', 'N_Civico', 'Lat', 'Lon'], rows: [{RAGIONE_SOCIALE:'AGRITURISMO MASSERIA LA FAVOLA SRL', INSEGNA:'MASSERIA LA FAVOLA', ATTIVITA:'agriturismo', UBICAZIONE_ESERCIZIO:'s.s. 16', N_Civico:'3', Lat:'40.1', Lon:'16.9'}], expected: ['POI', 'COV', 'CLV'] },
 ];
 
@@ -339,8 +343,8 @@ for(const s of sacri){
 }
 
 console.log(`\n${'='.repeat(55)}`);
-console.log(`✅ OK: ${ok}/24  ❌ Problemi: ${issues.length}`);
-if(issues.length===0) console.log('🎉 TUTTI I 24 CSV SACRI PASSANO IL TEST!');
+console.log(`✅ OK: ${ok}/25  ❌ Problemi: ${issues.length}`);
+if(issues.length===0) console.log('🎉 TUTTI I 25 CSV SACRI PASSANO IL TEST!');
 
 
 // ── NUOVE ONTOLOGIE v186 ─────────────────────────────────────────────────────

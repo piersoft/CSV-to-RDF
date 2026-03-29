@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.27.92 -->
+  <!-- build:v2026.03.27.93 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -740,7 +740,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.27.92</span>
+<span id="app-version">v2026.03.27.93</span>
 </footer>
 
 <script>
@@ -3382,6 +3382,15 @@ categoria_poi:{pred:'poi:POIcategoryName',type:'vocab_uri',vocab:'https://w3id.o
 
 var DET_PREFIXES={'rdf':'http://www.w3.org/1999/02/22-rdf-syntax-ns#','rdfs':'http://www.w3.org/2000/01/rdf-schema#','xsd':'http://www.w3.org/2001/XMLSchema#','dct':'http://purl.org/dc/terms/','dcat':'http://www.w3.org/ns/dcat#','foaf':'http://xmlns.com/foaf/0.1/','skos':'http://www.w3.org/2004/02/skos/core#','geo':'http://www.w3.org/2003/01/geo/wgs84_pos#','vcard':'http://www.w3.org/2006/vcard/ns#','schema':'https://schema.org/','park':'https://w3id.org/italia/onto/PARK/','pot':'https://w3id.org/italia/onto/POT/','pc':'https://w3id.org/italia/onto/PublicContract/','route':'https://w3id.org/italia/onto/Route/','rpo':'https://w3id.org/italia/onto/RPO/','mu':'https://w3id.org/italia/onto/MU/','learn':'https://w3id.org/italia/onto/Learning/','cpev':'https://w3id.org/italia/onto/CPEV/','tr':'https://w3id.org/italia/onto/Transparency/','indicator':'https://w3id.org/italia/onto/Indicator/','l0':'https://w3id.org/italia/onto/l0/','clv':'https://w3id.org/italia/onto/CLV/','sm':'https://w3id.org/italia/onto/SM/','ti':'https://w3id.org/italia/onto/TI/','acco':'https://w3id.org/italia/onto/ACCO/','poi':'https://w3id.org/italia/onto/POI/','iot':'https://w3id.org/italia/onto/IoT/','cov':'https://w3id.org/italia/onto/COV/','cpv':'https://w3id.org/italia/onto/CPV/','ro':'https://w3id.org/italia/onto/RO/','smapit':'https://w3id.org/italia/onto/SMAPIT/','gtfs':'http://vocab.gtfs.org/terms#','cis':'https://w3id.org/italia/onto/Cultural-ON/','adms':'http://www.w3.org/ns/adms#','cpsv':'http://purl.org/vocab/cpsv#','qb':'http://purl.org/linked-data/cube#','sdmx-dimension':'http://purl.org/linked-data/sdmx/2009/dimension#','sdmx-measure':'http://purl.org/linked-data/sdmx/2009/measure#','sdmx-attribute':'http://purl.org/linked-data/sdmx/2009/attribute#','aop':'https://w3id.org/italia/onto/AtlasOfPaths/','ch':'https://w3id.org/italia/onto/CulturalHeritage/','prj':'https://w3id.org/italia/onto/Project/','ndc':'https://w3id.org/italia/onto/NDC/'};
 
+
+function litQ(s,lang){
+  s=String(s==null?'':s).replace(/\r/g,'').replace(/\n/g,' ');
+  if(s.indexOf('"')>=0){
+    s=s.replace(/"""/g,'\\\"\\\"\\\"');
+    return lang?'"""'+s+'"""@'+lang:'"""'+s+'"""^^xsd:string';
+  }
+  return lang?'"'+s+'"@'+lang:'"'+s+'"^^xsd:string';
+}
 function buildDeterministicTTL(csvText,ontos,ipa,ente){
   if(!csvText||!csvText.trim())return'';
   if(!ontos||!ontos.length)return'';

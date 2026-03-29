@@ -486,6 +486,15 @@ function sanitizeEmailValue(v){
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v))return null;
   return v;
 }
+
+function litQ(s,lang){
+  s=String(s==null?'':s).replace(/\r/g,'').replace(/\n/g,' ');
+  if(s.indexOf('"')>=0){
+    s=s.replace(/"""/g,'\\\"\\\"\\\"');
+    return lang?'"""'+s+'"""@'+lang:'"""'+s+'"""^^xsd:string';
+  }
+  return lang?'"'+s+'"@'+lang:'"'+s+'"^^xsd:string';
+}
 function detFormatLit(rule,val){
   if(!val&&val!==0)return null;
   val=String(val).trim();if(!val)return null;

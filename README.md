@@ -1,34 +1,62 @@
-# CSV→RDF — Convertitore PA Italiana
+# CSV → RDF/TTL — Linked Open Data per la PA Italiana
 
-Converte CSV della Pubblica Amministrazione italiana in **RDF/Turtle** conforme alle ontologie [dati-semantic-assets](https://github.com/italia/dati-semantic-assets).
-
-🔗 **[Tool online](https://piersoft.github.io/CSV-to-RDF/)** · 📋 **[Guida ontologie](https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html)** · 🔌 **[API](https://csv2rdf.datigovit.workers.dev/)**
+Trasforma i CSV della Pubblica Amministrazione italiana in **RDF/Turtle** conforme alle ontologie ufficiali [dati-semantic-assets](https://github.com/italia/dati-semantic-assets) e ai vocabolari controllati di [schema.gov.it](https://schema.gov.it).
 
 ---
 
-## 📋 CSV di riferimento per ontologia
+## 🔗 Link rapidi
 
-Il tool include **29 CSV di riferimento**, uno per ciascuna ontologia supportata. Selezionabili dal menu "Carica esempio" nell'interfaccia.
+| | |
+|---|---|
+| ⚡ **Tool online** | [piersoft.github.io/CSV-to-RDF](https://piersoft.github.io/CSV-to-RDF/) |
+| 📖 **Guida completa per la PA** | [piersoft.github.io/CSV-to-RDF/guida.html](https://piersoft.github.io/CSV-to-RDF/guida.html) |
+| 📚 **Catalogo dataset ottimali** | [piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html](https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html) |
+| 🔌 **API REST** | [csv2rdf.datigovit.workers.dev](https://csv2rdf.datigovit.workers.dev/) |
 
 ---
 
-## 🚀 Uso rapido
+## ✨ Caratteristiche principali
 
-### Tool web
+- **Zero installazione** — singola pagina HTML, gira nel browser
+- **Rilevamento automatico** delle ontologie da header e valori del CSV
+- **39 template di esempio** coperenti tutti i 13 temi DCAT
+- **330 fixture** di training da CSV PA reali
+- **33 CSV sacri** con test automatici a ogni build
+- **Vocabolari controllati** ufficiali da schema.gov.it (URI tipizzati per forma giuridica, ATECO, sesso, licenze, comuni...)
+- **AI opzionale** (STEP 2) con Mistral, Groq, Gemini per colonne non standard
+- **Link dati.gov.it** (STEP 1 BIS) per arricchire il detect dai metadati DCAT
+
+---
+
+## 🚀 Come funziona
+
 ```
-https://piersoft.github.io/CSV-to-RDF/
+STEP 1   → Carica o incolla il CSV
+STEP 1b  → (opz.) Link dataset su dati.gov.it — migliora il detect
+AUTO     → Rilevamento deterministico delle ontologie
+STEP 2   → (opz.) AI-Detect con chiave API per colonne non standard
+STEP 3   → Inserisci il codice IPA della PA
+STEP 4   → Clicca "Genera TTL" → scarica il file .ttl
 ```
 
-### API REST (Cloudflare Worker)
-```bash
-# Converti URL CSV → Turtle
-curl "https://csv2rdf.datigovit.workers.dev/?url=https://esempio.it/dataset.csv"
+---
 
-# Con opzioni
-curl "https://csv2rdf.datigovit.workers.dev/" \
-  -H "Content-Type: text/csv" \
-  --data-binary @mio_dataset.csv
-```
+## 🗂 Ontologie supportate
+
+Il tool copre **29 ontologie** delle dati-semantic-assets:
+
+| Categoria | Ontologie |
+|---|---|
+| **Geografiche** | CLV, POI, PARK, Route, AtlasOfPaths |
+| **Organizzazioni** | COV, SMAPIT |
+| **Persone** | CPV, RO, RPO |
+| **Temporali** | TI, CPEV |
+| **Dati** | QB, IoT, MU, Indicator |
+| **Servizi PA** | CPSV, PublicContract, Transparency |
+| **Cultura** | CulturalON, CulturalHeritage, Learning |
+| **Trasporti** | GTFS |
+| **Turismo** | ACCO, POT, AccessCondition |
+| **Metadati** | ADMS, NDC, Project |
 
 ---
 
@@ -36,32 +64,53 @@ curl "https://csv2rdf.datigovit.workers.dev/" \
 
 | File | Descrizione |
 |---|---|
-| `index.html` | Tool web completo (single-file) |
-| `worker.js` | Cloudflare Worker API |
-| `fixtures_v9.json` | Corpus 289 dataset PA reali |
-| `dataset-ottimali-PA.html` | Guida visuale alle 29 ontologie |
+| `index.html` | Tool web completo (~5600 righe, single-file) |
+| `worker.js` | Cloudflare Worker — API REST e motore deterministico |
+| `fixtures_v9.json` | Corpus 330 fixture da CSV PA reali (13 temi DCAT) |
+| `dataset-ottimali-PA.html` | Catalogo visuale delle ontologie con esempi colonne |
+| `guida.html` | Guida completa per la PA (7 sezioni, slide-like) |
+| `test_22sacri.mjs` | 33 test automatici del rilevamento ontologie |
 
 ---
 
-## 🔧 Come funziona
+## 🔧 API REST
 
-1. **Carica** il CSV — incolla il testo o carica un file `.csv`, oppure scegli uno dei 29 modelli di esempio per ontologia
-2. **Rilevamento automatico** delle ontologie dai nomi delle colonne e valori campione
-3. **Generazione TTL** deterministico con prefissi, URI, triple e tipi XSD corretti
-4. **Validazione** inline: prefissi, lat/lon, @lang, valori tipizzati
-5. **Scarica** il file `.ttl` o copia negli appunti
+```bash
+# Converti un CSV da URL → Turtle
+curl "https://csv2rdf.datigovit.workers.dev/?url=https://esempio.it/dataset.csv"
 
----
-
-## 📚 Riferimenti
-
-- [Catalog Nazionale Dati Aperti](https://www.dati.gov.it) — L'unico catalogo ufficiale per Legge per i dati aperti della PA italiana
-- [dati-semantic-assets](https://github.com/italia/dati-semantic-assets) — Ontologie ufficiali PA italiana
-- [schema.gov.it](https://schema.gov.it) — National Data Catalog
-- [W3C RDF/Turtle](https://www.w3.org/TR/turtle/) — Specifiche formato
-- [RDF Data Cube](https://www.w3.org/TR/vocab-data-cube/) — Dati statistici
-- [ckan-mcp-server](https://github.com/ondata/ckan-mcp-server/) — MCP server per CKAN, sviluppato da [ondata](https://github.com/ondata) — usato per il proxy SPARQL verso schema.gov.it e per l'addestramento dai CSV presenti su dati.gov.it
+# Converti un file CSV locale
+curl "https://csv2rdf.datigovit.workers.dev/" \
+  -H "Content-Type: text/csv" \
+  --data-binary @mio_dataset.csv
+```
 
 ---
 
-Licenza MIT — Piersoft
+## 🧪 Test automatici
+
+```bash
+node test_22sacri.mjs
+# ✅ OK: 33/33 ❌ Problemi: 0
+# 🎉 TUTTI I 33 CSV SACRI PASSANO IL TEST!
+```
+
+I test verificano che il rilevamento deterministico produca le ontologie corrette per 33 CSV tipici della PA italiana, coprono tutti i 13 temi DCAT (HEAL, TRAN, ENVI, AGRI, JUST, SOCI, EDUC, ENER, REGI, SCIE, GOVE, ECON, TECH).
+
+---
+
+## 📚 Standard e riferimenti
+
+- [dati-semantic-assets](https://github.com/italia/dati-semantic-assets) — Ontologie ufficiali PA italiana (dati-semantic-assets)
+- [schema.gov.it](https://schema.gov.it) — Catalogo Nazionale Dati: 336 risorse (73 ontologie, 168 vocabolari, 95 schemi)
+- [dati.gov.it](https://www.dati.gov.it) — Catalogo nazionale open data PA
+- [DCAT-AP_IT](https://docs.italia.it/italia/daf/linee-guida-cataloghi-dati-dcat-ap-it/) — Profilo italiano DCAT
+- [W3C RDF/Turtle](https://www.w3.org/TR/turtle/) — Specifiche formato output
+- [RDF Data Cube](https://www.w3.org/TR/vocab-data-cube/) — Dati statistici aggregati
+- [ckan-mcp-server](https://github.com/ondata/ckan-mcp-server/) — MCP server CKAN di [ondata](https://github.com/ondata)
+
+---
+
+## 📄 Licenza
+
+MIT — [Piersoft](https://github.com/piersoft)

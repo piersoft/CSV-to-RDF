@@ -651,7 +651,7 @@ function detectOntologiesDeterministic(headers, rows) {
   // P4-FIX: "istituto" generico (banche, sanità, cultura) NON è SMAPIT
   if(has(['codice_scuola','codicescuola','denominazione_scuola','tipo_scuola','ciclo_scolastico',
           'ordine_scuola','grado_scolastico','codice_meccanografico']) ||
-     (has(['scuola','liceo','comprensivo','istruzione']) && !has(['cig','importo','appalto','museo','biblioteca','ospedale','banca','dae','defibrillatore','aed'])))
+     (has(['scuola','liceo','comprensivo','istruzione']) && !has(['cig','importo','appalto','museo','biblioteca','ospedale','banca','dae','defibrillatore','aed']) && !allText.includes('dae-') && !allText.includes('defibrillator')))
     result.add('SMAPIT');
 
   // ACCO — strutture ricettive con varianti PA regionali

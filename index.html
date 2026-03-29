@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.27.98 -->
+  <!-- build:v2026.03.27.99 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -740,7 +740,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.27.98</span>
+<span id="app-version">v2026.03.27.99</span>
 </footer>
 
 <script>
@@ -5082,8 +5082,14 @@ function updateStats(ttl) {
   var _out = document.getElementById('ttl-output');
   var _ipa = (document.getElementById('meta-ipa')||{value:'ipa'}).value.trim()||'ipa';
   if (_out && _out.value) {
-    _out.value = cleanTTL(_out.value);
-    ttl = _out.value;
+    // Non applicare cleanTTL al TTL generato da buildDeterministicTTL:
+    // removeDuplicatePredicates rimuoverebbe geo:lat/geo:long dal nodo
+    // clv:Address perché li trova già nelle triple del soggetto principale.
+    var _skipClean = _out.value.includes('a clv:Address');
+    if (!_skipClean) {
+      _out.value = cleanTTL(_out.value);
+      ttl = _out.value;
+    }
     if (_mc && _mc !== 'l0:Object' && !_out.value.includes(_mc)) {
       var _seg = getEntityTypeSegment(_ontos);
       var _base = 'https://w3id.org/italia/data/' + _ipa + '/' + _seg + '/';

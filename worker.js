@@ -1144,11 +1144,11 @@ function buildDeterministicTriples(cols, rows, entityBase, deterMappings, typeSe
       } else if (m.type === 'boolean') {
         // Per booleani si/no include il nome colonna per chiarezza
         const label = col.replace(/_/g, ' ').toLowerCase();
-        triples.push(`    ${m.prop} "${label}: ${val.replace(/"/g, "'")}"@it`);
+        triples.push(`    ${m.prop} "${label}: ${val.replace(/"/g, '\\"')}"@it`);
       } else if (m.type === '@it') {
-        triples.push(`    ${m.prop} "${val.replace(/"/g, "'")}"@it`);
+        triples.push(`    ${m.prop} "${val.replace(/"/g, '\\"')}"@it`);
       } else {
-        triples.push(`    ${m.prop} "${val.replace(/"/g, "'")}"^^xsd:string`);
+        triples.push(`    ${m.prop} "${val.replace(/"/g, '\\"')}"^^xsd:string`);
       }
     }
     if (triples.length > 0) {
@@ -1213,7 +1213,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       if(!val||normH==='id')return;
       var rule=detFindRule(normH,ontos);
       if(rule&&rule.type==='_clvnode')return; // gestito da addrMap come nodo clv:Address
-      if(!rule){var _n=detNormH(origH);if(_n==='_skip'||_n.startsWith('_'))return;if(val)triples.push({pred:'rdfs:comment',val:'"'+origH+': '+val.replace(/"/g,"'")+('"@it'),raw:true,unmapped:true});return;}
+      if(!rule){var _n=detNormH(origH);if(_n==='_skip'||_n.startsWith('_'))return;if(val)triples.push({pred:'rdfs:comment',val:'"'+origH+': '+val.replace(/"/g,'\\"' )+('"@it'),raw:true,unmapped:true});return;}
       if(rule.type==='skip')return;      var litVal=detFormatLit(rule,val);
       if(litVal)triples.push({pred:rule.pred,val:litVal,raw:true});
     });
@@ -1236,7 +1236,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       var addrMap={indirizzo:'clv:fullAddress',via:'clv:fullAddress',strada:'clv:fullAddress',cap:'clv:postCode',ubicazione_esercizio:'clv:fullAddress',indirizzo_esercizio:'clv:fullAddress'};
       Object.keys(addrMap).forEach(function(col){
         var xi=nh.indexOf(col);
-        if(xi>=0&&row[xi]&&row[xi].trim()){var v=row[xi].trim().replace(/"/g,"'");addrTriples.push({pred:addrMap[col],val:dq+v+dq+'@it'});}
+        if(xi>=0&&row[xi]&&row[xi].trim()){var v=row[xi].trim().replace(/"/g,'\\"');addrTriples.push({pred:addrMap[col],val:dq+v+dq+'@it'});}
       });
       var latI=nh.indexOf('lat'),lonI=nh.indexOf('lon');
       if(latI>=0&&row[latI])addrTriples.push({pred:'geo:lat',val:dq+row[latI].trim()+dq+'^^xsd:decimal'});
@@ -1256,7 +1256,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       var poiURI=base+'point-of-interest/'+idVal;
       var poiTriples=[];
       var labelI2=nh.indexOf('denominazione');if(labelI2<0)labelI2=nh.indexOf('nome');
-      if(labelI2>=0&&row[labelI2])poiTriples.push({pred:'rdfs:label',val:dq+(row[labelI2]||'').trim().replace(/"/g,"'")+dq+'@it'});
+      if(labelI2>=0&&row[labelI2])poiTriples.push({pred:'rdfs:label',val:dq+(row[labelI2]||'').trim().replace(/"/g,'\\"')+dq+'@it'});
       var idAreaI=nh.indexOf('id_area');if(idAreaI<0)idAreaI=nh.indexOf('id_punto');if(idAreaI<0)idAreaI=nh.indexOf('codice_stazione');
       if(idAreaI>=0&&row[idAreaI])poiTriples.push({pred:'dct:identifier',val:dq+(row[idAreaI]||'').trim()+dq});
       var latIp=nh.indexOf('lat');if(latIp<0)latIp=nh.indexOf('latitude');
@@ -1275,7 +1275,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
     if(ontos.indexOf('MU')>=0) {
       var unitaI=nh.indexOf('unita_misura');if(unitaI<0)unitaI=nh.indexOf('unita_di_misura');if(unitaI<0)unitaI=nh.indexOf('unit_of_measure');
       if(unitaI>=0&&row[unitaI]&&row[unitaI].trim()) {
-        var unitaV=(row[unitaI]||'').trim().replace(/"/g,"'");
+        var unitaV=(row[unitaI]||'').trim().replace(/"/g,'\\"');
         var numVal2='';
         nh.forEach(function(h,i){
           if(numVal2)return;

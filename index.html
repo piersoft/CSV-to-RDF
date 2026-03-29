@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.27.79 -->
+  <!-- build:v2026.03.27.80 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -718,7 +718,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.27.79</span>
+<span id="app-version">v2026.03.27.80</span>
 </footer>
 
 <script>
@@ -2026,6 +2026,21 @@ const WORKER_BASE = 'https://csv2rdf.datigovit.workers.dev';
 
 // ── MAPPA THEME DCAT → ontologie da ESCLUDERE (falsi positivi) ──────────
 // Non decide le ontologie — filtra solo quelle chiaramente incompatibili
+const THEME_SUGGEST = {
+  'HEAL': ['POI','CLV','SM','TI'],           // Salute → POI (DAE, farmacie, ospedali)
+  'ENVI': ['IOT','CLV','POI','MU'],           // Ambiente → sensori IoT, misure
+  'TRAN': ['GTFS','CLV','POI','Route'],       // Trasporti → fermate, percorsi
+  'REGI': ['CLV','QB'],                       // Regioni/territorio → indirizzi, statistiche
+  'ECON': ['QB','COV'],                       // Economia → dati statistici, organizzazioni
+  'SOCI': ['CPV','QB','RPO'],                 // Società → persone, statistiche
+  'EDUC': ['SMAPIT','CLV','Learning'],        // Istruzione → scuole, corsi
+  'GOVE': ['COV','CLV'],                      // Governo → organizzazioni PA
+  'JUST': ['COV','CPV'],                      // Giustizia → persone, organizzazioni
+  'AGRI': ['CLV','MU','QB'],                  // Agricoltura → misure, territorio
+  'ENER': ['IOT','MU','QB'],                  // Energia → sensori, misure
+  'TECH': ['IOT','ADMS','NDC'],               // Tecnologia → asset semantici, IoT
+  'SCIE': ['MU','IOT','QB'],                  // Scienza → misure, osservazioni
+};
 const THEME_EXCLUDE = {
   'HEAL': ['GTFS','SMAPIT','PARK','ACCO','Route','AtlasOfPaths','Learning','PublicContract','NDC','IoT','Indicator','QB','CPEV','CulturalHeritage','MU'],
   'TRAN': ['QB','SMAPIT','ADMS','Transparency','RPO','CulturalHeritage'],
@@ -2111,14 +2126,26 @@ async function fetchDatiGovContext() {
     const tags = (pkg.tags || []).map(t => t.name.toLowerCase());
     const groups = (pkg.groups || []).map(g => g.name.toLowerCase());
     const extras = pkg.extras || [];
-    const themeRaw = extras.find(e => e.key === 'theme');
+    // Legge themes_aggregate dalla root (campo corretto DCAT-AP_IT)
+    // fallback a extras.theme per retrocompatibilità
     let themes = [];
-    try { themes = JSON.parse(themeRaw?.value || '[]'); } catch(e) { themes = []; }
+    try {
+      if (pkg.themes_aggregate) {
+        // themes_aggregate è una stringa JSON: [{"theme":"HEAL","subthemes":[]},...]
+        const ta = JSON.parse(pkg.themes_aggregate);
+        themes = ta.map(t => t.theme).filter(Boolean);
+      }
+      if (!themes.length) {
+        const themeRaw = extras.find(e => e.key === 'theme');
+        themes = JSON.parse(themeRaw?.value || '[]');
+      }
+    } catch(e) { themes = []; }
 
     // Calcola ontologie da escludere (unione di tutte le exclusion per i temi trovati)
     const exclude = new Set();
     themes.forEach(function(th) {
       (THEME_EXCLUDE[th] || []).forEach(function(o) { exclude.add(o); });
+      (THEME_SUGGEST[th] || []).forEach(function(o) { suggested.add(o); });
     });
 
     // Calcola ontologie suggerite dai tag

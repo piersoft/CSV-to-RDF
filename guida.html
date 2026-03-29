@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guida — CSV → RDF Linked Open Data PA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blu:    #0d3b6e;
+  --blu2:   #1a5fa8;
+  --verde:  #1a6b35;
+  --ambra:  #d97706;
+  --rosso:  #c0392b;
+  --grigio: #f5f6fa;
+  --testo:  #1a1a2e;
+  --mono:   'DM Mono', monospace;
+  --sans:   'DM Sans', sans-serif;
+  --display:'Syne', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--grigio);
+  color: var(--testo);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+/* ── HEADER HERO ── */
+.hero {
+  background: linear-gradient(135deg, var(--blu) 0%, #1e3a5f 60%, #0a2540 100%);
+  color: #fff;
+  padding: 3rem 2rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 80% 20%, rgba(26,95,168,.4) 0%, transparent 60%);
+}
+.hero .container { max-width: 900px; margin: 0 auto; position: relative; }
+.hero .badge-row { display: flex; gap: .5rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+.badge {
+  display: inline-block;
+  padding: .2rem .6rem;
+  border-radius: 3px;
+  font-family: var(--mono);
+  font-size: .72rem;
+  font-weight: 500;
+  letter-spacing: .04em;
+}
+.badge-lod   { background: #e67e22; color: #fff; }
+.badge-dcat  { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.3); }
+.badge-ndc   { background: var(--verde); color: #fff; }
+
+.hero h1 {
+  font-family: var(--display);
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: .7rem;
+}
+.hero h1 span { color: #f59e0b; }
+.hero p.sub {
+  font-size: 1rem;
+  opacity: .85;
+  max-width: 640px;
+  margin-bottom: 1.5rem;
+}
+.hero .link-row { display: flex; gap: .8rem; flex-wrap: wrap; }
+.hero a.btn {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .5rem 1.1rem;
+  border-radius: 5px;
+  font-size: .82rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: opacity .15s;
+}
+.hero a.btn:hover { opacity: .85; }
+.btn-primary { background: #f59e0b; color: #000; }
+.btn-outline  { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.45); }
+
+/* ── NAV PILL ── */
+.nav-pills {
+  background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky; top: 0; z-index: 50;
+}
+.nav-pills .container {
+  max-width: 900px; margin: 0 auto;
+  display: flex; gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.nav-pills .container::-webkit-scrollbar { display: none; }
+.nav-pills a {
+  padding: .75rem 1.1rem;
+  white-space: nowrap;
+  font-size: .8rem;
+  font-weight: 500;
+  color: #64748b;
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+  transition: all .15s;
+}
+.nav-pills a:hover { color: var(--blu2); border-color: var(--blu2); }
+
+/* ── MAIN LAYOUT ── */
+main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+/* ── SEZIONI ── */
+.sezione {
+  margin-bottom: 3rem;
+  scroll-margin-top: 60px;
+}
+.sezione-title {
+  font-family: var(--display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--blu);
+  border-left: 4px solid var(--ambra);
+  padding-left: .8rem;
+  margin-bottom: 1.2rem;
+}
+.sezione > p { color: #475569; margin-bottom: 1rem; max-width: 720px; }
+
+/* ── SLIDE CARD ── */
+.card {
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  padding: 1.4rem 1.6rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+.card.accent-verde  { border-left: 4px solid var(--verde); }
+.card.accent-blu    { border-left: 4px solid var(--blu2); }
+.card.accent-ambra  { border-left: 4px solid var(--ambra); }
+.card.accent-rosso  { border-left: 4px solid var(--rosso); }
+
+.card h3 {
+  font-family: var(--display);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: .5rem;
+  display: flex; align-items: center; gap: .4rem;
+}
+.card p { color: #475569; font-size: .9rem; margin-bottom: .6rem; }
+.card p:last-child { margin-bottom: 0; }
+
+/* ── STEP FLOW ── */
+.step-flow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: .8rem;
+  margin-bottom: 1.2rem;
+}
+.step-box {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  position: relative;
+}
+.step-box .num {
+  display: inline-block;
+  width: 28px; height: 28px;
+  background: var(--blu);
+  color: #fff;
+  border-radius: 50%;
+  font-family: var(--mono);
+  font-size: .8rem;
+  font-weight: 700;
+  line-height: 28px;
+  margin-bottom: .5rem;
+}
+.step-box .num.optional { background: var(--ambra); }
+.step-box .label { font-size: .82rem; font-weight: 600; color: var(--testo); margin-bottom: .2rem; }
+.step-box .desc  { font-size: .75rem; color: #64748b; }
+
+/* ── CODE BLOCK ── */
+pre, code {
+  font-family: var(--mono);
+  font-size: .82rem;
+}
+pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 1rem 1.2rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: .8rem 0;
+  line-height: 1.6;
+}
+pre .ok   { color: #86efac; }
+pre .bad  { color: #fca5a5; }
+pre .cmt  { color: #94a3b8; font-style: italic; }
+pre .hl   { color: #fbbf24; }
+code { background: #f1f5f9; padding: .1rem .35rem; border-radius: 3px; color: var(--blu); }
+
+/* ── TABELLA ── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .85rem;
+  margin: .8rem 0;
+}
+th {
+  background: var(--blu);
+  color: #fff;
+  padding: .5rem .8rem;
+  text-align: left;
+  font-family: var(--mono);
+  font-size: .78rem;
+  font-weight: 500;
+}
+td {
+  padding: .5rem .8rem;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: top;
+}
+tr:hover td { background: #f8fafc; }
+.tag-si  { background: #dcfce7; color: #166534; padding: .1rem .4rem; border-radius: 3px; font-size: .75rem; font-family: var(--mono); }
+.tag-no  { background: #fee2e2; color: #991b1b; padding: .1rem .4rem; border-radius: 3px; font-size: .75rem; font-family: var(--mono); }
+.tag-forse { background: #fef9c3; color: #854d0e; padding: .1rem .4rem; border-radius: 3px; font-size: .75rem; font-family: var(--mono); }
+
+/* ── CHECKLIST ── */
+.checklist { list-style: none; margin: .6rem 0; }
+.checklist li {
+  padding: .3rem 0 .3rem 1.8rem;
+  position: relative;
+  font-size: .9rem;
+  color: #334155;
+}
+.checklist li::before {
+  content: '✓';
+  position: absolute; left: 0;
+  color: var(--verde);
+  font-weight: 700;
+}
+.checklist li.warn::before { content: '⚠'; color: var(--ambra); }
+.checklist li.bad::before  { content: '✗'; color: var(--rosso); }
+
+/* ── HIGHLIGHT BOX ── */
+.box {
+  border-radius: 6px;
+  padding: .9rem 1.1rem;
+  margin: .8rem 0;
+  font-size: .88rem;
+}
+.box.verde  { background: #f0fdf4; border: 1px solid #bbf7d0; color: #14532d; }
+.box.ambra  { background: #fffbeb; border: 1px solid #fde68a; color: #78350f; }
+.box.blu    { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; }
+.box.rosso  { background: #fef2f2; border: 1px solid #fecaca; color: #7f1d1d; }
+.box strong { font-weight: 600; }
+
+/* ── TWO COL ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+
+/* ── AI METER ── */
+.ai-meter {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  margin: .8rem 0;
+}
+.ai-meter .row {
+  display: flex; align-items: center; gap: .8rem;
+  margin-bottom: .5rem;
+}
+.ai-meter .row:last-child { margin-bottom: 0; }
+.ai-meter .label { font-size: .8rem; width: 180px; flex-shrink: 0; color: #475569; }
+.ai-meter .bar-bg {
+  flex: 1; height: 8px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.ai-meter .bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--blu2);
+}
+.ai-meter .score {
+  font-family: var(--mono); font-size: .75rem;
+  color: #64748b; width: 30px; text-align: right;
+}
+
+/* ── FOOTER ── */
+footer {
+  background: var(--blu);
+  color: rgba(255,255,255,.7);
+  text-align: center;
+  padding: 1.5rem;
+  font-size: .8rem;
+}
+footer a { color: #f59e0b; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="container">
+    <div class="badge-row">
+      <span class="badge badge-lod">LOD</span>
+      <span class="badge badge-dcat">DCAT-AP_IT</span>
+      <span class="badge badge-ndc">dati-semantic-assets</span>
+    </div>
+    <h1>Da CSV a <span>Linked Open Data</span><br>Guida pratica per la PA</h1>
+    <p class="sub">Tutto ciò che serve per costruire o migliorare un CSV e generare TTL semanticamente corretto, conforme alle ontologie italiane ufficiali.</p>
+    <div class="link-row">
+      <a href="https://piersoft.github.io/CSV-to-RDF/" class="btn btn-primary" target="_blank">⚡ Apri il tool</a>
+      <a href="dataset-ottimali-PA.html" class="btn btn-outline" target="_blank">📚 Catalogo dataset ottimali</a>
+    </div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav-pills">
+  <div class="container">
+    <a href="#come-funziona">Come funziona</a>
+    <a href="#partire-da-zero">Partire da zero</a>
+    <a href="#migliorare-csv">Migliorare un CSV</a>
+    <a href="#quando-ai">Quando usare l'AI</a>
+    <a href="#intestazioni">Intestazioni chiave</a>
+    <a href="#metodologia">Metodologia</a>
+    <a href="#errori-comuni">Errori comuni</a>
+  </div>
+</nav>
+
+<main>
+
+<!-- ══ 1. COME FUNZIONA ══ -->
+<section class="sezione" id="come-funziona">
+  <h2 class="sezione-title">1 — Come funziona il tool</h2>
+  <p>Il tool trasforma un CSV della PA in RDF/Turtle (TTL) conforme alle ontologie di <strong>dati-semantic-assets</strong>. Non richiede installazione: è una singola pagina HTML che gira nel browser.</p>
+
+  <div class="step-flow">
+    <div class="step-box">
+      <div class="num">1</div>
+      <div class="label">Carica il CSV</div>
+      <div class="desc">Incolla o trascina il file. Separatori , ; tab pipe tutti supportati.</div>
+    </div>
+    <div class="step-box">
+      <div class="num optional">1b</div>
+      <div class="label">Link dati.gov.it</div>
+      <div class="desc">Opzionale. Legge temi DCAT e migliora il rilevamento automatico.</div>
+    </div>
+    <div class="step-box">
+      <div class="num" style="background:var(--verde)">AUTO</div>
+      <div class="label">Detect ontologie</div>
+      <div class="desc">Il motore deterministico analizza header e valori e suggerisce le ontologie.</div>
+    </div>
+    <div class="step-box">
+      <div class="num optional">2</div>
+      <div class="label">AI-Detect</div>
+      <div class="desc">Opzionale. Migliora la mappatura colonne non standard.</div>
+    </div>
+    <div class="step-box">
+      <div class="num">3</div>
+      <div class="label">Codice IPA</div>
+      <div class="desc">Es. c_a662. Costruisce gli URI RDF univoci della PA.</div>
+    </div>
+    <div class="step-box">
+      <div class="num">4</div>
+      <div class="label">Genera TTL</div>
+      <div class="desc">Output RDF/Turtle scaricabile, validabile, pubblicabile su dati.gov.it.</div>
+    </div>
+  </div>
+
+  <div class="box blu">
+    <strong>Principio chiave:</strong> le ontologie rilevate (o scelte manualmente) <strong>comandano</strong> la generazione TTL. Se il detect suggerisce POI+CLV, il TTL conterrà <code>poi:PointOfInterest</code> con <code>clv:hasAddress</code>. Se le ontologie sono sbagliate, il TTL sarà sbagliato: verificale sempre prima di generare.
+  </div>
+</section>
+
+<!-- ══ 2. PARTIRE DA ZERO ══ -->
+<section class="sezione" id="partire-da-zero">
+  <h2 class="sezione-title">2 — Partire da zero: costruire un CSV "decente"</h2>
+  <p>Se la tua PA non ha ancora un CSV, segui questa metodologia per costruirne uno che generi un TTL completo e semanticamente ricco.</p>
+
+  <div class="card accent-verde">
+    <h3>📋 Passo 1 — Identifica il tipo di dataset</h3>
+    <p>Prima di tutto: <em>cosa stai pubblicando?</em> Consulta il <a href="dataset-ottimali-PA.html" target="_blank">catalogo dei dataset ottimali</a> e scegli il template più adatto al tuo caso.</p>
+    <table>
+      <tr><th>Tipo di dato</th><th>Ontologie principali</th><th>Colonne obbligatorie</th></tr>
+      <tr><td>Luoghi fisici (DAE, farmacie, uffici)</td><td>POI + CLV</td><td>nome, indirizzo, lat, lon</td></tr>
+      <tr><td>Organizzazioni, enti PA</td><td>COV + CLV</td><td>denominazione, codice_ipa, comune</td></tr>
+      <tr><td>Statistiche, dati aggregati</td><td>QB + CLV</td><td>anno, comune, valore numerico</td></tr>
+      <tr><td>Scuole, istituti</td><td>SMAPIT + CLV + SM</td><td>codice_meccanografico, nome_istituto, lat, lon, telefono</td></tr>
+      <tr><td>Strutture ricettive</td><td>ACCO + CLV</td><td>nome, stelle, posti_letto, indirizzo</td></tr>
+      <tr><td>Sensori / misure ambientali</td><td>IoT + CLV + POI + TI</td><td>stazione_id, data, lat, lon, valore_misurato</td></tr>
+      <tr><td>Fermate TPL</td><td>GTFS + CLV</td><td>stop_id, stop_name, stop_lat, stop_lon</td></tr>
+      <tr><td>Persone (anagrafe)</td><td>CPV + CLV</td><td>cognome, nome, codice_fiscale, comune</td></tr>
+    </table>
+  </div>
+
+  <div class="card accent-blu">
+    <h3>📐 Passo 2 — Scegli le intestazioni giuste</h3>
+    <p>Le intestazioni delle colonne <strong>determinano tutto</strong>: il tool le riconosce e le mappa su proprietà ontologiche ufficiali. Usa i nomi standard riportati in questa guida (sezione <a href="#intestazioni">Intestazioni chiave</a>). Esempio per un dataset di defibrillatori:</p>
+    <pre><span class="ok">✓ BUONO:</span>  id,nome,indirizzo,modello,lat,lon,stato
+<span class="bad">✗ EVITA:</span>  ID,Nome_Punto,Luogo,Tipo_DAE,Latitudine,Longitudine,Funzionante</pre>
+    <p style="margin-top:.5rem">La seconda riga usa nomi non standard: il tool li metterà in <code>rdfs:comment</code> invece di proprietà ontologiche corrette.</p>
+  </div>
+
+  <div class="card accent-ambra">
+    <h3>🗺 Passo 3 — Includi sempre le coordinate</h3>
+    <p>Se il tuo dataset ha una componente geografica (quasi sempre nella PA locale), includi <strong>lat</strong> e <strong>lon</strong> come colonne separate. Questo attiva automaticamente POI e CLV.</p>
+    <pre><span class="bad">✗ EVITA:</span>  geo_point
+           44.4938, 11.3430      <span class="cmt">&lt;-- tutto in una cella, non riconosciuto</span>
+
+<span class="ok">✓ CORRETTO:</span>  lat,lon
+              44.4938,11.3430    <span class="cmt">&lt;-- due colonne separate, riconosciuto subito</span></pre>
+  </div>
+
+  <div class="card accent-verde">
+    <h3>✅ Template CSV minimale per dataset POI (luoghi fisici)</h3>
+    <pre><span class="hl">id,nome,tipo,indirizzo,comune,lat,lon,telefono,email,note</span>
+1,Farmacia Centrale,farmacia,Via Roma 10,Bari,41.1171,16.8719,0801234567,farmacia@mail.it,aperta 24h
+2,Defibrillatore Municipio,DAE,Piazza del Comune 1,Bari,41.1253,16.8620,,, funzionante</pre>
+    <ul class="checklist">
+      <li>id → identificatore univoco (usato per costruire l'URI RDF)</li>
+      <li>nome → <code>rdfs:label</code> — il nome leggibile del soggetto</li>
+      <li>tipo → <code>dct:type</code> — categoria del punto di interesse</li>
+      <li>indirizzo → <code>clv:fullAddress</code> nel nodo <code>clv:Address</code></li>
+      <li>lat, lon → <code>geo:lat</code> / <code>geo:long</code> con tipo <code>xsd:decimal</code></li>
+      <li>telefono → <code>sm:hasTelephone</code></li>
+      <li>email → <code>sm:hasEmail</code> con URI <code>mailto:</code></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ══ 3. MIGLIORARE UN CSV ESISTENTE ══ -->
+<section class="sezione" id="migliorare-csv">
+  <h2 class="sezione-title">3 — Migliorare un CSV esistente</h2>
+  <p>Hai già un CSV pubblicato e vuoi aumentare la qualità del TTL generato? Segui questa checklist.</p>
+
+  <div class="two-col">
+    <div class="card accent-rosso">
+      <h3>❌ Problemi frequenti nei CSV PA</h3>
+      <ul class="checklist">
+        <li class="bad">Coordinate in una sola cella ("44.56, 11.27")</li>
+        <li class="bad">Intestazioni generiche (col1, col2, valore)</li>
+        <li class="bad">Separatore ; invece di ,</li>
+        <li class="bad">Encoding ISO-8859 invece di UTF-8</li>
+        <li class="bad">Valori misti (numeri e testo nella stessa colonna)</li>
+        <li class="bad">Colonna "id" con valori come 1, 2, 3 mappata su rdfs:label</li>
+        <li class="bad">Indirizzo, via, comune, cap tutti in una colonna sola</li>
+      </ul>
+    </div>
+    <div class="card accent-verde">
+      <h3>✓ Fix rapidi ad alto impatto</h3>
+      <ul class="checklist">
+        <li>Dividi "Geo Point" → colonne lat e lon separate</li>
+        <li>Rinomina le intestazioni con i nomi standard (vedi tabella)</li>
+        <li>Converti in UTF-8 da LibreOffice: Salva con nome → UTF-8</li>
+        <li>Rinomina "id" in "codice" o "codice_identificativo"</li>
+        <li>Separa indirizzo in: via, civico, comune, cap, provincia</li>
+        <li>Aggiungi colonne lat/lon se hai indirizzi (geocodifica)</li>
+        <li>Usa punto decimale, non virgola (40.604 non 40,604)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card accent-blu">
+    <h3>🔍 Come leggere gli avvisi del validatore</h3>
+    <p>Dopo aver caricato il CSV, usa il pulsante <strong>"Valida"</strong>. Gli avvisi indicano cosa migliorare:</p>
+    <table>
+      <tr><th>Avviso</th><th>Causa</th><th>Fix</th></tr>
+      <tr><td>⚠ rdfs:label con valore numerico</td><td>Una colonna numerica finisce come etichetta</td><td>Rinomina la colonna o aggiungi una colonna "nome" testuale</td></tr>
+      <tr><td>⚠ N colonne non mappate → rdfs:comment</td><td>Intestazioni non standard</td><td>Rinomina con i nomi standard O usa l'AI (STEP 2)</td></tr>
+      <tr><td>⚠ Colonna "Geo Point" con lat/lon unificati</td><td>Coordinate in una cella</td><td>Dividi in due colonne lat e lon</td></tr>
+      <tr><td>❌ Encoding problematico</td><td>File ISO-8859, non UTF-8</td><td>Riesporta da Excel/LibreOffice scegliendo UTF-8</td></tr>
+      <tr><td>❌ Coordinate fuori range</td><td>Virgola usata come decimale</td><td>Sostituisci , con . nei valori numerici</td></tr>
+    </table>
+  </div>
+
+  <div class="box ambra">
+    <strong>Regola pratica:</strong> se il TTL generato ha molte righe <code>rdfs:comment "COLONNA: valore"@it</code>, significa che quelle colonne non sono state riconosciute. Rinominale con i nomi standard o attiva l'AI per gestirle.
+  </div>
+</section>
+
+<!-- ══ 4. QUANDO USARE L'AI ══ -->
+<section class="sezione" id="quando-ai">
+  <h2 class="sezione-title">4 — Quando conviene usare l'AI (STEP 2)</h2>
+  <p>Il motore deterministico funziona istantaneamente e copre la grande maggioranza dei CSV PA standard. L'AI entra in gioco quando le colonne sono specifiche di dominio o non standard.</p>
+
+  <div class="ai-meter">
+    <div class="row">
+      <div class="label">CSV con intestazioni standard</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:95%;background:var(--verde)"></div></div>
+      <div class="score">95%</div>
+    </div>
+    <div class="row">
+      <div class="label">CSV con intestazioni in inglese</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:70%;background:var(--ambra)"></div></div>
+      <div class="score">70%</div>
+    </div>
+    <div class="row">
+      <div class="label">CSV di dominio specifico (sanitario, agricolo)</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:45%;background:var(--ambra)"></div></div>
+      <div class="score">45%</div>
+    </div>
+    <div class="row">
+      <div class="label">CSV con intestazioni abbreviate o codificate</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:20%;background:var(--rosso)"></div></div>
+      <div class="score">20%</div>
+    </div>
+    <p style="font-size:.75rem;color:#94a3b8;margin-top:.6rem">Copertura stimata del motore deterministico senza AI</p>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <h3>✅ Usa il deterministico (senza AI) quando:</h3>
+      <ul class="checklist">
+        <li>Il CSV usa intestazioni italiane standard (nome, indirizzo, lat, lon...)</li>
+        <li>Il dataset è uno dei 39 tipi nel menu esempi</li>
+        <li>Il validatore mostra 0 colonne non mappate</li>
+        <li>Il TTL atteso ha &lt; 50 triple per soggetto</li>
+        <li>Vuoi velocità massima (generazione istantanea)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🤖 Attiva l'AI (STEP 2) quando:</h3>
+      <ul class="checklist">
+        <li>Hai ≥ 3 colonne non mappate (avviso nel validatore)</li>
+        <li>Le intestazioni sono abbreviazioni o codici (es. UO_AMM, COD_PRES)</li>
+        <li>Il dominio è specifico (sanitario, agricolo, giudiziario)</li>
+        <li>Vuoi la mappatura più precisa possibile</li>
+        <li>Il CSV ha intestazioni in inglese o miste</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="box verde">
+    <strong>Provider AI supportati:</strong> Mistral (gratuito con chiave API), Groq (veloce, gratuito), Google Gemini. La chiave API va inserita nello STEP 2 — non viene salvata. Senza chiave la generazione è comunque disponibile, solo senza AI.
+  </div>
+</section>
+
+<!-- ══ 5. INTESTAZIONI CHIAVE ══ -->
+<section class="sezione" id="intestazioni">
+  <h2 class="sezione-title">5 — Intestazioni chiave riconosciute</h2>
+  <p>Queste intestazioni vengono mappate automaticamente su proprietà ontologiche ufficiali. Usarle correttamente è il modo più semplice per ottenere un TTL ricco senza AI.</p>
+
+  <div class="card accent-blu">
+    <h3>📍 Colonne geografiche → CLV + POI</h3>
+    <table>
+      <tr><th>Intestazione CSV</th><th>Proprietà RDF</th><th>Note</th></tr>
+      <tr><td><code>lat</code> / <code>latitudine</code></td><td><code>geo:lat</code></td><td>Punto decimale, es. 41.117</td></tr>
+      <tr><td><code>lon</code> / <code>longitudine</code></td><td><code>geo:long</code></td><td>Punto decimale, es. 16.871</td></tr>
+      <tr><td><code>indirizzo</code></td><td><code>clv:fullAddress</code></td><td>Su nodo clv:Address</td></tr>
+      <tr><td><code>comune</code></td><td><code>clv:hasCity</code></td><td>Skippa nella generazione URI</td></tr>
+      <tr><td><code>citta</code> / <code>città</code></td><td><code>clv:hasCity</code></td><td>Alias di comune</td></tr>
+      <tr><td><code>cap</code></td><td><code>clv:postCode</code></td><td>Codice postale</td></tr>
+      <tr><td><code>codice_comune</code></td><td><code>dct:spatial</code></td><td>URI vocabolario comuni ISTAT</td></tr>
+    </table>
+  </div>
+
+  <div class="card accent-verde">
+    <h3>🏢 Colonne organizzazione → COV</h3>
+    <table>
+      <tr><th>Intestazione CSV</th><th>Proprietà RDF</th></tr>
+      <tr><td><code>codice_ipa</code></td><td><code>cov:IPAcode</code></td></tr>
+      <tr><td><code>partita_iva</code></td><td><code>cov:VATnumber</code></td></tr>
+      <tr><td><code>ragione_sociale</code> / <code>denominazione</code></td><td><code>cov:legalName</code></td></tr>
+      <tr><td><code>nome_centro</code> / <code>nome_struttura</code></td><td><code>cov:legalName</code></td></tr>
+      <tr><td><code>forma_giuridica</code></td><td><code>cov:hasLegalStatus</code> + URI vocabolario</td></tr>
+      <tr><td><code>codice_ateco</code></td><td><code>cov:hasActivityType</code> + URI vocabolario ATECO</td></tr>
+    </table>
+  </div>
+
+  <div class="card accent-ambra">
+    <h3>📞 Contatti → SM</h3>
+    <table>
+      <tr><th>Intestazione CSV</th><th>Proprietà RDF</th></tr>
+      <tr><td><code>email</code></td><td><code>sm:hasEmail</code> (URI mailto:)</td></tr>
+      <tr><td><code>telefono</code> / <code>cellulare</code></td><td><code>sm:hasTelephone</code></td></tr>
+      <tr><td><code>sitoweb</code> / <code>sito_web</code></td><td><code>sm:hasWebSite</code> (URI)</td></tr>
+      <tr><td><code>pec</code></td><td><code>sm:hasEmail</code></td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>📅 Colonne temporali → TI</h3>
+    <table>
+      <tr><th>Intestazione CSV</th><th>Proprietà RDF</th></tr>
+      <tr><td><code>data</code></td><td><code>ti:startTime</code> (xsd:date)</td></tr>
+      <tr><td><code>data_inizio</code> / <code>inizio</code></td><td><code>ti:startTime</code></td></tr>
+      <tr><td><code>data_fine</code> / <code>termine</code></td><td><code>ti:endTime</code></td></tr>
+      <tr><td><code>data_nascita</code></td><td><code>cpv:dateOfBirth</code></td></tr>
+      <tr><td><code>anno</code> / <code>mese</code></td><td><code>sdmx-dimension:refPeriod</code></td></tr>
+    </table>
+  </div>
+
+  <div class="card accent-verde">
+    <h3>📊 Colonne statistiche → QB</h3>
+    <table>
+      <tr><th>Intestazione CSV</th><th>Proprietà RDF</th></tr>
+      <tr><td><code>valore</code> / <code>numero</code> / <code>totale</code></td><td><code>sdmx-measure:obsValue</code></td></tr>
+      <tr><td><code>popolazione_residente</code></td><td><code>sdmx-measure:obsValue</code></td></tr>
+      <tr><td><code>kwh_prodotti</code> / <code>consumo_kwh</code></td><td><code>sdmx-measure:obsValue</code> (ENER)</td></tr>
+      <tr><td><code>feriti</code> / <code>morti</code></td><td><code>sdmx-measure:obsValue</code> (JUST)</td></tr>
+      <tr><td><code>numero_alunni</code></td><td><code>sdmx-measure:obsValue</code> (EDUC)</td></tr>
+      <tr><td><code>superficie_ha</code></td><td><code>sdmx-measure:obsValue</code> (AGRI)</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>🌡 Colonne sensori → IoT</h3>
+    <table>
+      <tr><th>Intestazione CSV</th><th>Proprietà RDF</th></tr>
+      <tr><td><code>pm10</code> / <code>pm25</code> / <code>no2</code> / <code>so2</code></td><td><code>iot:hasValue</code> (xsd:decimal)</td></tr>
+      <tr><td><code>temperatura_c</code> / <code>umidita_perc</code></td><td><code>iot:hasValue</code></td></tr>
+      <tr><td><code>precipitazioni_mm</code> / <code>pressione_hpa</code></td><td><code>iot:hasValue</code></td></tr>
+      <tr><td><code>stazione_id</code> / <code>nome_stazione</code></td><td>trigger POI (centralina geolocalizzata)</td></tr>
+      <tr><td><code>unita_misura</code></td><td><code>mu:hasMeasurementUnit</code></td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ══ 6. METODOLOGIA ══ -->
+<section class="sezione" id="metodologia">
+  <h2 class="sezione-title">6 — Metodologia: come funziona il motore</h2>
+
+  <div class="card accent-blu">
+    <h3>🔬 Rilevamento ontologie deterministico</h3>
+    <p>Il motore analizza le intestazioni del CSV (header) e i valori delle prime righe, poi applica una cascata di regole per determinare quali ontologie usare. Le ontologie rilevate <strong>comandano</strong> la generazione TTL.</p>
+    <p>Principi chiave del rilevamento:</p>
+    <ul class="checklist">
+      <li>CLV scatta se ci sono colonne geografiche (lat, lon, comune, indirizzo...)</li>
+      <li>POI scatta se ci sono coordinate + nome del luogo</li>
+      <li>IoT→POI e IoT→TI scattano automaticamente (sensori geolocalizzati hanno sempre coordinate e timestamp)</li>
+      <li>QB richiede colonne numeriche aggregate + anno/periodo, ma <em>non</em> scatta su eventi puntuali con data+ora+lat</li>
+      <li>ACCO non scatta se il CSV è di strutture socioassistenziali (RSA, centri diurni)</li>
+      <li>SM scatta automaticamente se ci sono colonne telefono/email</li>
+    </ul>
+  </div>
+
+  <div class="card accent-verde">
+    <h3>🗂 Corpus di riconoscimento (330 fixture)</h3>
+    <p>Il motore usa un corpus di 330 pattern estratti da CSV reali della PA italiana, organizzati per i 13 temi DCAT. Ogni fixture contiene header tipici e valori di esempio che guidano il rilevamento per dataset ambigui.</p>
+    <div class="box verde">Il corpus copre: POI, CLV, COV, SMAPIT, IoT, QB, GTFS, ACCO, CPV, TI, RO, CPSV, PublicContract, Route, RPO, Learning, Transparency, Indicator, MU, PARK, CulturalON, ADMS, NDC, CPEV, AccessCondition, AtlasOfPaths, CulturalHeritage, Project.</div>
+  </div>
+
+  <div class="card accent-ambra">
+    <h3>📚 Ontologie e vocabolari controllati ufficiali</h3>
+    <p>Il tool usa esclusivamente le ontologie del progetto <strong>dati-semantic-assets</strong> (ex OntoPiA), verificate sui TTL ufficiali scaricati da <code>daf-ontologie-vocabolari-controllati</code>. I valori classificabili vengono tipizzati con URI dai vocabolari controllati di <strong>schema.gov.it</strong> (336 risorse analizzate).</p>
+    <pre><span class="cmt"># Esempio: forma_giuridica genera URI tipizzato</span>
+&lt;...&gt; cov:hasLegalStatus
+  &lt;https://w3id.org/italia/controlled-vocabulary/classifications-for-organizations/legal-status/<span class="hl">comune</span>&gt; .
+
+<span class="cmt"># Invece di una stringa generica</span>
+&lt;...&gt; dct:type <span class="bad">"Comune"@it</span> .</pre>
+  </div>
+
+  <div class="card">
+    <h3>🔗 Struttura degli URI RDF generati</h3>
+    <pre><span class="cmt"># Pattern URI standard</span>
+https://w3id.org/italia/data/<span class="hl">{ipa}</span>/<span class="hl">{tipo-entità}</span>/<span class="hl">{id-riga}</span>
+
+<span class="cmt"># Esempi concreti</span>
+<span class="ok">https://w3id.org/italia/data/c_a662/point-of-interest/1</span>
+<span class="ok">https://w3id.org/italia/data/c_a662/address/1</span>
+<span class="ok">https://w3id.org/italia/data/r_emiro/public-organization/AOU-Policlinico</span></pre>
+    <p>Il tipo-entità dipende dall'ontologia principale: <code>point-of-interest</code> per POI, <code>public-organization</code> per COV, <code>observation</code> per QB, <code>sensor</code> per IoT, ecc.</p>
+  </div>
+</section>
+
+<!-- ══ 7. ERRORI COMUNI ══ -->
+<section class="sezione" id="errori-comuni">
+  <h2 class="sezione-title">7 — Errori comuni e come evitarli</h2>
+
+  <div class="two-col">
+    <div>
+      <div class="card accent-rosso">
+        <h3>❌ CSV con "Geo Point" unificato</h3>
+        <pre><span class="bad">Geo Point
+"44.56268, 11.27106"</span></pre>
+        <p>Il tool mostra avviso ⚠. Soluzione: dividi in due colonne separate <code>lat</code> e <code>lon</code> in Excel con Dati → Testo in colonne, usando la virgola come delimitatore.</p>
+      </div>
+
+      <div class="card accent-rosso">
+        <h3>❌ Nessuna colonna "nome" o "denominazione"</h3>
+        <pre><span class="bad">id,tipo,lat,lon
+1,DAE,41.117,16.871</span></pre>
+        <p>Senza etichetta leggibile il TTL genera <code>rdfs:label "1"@it</code> — numerico. Aggiungi una colonna <code>nome</code> con testo descrittivo.</p>
+      </div>
+
+      <div class="card accent-rosso">
+        <h3>❌ Separatore ; con portali regionali</h3>
+        <p>Molti portali open data italiani esportano CSV con <code>;</code> come separatore. Il tool lo gestisce automaticamente, ma il validatore mostra un avviso informativo. Nessuna azione richiesta se l'avviso è <em>info</em> (blu), non <em>errore</em> (rosso).</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="card accent-ambra">
+        <h3>⚠ Posta letti ≠ struttura ricettiva</h3>
+        <pre><span class="bad">nome_struttura,tipo_struttura,posti_letto
+RSA San Giuseppe,RSA,80</span></pre>
+        <p><code>posti_letto</code> di solito attiva ACCO (strutture ricettive), ma una RSA non è un hotel. Il tool v88 riconosce <code>tipo_struttura</code> + <code>nome_struttura</code> come struttura sociale e usa COV+POI invece di ACCO.</p>
+      </div>
+
+      <div class="card accent-ambra">
+        <h3>⚠ codice_istat blocca le statistiche</h3>
+        <p>In versioni precedenti <code>codice_istat</code> bloccava il rilevamento QB. Dalla v85 questo è risolto: i CSV demografici con codice_istat vengono riconosciuti correttamente come QB+CLV.</p>
+      </div>
+
+      <div class="card accent-verde">
+        <h3>✓ Link dati.gov.it migliora il detect</h3>
+        <p>Se il tuo dataset è già pubblicato su dati.gov.it, incolla il link nello <strong>STEP 1 BIS</strong>. Il tool legge i temi DCAT (<code>themes_aggregate</code>) e li usa per escludere ontologie spurie e suggerire quelle corrette. Esempio: tema HEAL suggerisce POI+CLV+SM e scarta GTFS/ACCO.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="box blu">
+    <strong>Regola d'oro:</strong> un CSV di qualità per Linked Open Data ha sempre — almeno — queste quattro colonne: <code>nome/denominazione</code> (etichetta testuale), <code>indirizzo</code> o <code>lat+lon</code> (localizzazione), <code>tipo</code> (categoria), e un identificatore univoco. Con queste quattro il tool genera TTL valido anche senza AI.
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>CSV → RDF Linked Open Data PA · <a href="https://piersoft.github.io/CSV-to-RDF/" target="_blank">Apri il tool</a> · <a href="dataset-ottimali-PA.html" target="_blank">Catalogo dataset ottimali</a> · Ontologie: <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> · Vocabolari: <a href="https://schema.gov.it" target="_blank">schema.gov.it</a></p>
+</footer>
+
+</body>
+</html>

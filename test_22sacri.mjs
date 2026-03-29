@@ -68,8 +68,10 @@ function detectOntologiesDeterministic(headers, rows) {
                          'struttura_ricettiva','rta','affittacamere','casa_vacanze','codice_struttura_acco']);
   var _accoCtx    = has(['stelle','posti_letto','numero_posti_letto','camere','letti',
                          'check_in','check_out','classificazione_struttura','categoria_struttura']);
+  var _isStrutturaSociale = (hasH(['tipo_struttura']) || hasH(['codice_struttura'])) &&
+                           hasH(['nome_struttura','nome_centro','nome_presidio','nome_istituto']);
   var _isEsercizioCommerciale = hasH(['insegna','insegna_commerciale']) && hasH(['ragione_sociale']);
-  if((_accoStrong || _accoCtx) && !_narrativeCSV && !_isEsercizioCommerciale)
+  if((_accoStrong || _accoCtx) && !_narrativeCSV && !_isEsercizioCommerciale && !_isStrutturaSociale)
     result.add('ACCO');
 
   // IOT — sensori fisici: richiede identificatore sensore O proprietà misurata specifica
@@ -89,9 +91,13 @@ function detectOntologiesDeterministic(headers, rows) {
                             'coordx','coordy','x_coord','y_coord']);
   // OSM schema: osm_id + lat/lon → POI forte (defibrillatori, punti interesse OSM)
   var _hasOSMschema = has(['osm_id','osm_type']) && _hasPOIcoord;
+  // IoT con coordinate → POI; IoT con data → TI (misurazioni temporali geolocalizzate)
+  if(result.has('IoT') && _hasPOIcoord) result.add('POI');
+  if(result.has('IoT') && hasH(['data','datetime','timestamp','date','ora'])) result.add('TI');
   if(has(['tipo_poi','dae','defibrillatore','punto_di_interesse','punto_interesse',
           'point_of_interest','idelem','id_elem',
-          'id_area','id_punto','codice_stazione','stazione_monitoraggio','punto_monitoraggio']) || _hasOSMschema) {
+          'id_area','id_punto','codice_stazione','stazione_monitoraggio','punto_monitoraggio',
+          'stazione_id','nome_stazione','id_stazione']) || _hasOSMschema) {
     result.add('POI');
   } else if(has(['insegna','nome_esercizio','insegna_commerciale']) &&
             has(['attivita','tipo_esercizio','categoria_esercizio']) &&
@@ -101,8 +107,8 @@ function detectOntologiesDeterministic(headers, rows) {
   } else if(_hasPOIcoord && !result.has('GTFS') &&  // B1: ACCO+lat/lon = anche POI
             !result.has('SMAPIT') && !result.has('QB') &&
             !result.has('Cultural-ON')) { // non aggiungere POI su istituti culturali
-    if(has(['nome','denominazione','tipo','categoria','descrizione']) &&
-       !has(['mortali','feriti','deceduti','incidenti','importo','spesa','entrata']))
+    if(has(['nome','denominazione','tipo','categoria','descrizione','tipo_incidente','via','strada']) &&
+       !has(['importo','spesa','entrata']))
       result.add('POI');
   }
 
@@ -132,14 +138,14 @@ function detectOntologiesDeterministic(headers, rows) {
 
   // CLV toponomastica pura: stradari/civici senza coordinate né trigger forti → rimuovi spurii
   // (deve stare DOPO il blocco COV perché 'Comune' come header triggera COV)
-  if(result.has('CLV') && !_hasPOIcoord &&
+  if(result.has('CLV') && !_hasPOIcoord && !result.has('IoT') &&
      !has(['codice_ipa','codice_ente','partita_iva','tipo_poi','nome_poi','dae',
            'data_inizio','data_fine','data_evento','importo','valore','obs_value',
            'qualifica','contratto','ccnl','cig','cup','obbligo_trasparenza',
            'ubicazione_esercizio','n_civico','insegna','ragione_sociale'])) {
     if(result.has('COV') && !has(['codice_ipa','cf_ente','ragione_sociale','tipo_ente','nome_centro','nome_struttura','nome_presidio','unita_operativa'])) result.delete('COV');
-    if(result.has('TI')  && !has(['data_inizio','data_fine','data_da','data_a','data_evento','quando','inizio','termine'])) result.delete('TI');
-    if(result.has('POI') && !has(['tipo_poi','nome_poi','dae','lat','lon','insegna','insegna_commerciale'])) result.delete('POI');
+    if(result.has('TI')  && !has(['data_inizio','data_fine','data_da','data_a','data_evento','quando','inizio','termine','data','data_rilevazione','data_campionamento','ora','feriti','morti','tipo_incidente'])) result.delete('TI');
+    if(result.has('POI') && !has(['tipo_poi','nome_poi','dae','lat','lon','insegna','insegna_commerciale','stazione','nome_stazione','stazione_id','codice_stazione'])) result.delete('POI');
     if(result.has('CPV') && !has(['cognome','codice_fiscale','nome_completo','data_nascita'])) result.delete('CPV');
   }
 
@@ -159,6 +165,10 @@ function detectOntologiesDeterministic(headers, rows) {
   if(!result.has('SMAPIT') && !result.has('IoT') && _hasAnag)
     result.add('CPV');
 
+  // SM — contatti digitali: telefono o email nei dati di struttura
+  if(hasH(['telefono','cellulare','email','pec','sito_web','sitoweb']) && !result.has('GTFS'))
+    result.add('SM');
+
   // RO — ruoli
   if(has(['ruolo','incarico','mandato','consigliere','assessore','sindaco','dirigente',
           'id_consigliere','legislatura','voti_validi']))
@@ -166,7 +176,8 @@ function detectOntologiesDeterministic(headers, rows) {
 
   // QB — dati statistici aggregati (R2-FIX: blocca su cataloghi ADMS e dataset trasporto)
   // FIX5: include incidenti/feriti/mortali come dati statistici aggregati
-  if(has(['anno','mese','occorrenze','totale','numero','valore','indice',
+  // QB: NON se è un evento puntuale con data+ora+coordinate (→ POI/TI)
+  if(!(hasH(['data']) && hasH(['ora']) && has(['lat','lon'])) && has(['anno','mese','occorrenze','totale','numero','valore','indice',
           'popolazione_residente','numero_famiglie',
           'incidenti','feriti','mortali','deceduti','sinistri',
           'count','total','amount','value','measure',
@@ -178,7 +189,7 @@ function detectOntologiesDeterministic(headers, rows) {
      !result.has('CulturalON') &&
      !has(['nome_dataset','nome_risorsa','numero_righe','distribution_url']) &&
      !has(['tratta','capolinea','fermata_origine','fermata_arrivo']) &&
-     !has(['codice_istat','codice_civico','cod_civico','numero_civico']))  // B3: codici geo —  QB
+     !has(['codice_civico','cod_civico','numero_civico']))  // B3: codici geo —  QB
     if(!_narrativeCSV) result.add('QB');
 
   // TI — R6-FIX: richiede date esplicite O combo evento+luogo (non solo titolo/tipo)
@@ -186,7 +197,9 @@ function detectOntologiesDeterministic(headers, rows) {
                        'orario_fine','data_evento','ora_inizio','ora_fine','data_ora',
                        'data_rilevazione','data_apertura','data_chiusura','data_campionamento','data_rilevamento','data_misura','data_monitoraggio',
                        'date','datetime','timestamp','start_date','end_date','created_at','updated_at','time']) ||
-                     (hasH(['data']) && has(['valore','misura','rilevazione','monitoraggio','campione','sensore','iot','misura']));
+                     (hasH(['data']) && has(['valore','misura','rilevazione','monitoraggio','campione','sensore','iot','misura'])) ||
+                     (hasH(['data']) && hasH(['ora'])) ||
+                     (hasH(['data']) && has(['feriti','morti','tipo_incidente','veicoli_coinvolti']));
   var _tiEvent  = has(['tipo_evento','nome_iniziativa','nome_evento','manifestazione','data_da','data_a','data_inizio_evento','data_fine_evento',
                        'spettacolo','concerto','rassegna','stagione','programmazione']);
   if(_tiStrong || _tiEvent)
@@ -315,6 +328,14 @@ const sacri = [
     rows: [{'CODICE_ESENZIONE':'RFG050','MALATTIA':'Atrofie Muscolari Spinali','NOME_CENTRO':'AOU Policlinico Bari','UNITA_OPERATIVA':'Neurologia Pediatrica','CITTA':'Bari','LIVELLO_CENTRO':'Capofila','CENTRO_CAPOFILA_RIFERIMENTO':'AOU Policlinico Bari'}],
     expected: ['COV','CLV'] },
   { name: 'esercizi_ristorazione_latlon', headers: ['RAGIONE_SOCIALE', 'INSEGNA', 'ATTIVITA', 'UBICAZIONE_ESERCIZIO', 'N_Civico', 'Lat', 'Lon'], rows: [{RAGIONE_SOCIALE:'AGRITURISMO MASSERIA LA FAVOLA SRL', INSEGNA:'MASSERIA LA FAVOLA', ATTIVITA:'agriturismo', UBICAZIONE_ESERCIZIO:'s.s. 16', N_Civico:'3', Lat:'40.1', Lon:'16.9'}], expected: ['POI', 'COV', 'CLV'] },
+  { name: 'energia_rinnovabile_comuni', headers: ['anno','comune','codice_istat','tipo_fonte','kwh_prodotti','numero_impianti','potenza_kw'], rows: [{'anno':'2023','comune':'Roma','codice_istat':'058091','tipo_fonte':'Fotovoltaico','kwh_prodotti':'12500000','numero_impianti':'450','potenza_kw':'8200'}], expected: ['QB','CLV'] },
+  { name: 'qualita_aria_centraline', headers: ['data','stazione','comune','lat','lon','pm10','pm25','no2','indice_qualita'], rows: [{'data':'2024-01-15','stazione':'MI-Via Senato','comune':'Milano','lat':'45.4697','lon':'9.1982','pm10':'28.5','pm25':'18.2','no2':'45.1','indice_qualita':'buono'}], expected: ['IoT','CLV','POI','TI'] },
+  { name: 'superficie_agricola_sau', headers: ['anno','regione','provincia','tipo_coltivazione','superficie_ha','numero_aziende','produzione_tonnellate'], rows: [{'anno':'2022','regione':'Emilia-Romagna','provincia':'BO','tipo_coltivazione':'Frumento','superficie_ha':'45200','numero_aziende':'1240','produzione_tonnellate':'198000'}], expected: ['QB','CLV'] },
+  { name: 'incidenti_stradali_geo', headers: ['data','ora','comune','via','lat','lon','tipo_incidente','veicoli_coinvolti','feriti','morti'], rows: [{'data':'2023-09-15','ora':'14:30','comune':'Torino','via':'Corso Francia','lat':'45.0703','lon':'7.6869','tipo_incidente':'tamponamento','veicoli_coinvolti':'2','feriti':'1','morti':'0'}], expected: ['POI','CLV','TI'] },
+  { name: 'strutture_socioassistenziali', headers: ['codice_struttura','nome_struttura','tipo_struttura','comune','indirizzo','lat','lon','telefono','email','posti_letto'], rows: [{'codice_struttura':'FI001','nome_struttura':'Casa di Riposo','tipo_struttura':'RSA','comune':'Firenze','indirizzo':'Via Roma 10','lat':'43.7696','lon':'11.2558','telefono':'055123456','email':'info@rsa.it','posti_letto':'80'}], expected: ['COV','CLV','POI','SM'] },
+  { name: 'anagrafica_istituti_scolastici', headers: ['codice_meccanografico','nome_istituto','tipo_istituto','comune','indirizzo','lat','lon','telefono','email','numero_alunni'], rows: [{'codice_meccanografico':'RMIS00100G','nome_istituto':'Liceo Fermi','tipo_istituto':'Liceo Scientifico','comune':'Roma','indirizzo':'Via Roma 1','lat':'41.9028','lon':'12.4964','telefono':'0612345','email':'info@fermi.it','numero_alunni':'1200'}], expected: ['SMAPIT','CLV','SM'] },
+  { name: 'dati_meteo_stazioni', headers: ['data','ora','stazione_id','nome_stazione','lat','lon','temperatura_c','umidita_perc','pressione_hpa','precipitazioni_mm'], rows: [{'data':'2024-03-15','ora':'12:00','stazione_id':'VE001','nome_stazione':'Venezia Marghera','lat':'45.4654','lon':'12.2281','temperatura_c':'14.2','umidita_perc':'68','pressione_hpa':'1015.2','precipitazioni_mm':'0.0'}], expected: ['IoT','CLV','POI','TI'] },
+  { name: 'movimento_demografico_comuni', headers: ['anno','comune','codice_istat','regione','popolazione_maschi','popolazione_femmine','popolazione_totale','nati','morti','saldo_naturale'], rows: [{'anno':'2023','comune':'Venezia','codice_istat':'027042','regione':'Veneto','popolazione_maschi':'124500','popolazione_femmine':'131200','popolazione_totale':'255700','nati':'1820','morti':'2650','saldo_naturale':'-830'}], expected: ['QB','CLV'] },
 ];
 
 
@@ -343,8 +364,8 @@ for(const s of sacri){
 }
 
 console.log(`\n${'='.repeat(55)}`);
-console.log(`✅ OK: ${ok}/25  ❌ Problemi: ${issues.length}`);
-if(issues.length===0) console.log('🎉 TUTTI I 25 CSV SACRI PASSANO IL TEST!');
+console.log(`✅ OK: ${ok}/33  ❌ Problemi: ${issues.length}`);
+if(issues.length===0) console.log('🎉 TUTTI I 33 CSV SACRI PASSANO IL TEST!');
 
 
 // ── NUOVE ONTOLOGIE v186 ─────────────────────────────────────────────────────

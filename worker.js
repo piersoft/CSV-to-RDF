@@ -219,7 +219,68 @@ centro_capofila_riferimento:{pred:'dct:relation',type:'langlit',lang:'it'},
 centro_capofila:{pred:'dct:relation',type:'langlit',lang:'it'},
 capofila:{pred:'dct:relation',type:'langlit',lang:'it'},
 codice_struttura_sanitaria:{pred:'dct:identifier',type:'literal'},
-codice_presidio:{pred:'dct:identifier',type:'literal'}};
+codice_presidio:{pred:'dct:identifier',type:'literal'},
+tipo_fonte:{pred:'dct:type',type:'langlit',lang:'it'},
+kwh_prodotti:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+consumo_kwh:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+potenza_kw:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+numero_impianti:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+pm10:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},
+pm25:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},
+no2:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},
+so2:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},
+ozono:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},
+indice_qualita:{pred:'iot:hasQualityAnnotation',type:'langlit',lang:'it',onto:'IoT'},
+raccolta_differenziata_perc:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+rifiuti_totali_kg:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+rifiuti_pro_capite:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+tipo_reato:{pred:'dct:type',type:'langlit',lang:'it'},
+numero_reati:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+denunce:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+arresti:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+tipo_incidente:{pred:'dct:type',type:'langlit',lang:'it'},
+veicoli_coinvolti:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+feriti:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+morti:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+condizioni_meteo:{pred:'dct:description',type:'langlit',lang:'it'},
+tipo_servizio:{pred:'dct:type',type:'langlit',lang:'it'},
+numero_beneficiari:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+spesa_totale:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+spesa_pro_capite:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+tipo_struttura:{pred:'dct:type',type:'langlit',lang:'it'},
+posti_letto:{pred:'acco:totalBed',type:'integer'},
+accreditata:{pred:'dct:description',type:'literal'},
+codice_meccanografico:{pred:'dct:identifier',type:'literal'},
+nome_istituto:{pred:'rdfs:label',type:'langlit',lang:'it'},
+tipo_istituto:{pred:'dct:type',type:'langlit',lang:'it'},
+numero_alunni:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+numero_classi:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+numero_docenti:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+tasso_abbandono:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+ordine_scuola:{pred:'dct:type',type:'langlit',lang:'it'},
+numero_istituti:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+stazione_id:{pred:'dct:identifier',type:'literal'},
+nome_stazione:{pred:'rdfs:label',type:'langlit',lang:'it'},
+quota_m:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+quota:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+temperatura_c:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},
+umidita_perc:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},
+pressione_hpa:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},
+vento_kmh:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},
+precipitazioni_mm:{pred:'iot:hasValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},
+rete:{pred:'dct:description',type:'langlit',lang:'it'},
+tipo_sensori:{pred:'dct:type',type:'langlit',lang:'it'},
+gestore:{pred:'smapit:hasManager',type:'langlit',lang:'it',onto:'SMAPIT'},
+tipo_allevamento:{pred:'dct:type',type:'langlit',lang:'it'},
+capi:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+biologico:{pred:'dct:description',type:'literal'},
+superficie_ha:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+produzione_tonnellate:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},
+tipo_coltivazione:{pred:'dct:type',type:'langlit',lang:'it'},
+pod:{pred:'dct:identifier',type:'literal'},
+tipo_contratto:{pred:'dct:type',type:'langlit',lang:'it'},
+codice_azienda:{pred:'dct:identifier',type:'literal'},
+denominazione:{pred:'cov:legalName',type:'langlit',lang:'it'}};
 
 var ONTO_URI={'acco':'https://w3id.org/italia/onto/ACCO/','gtfs':'http://vocab.gtfs.org/terms#',
     'poi':'https://w3id.org/italia/onto/POI/','iot':'https://w3id.org/italia/onto/IoT/',
@@ -388,7 +449,7 @@ function detGetMainOnto(ontos){var priority=['GTFS','SMAPIT','ACCO','IoT','Cultu
 
 function detFindColIdx(nh,cands){for(var i=0;i<cands.length;i++){var x=nh.indexOf(cands[i]);if(x>=0)return x;}return-1;}
 
-function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat','lon','ubicazione_esercizio','indirizzo_esercizio','n_civico','numero_civico','citta','città','city'].some(function(c){return nh.indexOf(c)>=0;});}
+function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat','lon','ubicazione_esercizio','indirizzo_esercizio','n_civico','numero_civico','citta','città','city','stazione','nome_stazione'].some(function(c){return nh.indexOf(c)>=0;});}
 
 function detHasTime(nh,ontos){return ontos.indexOf('TI')>=0&&['inizio','termine','data','quando'].some(function(c){return nh.indexOf(c)>=0;});}
 
@@ -583,8 +644,10 @@ function detectOntologiesDeterministic(headers, rows) {
   var _accoCtx    = has(['stelle','posti_letto','numero_posti_letto','camere','letti',
                          'check_in','check_out','classificazione_struttura','categoria_struttura']);
   // ACCO: escludi se contesto esercizi commerciali (insegna+ragione_sociale = bar/ristorante/ecc)
+  var _isStrutturaSociale = (hasH(['tipo_struttura']) || hasH(['codice_struttura'])) &&
+                           hasH(['nome_struttura','nome_centro','nome_presidio','nome_istituto']);
   var _isEsercizioCommerciale = hasH(['insegna','insegna_commerciale']) && hasH(['ragione_sociale']);
-  if((_accoStrong || _accoCtx) && !_narrativeCSV && !_isEsercizioCommerciale)
+  if((_accoStrong || _accoCtx) && !_narrativeCSV && !_isEsercizioCommerciale && !_isStrutturaSociale)
     result.add('ACCO');
 
   // IOT — sensori fisici: richiede identificatore sensore O proprietà misurata specifica
@@ -604,9 +667,13 @@ function detectOntologiesDeterministic(headers, rows) {
                             'coordx','coordy','x_coord','y_coord']);
   // OSM schema: osm_id + lat/lon → POI forte (defibrillatori, punti interesse OSM)
   var _hasOSMschema = has(['osm_id','osm_type']) && _hasPOIcoord;
+  // IoT con coordinate → POI; IoT con data → TI (misurazioni temporali geolocalizzate)
+  if(result.has('IoT') && _hasPOIcoord) result.add('POI');
+  if(result.has('IoT') && hasH(['data','datetime','timestamp','date','ora'])) result.add('TI');
   if(has(['tipo_poi','dae','defibrillatore','punto_di_interesse','punto_interesse',
           'point_of_interest','idelem','id_elem',
-          'id_area','id_punto','codice_stazione','stazione_monitoraggio','punto_monitoraggio']) || _hasOSMschema) {
+          'id_area','id_punto','codice_stazione','stazione_monitoraggio','punto_monitoraggio',
+          'stazione_id','nome_stazione','id_stazione']) || _hasOSMschema) {
     result.add('POI');
   } else if(has(['insegna','nome_esercizio','insegna_commerciale']) &&
             has(['attivita','tipo_esercizio','categoria_esercizio']) &&
@@ -616,8 +683,8 @@ function detectOntologiesDeterministic(headers, rows) {
   } else if(_hasPOIcoord && !result.has('GTFS') &&  // B1: ACCO+lat/lon = anche POI
             !result.has('SMAPIT') && !result.has('QB') &&
             !result.has('Cultural-ON')) { // non aggiungere POI su istituti culturali
-    if(has(['nome','denominazione','tipo','categoria','descrizione']) &&
-       !has(['mortali','feriti','deceduti','incidenti','importo','spesa','entrata']))
+    if(has(['nome','denominazione','tipo','categoria','descrizione','tipo_incidente','via','strada']) &&
+       !has(['importo','spesa','entrata']))
       result.add('POI');
   }
 
@@ -647,14 +714,14 @@ function detectOntologiesDeterministic(headers, rows) {
 
   // CLV toponomastica pura: stradari/civici senza coordinate né trigger forti → rimuovi spurii
   // (deve stare DOPO il blocco COV perché 'Comune' come header triggera COV)
-  if(result.has('CLV') && !_hasPOIcoord &&
+  if(result.has('CLV') && !_hasPOIcoord && !result.has('IoT') &&
      !has(['codice_ipa','codice_ente','partita_iva','tipo_poi','nome_poi','dae',
            'data_inizio','data_fine','data_evento','importo','valore','obs_value',
            'qualifica','contratto','ccnl','cig','cup','obbligo_trasparenza',
            'ubicazione_esercizio','n_civico','insegna','ragione_sociale'])) {
     if(result.has('COV') && !has(['codice_ipa','cf_ente','ragione_sociale','tipo_ente','nome_centro','nome_struttura','nome_presidio','unita_operativa'])) result.delete('COV');
-    if(result.has('TI')  && !has(['data_inizio','data_fine','data_da','data_a','data_evento','quando','inizio','termine'])) result.delete('TI');
-    if(result.has('POI') && !has(['tipo_poi','nome_poi','dae','lat','lon','insegna','insegna_commerciale'])) result.delete('POI');
+    if(result.has('TI')  && !has(['data_inizio','data_fine','data_da','data_a','data_evento','quando','inizio','termine','data','data_rilevazione','data_campionamento','ora','feriti','morti','tipo_incidente'])) result.delete('TI');
+    if(result.has('POI') && !has(['tipo_poi','nome_poi','dae','lat','lon','insegna','insegna_commerciale','stazione','nome_stazione','stazione_id','codice_stazione'])) result.delete('POI');
     if(result.has('CPV') && !has(['cognome','codice_fiscale','nome_completo','data_nascita'])) result.delete('CPV');
   }
 
@@ -674,6 +741,10 @@ function detectOntologiesDeterministic(headers, rows) {
   if(!result.has('SMAPIT') && !result.has('IoT') && _hasAnag)
     result.add('CPV');
 
+  // SM — contatti digitali: telefono o email nei dati di struttura
+  if(hasH(['telefono','cellulare','email','pec','sito_web','sitoweb']) && !result.has('GTFS'))
+    result.add('SM');
+
   // RO — ruoli
   if(has(['ruolo','incarico','mandato','consigliere','assessore','sindaco','dirigente',
           'id_consigliere','legislatura','voti_validi']))
@@ -681,19 +752,26 @@ function detectOntologiesDeterministic(headers, rows) {
 
   // QB — dati statistici aggregati (R2-FIX: blocca su cataloghi ADMS e dataset trasporto)
   // FIX5: include incidenti/feriti/mortali come dati statistici aggregati
-  if(has(['anno','mese','occorrenze','totale','numero','valore','indice',
-          'popolazione_residente','numero_famiglie',
+  // QB: NON se è un evento puntuale con data+ora+coordinate (→ POI/TI)
+  if(!(hasH(['data']) && hasH(['ora']) && has(['lat','lon'])) && has(['anno','mese','occorrenze','totale','numero','valore','indice',
+          'popolazione_residente','numero_famiglie','nati','morti','saldo_naturale',
           'incidenti','feriti','mortali','deceduti','sinistri',
           'count','total','amount','value','measure',
           'dipendenti','personale','addetti','lavoratori','occupati',
+          'kwh_prodotti','consumo_kwh','numero_impianti','potenza_kw',
+          'raccolta_differenziata_perc','rifiuti_totali_kg','rifiuti_pro_capite',
+          'numero_reati','denunce','arresti','numero_beneficiari','spesa_totale',
+          'numero_alunni','numero_classi','numero_istituti','numero_docenti',
+          'superficie_ha','produzione_tonnellate','numero_aziende','capi',
           'maschi','femmine','fascia_eta','classe_eta']) &&
      !result.has('ACCO') && !result.has('GTFS') && !result.has('IoT') &&
      !result.has('COV') && !result.has('CPV') && !result.has('SMAPIT') &&
      !result.has('CPSV') && !result.has('ADMS') && !result.has('RO') &&
      !result.has('CulturalON') &&
      !has(['nome_dataset','nome_risorsa','numero_righe','distribution_url']) &&
+     !has(['stazione_id','codice_stazione','nome_stazione']) &&  // meteo → IoT non QB
      !has(['tratta','capolinea','fermata_origine','fermata_arrivo']) &&
-     !has(['codice_istat','codice_civico','cod_civico','numero_civico']))  // B3: codici geo —  QB
+     !has(['codice_civico','cod_civico','numero_civico']))  // B3: codici geo —  QB
     if(!_narrativeCSV) result.add('QB');
 
   // TI — R6-FIX: richiede date esplicite O combo evento+luogo (non solo titolo/tipo)
@@ -701,7 +779,9 @@ function detectOntologiesDeterministic(headers, rows) {
                        'orario_fine','data_evento','ora_inizio','ora_fine','data_ora',
                        'data_rilevazione','data_apertura','data_chiusura','data_campionamento','data_rilevamento','data_misura','data_monitoraggio',
                        'date','datetime','timestamp','start_date','end_date','created_at','updated_at','time']) ||
-                     (hasH(['data']) && has(['valore','misura','rilevazione','monitoraggio','campione','sensore','iot','misura']));
+                     (hasH(['data']) && has(['valore','misura','rilevazione','monitoraggio','campione','sensore','iot','misura'])) ||
+                     (hasH(['data']) && hasH(['ora'])) ||
+                     (hasH(['data']) && has(['feriti','morti','incidenti','tipo_incidente','veicoli_coinvolti']));
   var _tiEvent  = has(['tipo_evento','nome_iniziativa','nome_evento','manifestazione','data_da','data_a','data_inizio_evento','data_fine_evento',
                        'spettacolo','concerto','rassegna','stagione','programmazione']);
   if(_tiStrong || _tiEvent)

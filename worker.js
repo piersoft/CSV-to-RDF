@@ -489,10 +489,7 @@ function sanitizeEmailValue(v){
 
 function litQ(s,lang){
   s=String(s==null?'':s).replace(/\r/g,'').replace(/\n/g,' ');
-  if(s.indexOf('"')>=0){
-    s=s.replace(/"""/g,'\\\"\\\"\\\"');
-    return lang?'"""'+s+'"""@'+lang:'"""'+s+'"""^^xsd:string';
-  }
+  s=s.replace(/\\/g,'\\\\').replace(/"/g,'\\"');
   return lang?'"'+s+'"@'+lang:'"'+s+'"^^xsd:string';
 }
 function detFormatLit(rule,val){

@@ -510,7 +510,7 @@ function detFormatLit(rule,val){
     if(xsdType==='xsd:integer'){var ni=parseInt(val);return isNaN(ni)?null:'"'+ni+'"^^xsd:integer';}
     if(xsdType==='xsd:date'){return'"'+val.replace(/\//g,'-')+'"^^xsd:date';}
     if(xsdType==='xsd:dateTime')return'"'+val+'"^^xsd:dateTime';
-    return'"'+val.replace(/"/g,'\\"')+'"^^'+xsdType;
+    return'"'+val.replace(/\\/g,'\\\\').replace(/"/g,'\\"')+'"^^'+xsdType;
   }
   if(rule.type==='vocab_uri'){var base=rule.vocab||'';var slug=encodeURIComponent(val.trim().toLowerCase().replace(/\s+/g,'-'));return'<'+base+'/'+slug+'>';}
   if(rule.type==='mailto'){var em=sanitizeEmailValue(val);if(!em)return null;return'<mailto:'+em+'>';}
@@ -651,7 +651,7 @@ function detectOntologiesDeterministic(headers, rows) {
   // P4-FIX: "istituto" generico (banche, sanità, cultura) NON è SMAPIT
   if(has(['codice_scuola','codicescuola','denominazione_scuola','tipo_scuola','ciclo_scolastico',
           'ordine_scuola','grado_scolastico','codice_meccanografico']) ||
-     (has(['scuola','liceo','comprensivo','istruzione']) && !has(['cig','importo','appalto','museo','biblioteca','ospedale','banca'])))
+     (has(['scuola','liceo','comprensivo','istruzione']) && !has(['cig','importo','appalto','museo','biblioteca','ospedale','banca','dae','defibrillatore','aed'])))
     result.add('SMAPIT');
 
   // ACCO — strutture ricettive con varianti PA regionali

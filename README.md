@@ -107,7 +107,7 @@ I test verificano che il rilevamento deterministico produca le ontologie corrett
 - [DCAT-AP_IT](https://docs.italia.it/italia/daf/linee-guida-cataloghi-dati-dcat-ap-it/) — Profilo italiano DCAT
 - [W3C RDF/Turtle](https://www.w3.org/TR/turtle/) — Specifiche formato output
 - [RDF Data Cube](https://www.w3.org/TR/vocab-data-cube/) — Dati statistici aggregati
-- [ckan-mcp-server](https://github.com/ondata/ckan-mcp-server/) — MCP server CKAN di [ondata](https://github.com/ondata)
+- [ckan-mcp-server](https://github.com/ondata/ckan-mcp-server/) — MCP server CKAN di [ondata](https://github.com/ondata) utilizzato per la fase di addestramento
 
 ---
 

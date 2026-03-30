@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.30.05 -->
+  <!-- build:v2026.03.30.06 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -745,7 +745,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.30.05</span>
+<span id="app-version">v2026.03.30.06</span>
 </footer>
 
 <script>
@@ -2117,7 +2117,7 @@ const WORKER_BASE = 'https://csv2rdf.datigovit.workers.dev';
 // Non decide le ontologie — filtra solo quelle chiaramente incompatibili
 const THEME_SUGGEST = {
   'HEAL': ['POI','CLV','SM','TI'],           // Salute → POI (DAE, farmacie, ospedali)
-  'ENVI': ['IOT','CLV','POI','MU'],           // Ambiente → sensori IoT, misure
+  'ENVI': ['IOT','CLV','POI','MU','COV','TI'], // Ambiente → sensori IoT, misure, impianti (COV+TI)
   'TRAN': ['GTFS','CLV','POI','Route'],       // Trasporti → fermate, percorsi
   'REGI': ['CLV','QB'],                       // Regioni/territorio → indirizzi, statistiche
   'ECON': ['QB','COV'],                       // Economia → dati statistici, organizzazioni
@@ -2261,7 +2261,8 @@ async function fetchDatiGovContext() {
       'Suggerite dai tag: <strong style="color:#1a6b35">' + suggStr + '</strong>';
 
     // Ri-esegui il detect con il contesto attivo se il CSV è già caricato
-    if (document.getElementById('csv-input').value.trim()) {
+    // MA solo se l'utente non ha modificato manualmente le pill
+    if (document.getElementById('csv-input').value.trim() && !window._userModifiedPills) {
       parseAndPreviewCSV(); // ri-detect con contesto CKAN attivo — applyDatiGovContext viene chiamata dentro
     }
 
@@ -2279,6 +2280,8 @@ function escTTL_safe(s) {
 function applyDatiGovContext() {
   const ctx = window._datiGovContext;
   if (!ctx) return;
+  // NON sovrascrivere se l'utente ha selezionato manualmente
+  if (window._userModifiedPills) return;
 
   const pills = document.querySelectorAll('#onto-selector .pill[data-onto], #onto-selector-adv .pill[data-onto]');
   pills.forEach(function(pill) {

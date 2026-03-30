@@ -319,8 +319,8 @@ footer a { color: #f59e0b; text-decoration: none; }
     <h1>Da CSV a <span>Linked Open Data</span><br>Guida pratica per la PA</h1>
     <p class="sub">Tutto ciò che serve per costruire o migliorare un CSV e generare TTL semanticamente corretto, conforme alle ontologie italiane ufficiali.</p>
     <div class="link-row">
-      <a href="https://piersoft.github.io/CSV-to-RDF/" class="btn btn-primary" target="_blank">⚡ Apri il tool</a>
-      <a href="dataset-ottimali-PA.html" class="btn btn-outline" target="_blank">📚 Catalogo dataset ottimali</a>
+      <a href="https://piersoft.github.io/CSV-to-RDF/" class="btn btn-primary" target="_blank">Apri il tool</a>
+      <a href="dataset-ottimali-PA.html" class="btn btn-outline" target="_blank">Catalogo dataset ottimali</a>
     </div>
   </div>
 </header>
@@ -389,7 +389,7 @@ footer a { color: #f59e0b; text-decoration: none; }
   <p>Se la tua PA non ha ancora un CSV, segui questa metodologia per costruirne uno che generi un TTL completo e semanticamente ricco.</p>
 
   <div class="card accent-verde">
-    <h3>📋 Passo 1 — Identifica il tipo di dataset</h3>
+    <h3>Passo 1 — Identifica il tipo di dataset</h3>
     <p>Prima di tutto: <em>cosa stai pubblicando?</em> Consulta il <a href="dataset-ottimali-PA.html" target="_blank">catalogo dei dataset ottimali</a> e scegli il template più adatto al tuo caso.</p>
     <table>
       <tr><th>Tipo di dato</th><th>Ontologie principali</th><th>Colonne obbligatorie</th></tr>
@@ -405,7 +405,7 @@ footer a { color: #f59e0b; text-decoration: none; }
   </div>
 
   <div class="card accent-blu">
-    <h3>📐 Passo 2 — Scegli le intestazioni giuste</h3>
+    <h3>Passo 2 — Scegli le intestazioni giuste</h3>
     <p>Le intestazioni delle colonne <strong>determinano tutto</strong>: il tool le riconosce e le mappa su proprietà ontologiche ufficiali. Usa i nomi standard riportati in questa guida (sezione <a href="#intestazioni">Intestazioni chiave</a>). Esempio per un dataset di defibrillatori:</p>
     <pre><span class="ok">✓ BUONO:</span>  id,nome,indirizzo,modello,lat,lon,stato
 <span class="bad">✗ EVITA:</span>  ID,Nome_Punto,Luogo,Tipo_DAE,Latitudine,Longitudine,Funzionante</pre>
@@ -413,7 +413,7 @@ footer a { color: #f59e0b; text-decoration: none; }
   </div>
 
   <div class="card accent-ambra">
-    <h3>🗺 Passo 3 — Includi sempre le coordinate</h3>
+    <h3>Passo 3 — Includi sempre le coordinate</h3>
     <p>Se il tuo dataset ha una componente geografica (quasi sempre nella PA locale), includi <strong>lat</strong> e <strong>lon</strong> come colonne separate. Questo attiva automaticamente POI e CLV.</p>
     <pre><span class="bad">✗ EVITA:</span>  geo_point
            44.4938, 11.3430      <span class="cmt">&lt;-- tutto in una cella, non riconosciuto</span>
@@ -423,7 +423,7 @@ footer a { color: #f59e0b; text-decoration: none; }
   </div>
 
   <div class="card accent-verde">
-    <h3>✅ Template CSV minimale per dataset POI (luoghi fisici)</h3>
+    <h3>Template CSV minimale per dataset POI (luoghi fisici)</h3>
     <pre><span class="hl">id,nome,tipo,indirizzo,comune,lat,lon,telefono,email,note</span>
 1,Farmacia Centrale,farmacia,Via Roma 10,Bari,41.1171,16.8719,0801234567,farmacia@mail.it,aperta 24h
 2,Defibrillatore Municipio,DAE,Piazza del Comune 1,Bari,41.1253,16.8620,,, funzionante</pre>
@@ -472,13 +472,13 @@ footer a { color: #f59e0b; text-decoration: none; }
   </div>
 
   <div class="card accent-blu">
-    <h3>🔍 Come leggere gli avvisi del validatore</h3>
+    <h3>Come leggere gli avvisi gli avvisi del validatore</h3>
     <p>Dopo aver caricato il CSV, usa il pulsante <strong>"Valida"</strong>. Gli avvisi indicano cosa migliorare:</p>
     <table>
       <tr><th>Avviso</th><th>Causa</th><th>Fix</th></tr>
-      <tr><td>⚠ rdfs:label con valore numerico</td><td>Una colonna numerica finisce come etichetta</td><td>Rinomina la colonna o aggiungi una colonna "nome" testuale</td></tr>
-      <tr><td>⚠ N colonne non mappate → rdfs:comment</td><td>Intestazioni non standard</td><td>Rinomina con i nomi standard O usa l'AI (STEP 2)</td></tr>
-      <tr><td>⚠ Colonna "Geo Point" con lat/lon unificati</td><td>Coordinate in una cella</td><td>Dividi in due colonne lat e lon</td></tr>
+      <tr><td>Avviso: rdfs:label con valore numerico</td><td>Una colonna numerica finisce come etichetta</td><td>Rinomina la colonna o aggiungi una colonna "nome" testuale</td></tr>
+      <tr><td>Avviso: colonne non mappate non mappate → rdfs:comment</td><td>Intestazioni non standard</td><td>Rinomina con i nomi standard O usa l'AI (STEP 2)</td></tr>
+      <tr><td>Avviso: Colonna "Geo Point" con lat/lon unificati</td><td>Coordinate in una cella</td><td>Dividi in due colonne lat e lon</td></tr>
       <tr><td>❌ Encoding problematico</td><td>File ISO-8859, non UTF-8</td><td>Riesporta da Excel/LibreOffice scegliendo UTF-8</td></tr>
       <tr><td>❌ Coordinate fuori range</td><td>Virgola usata come decimale</td><td>Sostituisci , con . nei valori numerici</td></tr>
     </table>
@@ -530,7 +530,7 @@ footer a { color: #f59e0b; text-decoration: none; }
       </ul>
     </div>
     <div class="card">
-      <h3>🤖 Attiva l'AI (STEP 2) quando:</h3>
+      <h3>Quando attivare l'AI (STEP 2) (STEP 2) quando:</h3>
       <ul class="checklist">
         <li>Hai ≥ 3 colonne non mappate (avviso nel validatore)</li>
         <li>Le intestazioni sono abbreviazioni o codici (es. UO_AMM, COD_PRES)</li>
@@ -552,7 +552,7 @@ footer a { color: #f59e0b; text-decoration: none; }
   <p>Queste intestazioni vengono mappate automaticamente su proprietà ontologiche ufficiali. Usarle correttamente è il modo più semplice per ottenere un TTL ricco senza AI.</p>
 
   <div class="card accent-blu">
-    <h3>📍 Colonne geografiche → CLV + POI</h3>
+    <h3>Colonne geografiche → CLV + POI</h3>
     <table>
       <tr><th>Intestazione CSV</th><th>Proprietà RDF</th><th>Note</th></tr>
       <tr><td><code>lat</code> / <code>latitudine</code></td><td><code>geo:lat</code></td><td>Punto decimale, es. 41.117</td></tr>
@@ -566,7 +566,7 @@ footer a { color: #f59e0b; text-decoration: none; }
   </div>
 
   <div class="card accent-verde">
-    <h3>🏢 Colonne organizzazione → COV</h3>
+    <h3>Colonne organizzazione → COV</h3>
     <table>
       <tr><th>Intestazione CSV</th><th>Proprietà RDF</th></tr>
       <tr><td><code>codice_ipa</code></td><td><code>cov:IPAcode</code></td></tr>
@@ -579,7 +579,7 @@ footer a { color: #f59e0b; text-decoration: none; }
   </div>
 
   <div class="card accent-ambra">
-    <h3>📞 Contatti → SM</h3>
+    <h3>Contatti → SM</h3>
     <table>
       <tr><th>Intestazione CSV</th><th>Proprietà RDF</th></tr>
       <tr><td><code>email</code></td><td><code>sm:hasEmail</code> (URI mailto:)</td></tr>
@@ -590,7 +590,7 @@ footer a { color: #f59e0b; text-decoration: none; }
   </div>
 
   <div class="card">
-    <h3>📅 Colonne temporali → TI</h3>
+    <h3>Colonne temporali → TI</h3>
     <table>
       <tr><th>Intestazione CSV</th><th>Proprietà RDF</th></tr>
       <tr><td><code>data</code></td><td><code>ti:startTime</code> (xsd:date)</td></tr>
@@ -602,7 +602,7 @@ footer a { color: #f59e0b; text-decoration: none; }
   </div>
 
   <div class="card accent-verde">
-    <h3>📊 Colonne statistiche → QB</h3>
+    <h3>Colonne statistiche → QB</h3>
     <table>
       <tr><th>Intestazione CSV</th><th>Proprietà RDF</th></tr>
       <tr><td><code>valore</code> / <code>numero</code> / <code>totale</code></td><td><code>sdmx-measure:obsValue</code></td></tr>
@@ -615,7 +615,7 @@ footer a { color: #f59e0b; text-decoration: none; }
   </div>
 
   <div class="card">
-    <h3>🌡 Colonne sensori → IoT</h3>
+    <h3>Colonne sensori → IoT</h3>
     <table>
       <tr><th>Intestazione CSV</th><th>Proprietà RDF</th></tr>
       <tr><td><code>pm10</code> / <code>pm25</code> / <code>no2</code> / <code>so2</code></td><td><code>iot:hasValue</code> (xsd:decimal)</td></tr>
@@ -632,7 +632,7 @@ footer a { color: #f59e0b; text-decoration: none; }
   <h2 class="sezione-title">6 — Metodologia: come funziona il motore</h2>
 
   <div class="card accent-blu">
-    <h3>🔬 Rilevamento ontologie deterministico</h3>
+    <h3>Rilevamento ontologie deterministico</h3>
     <p>Il motore analizza le intestazioni del CSV (header) e i valori delle prime righe, poi applica una cascata di regole per determinare quali ontologie usare. Le ontologie rilevate <strong>comandano</strong> la generazione TTL.</p>
     <p>Principi chiave del rilevamento:</p>
     <ul class="checklist">
@@ -646,13 +646,13 @@ footer a { color: #f59e0b; text-decoration: none; }
   </div>
 
   <div class="card accent-verde">
-    <h3>🗂 Corpus di riconoscimento (330 fixture)</h3>
+    <h3>Corpus di riconoscimento (330 fixture)</h3>
     <p>Il motore usa un corpus di 330 pattern estratti da CSV reali della PA italiana, organizzati per i 13 temi DCAT. Ogni fixture contiene header tipici e valori di esempio che guidano il rilevamento per dataset ambigui.</p>
     <div class="box verde">Il corpus copre: POI, CLV, COV, SMAPIT, IoT, QB, GTFS, ACCO, CPV, TI, RO, CPSV, PublicContract, Route, RPO, Learning, Transparency, Indicator, MU, PARK, CulturalON, ADMS, NDC, CPEV, AccessCondition, AtlasOfPaths, CulturalHeritage, Project.</div>
   </div>
 
   <div class="card accent-ambra">
-    <h3>📚 Ontologie e vocabolari controllati ufficiali</h3>
+    <h3>Ontologie e vocabolari controllati ufficiali</h3>
     <p>Il tool usa esclusivamente le ontologie del progetto <strong>dati-semantic-assets</strong> (ex OntoPiA), verificate sui TTL ufficiali scaricati da <code>daf-ontologie-vocabolari-controllati</code>. I valori classificabili vengono tipizzati con URI dai vocabolari controllati di <strong>schema.gov.it</strong> (336 risorse analizzate).</p>
     <pre><span class="cmt"># Esempio: forma_giuridica genera URI tipizzato</span>
 &lt;...&gt; cov:hasLegalStatus
@@ -663,7 +663,7 @@ footer a { color: #f59e0b; text-decoration: none; }
   </div>
 
   <div class="card">
-    <h3>🔗 Struttura degli URI RDF generati</h3>
+    <h3>Struttura degli URI RDF generati</h3>
     <pre><span class="cmt"># Pattern URI standard</span>
 https://w3id.org/italia/data/<span class="hl">{ipa}</span>/<span class="hl">{tipo-entità}</span>/<span class="hl">{id-riga}</span>
 
@@ -682,40 +682,40 @@ https://w3id.org/italia/data/<span class="hl">{ipa}</span>/<span class="hl">{tip
   <div class="two-col">
     <div>
       <div class="card accent-rosso">
-        <h3>❌ CSV con "Geo Point" unificato</h3>
+        <h3>Problema: CSV con "Geo Point" unificato</h3>
         <pre><span class="bad">Geo Point
 "44.56268, 11.27106"</span></pre>
-        <p>Il tool mostra avviso ⚠. Soluzione: dividi in due colonne separate <code>lat</code> e <code>lon</code> in Excel con Dati → Testo in colonne, usando la virgola come delimitatore.</p>
+        <p>Il tool mostra avviso (triangolo). Soluzione: dividi in due colonne separate <code>lat</code> e <code>lon</code> in Excel con Dati → Testo in colonne, usando la virgola come delimitatore.</p>
       </div>
 
       <div class="card accent-rosso">
-        <h3>❌ Nessuna colonna "nome" o "denominazione"</h3>
+        <h3>Problema: Nessuna colonna "nome" o "denominazione"</h3>
         <pre><span class="bad">id,tipo,lat,lon
 1,DAE,41.117,16.871</span></pre>
         <p>Senza etichetta leggibile il TTL genera <code>rdfs:label "1"@it</code> — numerico. Aggiungi una colonna <code>nome</code> con testo descrittivo.</p>
       </div>
 
       <div class="card accent-rosso">
-        <h3>❌ Separatore ; con portali regionali</h3>
+        <h3>Problema: Separatore ; con portali regionali</h3>
         <p>Molti portali open data italiani esportano CSV con <code>;</code> come separatore. Il tool lo gestisce automaticamente, ma il validatore mostra un avviso informativo. Nessuna azione richiesta se l'avviso è <em>info</em> (blu), non <em>errore</em> (rosso).</p>
       </div>
     </div>
 
     <div>
       <div class="card accent-ambra">
-        <h3>⚠ Posta letti ≠ struttura ricettiva</h3>
+        <h3>Attenzione: Posti letto ≠ struttura ricettiva</h3>
         <pre><span class="bad">nome_struttura,tipo_struttura,posti_letto
 RSA San Giuseppe,RSA,80</span></pre>
         <p><code>posti_letto</code> di solito attiva ACCO (strutture ricettive), ma una RSA non è un hotel. Il tool v88 riconosce <code>tipo_struttura</code> + <code>nome_struttura</code> come struttura sociale e usa COV+POI invece di ACCO.</p>
       </div>
 
       <div class="card accent-ambra">
-        <h3>⚠ codice_istat blocca le statistiche</h3>
+        <h3>Attenzione: codice_istat blocca le statistiche</h3>
         <p>In versioni precedenti <code>codice_istat</code> bloccava il rilevamento QB. Dalla v85 questo è risolto: i CSV demografici con codice_istat vengono riconosciuti correttamente come QB+CLV.</p>
       </div>
 
       <div class="card accent-verde">
-        <h3>✓ Link dati.gov.it migliora il detect</h3>
+        <h3>Link dati.gov.it migliora il detect</h3>
         <p>Se il tuo dataset è già pubblicato su dati.gov.it, incolla il link nello <strong>STEP 1 BIS</strong>. Il tool legge i temi DCAT (<code>themes_aggregate</code>) e li usa per escludere ontologie spurie e suggerire quelle corrette. Esempio: tema HEAL suggerisce POI+CLV+SM e scarta GTFS/ACCO.</p>
       </div>
     </div>

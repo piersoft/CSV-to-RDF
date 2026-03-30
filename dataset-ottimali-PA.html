@@ -42,14 +42,14 @@
 </head>
 <body>
 <header>
-  <h1>🔗 Ontologie PA Italiana — CSV→RDF</h1>
+  <h1>Ontologie PA Italiana — CSV→RDF</h1>
   <p>Guida alle 29 ontologie supportate dal convertitore CSV→RDF/Turtle per la Pubblica Amministrazione italiana, basate sulla repo ufficiale <a href="https://github.com/italia/dati-semantic-assets" style="color:#c7d2fe">dati-semantic-assets</a>. Il corpus include ora dataset reali da <strong>Halley Boxxapps</strong> (Veneto e multiregionale).</p>
   <div class="meta">
-    <span>📦 v2026.03.27.52</span>
-    <span>🗂 29 ontologie</span>
-    <span>📋 311 dataset PA reali</span>
-    <span>🧪 22+7 CSV sacri testati</span>
-    <span>🔗 <a href="https://piersoft.github.io/CSV-to-RDF/" style="color:#c7d2fe">Apri il tool</a></span>
+    <span>v2026.03.27.52</span>
+    <span>29 ontologie</span>
+    <span>311 dataset PA reali</span>
+    <span>22+7 CSV sacri testati</span>
+    <span><a href="https://piersoft.github.io/CSV-to-RDF/" style="color:#c7d2fe">Apri il tool</a></span>
   </div>
 </header>
 <div class="container">
@@ -64,7 +64,7 @@
 
     <div class="card">
       <div class="card-head">
-        <div class="badge prio-alta">🎭</div>
+        <div class="badge prio-alta">CUL</div>
         <div>
           <h3>CPEV — Core Public Event Vocabulary</h3>
           <div class="ns">cpev: &lt;https://w3id.org/italia/onto/CPEV/&gt;</div>
@@ -83,7 +83,7 @@
 
     <div class="card">
       <div class="card-head">
-        <div class="badge prio-media">🚪</div>
+        <div class="badge prio-media">ACC</div>
         <div>
           <h3>AccessCondition — Condizioni di accesso</h3>
           <div class="ns">ac: &lt;https://w3id.org/italia/onto/AccessCondition/&gt;</div>
@@ -102,7 +102,7 @@
 
     <div class="card">
       <div class="card-head">
-        <div class="badge prio-media">🥾</div>
+        <div class="badge prio-media">APT</div>
         <div>
           <h3>AtlasOfPaths — Atlante dei percorsi</h3>
           <div class="ns">aop: &lt;https://w3id.org/italia/onto/AtlasOfPaths/&gt;</div>
@@ -120,7 +120,7 @@
 
     <div class="card">
       <div class="card-head">
-        <div class="badge prio-media">🏛</div>
+        <div class="badge prio-media">IST</div>
         <div>
           <h3>CulturalHeritage — Beni culturali</h3>
           <div class="ns">ch: &lt;https://w3id.org/italia/onto/CulturalHeritage/&gt;</div>
@@ -138,7 +138,7 @@
 
     <div class="card">
       <div class="card-head">
-        <div class="badge prio-media">📋</div>
+        <div class="badge prio-media">PRJ</div>
         <div>
           <h3>Project — Progetti pubblici</h3>
           <div class="ns">prj: &lt;https://w3id.org/italia/onto/Project/&gt;</div>
@@ -156,7 +156,7 @@
 
     <div class="card">
       <div class="card-head">
-        <div class="badge prio-base">📐</div>
+        <div class="badge prio-base">L0</div>
         <div>
           <h3>MU — Unità di misura</h3>
           <div class="ns">mu: &lt;https://w3id.org/italia/onto/MU/&gt;</div>
@@ -174,7 +174,7 @@
 
     <div class="card">
       <div class="card-head">
-        <div class="badge prio-base">📚</div>
+        <div class="badge prio-base">DOC</div>
         <div>
           <h3>NDC — National Data Catalog</h3>
           <div class="ns">ndc: &lt;https://w3id.org/italia/onto/NDC/&gt;</div>
@@ -191,11 +191,11 @@
 
   </div>
 
-  <div class="section-title">📍 Ontologie geografiche e luoghi</div>
+  <div class="section-title">Ontologie geografiche e luoghi</div>
   <div class="grid">
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-base">📍</div>
+      <div class="card-head"><div class="badge prio-base">GEO</div>
         <div><h3>CLV — Core Location Vocabulary</h3><div class="ns">clv: &lt;https://w3id.org/italia/onto/CLV/&gt;</div></div>
       </div>
       <p>Indirizzi, strade, toponimi, numeri civici. Ontologia base per qualunque dataset con colonne geografiche testuali.</p>
@@ -203,7 +203,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-alta">📌</div>
+      <div class="card-head"><div class="badge prio-alta">POI</div>
         <div><h3>POI — Point Of Interest</h3><div class="ns">poi: &lt;https://w3id.org/italia/onto/POI/&gt;</div></div>
       </div>
       <p>Punti di interesse geolocalizzati (lat/lon): DAE, defibrillatori, fontanelle, colonnine, servizi. Rilevato automaticamente quando ci sono coordinate.</p>
@@ -211,16 +211,16 @@
     </div>
 
     <div class="card" style="border-left: 3px solid #e67e22;">
-      <div class="card-head"><div class="badge prio-alta">🍽</div>
+      <div class="card-head"><div class="badge prio-alta">COM</div>
         <div><h3>POI + COV + CLV — Esercizi commerciali e ristorazione</h3><div class="ns">poi: + cov: + clv: · Multi-ontologia</div></div>
       </div>
       <p>Registro esercizi di ristorazione, bar, attività commerciali, SUAP: ragione sociale, insegna, tipo attività, indirizzo. Genera automaticamente nodi separati <code>poi:PointOfInterest</code>, <code>cov:Organization</code> e <code>clv:Address</code>.</p>
       <div class="triggers"><span class="trig">RAGIONE_SOCIALE</span><span class="trig">INSEGNA</span><span class="trig">ATTIVITA</span><span class="trig">UBICAZIONE_ESERCIZIO</span><span class="trig">N_Civico</span></div>
-      <p style="font-size:.78rem;color:#666;margin-top:.5rem;">💡 CSV sacro disponibile nel menù esempi — compatibile con dataset SUAP comunali</p>
+      <p style="font-size:.78rem;color:#666;margin-top:.5rem;">CSV sacro disponibile nel menù esempi — compatibile con dataset SUAP comunali</p>
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">🚌</div>
+      <div class="card-head"><div class="badge prio-media">TPL</div>
         <div><h3>GTFS — Trasporto pubblico</h3><div class="ns">gtfs: &lt;http://vocab.gtfs.org/terms#&gt;</div></div>
       </div>
       <p>Fermate, linee e orari del trasporto pubblico locale secondo lo standard GTFS (General Transit Feed Specification).</p>
@@ -228,7 +228,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">🚗</div>
+      <div class="card-head"><div class="badge prio-media">PK</div>
         <div><h3>PARK — Parcheggi</h3><div class="ns">park: &lt;https://w3id.org/italia/onto/PARK/&gt;</div></div>
       </div>
       <p>Parcheggi pubblici e privati: numero stalli, posti disabili, tariffa oraria, tipo (coperto/scoperto), accessibilità h24.</p>
@@ -236,7 +236,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">🗺</div>
+      <div class="card-head"><div class="badge prio-media">RTE</div>
         <div><h3>Route — Percorsi/Itinerari</h3><div class="ns">route: &lt;https://w3id.org/italia/onto/Route/&gt;</div></div>
       </div>
       <p>Itinerari, sentieri, ciclovie, strade: lunghezza, difficoltà, dislivello, durata stimata, numero tappe, coordinate di partenza/arrivo.</p>
@@ -245,11 +245,11 @@
 
   </div>
 
-  <div class="section-title">🏢 Ontologie per organizzazioni e persone</div>
+  <div class="section-title">Ontologie per organizzazioni</div>
   <div class="grid">
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-alta">🏛</div>
+      <div class="card-head"><div class="badge prio-alta">IST</div>
         <div><h3>COV — Core Organization Vocabulary</h3><div class="ns">cov: &lt;https://w3id.org/italia/onto/COV/&gt;</div></div>
       </div>
       <p>Enti pubblici, organizzazioni, codice IPA, partita IVA, forma giuridica, settore ATECO, acronimo, sede legale.</p>
@@ -257,7 +257,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-alta">👤</div>
+      <div class="card-head"><div class="badge prio-alta">CPV</div>
         <div><h3>CPV — Core Person Vocabulary</h3><div class="ns">cpv: &lt;https://w3id.org/italia/onto/CPV/&gt;</div></div>
       </div>
       <p>Persone fisiche: nome, cognome, codice fiscale, data di nascita, sesso, cittadinanza, grado di istruzione.</p>
@@ -265,7 +265,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">👔</div>
+      <div class="card-head"><div class="badge prio-media">RO</div>
         <div><h3>RO — Role Ontology</h3><div class="ns">ro: &lt;https://w3id.org/italia/onto/RO/&gt;</div></div>
       </div>
       <p>Ruoli istituzionali: sindaci, consiglieri, amministratori. Collega persona, ente e periodo di mandato.</p>
@@ -273,7 +273,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">👷</div>
+      <div class="card-head"><div class="badge prio-media">RPO</div>
         <div><h3>RPO — Role in Public Organization</h3><div class="ns">rpo: &lt;https://w3id.org/italia/onto/RPO/&gt;</div></div>
       </div>
       <p>Personale PA: qualifica, tipo contratto, CCNL, ore settimanali, voci retributive, compensi accessori, costo del lavoro, distacco/comando, anzianità di servizio. Riconosce i dataset conto annuale Halley.</p>
@@ -281,7 +281,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">🏫</div>
+      <div class="card-head"><div class="badge prio-media">SCU</div>
         <div><h3>SMAPIT — Scuole</h3><div class="ns">smapit: &lt;https://w3id.org/italia/onto/SMAPIT/&gt;</div></div>
       </div>
       <p>Istituti scolastici italiani: codice scuola MIUR, tipo istituto, ciclo, indirizzo, organico autonomia.</p>
@@ -289,7 +289,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">🎓</div>
+      <div class="card-head"><div class="badge prio-media">LRN</div>
         <div><h3>Learning — Corsi e formazione</h3><div class="ns">learn: &lt;https://w3id.org/italia/onto/Learning/&gt;</div></div>
       </div>
       <p>Corsi di formazione PA: titolo, ente erogatore, durata, ore, ECTS, titolo rilasciato, modalità (presenza/webinar/misto).</p>
@@ -299,15 +299,15 @@
   </div>
 
     <div class="card" style="border-left: 3px solid #e74c3c;">
-      <div class="card-head"><div class="badge prio-alta">🏥</div>
+      <div class="card-head"><div class="badge prio-alta">SAN</div>
         <div><h3>COV + CLV + POI — Centri sanitari e strutture di riferimento</h3><div class="ns">cov: + clv: + poi: · Multi-ontologia · Malattie rare, SMA, IRCCS</div></div>
       </div>
       <p>Anagrafica centri di riferimento per malattie rare, ospedali, IRCCS, reti sanitarie regionali. Genera nodi <code>cov:PublicOrganization</code> con unità operative, codici esenzione e città.</p>
       <div class="triggers"><span class="trig">NOME_CENTRO</span><span class="trig">UNITA_OPERATIVA</span><span class="trig">CODICE_ESENZIONE</span><span class="trig">MALATTIA</span><span class="trig">LIVELLO_CENTRO</span><span class="trig">CITTA</span></div>
-      <p style="font-size:.78rem;color:#666;margin-top:.5rem;">💡 Colonne <code>patologia</code>, <code>nome_struttura</code>, <code>codice_presidio</code> anche supportate</p>
+      <p style="font-size:.78rem;color:#666;margin-top:.5rem;">Colonne <code>patologia</code>, <code>nome_struttura</code>, <code>codice_presidio</code> anche supportate</p>
     </div>
 
-  <div class="section-title">🕐 Ontologie temporali e servizi</div>
+  <div class="section-title">Ontologie temporali e servizi</div>
   <div class="grid">
 
     <div class="card">
@@ -319,7 +319,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-alta">🏛</div>
+      <div class="card-head"><div class="badge prio-alta">IST</div>
         <div><h3>CPSV / CPSV-AP — Servizi pubblici</h3><div class="ns">cpsv: &lt;http://purl.org/vocab/cpsv#&gt;</div></div>
       </div>
       <p>Servizi della PA al cittadino e concorsi pubblici: SUAP, anagrafe, certificati, bandi. Nome servizio/bando, ente bandente, posti disponibili, data scadenza, Gazzetta Ufficiale.</p>
@@ -327,7 +327,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">📜</div>
+      <div class="card-head"><div class="badge prio-media">TR</div>
         <div><h3>Transparency — Obblighi trasparenza</h3><div class="ns">tr: &lt;https://w3id.org/italia/onto/Transparency/&gt;</div></div>
       </div>
       <p>Obblighi di pubblicazione D.Lgs 33/2013: categoria trasparenza, norma riferimento, dato obbligatorio, anno pubblicazione.</p>
@@ -335,7 +335,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">💶</div>
+      <div class="card-head"><div class="badge prio-media">PC</div>
         <div><h3>PublicContract — Appalti pubblici</h3><div class="ns">pc: &lt;https://w3id.org/italia/onto/PublicContract/&gt;</div></div>
       </div>
       <p>Contratti pubblici: CIG, CUP, oggetto, importo aggiudicazione, stazione appaltante, aggiudicatario, CPV, modalità di scelta.</p>
@@ -344,11 +344,11 @@
 
   </div>
 
-  <div class="section-title">📊 Ontologie per dati e misure</div>
+  <div class="section-title">Ontologie per dati e misure</div>
   <div class="grid">
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-alta">📡</div>
+      <div class="card-head"><div class="badge prio-alta">IoT</div>
         <div><h3>IoT — Internet of Things</h3><div class="ns">iot: &lt;https://w3id.org/italia/onto/IoT/&gt;</div></div>
       </div>
       <p>Sensori, rilevazioni ambientali (qualità aria, temperatura, traffico): ID sensore, tipo, proprietà osservata, valore, unità di misura.</p>
@@ -356,7 +356,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-alta">📈</div>
+      <div class="card-head"><div class="badge prio-alta">QB</div>
         <div><h3>QB — RDF Data Cube</h3><div class="ns">qb: &lt;http://purl.org/linked-data/cube#&gt;</div></div>
       </div>
       <p>Dataset statistici multidimensionali: popolazioni, bilanci, indicatori, costi PA. Riconosce tutti i dataset Halley (demografici, bilancio, pratiche, protocollo, atti, cimiteri, trasporto). Segue lo standard W3C RDF Data Cube.</p>
@@ -364,7 +364,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">🎯</div>
+      <div class="card-head"><div class="badge prio-media">IND</div>
         <div><h3>Indicator — Indicatori/KPI</h3><div class="ns">indicator: &lt;https://w3id.org/italia/onto/Indicator/&gt;</div></div>
       </div>
       <p>KPI e indicatori di performance PA: tipo, valore rilevato, baseline, target, fonte, periodo di riferimento, unità di misura.</p>
@@ -373,11 +373,11 @@
 
   </div>
 
-  <div class="section-title">🎨 Ontologie per cultura e turismo</div>
+  <div class="section-title">Ontologie per cultura e turismo</div>
   <div class="grid">
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-alta">🏺</div>
+      <div class="card-head"><div class="badge prio-alta">CH</div>
         <div><h3>Cultural-ON — Istituti culturali</h3><div class="ns">cis: &lt;https://w3id.org/italia/onto/Cultural-ON/&gt;</div></div>
       </div>
       <p>Musei, biblioteche, archivi, istituti culturali MiC: tipo istituto, disciplina, tipo bene culturale, orari, accessibilità.</p>
@@ -385,7 +385,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">🛏</div>
+      <div class="card-head"><div class="badge prio-media">ACC</div>
         <div><h3>ACCO — Strutture ricettive</h3><div class="ns">acco: &lt;https://w3id.org/italia/onto/ACCO/&gt;</div></div>
       </div>
       <p>Hotel, B&B, campeggi, agriturismi: numero camere, posti letto, stelle, codice struttura, classificazione.</p>
@@ -393,7 +393,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">🎟</div>
+      <div class="card-head"><div class="badge prio-media">POT</div>
         <div><h3>POT — Prezzi e tariffe</h3><div class="ns">pot: &lt;https://w3id.org/italia/onto/POT/&gt;</div></div>
       </div>
       <p>Listini prezzi, tariffe di accesso: prezzo intero, ridotto, gratuito, età ridotto, valuta. Teatri, musei, trasporti.</p>
@@ -402,11 +402,11 @@
 
   </div>
 
-  <div class="section-title">🔧 Ontologie tecnico/amministrative</div>
+  <div class="section-title">Ontologie tecnico-amministrative</div>
   <div class="grid">
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-base">🧱</div>
+      <div class="card-head"><div class="badge prio-base">L0</div>
         <div><h3>L0 — Level-0 / Top Ontology</h3><div class="ns">l0: &lt;https://w3id.org/italia/onto/l0/&gt;</div></div>
       </div>
       <p>Ontologia di base sempre presente: classi radice come <code>l0:Object</code>, <code>l0:EventOrSituation</code>. Aggiunta automaticamente a ogni output TTL.</p>
@@ -414,7 +414,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-base">📡</div>
+      <div class="card-head"><div class="badge prio-base">IoT</div>
         <div><h3>SM — Social Media / Contatti</h3><div class="ns">sm: &lt;https://w3id.org/italia/onto/SM/&gt;</div></div>
       </div>
       <p>Informazioni di contatto e canali digitali: email, sito web, telefono, fax. Sempre incluso quando presenti colonne contatto.</p>
@@ -422,7 +422,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-base">🏷</div>
+      <div class="card-head"><div class="badge prio-base">CAT</div>
         <div><h3>ADMS — Asset Description Metadata Schema</h3><div class="ns">adms: &lt;http://www.w3.org/ns/adms#&gt;</div></div>
       </div>
       <p>Asset semantici PA: ontologie, vocabolari, schemi. Versione, stato, licenza, formato, URL distribuzione, editore.</p>
@@ -432,12 +432,12 @@
   </div>
 
 
-  <div class="section-title">🏘 Dataset Halley Boxxapps — Comuni italiani</div>
+  <div class="section-title">Dataset Halley Boxxapps</div>
   <p style="font-size:.85rem;color:#374151;margin-bottom:1rem;">22 nuovi dataset reali da <strong>opendata.boxxapps.com</strong> e <strong>opendata2.boxxapps.com</strong> (Gruppo Halley), che raccolgono i dati aperti di centinaia di Comuni italiani tramite applicativi verticali standardizzati. Tutti i dataset seguono schemi CSV fissi e replicati su ogni Comune.</p>
   <div class="grid">
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-alta">👷</div>
+      <div class="card-head"><div class="badge prio-alta">RPO</div>
         <div><h3>Personale PA — 9 sotto-tipi</h3><div class="ns">RPO + QB · Conto annuale</div></div>
       </div>
       <p>Costo personale, qualifica, titolo di studio, classi di età, anzianità, distacco/comando, voci retributive, compensi accessori, altri oneri. Tutti i sotto-tipi del conto annuale del personale comunale.</p>
@@ -452,7 +452,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-alta">👨‍👩‍👧</div>
+      <div class="card-head"><div class="badge prio-alta">DEM</div>
         <div><h3>Demografici e famiglie</h3><div class="ns">QB · Anagrafe comunale</div></div>
       </div>
       <p>Andamento demografico annuale (nati, decessi, immigrati, emigrati, totale) e composizione delle famiglie per numero di componenti e minori.</p>
@@ -463,7 +463,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-alta">💰</div>
+      <div class="card-head"><div class="badge prio-alta">FIN</div>
         <div><h3>Bilancio — residui e competenza</h3><div class="ns">QB · Contabilità comunale</div></div>
       </div>
       <p>Andamento entrate e uscite: stanziato, accertato, incassato, impegnato, pagato, residui attivi e passivi per esercizio.</p>
@@ -475,7 +475,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">📜</div>
+      <div class="card-head"><div class="badge prio-media">TR</div>
         <div><h3>Atti amministrativi</h3><div class="ns">QB · Delibere e determine</div></div>
       </div>
       <p>Delibere di giunta/consiglio e determine dirigenziali: tipo atto, totale mensile, media giorni di approvazione, importo impegnato, mandati collegati.</p>
@@ -487,7 +487,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">🏗</div>
+      <div class="card-head"><div class="badge prio-media">PRJ</div>
         <div><h3>Pratiche edilizie</h3><div class="ns">QB · Sportello edilizio</div></div>
       </div>
       <p>Permessi di costruire e atti edilizi rilasciati mensilmente: tipologia, permessi rilasciati, rispetto dei termini (entro/fuori).</p>
@@ -498,7 +498,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">📮</div>
+      <div class="card-head"><div class="badge prio-media">PEC</div>
         <div><h3>Protocollo</h3><div class="ns">QB · Gestione documentale</div></div>
       </div>
       <p>Volumi di protocollo per anno, tipo (entrata/uscita/interno) e tipo spedizione. Indicatore del carico documentale dell'ente.</p>
@@ -509,7 +509,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">⚰️</div>
+      <div class="card-head"><div class="badge prio-media">SRV</div>
         <div><h3>Servizi cimiteriali</h3><div class="ns">QB · Stato civile</div></div>
       </div>
       <p>Servizi erogati dal cimitero comunale per anno e tipologia: inumazioni, tumulazioni, esumazioni, estumulazioni.</p>
@@ -519,7 +519,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">🏆</div>
+      <div class="card-head"><div class="badge prio-media">GRE</div>
         <div><h3>Concorsi pubblici</h3><div class="ns">CPSV · Reclutamento PA</div></div>
       </div>
       <p>Bandi di concorso dell'ente: oggetto, ente bandente, posti disponibili (totali e riservati), data scadenza, pubblicazione in Gazzetta Ufficiale.</p>
@@ -531,7 +531,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">🏛</div>
+      <div class="card-head"><div class="badge prio-media">IST</div>
         <div><h3>Incarichi politici e amministrativi</h3><div class="ns">CPV + RO · Organi istituzionali</div></div>
       </div>
       <p>Titolari di incarichi politici (sindaco, assessori, consiglieri): cognome, nome, gruppo politico, organo di appartenenza, ruolo, orario di ricevimento.</p>
@@ -543,7 +543,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">🛒</div>
+      <div class="card-head"><div class="badge prio-media">MKT</div>
         <div><h3>Mercati e fiere</h3><div class="ns">TI + POI · Commercio ambulante</div></div>
       </div>
       <p>Posteggi per mercati settimanali e fiere: nome mercato, tipo (fiera/mercato), giorno, periodo di svolgimento, tipo posteggio, totale stalli.</p>
@@ -555,7 +555,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">🤝</div>
+      <div class="card-head"><div class="badge prio-media">EL</div>
         <div><h3>Elenco associazioni</h3><div class="ns">COV + CLV + SM · Terzo settore</div></div>
       </div>
       <p>Associazioni del territorio: nome, indirizzo, coordinate geografiche (latitudine/longitudine), contatti (telefono, email, fax, cellulare), categoria di attività.</p>
@@ -568,7 +568,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="badge prio-media">🚌</div>
+      <div class="card-head"><div class="badge prio-media">TPL</div>
         <div><h3>Trasporto scolastico</h3><div class="ns">QB · Servizi scolastici</div></div>
       </div>
       <p>Servizio di trasporto scolastico per tragitto: totale alunni trasportati, rette emesse e pagamenti ricevuti per anno.</p>
@@ -582,7 +582,7 @@
   </div>
 
   <div style="margin-top:2.5rem;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem 1.6rem;">
-    <h2 style="font-size:1.1rem;margin-bottom:.8rem;">⚙️ Come funziona il rilevamento automatico</h2>
+    <h2 style="font-size:1.1rem;margin-bottom:.8rem;">Come funziona il rilevamento automatico</h2>
     <p style="font-size:.9rem;color:#374151;">Il motore deterministico analizza gli <strong>header CSV normalizzati</strong> e un campione di valori (prime 5 righe). Ogni ontologia ha trigger specifici — colonne esatte o combinazioni logiche. L'ordine di precedenza:</p>
     <ol style="font-size:.85rem;color:#374151;margin-top:.6rem;padding-left:1.4rem;line-height:2;">
       <li>Trigger forti (colonne dominanti del dominio)</li>
@@ -591,7 +591,7 @@
       <li>Cleanup post-rilevamento (rimozione ontologie spurie)</li>
       <li>Aggiunta automatica ontologie dipendenti (es. <code>PublicContract→COV</code>, <code>Indicator→QB</code>)</li>
     </ol>
-    <p style="margin-top:.8rem;font-size:.85rem;">📖 <a href="https://github.com/piersoft/CSV-to-RDF">Sorgente su GitHub</a> · 🔗 <a href="https://piersoft.github.io/CSV-to-RDF/">Tool online</a> · 📋 <a href="https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html">Questa pagina</a></p>
+    <p style="margin-top:.8rem;font-size:.85rem;"><a href="https://github.com/piersoft/CSV-to-RDF">Sorgente su GitHub</a> · <a href="https://piersoft.github.io/CSV-to-RDF/">Tool online</a> · <a href="https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html">Questa pagina</a></p>
   </div>
 </div>
 <footer>CSV→RDF PA Italiana · piersoft · v2026.03.27.52 · 29 ontologie · 311 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>

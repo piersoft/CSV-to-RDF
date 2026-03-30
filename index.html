@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.27.99 -->
+  <!-- build:v2026.03.30.00 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -209,7 +209,7 @@
     
     <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1rem;">
       <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 1</div><div style="font-size:.9rem;">Incolla o <strong>carica il CSV</strong></div></div>
-      <div style="background:rgba(255,255,255,0.18);border-radius:8px;padding:.6rem .9rem;min-width:130px;border:1px solid rgba(255,255,255,.35)"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">AUTO ✨</div><div style="font-size:.9rem;">Le <strong>ontologie</strong> si rilevano</div></div>
+      <div style="background:rgba(255,255,255,0.18);border-radius:8px;padding:.6rem .9rem;min-width:130px;border:1px solid rgba(255,255,255,.35)"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">AUTO</div><div style="font-size:.9rem;">Le <strong>ontologie</strong> si rilevano</div></div>
       <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;border:1px dashed rgba(255,255,255,.4);" onclick="document.getElementById('step1bis-panel')?.scrollIntoView({behavior:'smooth'});document.getElementById('step1bis-panel')?.querySelector('details')?.setAttribute('open','');" title="Clicca per andare allo STEP 1 BIS" ><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 1 BIS <em style="font-weight:400;opacity:.7">(opz.)</em></div><div style="font-size:.9rem;">Link <strong>dati.gov.it</strong></div></div>
       <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 2 <em style="font-weight:400;opacity:.7">(opz.)</em></div><div style="font-size:.9rem;">API key <strong>AI-Detect</strong></div></div>
       <div style="background:rgba(255,255,255,0.13);border-radius:8px;padding:.6rem .9rem;min-width:130px;"><div style="font-weight:700;font-size:.78rem;opacity:.7;margin-bottom:.2rem;">STEP 3</div><div style="font-size:.9rem;">Inserisci <strong>codice IPA</strong></div></div>
@@ -225,7 +225,7 @@
       <a href="guida.html" target="_blank" rel="noopener noreferrer"
          style="display:inline-flex;align-items:center;gap:.35rem;background:#f59e0b;border:1px solid #d97706;color:#000;padding:.45rem .9rem;border-radius:5px;font-size:.8rem;font-weight:700;text-decoration:none;transition:opacity .15s;"
          onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
-        📖 Guida completa per la PA
+        Guida completa →
       </a>
     </div>
   </div>
@@ -240,12 +240,12 @@
 
       <!-- CSV -->
       <div class="card-pa">
-        <div class="card-head blue">📄 STEP 1 — Incolla o carica un CSV</div>
+        <div class="card-head blue">STEP 1 — Incolla o carica un CSV</div>
         <div class="card-body-pa">
           <label class="lbl">Contenuto CSV (con intestazioni)</label>
           <p style="font-size:.78rem;color:var(--dg-muted);margin:.2rem 0 .4rem;">Non hai un CSV? Usa <strong>Carica esempio</strong> per vedere i formati per ontologia e usali come schema.</p>
           <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;align-items:center">
-            <button class="btn-sec" style="font-size:0.8rem;padding:0.35rem 0.8rem" onclick="document.getElementById('file-input').click()">📂 Carica file CSV</button>
+            <button class="btn-sec" style="font-size:0.8rem;padding:0.35rem 0.8rem" onclick="document.getElementById('file-input').click()">Carica file CSV</button>
             <input type="file" accept=".csv,.tsv,.txt" id="file-input" style="display:none">
             <span id="file-name" style="font-size:0.75rem;color:var(--dg-muted);font-family:var(--mono)"></span>
           </div>
@@ -253,7 +253,7 @@
             oninput="window._exampleLocked=false;clearTimeout(window._csvDebounce);window._csvDebounce=setTimeout(function(){if(document.getElementById('csv-input').value.trim())parseAndPreviewCSV();},400);"
             placeholder="Incolla qui il contenuto del tuo file CSV...&#10;&#10;id,nome,indirizzo,latitudine,longitudine&#10;1,Teatro Comunale,Piazza Garibaldi,40.604,17.231"></textarea>
           <div class="d-flex gap-2 mt-2 flex-wrap">
-            <button class="btn-sec" onclick="parseAndPreviewCSV()">👁 Anteprima</button>
+            <button class="btn-sec" onclick="parseAndPreviewCSV()">Anteprima</button>
             <select id="esempio-tipo" class="inp" style="width:auto;display:inline-block;padding:4px 8px;font-size:12px;" title="Scegli un esempio per tipologia di dataset">
   <option value="poi">POI — Defibrillatori</option>
   <option value="smapit">SMAPIT — Scuole</option>
@@ -294,7 +294,7 @@
   <option value="superficie_agricola">QB+CLV — Superficie agricola</option>
   <option value="istituti_scolastici">SMAPIT+CLV+SM — Istituti scolastici</option>
   <option value="dati_meteo">IoT+CLV+POI+TI — Dati meteo stazioni</option>
-</select><button class="btn-sec" onclick="loadExample(document.getElementById('esempio-tipo').value)">📋 Carica esempio</button>
+</select><button class="btn-sec" onclick="loadExample(document.getElementById('esempio-tipo').value)">Carica esempio</button>
             <button class="btn-sec" onclick="clearAll()">✕ Svuota</button>
           </div>
           <div class="csv-preview-wrap" id="csv-preview"></div>
@@ -305,7 +305,7 @@
           <!-- PANNELLO VALIDAZIONE -->
           <div id="csv-validation" style="display:none;margin-top:0.9rem;">
             <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--dg-muted);margin-bottom:0.4rem;">
-              🔍 Analisi qualità CSV
+              Analisi qualità CSV
             </div>
             <div id="csv-validation-items"></div>
           </div>
@@ -316,7 +316,7 @@
       <div id="step1bis-panel">
       <details class="card-pa" id="step1bis-accordion">
         <summary class="card-head" style="background:#4a90d9;cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;">
-          <span>🔗 STEP 1 BIS — Contesto da dati.gov.it <span style="font-weight:400;font-size:.8em;opacity:.8;">(opzionale)</span></span>
+          <span>STEP 1 BIS — Contesto da dati.gov.it <span style="font-weight:400;font-size:.8em;opacity:.8;">(opzionale)</span></span>
           <span id="step1bis-arrow" style="font-size:.7em;opacity:.8;">▶</span>
         </summary>
         <div class="card-body-pa">
@@ -342,17 +342,17 @@
       <!-- ONTOLOGIE — sezione separata dagli step, auto-rilevata -->
       <div class="card-pa" id="onto-card" style="border:2px solid transparent;transition:border-color .4s">
         <div class="card-head" style="background:#1a6b35;">
-          🔗 Ontologie rilevate automaticamente
+          Ontologie rilevate automaticamente
           <span style="font-weight:400;font-size:.78em;opacity:.8;margin-left:.4rem;">— clicca per modificare</span>
           <button class="btn-auto-onto" id="btn-ai-onto" onclick="autoDetectOntoAI()" disabled
             style="margin-left:auto;font-size:.72rem;padding:.2rem .6rem;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:3px;cursor:pointer;font-family:var(--mono)">
-            🤖 Rileva ontologie
+            Rileva ontologie
           </button>
         </div>
         <div class="card-body-pa" style="padding:.75rem 1rem">
           <div id="auto-onto-msg" style="display:none;font-size:0.72rem;color:#1a6b35;margin-bottom:0.4rem;font-family:var(--mono)"></div>
           <div id="manual-pills-msg" style="display:none;font-size:0.72rem;color:#c45e00;margin-bottom:0.4rem;font-family:var(--mono)">
-            ✋ Selezione manuale attiva — il detect automatico è disabilitato.
+            Selezione manuale attiva — il detect automatico è disabilitato.
             <button onclick="resetToAutoDetect()" style="margin-left:.5rem;font-size:0.7rem;font-family:var(--mono);background:none;border:1px solid #c45e00;border-radius:3px;color:#c45e00;cursor:pointer;padding:1px 6px">↺ Torna al detect automatico</button>
           </div>
           <div class="pills" id="onto-selector">
@@ -403,17 +403,17 @@
       <!-- PROVIDER AI (STEP 2) -->
       <div class="card-pa">
         <div class="card-head dark" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.acc-arrow').textContent=this.nextElementSibling.style.display==='none'?'▶':'▼';" style="cursor:pointer;justify-content:space-between;">
-          <span>⚙ STEP 2 — Provider AI <span style="font-weight:400;font-size:.8em;opacity:.7;">(opzionale)</span></span>
+          <span>STEP 2 — Provider AI <span style="font-weight:400;font-size:.8em;opacity:.7;">(opzionale)</span></span>
           <span class="acc-arrow" style="font-size:.7em;opacity:.8;">▶</span>
         </div>
         <div class="card-body-pa" style="display:none;">
           <div class="provider-tabs">
-            <button class="provider-tab active" data-provider="mistral"   onclick="switchProvider('mistral')">🟠 Mistral</button>
-            <button class="provider-tab"        data-provider="groq"      onclick="switchProvider('groq')">⚡ Groq</button>
+            <button class="provider-tab active" data-provider="mistral"   onclick="switchProvider('mistral')">Mistral</button>
+            <button class="provider-tab"        data-provider="groq"      onclick="switchProvider('groq')">Groq</button>
             <button class="provider-tab"        data-provider="gemini"    onclick="switchProvider('gemini')">✨ Gemini</button>
-            <button class="provider-tab"        data-provider="ollama"    onclick="switchProvider('ollama')">🦙 Ollama Cloud</button>
+            <button class="provider-tab"        data-provider="ollama"    onclick="switchProvider('ollama')">Ollama Cloud</button>
               <button class="provider-tab" data-provider="openai" onclick="switchProvider('openai')">&#x1F7E2; OpenAI</button>
-            <button class="provider-tab"        data-provider="anthropic" onclick="switchProvider('anthropic')">🔴 Anthropic</button>
+            <button class="provider-tab"        data-provider="anthropic" onclick="switchProvider('anthropic')">Anthropic</button>
           </div>
 
           <div class="provider-panel active" id="panel-mistral">
@@ -422,7 +422,7 @@
                 <label class="lbl">API Key</label>
                 <div class="apikey-wrap">
                   <input type="password" class="inp" id="mistral-key" oninput="onApiKeyChange()" onpaste="setTimeout(onApiKeyChange,100)" onchange="onApiKeyChange()" placeholder="Incolla la tua API key Mistral..."/>
-                  <button class="apikey-toggle" onclick="toggleKey('mistral-key')">👁</button>
+                  <button class="apikey-toggle" onclick="toggleKey('mistral-key')">&#128065;</button>
                 </div>
               </div>
               <div class="col-12">
@@ -435,7 +435,7 @@
                 </select>
               </div>
             </div>
-            <div class="info-note mt-2">🔑 <a href="https://console.mistral.ai" target="_blank" rel="noopener noreferrer">console.mistral.ai</a> — <strong>mistral-large-latest</strong> consigliato per la generazione TTL · <strong>open-mistral-7b</strong> consigliato per il rilevamento ontologie (AI-detect).</div>
+            <div class="info-note mt-2"><a href="https://console.mistral.ai" target="_blank" rel="noopener noreferrer">console.mistral.ai</a> — <strong>mistral-large-latest</strong> consigliato per la generazione TTL · <strong>open-mistral-7b</strong> consigliato per il rilevamento ontologie (AI-detect).</div>
           </div>
 
           <div class="provider-panel" id="panel-groq">
@@ -444,7 +444,7 @@
                 <label class="lbl">API Key</label>
                 <div class="apikey-wrap">
                   <input type="password" class="inp" id="groq-key" oninput="onApiKeyChange()" onpaste="setTimeout(onApiKeyChange,100)" onchange="onApiKeyChange()" placeholder="Incolla la tua API key Groq..."/>
-                  <button class="apikey-toggle" onclick="toggleKey('groq-key')">👁</button>
+                  <button class="apikey-toggle" onclick="toggleKey('groq-key')">&#128065;</button>
                 </div>
               </div>
               <div class="col-12">
@@ -456,7 +456,7 @@
                 </select>
               </div>
             </div>
-            <div class="info-note mt-2">⚡ <a href="https://console.groq.com" target="_blank" rel="noopener noreferrer">console.groq.com</a> — veloce, rate limit sul piano free.</div>
+            <div class="info-note mt-2"><a href="https://console.groq.com" target="_blank" rel="noopener noreferrer">console.groq.com</a> — veloce, rate limit sul piano free.</div>
           </div>
 
           <div class="provider-panel" id="panel-gemini">
@@ -465,7 +465,7 @@
                 <label class="lbl">API Key</label>
                 <div class="apikey-wrap">
                   <input type="password" class="inp" id="gemini-key" oninput="onApiKeyChange()" onpaste="setTimeout(onApiKeyChange,100)" onchange="onApiKeyChange()" placeholder="Incolla la tua API key Google AI Studio..."/>
-                  <button class="apikey-toggle" onclick="toggleKey('gemini-key')">👁</button>
+                  <button class="apikey-toggle" onclick="toggleKey('gemini-key')">&#128065;</button>
                 </div>
               </div>
               <div class="col-12">
@@ -495,7 +495,7 @@
                 <label class="lbl">API Key Ollama Cloud</label>
                 <div class="apikey-wrap">
                   <input type="password" class="inp" id="ollama-key" placeholder="da ollama.com/settings/keys"/>
-                  <button class="apikey-toggle" onclick="toggleKey('ollama-key')">👁</button>
+                  <button class="apikey-toggle" onclick="toggleKey('ollama-key')">&#128065;</button>
                 </div>
               </div>
               <div class="col-12">
@@ -510,7 +510,7 @@
               </div>
             </div>
             <div class="info-note mt-2">
-              🦙 Ollama Cloud blocca le chiamate dirette dal browser (CORS). Il proxy sul tuo server fa da intermediario verso <code>ollama.com</code>.<br/>
+              Ollama Cloud blocca le chiamate dirette dal browser (CORS). Il proxy sul tuo server fa da intermediario verso <code>ollama.com</code>.<br/>
               API key: <a href="https://ollama.com/settings/keys" target="_blank" rel="noopener noreferrer">ollama.com/settings/keys</a>
             </div>
           </div>
@@ -522,7 +522,7 @@
                 <label class="lbl">API Key</label>
                 <div class="apikey-wrap">
                   <input type="password" class="inp" id="anthropic-key" oninput="onApiKeyChange()" onpaste="setTimeout(onApiKeyChange,100)" onchange="onApiKeyChange()" placeholder="Incolla la tua API key Anthropic..."/>
-                  <button class="apikey-toggle" onclick="toggleKey('anthropic-key')">👁</button>
+                  <button class="apikey-toggle" onclick="toggleKey('anthropic-key')">&#128065;</button>
                 </div>
               </div>
               <div class="col-12">
@@ -534,7 +534,7 @@
                 </select>
               </div>
             </div>
-            <div class="info-note mt-2">🔴 <a href="https://console.anthropic.com/" target="_blank" rel="noopener noreferrer">console.anthropic.com</a> — <strong>claude-haiku</strong> consigliato per AI-detect, <strong>claude-sonnet</strong> per la generazione TTL.</div>
+            <div class="info-note mt-2"><a href="https://console.anthropic.com/" target="_blank" rel="noopener noreferrer">console.anthropic.com</a> — <strong>claude-haiku</strong> consigliato per AI-detect, <strong>claude-sonnet</strong> per la generazione TTL.</div>
           </div>
           <!-- OPENAI -->
           <div class="provider-panel" id="panel-openai">
@@ -572,7 +572,7 @@
 
       <!-- TITOLARE (STEP 3) -->
       <div class="card-pa">
-        <div class="card-head orange">🏛 STEP 3 — Titolare del dato</div>
+        <div class="card-head orange">STEP 3 — Titolare del dato</div>
         <div class="card-body-pa">
           <div class="row g-2">
             <div class="col-md-7">
@@ -593,7 +593,7 @@
 
       <div style="margin-bottom:.5rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--dg-muted)">⚡ STEP 4 — Genera il file TTL</div>
       <div class="d-flex gap-2 flex-wrap mb-3">
-        <button class="btn-orange" id="btn-convert" onclick="startConversion()">⚡ Genera TTL</button>
+        <button class="btn-orange" id="btn-convert" onclick="startConversion()">Genera TTL</button>
         <button class="btn-sec" onclick="clearAll()">↺ Reset</button>
       </div>
       <div class="status-bar" id="status-bar"></div>
@@ -603,16 +603,16 @@
     <!-- ══ COLONNA DX ══ -->
     <div class="col-lg-6">
       <div class="card-pa">
-        <div class="card-head dark">💻 Output RDF / Turtle (.ttl)</div>
+        <div class="card-head dark">Output RDF / Turtle (.ttl)</div>
         <div class="card-body-pa">
           <textarea class="inp ttl-area" id="ttl-output" readonly
             placeholder="# Il file Turtle apparirà qui...&#10;#&#10;# Esempio:&#10;# @prefix poi: &lt;https://w3id.org/italia/onto/POI/&gt; .&#10;# @prefix geo: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#&gt; .&#10;# ...&#10;#&#10;# &lt;https://...&gt; a poi:PointOfInterest ;&#10;#     rdfs:label &quot;...&quot;@it ;&#10;#     geo:lat &quot;...&quot;^^xsd:decimal ."></textarea>
           <div class="d-flex gap-2 mt-2 flex-wrap">
             <button class="btn-primary" id="btn-download-ttl" onclick="downloadTTL()" disabled>⬇ Scarica .ttl</button>
             <button class="btn-primary" id="btn-download-rdf" onclick="downloadRDF()" disabled style="background:#1a6b35">⬇ Scarica .rdf</button>
-            <button class="btn-sec" onclick="copyTTL()">📋 Copia TTL</button>
+            <button class="btn-sec" onclick="copyTTL()">Copia TTL</button>
             <button id="btn-validate" class="btn-sec" disabled onclick="validateTTL()" style="border-color:#f90;color:#f90">🔍 Valida</button>
-            <button id="btn-show-graph" class="btn-sec" disabled onclick="showGraphPanel()" style="border-color:var(--dg-blue);color:var(--dg-blue)">🕸 Grafo</button>
+            <button id="btn-show-graph" class="btn-sec" disabled onclick="showGraphPanel()" style="border-color:var(--dg-blue);color:var(--dg-blue)">Grafo</button>
           </div>
           <div id="validation-report" style="display:none; margin-top:12px; padding:12px; background:#1a1a2e; border-radius:8px; font-family:monospace; font-size:12px; max-height:200px; overflow-y:auto"></div>
           <div id="output-stats" style="display:none;margin-top:0.9rem;">
@@ -662,7 +662,7 @@
 <div class="container mt-3 mb-2" id="graph-panel" style="display:none">
   <div class="card-pa" style="border:2px solid var(--dg-blue)">
     <div class="card-head dark" style="display:flex;align-items:center;justify-content:space-between;">
-      <span>🕸 Anteprima Grafo RDF</span>
+      <span>Anteprima Grafo RDF</span>
       <div style="display:flex;gap:.5rem;align-items:center;">
         <label style="font-size:.72rem;color:rgba(255,255,255,.8);font-weight:400">
           <input type="checkbox" id="graph-labels" checked onchange="renderGraph()" style="margin-right:3px"> Etichette
@@ -695,7 +695,7 @@
     <div onclick="var b=this.nextElementSibling;b.style.display=b.style.display==='none'?'block':'none';this.querySelector('.acc-arrow').textContent=b.style.display==='none'?'▶':'▼';"
          style="background:#1a6b35;padding:.5rem 1rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
       <span style="color:#fff;font-size:.75rem;font-weight:700;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;">
-        🔗 Endpoint TTL dinamico — aggiorna il TTL automaticamente ad ogni chiamata
+        Endpoint TTL dinamico — aggiorna il TTL automaticamente ad ogni chiamata
       </span>
       <span class="acc-arrow" style="color:rgba(255,255,255,.8);font-size:.7em;">▶</span>
     </div>
@@ -740,7 +740,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.27.99</span>
+<span id="app-version">v2026.03.30.00</span>
 </footer>
 
 <script>
@@ -1395,7 +1395,7 @@ if (!window._exampleLocked) {
     }
 
     const msg = document.getElementById('auto-onto-msg');
-    msg.textContent = `🤖 AI suggerisce: ${ontos.join(', ')}`;
+    msg.textContent = `AI suggerisce: ${ontos.join(', ')}`;
     msg.style.display = 'block';
     window._aiDetectDone = true; // segnala che l'AI ha già completato
 
@@ -2249,10 +2249,10 @@ async function fetchDatiGovContext() {
     res.style.background = '#e8f5e9';
     res.innerHTML =
       '✅ <strong>' + escTTL_safe(title) + '</strong><br>' +
-      '📂 Temi: <strong>' + themeStr + '</strong> &nbsp;|&nbsp; ' +
-      '🏷️ Tag: ' + tagStr + '<br>' +
-      '🚫 Escludo ontologie spurie: <strong style="color:#c00">' + exclStr + '</strong><br>' +
-      '💡 Suggerite dai tag: <strong style="color:#1a6b35">' + suggStr + '</strong>';
+      'Temi: <strong>' + themeStr + '</strong> &nbsp;|&nbsp; ' +
+      'Tag: ' + tagStr + '<br>' +
+      'Escludo ontologie spurie: <strong style="color:#c00">' + exclStr + '</strong><br>' +
+      'Suggerite dai tag: <strong style="color:#1a6b35">' + suggStr + '</strong>';
 
     // Ri-esegui il detect con il contesto attivo se il CSV è già caricato
     if (document.getElementById('csv-input').value.trim()) {
@@ -3847,7 +3847,7 @@ async function startDeterministicConversion() {
   var _nRows=_parsed3?_parsed3.length:0;
   var _nCols=(_parsed3&&_parsed3[0])?Object.keys(_parsed3[0]).length:0;
   var _btnC2=document.getElementById('btn-convert');
-  if(_btnC2){_btnC2.dataset.origText=(_btnC2.textContent.includes('Genera')?_btnC2.textContent:'⚡ Genera TTL');_btnC2.textContent='Generazione...';_btnC2.disabled=true;}
+  if(_btnC2){_btnC2.dataset.origText=(_btnC2.textContent.includes('Genera')?_btnC2.textContent:'Genera TTL');_btnC2.textContent='Generazione...';_btnC2.disabled=true;}
   // Animazione progressiva — await per cedere thread al browser ad ogni step
   var _yield=function(msg){return new Promise(function(res){showStatus(msg);setTimeout(res,30);});};
   await _yield('Analisi struttura CSV ('+_nCols+' colonne, '+_nRows+' righe)...');
@@ -3881,11 +3881,11 @@ async function startDeterministicConversion() {
         _btnConv.textContent = '✅ TTL generato';
         _btnConv.style.background = '#1a6b35';
         setTimeout(function(){
-          _btnConv.textContent = '⚡ Genera TTL';
+          _btnConv.textContent = 'Genera TTL';
           _btnConv.style.background = '';
         }, 3000);
       } else {
-        _btnConv.textContent = '⚡ Genera TTL';
+        _btnConv.textContent = 'Genera TTL';
         _btnConv.style.background = '';
       }
     }
@@ -4676,11 +4676,11 @@ async function startConversion() {
         _btnConvAI.textContent = '✅ TTL generato';
         _btnConvAI.style.background = '#1a6b35';
         setTimeout(function(){
-          _btnConvAI.textContent = '⚡ Genera TTL';
+          _btnConvAI.textContent = 'Genera TTL';
           _btnConvAI.style.background = '';
         }, 3000);
       } else {
-        _btnConvAI.textContent = '⚡ Genera TTL';
+        _btnConvAI.textContent = 'Genera TTL';
         _btnConvAI.style.background = '';
       }
     }

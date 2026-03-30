@@ -304,6 +304,12 @@ footer {
   font-size: .8rem;
 }
 footer a { color: #f59e0b; text-decoration: none; }
+
+    .card-tag { display: inline-block; padding: .15rem .5rem; border-radius: 3px; font-size: .75rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; margin-right: .4rem; }
+    .card-tag.err { background: #fee2e2; color: #991b1b; }
+    .card-tag.ok  { background: #dcfce7; color: #166534; }
+    .tag-err { display: inline-block; background: #fee2e2; color: #991b1b; font-size: .72rem; font-weight: 700; padding: .1rem .4rem; border-radius: 3px; margin-right: .3rem; }
+    .tag-warn { display: inline-block; background: #fef9c3; color: #854d0e; font-size: .72rem; font-weight: 700; padding: .1rem .4rem; border-radius: 3px; margin-right: .3rem; }
 </style>
 </head>
 <body>
@@ -407,18 +413,18 @@ footer a { color: #f59e0b; text-decoration: none; }
   <div class="card accent-blu">
     <h3>Passo 2 — Scegli le intestazioni giuste</h3>
     <p>Le intestazioni delle colonne <strong>determinano tutto</strong>: il tool le riconosce e le mappa su proprietà ontologiche ufficiali. Usa i nomi standard riportati in questa guida (sezione <a href="#intestazioni">Intestazioni chiave</a>). Esempio per un dataset di defibrillatori:</p>
-    <pre><span class="ok">✓ BUONO:</span>  id,nome,indirizzo,modello,lat,lon,stato
-<span class="bad">✗ EVITA:</span>  ID,Nome_Punto,Luogo,Tipo_DAE,Latitudine,Longitudine,Funzionante</pre>
+    <pre><span class="ok">Corretto:</span>  id,nome,indirizzo,modello,lat,lon,stato
+<span class="bad">Evitare:</span>  ID,Nome_Punto,Luogo,Tipo_DAE,Latitudine,Longitudine,Funzionante</pre>
     <p style="margin-top:.5rem">La seconda riga usa nomi non standard: il tool li metterà in <code>rdfs:comment</code> invece di proprietà ontologiche corrette.</p>
   </div>
 
   <div class="card accent-ambra">
     <h3>Passo 3 — Includi sempre le coordinate</h3>
     <p>Se il tuo dataset ha una componente geografica (quasi sempre nella PA locale), includi <strong>lat</strong> e <strong>lon</strong> come colonne separate. Questo attiva automaticamente POI e CLV.</p>
-    <pre><span class="bad">✗ EVITA:</span>  geo_point
+    <pre><span class="bad">Evitare:</span>  geo_point
            44.4938, 11.3430      <span class="cmt">&lt;-- tutto in una cella, non riconosciuto</span>
 
-<span class="ok">✓ CORRETTO:</span>  lat,lon
+<span class="ok">Corretto:</span>  lat,lon
               44.4938,11.3430    <span class="cmt">&lt;-- due colonne separate, riconosciuto subito</span></pre>
   </div>
 
@@ -446,7 +452,7 @@ footer a { color: #f59e0b; text-decoration: none; }
 
   <div class="two-col">
     <div class="card accent-rosso">
-      <h3>❌ Problemi frequenti nei CSV PA</h3>
+      <h3><span class="card-tag err">Problemi frequenti nei CSV PA</span></h3>
       <ul class="checklist">
         <li class="bad">Coordinate in una sola cella ("44.56, 11.27")</li>
         <li class="bad">Intestazioni generiche (col1, col2, valore)</li>
@@ -458,7 +464,7 @@ footer a { color: #f59e0b; text-decoration: none; }
       </ul>
     </div>
     <div class="card accent-verde">
-      <h3>✓ Fix rapidi ad alto impatto</h3>
+      <h3><span class="card-tag ok">Fix rapidi ad alto impatto</span></h3>
       <ul class="checklist">
         <li>Dividi "Geo Point" → colonne lat e lon separate</li>
         <li>Rinomina le intestazioni con i nomi standard (vedi tabella)</li>
@@ -479,8 +485,8 @@ footer a { color: #f59e0b; text-decoration: none; }
       <tr><td>Avviso: rdfs:label con valore numerico</td><td>Una colonna numerica finisce come etichetta</td><td>Rinomina la colonna o aggiungi una colonna "nome" testuale</td></tr>
       <tr><td>Avviso: colonne non mappate non mappate → rdfs:comment</td><td>Intestazioni non standard</td><td>Rinomina con i nomi standard O usa l'AI (STEP 2)</td></tr>
       <tr><td>Avviso: Colonna "Geo Point" con lat/lon unificati</td><td>Coordinate in una cella</td><td>Dividi in due colonne lat e lon</td></tr>
-      <tr><td>❌ Encoding problematico</td><td>File ISO-8859, non UTF-8</td><td>Riesporta da Excel/LibreOffice scegliendo UTF-8</td></tr>
-      <tr><td>❌ Coordinate fuori range</td><td>Virgola usata come decimale</td><td>Sostituisci , con . nei valori numerici</td></tr>
+      <tr><td><span class="tag-err">Errore</span> Encoding problematico</td><td>File ISO-8859, non UTF-8</td><td>Riesporta da Excel/LibreOffice scegliendo UTF-8</td></tr>
+      <tr><td><span class="tag-err">Errore</span> Coordinate fuori range</td><td>Virgola usata come decimale</td><td>Sostituisci , con . nei valori numerici</td></tr>
     </table>
   </div>
 
@@ -520,7 +526,7 @@ footer a { color: #f59e0b; text-decoration: none; }
 
   <div class="two-col">
     <div class="card">
-      <h3>✅ Usa il deterministico (senza AI) quando:</h3>
+      <h3>Usa il deterministico (senza AI) quando:</h3>
       <ul class="checklist">
         <li>Il CSV usa intestazioni italiane standard (nome, indirizzo, lat, lon...)</li>
         <li>Il dataset è uno dei 39 tipi nel menu esempi</li>

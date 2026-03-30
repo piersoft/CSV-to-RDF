@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.30.01 -->
+  <!-- build:v2026.03.30.02 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -322,7 +322,7 @@
       <details class="card-pa" id="step1bis-accordion">
         <summary class="card-head" style="background:#4a90d9;cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;">
           <span>STEP 1 BIS — Contesto da dati.gov.it <span style="font-weight:400;font-size:.8em;opacity:.8;">(opzionale)</span></span>
-          <span id="step1bis-arrow" style="font-size:.7em;opacity:.8;">▶</span>
+          <span id="step1bis-arrow" style="font-size:.7em;opacity:.8;">+</span>
         </summary>
         <div class="card-body-pa">
           <p style="font-size:.78rem;color:var(--dg-muted);margin:.2rem 0 .8rem;">
@@ -407,9 +407,9 @@
 
       <!-- PROVIDER AI (STEP 2) -->
       <div class="card-pa">
-        <div class="card-head dark" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.acc-arrow').textContent=this.nextElementSibling.style.display==='none'?'▶':'▼';" style="cursor:pointer;justify-content:space-between;">
+        <div class="card-head dark" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.acc-arrow').textContent=this.nextElementSibling.style.display==='none'?'+':'−';" style="cursor:pointer;justify-content:space-between;">
           <span>STEP 2 — Provider AI <span style="font-weight:400;font-size:.8em;opacity:.7;">(opzionale)</span></span>
-          <span class="acc-arrow" style="font-size:.7em;opacity:.8;">▶</span>
+          <span class="acc-arrow" style="font-size:.7em;opacity:.8;">+</span>
         </div>
         <div class="card-body-pa" style="display:none;">
           <div class="provider-tabs">
@@ -616,7 +616,7 @@
             <button class="btn-primary" id="btn-download-ttl" onclick="downloadTTL()" disabled><svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 12L3 7h3V2h4v5h3L8 12z"/><path d="M2 14h12v1.5H2z"/></svg> Scarica .ttl</button>
             <button class="btn-primary" id="btn-download-rdf" onclick="downloadRDF()" disabled style="background:#1a6b35"><svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 12L3 7h3V2h4v5h3L8 12z"/><path d="M2 14h12v1.5H2z"/></svg> Scarica .rdf</button>
             <button class="btn-sec" onclick="copyTTL()">Copia TTL</button>
-            <button id="btn-validate" class="btn-sec" disabled onclick="validateTTL()" style="border-color:#f90;color:#f90"><svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0zm-.7 3.8a5 5 0 1 1 1.4-1.4l3.2 3.2-1.4 1.4-3.2-3.2z"/></svg> Valida</button>
+            <button id="btn-validate" class="btn-sec" disabled onclick="validateTTL()"><svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0zm-.7 3.8a5 5 0 1 1 1.4-1.4l3.2 3.2-1.4 1.4-3.2-3.2z"/></svg> Valida</button>
             <button id="btn-show-graph" class="btn-sec" disabled onclick="showGraphPanel()" style="border-color:var(--dg-blue);color:var(--dg-blue)">Grafo</button>
           </div>
           <div id="validation-report" style="display:none; margin-top:12px; padding:12px; background:#1a1a2e; border-radius:8px; font-family:monospace; font-size:12px; max-height:200px; overflow-y:auto"></div>
@@ -647,7 +647,7 @@
 
       <!-- INFO -->
       <div class="card-pa mt-3">
-        <div class="card-head gray">ℹ Come funziona</div>
+        <div class="card-head gray">Come funziona</div>
         <div class="card-body-pa" style="font-size:0.82rem;line-height:1.7;color:var(--dg-muted)">
           <p>La PA ha già pubblicato il dataset su <strong>dati.gov.it</strong> o sul portale opendata locale con tutti i metadati DCAT. Questo strumento genera la <strong>distribuzione TTL</strong> da aggiungere al catalogo.</p>
           <p>Il file TTL contiene:</p>
@@ -697,12 +697,12 @@
 <!-- ── ENDPOINT DINAMICO (tutta pagina) ────────────────────────────── -->
 <div class="container mt-3 mb-2">
   <div id="api-endpoint-box" style="border:2px solid #1a6b35;border-radius:6px;overflow:hidden;">
-    <div onclick="var b=this.nextElementSibling;b.style.display=b.style.display==='none'?'block':'none';this.querySelector('.acc-arrow').textContent=b.style.display==='none'?'▶':'▼';"
+    <div onclick="var b=this.nextElementSibling;b.style.display=b.style.display==='none'?'block':'none';this.querySelector('.acc-arrow').textContent=b.style.display==='none'?'+':'−';"
          style="background:#1a6b35;padding:.5rem 1rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
       <span style="color:#fff;font-size:.75rem;font-weight:700;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;">
         Endpoint TTL dinamico — aggiorna il TTL automaticamente ad ogni chiamata
       </span>
-      <span class="acc-arrow" style="color:rgba(255,255,255,.8);font-size:.7em;">▶</span>
+      <span class="acc-arrow" style="color:rgba(255,255,255,.8);font-size:.7em;">+</span>
     </div>
     <div style="background:#f0faf4;padding:.75rem 1rem;display:none;">
       <div style="font-size:.72rem;color:#555;font-family:var(--mono);margin-bottom:.4rem;">
@@ -745,7 +745,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.30.01</span>
+<span id="app-version">v2026.03.30.02</span>
 </footer>
 
 <script>
@@ -890,7 +890,7 @@ function resetToAutoDetect() {
       if (ontos && ontos.length) {
         setExampleOntos(ontos);
         const msg = document.getElementById('auto-onto-msg');
-        if (msg) { msg.textContent = '✓ Detect automatico: ' + ontos.join(', '); msg.style.display = 'block'; }
+        if (msg) { msg.textContent = 'Ontologie rilevate: ' + ontos.join(', '); msg.style.display = 'block'; }
       }
     }
   }
@@ -1405,7 +1405,7 @@ if (!window._exampleLocked) {
     window._aiDetectDone = true; // segnala che l'AI ha già completato
 
   } catch(e) {
-    showStatus('✕ AI-detect fallito: ' + e.message, 'error');
+    showStatus('AI-detect fallito: ' + e.message, 'error');
   } finally {
     btn.disabled = false;
     btn.textContent = 'AI-detect';
@@ -1859,9 +1859,9 @@ function parseAndPreviewCSV() {
     if (_autoOntos && _autoOntos.length > 0) {
       setExampleOntos(_autoOntos);
       if(typeof showPanel==='function') showPanel(parsed.headers);
-      showStatus('' + parsed.headers.length + ' colonne • ' + parsed.rows.length + ' righe • Ontologie: ' + _autoOntos.join(', '), 'success');
+      showStatus('' + parsed.headers.length + ' colonne — ' + parsed.rows.length + ' righe — Ontologie: ' + _autoOntos.join(', '), 'success');
     } else {
-      showStatus('✓ ' + parsed.headers.length + ' colonne · ' + parsed.rows.length + ' righe', 'success');
+      showStatus('' + parsed.headers.length + ' colonne · ' + parsed.rows.length + ' righe', 'success');
       if(typeof showPanel==='function') showPanel(parsed.headers);
     }
     // Applica contesto dati.gov.it se presente
@@ -1869,7 +1869,7 @@ function parseAndPreviewCSV() {
   } else {
     // Esempio caricato: mostra status con le ontologie già impostate da ontoMap
     var activePills = Array.from(document.querySelectorAll('.pill[data-onto].active')).map(p=>p.dataset.onto).filter(o=>o!=='L0'&&o!=='SM');
-    showStatus('' + parsed.headers.length + ' colonne • ' + parsed.rows.length + ' righe • Ontologie: ' + activePills.join(', '), 'success');
+    showStatus('' + parsed.headers.length + ' colonne — ' + parsed.rows.length + ' righe — Ontologie: ' + activePills.join(', '), 'success');
     if(typeof showPanel==='function') showPanel(parsed.headers);
   }
   // Lancia AI-detect automaticamente se c'è una API key configurata
@@ -4352,7 +4352,7 @@ async function loadOllamaModels() {
     sel.style.display = 'block';
     hideStatus();
   } catch(e) {
-    showStatus('✕ Errore caricamento modelli: ' + e.message, 'error');
+    showStatus('Errore caricamento modelli: ' + e.message, 'error');
   }
 }
 
@@ -4668,11 +4668,11 @@ async function startConversion() {
     document.getElementById('btn-validate').disabled = false;
     ttl = forceMainClassInTTL(ttl, ontos, entityBase);
     updateStats(ttl);
-    showStatus(`✓ Completato! ${allRows.length} righe trasformate in ${chunks.length} chunk.`, 'success');
+    showStatus(`Completato! ${allRows.length} righe trasformate in ${chunks.length} chunk.`, 'success');
     showApiEndpointBox();
 
   } catch (err) {
-    showStatus(`✕ ${err.message}`, 'error');
+    showStatus(`Errore: ${err.message}`, 'error');
   } finally {
     var _btnConvAI = document.getElementById('btn-convert');
     if(_btnConvAI){
@@ -5066,7 +5066,7 @@ function showValidationReport({ errors, warnings, infos, terms, prefixMap }) {
     html += '<br>';
   }
   if (warnings.length > 0) {
-    html += `<b style="color:#f90">AVVISI (${warnings.length})</b><br>`;
+    html += `<b style="color:#c45e00">AVVISI (${warnings.length})</b><br>`;
     for (const w of warnings) html += `&nbsp;&nbsp;${w}<br>`;
     html += '<br>';
   }
@@ -5153,7 +5153,7 @@ async function downloadRDF() {
     a.click();
     showStatus('✓ File RDF/XML scaricato!', 'success');
   } catch(err) {
-    showStatus('✕ Errore conversione: ' + err.message, 'error');
+    showStatus('Errore conversione: ' + err.message, 'error');
   }
 }
 

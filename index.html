@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.30.02 -->
+  <!-- build:v2026.03.30.03 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -745,7 +745,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.30.02</span>
+<span id="app-version">v2026.03.30.03</span>
 </footer>
 
 <script>
@@ -3246,7 +3246,7 @@ function detNormH(h){var n=h.toLowerCase().trim().replace(/[àáâä]/g,'a').rep
 function detFindColIdx(nh,cands){for(var i=0;i<cands.length;i++){var x=nh.indexOf(cands[i]);if(x>=0)return x;}return-1;}
 function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat','lon','ubicazione_esercizio','indirizzo_esercizio','n_civico','numero_civico','citta','città','city','stazione','nome_stazione'].some(function(c){return nh.indexOf(c)>=0;});}
 function detHasTime(nh,ontos){return ontos.indexOf('TI')>=0&&['inizio','termine','data','quando'].some(function(c){return nh.indexOf(c)>=0;});}
-function detGetTimeVal(nh,row){var tc=['inizio','data','quando','published','data_inizio','periodo','stagione','programmazione'];for(var i=0;i<tc.length;i++){var x=nh.indexOf(tc[i]);if(x>=0&&row[x]&&row[x].trim())return row[x].trim();}return null;}
+function detGetTimeVal(nh,row){var tc=['inizio','data','quando','published','data_inizio','periodo','stagione','programmazione','data_sopralluogo','data_ispezione','data_controllo','data_campionamento','data_rilevamento','data_misura','data_verifica','data_accertamento'];for(var i=0;i<tc.length;i++){var x=nh.indexOf(tc[i]);if(x>=0&&row[x]&&row[x].trim())return row[x].trim();}return null;}
 function detFindRule(normH,ontos){
   if(ontos.indexOf('QB')>=0&&normH==='nome')return null; // QB: nome non è un'entità
   if(ontos.indexOf('CPV')>=0&&normH==='nome')return{pred:'cpv:givenName',type:'langlit',lang:'it',onto:'CPV'};
@@ -5049,19 +5049,19 @@ function showValidationReport({ errors, warnings, infos, terms, prefixMap }) {
   div.style.display = 'block';
 
   const total = errors.length + warnings.length;
-  const statusColor = errors.length > 0 ? '#c00' : warnings.length > 0 ? '#f90' : '#0a0';
+  const statusColor = errors.length > 0 ? '#b00020' : warnings.length > 0 ? '#c45e00' : '#1a6b35';
   const statusIcon  = errors.length > 0 ? 'Errore' : warnings.length > 0 ? 'Avviso' : 'OK';
   const statusText  = errors.length > 0 ? `${errors.length} errori, ${warnings.length} avvisi`
                     : warnings.length > 0 ? `${warnings.length} avvisi`
                     : 'TTL valido';
 
-  let html = `<div style="font-family:monospace;font-size:13px;padding:10px">`;
+  let html = `<div style="font-family:'Titillium Web',sans-serif;font-size:13px;padding:12px 14px;line-height:1.7">`;
   html += `<b style="color:${statusColor}">${statusIcon} ${statusText}</b>`;
-  if (infos.length) html += ` &nbsp;·&nbsp; <span style="color:#888">${infos.join(' · ')}</span>`;
+  if (infos.length) html += ` &nbsp;·&nbsp; <span style="color:#5c6f82">${infos.join(' · ')}</span>`;
   html += '<br><br>';
 
   if (errors.length > 0) {
-    html += `<b style="color:#c00">ERRORI (${errors.length})</b><br>`;
+    html += `<b style="color:#b00020">ERRORI (${errors.length})</b><br>`;
     for (const e of errors) html += `&nbsp;&nbsp;${e}<br>`;
     html += '<br>';
   }
@@ -5071,7 +5071,7 @@ function showValidationReport({ errors, warnings, infos, terms, prefixMap }) {
     html += '<br>';
   }
   if (errors.length === 0 && warnings.length === 0) {
-    html += `<span style="color:#0a0">Nessun problema rilevato localmente.</span><br><br>`;
+    html += `<span style="color:#1a6b35">Nessun problema rilevato localmente.</span><br><br>`;
   }
 
   // Sezione SPARQL (popolata in background)
@@ -5280,7 +5280,7 @@ function validateSPARQL(terms, prefixMap) {
     if (!report) return;
     sparqlDiv = document.createElement('div');
     sparqlDiv.id = 'validation-sparql';
-    sparqlDiv.style.cssText = 'margin-top:.6em;padding:.35em .5em;border-top:1px solid #e0e8f0;font-size:.84em;color:#888';
+    sparqlDiv.style.cssText = 'margin-top:.6em;padding:.35em .5em;border-top:1px solid #e0e8f0;font-size:.84em;color:#5c6f82';
     report.appendChild(sparqlDiv);
   }
   sparqlDiv.innerHTML = 'Verifica classi su schema.gov.it...';
@@ -5420,7 +5420,7 @@ function showPanel(headers){
   document.getElementById("corpus-examples").innerHTML=r.examples.map(function(ex){
     var tstr=(ex.temi||[]).join(" - ");
     var link=ex.id?"<a href=\"https://www.dati.gov.it/view-dataset/dataset?id="+ex.id+"\" target=\"_blank\" style=\"color:#2c5f8a\">link</a>":"";
-    return"<div class=\"corpus-ex\"><strong>"+ex.title+" "+link+"</strong><span style=\"color:#555\">"+ex.org+"</span> &nbsp;<span style=\"color:#888;font-size:.8em\">"+tstr+"</span><br><code>"+ex.headers.join(" | ")+"</code><span style=\"float:right;color:#999;font-size:.75em\">sim:"+ex.score+"%</span></div>";
+    return"<div class=\"corpus-ex\"><strong>"+ex.title+" "+link+"</strong><span style=\"color:#555\">"+ex.org+"</span> &nbsp;<span style=\"color:#5c6f82;font-size:.8em\">"+tstr+"</span><br><code>"+ex.headers.join(" | ")+"</code><span style=\"float:right;color:#999;font-size:.75em\">sim:"+ex.score+"%</span></div>";
   }).join("");
   wrap.style.display='block';
 }

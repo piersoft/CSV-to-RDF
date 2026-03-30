@@ -1,0 +1,16 @@
+{
+  "generated_at": "2026-03-30T21:28:15.078707Z",
+  "target": 2000,
+  "total_attempted": 0,
+  "total_ok": 0,
+  "errors": {},
+  "by_tier": {},
+  "by_theme": {},
+  "encodings": {},
+  "separators": {},
+  "anomalies": {},
+  "onto_detected": {},
+  "onto_gap_vs_corpus": {
+    "note": "Confrontare onto_detected con distribuzione fixtures_v7.json"
+  }
+}

@@ -796,6 +796,7 @@ function detectOntologiesDeterministic(headers, rows) {
   var _tiStrong = has(['data_inizio','data_fine','data_da','data_a','data_inizio_evento','data_fine_evento','inizio','termine','quando','orario_inizio',
                        'orario_fine','data_evento','ora_inizio','ora_fine','data_ora',
                        'data_rilevazione','data_apertura','data_chiusura','data_campionamento','data_rilevamento','data_misura','data_monitoraggio',
+                       'data_sopralluogo','data_ispezione','data_controllo','data_verifica','data_accertamento',
                        'date','datetime','timestamp','start_date','end_date','created_at','updated_at','time']) ||
                      (hasH(['data']) && has(['valore','misura','rilevazione','monitoraggio','campione','sensore','iot','misura'])) ||
                      (hasH(['data']) && hasH(['ora'])) ||

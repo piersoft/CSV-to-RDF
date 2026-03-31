@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.03.31.07 -->
+  <!-- build:v2026.03.31.08 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -745,7 +745,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.03.31.07</span>
+<span id="app-version">v2026.03.31.08</span>
 </footer>
 
 <script>
@@ -3450,6 +3450,8 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
     var subURI=base+seg+'/'+idVal;
     var triples=[{pred:'a',val:mainClass,raw:true}];
     if(ontos.indexOf('QB')>=0)triples.push({pred:'qb:dataSet',val:'<'+dsUri+'>',raw:true});
+    var _singleValPreds=new Set(['dct:type','dct:identifier','dct:date','dct:publisher','geo:lat','geo:long','dct:spatial','dct:temporal']);
+    var _usedSinglePreds=new Set();
     headers.forEach(function(origH,i){
       var normH=nh[i];
       var val=(row[i]||'').trim();
@@ -3458,8 +3460,10 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       if(rule&&rule.type==='_clvnode')return; // gestito da addrMap come nodo clv:Address
       if(!rule){var _n=detNormH(origH);if(_n==='_skip'||_n.startsWith('_'))return;if(val)triples.push({pred:'rdfs:comment',val:litQ(origH+': '+val,'it'),raw:true,unmapped:true});return;}
       if(rule.type==='skip')return;
+      // Deduplicazione predicati single-value: se dct:type già emesso da altra colonna, salta
+      if(_singleValPreds.has(rule.pred)&&_usedSinglePreds.has(rule.pred))return;
       var litVal=detFormatLit(rule,val);
-      if(litVal)triples.push({pred:rule.pred,val:litVal,raw:true});
+      if(litVal){triples.push({pred:rule.pred,val:litVal,raw:true});if(_singleValPreds.has(rule.pred))_usedSinglePreds.add(rule.pred);}
     });
     var addrURI=base+'address/'+idVal;
     // Rimuovi eventuali clv:hasAddress come stringa e sostituisci con riferimento a nodo

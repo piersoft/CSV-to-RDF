@@ -25820,6 +25820,143 @@
         "bool_italian",
         "windows_lineend"
       ]
+    },
+    {
+      "seq": 336,
+      "id": "6133b30c-bbc9-4de8-90a6-f81e5b8c9159",
+      "name": "beni-culturali-catalogo-milano",
+      "title": "Schede catalografiche beni culturali Comune di Milano",
+      "org": "comune-di-milano",
+      "ente": "Comune di Milano",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "EDUC"
+      ],
+      "tema_onto": [
+        "Cultural-ON",
+        "MUAPIT",
+        "CLV",
+        "POI",
+        "TI"
+      ],
+      "tema_target": [
+        "Cultural-ON",
+        "MUAPIT",
+        "CLV",
+        "POI",
+        "TI",
+        "QB"
+      ],
+      "score": 35,
+      "resource_id": "2c87c7c1-b007-4d9c-8d15-f252fd7328db",
+      "csv_url": "https://dati.comune.milano.it/dataset/364a67d3-0734-49d3-b4b7-2c704eeadd24/resource/2c87c7c1-b007-4d9c-8d15-f252fd7328db/download/ds599_beni_culturali_siti_nel__c23i-gtvh_final.csv",
+      "gap_categoria": "Cultural-ON",
+      "gap_note": "UTF-8, sep ;, 40 colonne SIRBEC+ArCO: IDBENE CATEGORIA DENOMINAZIONE AUTORE EPOCA MATERIA INDIRIZZO WGS84_X/Y — mappa su arco:HistoricOrArtisticProperty",
+      "col_names": [
+        "IDBENE",
+        "CATEGORIA",
+        "DENOMINAZIONE",
+        "DEFINIZIONE",
+        "AUTORE",
+        "EPOCA",
+        "PROVINCIA",
+        "SIGLAPROVINCIA",
+        "CODICECOMUNE",
+        "LOCALITA",
+        "INDIRIZZO",
+        "CAP",
+        "MATERIA",
+        "MISURE",
+        "ORARIOAPERTURA",
+        "WEBSITE",
+        "TIPOMUSEO",
+        "ABSTRACT",
+        "DESCRIZIONE",
+        "NOTIZIESTORICHE",
+        "COMPILATORE",
+        "DATACOMPILAZIONE",
+        "USO",
+        "TIPOLOGIA",
+        "SEARCHFIELD",
+        "IDK_SIRBEC",
+        "CARDMUSEI",
+        "TIPOSCHEDA_SIRBEC",
+        "IDBENE_COLLEZIONE",
+        "IDBENE_MUSEO",
+        "IDBENE_ARCHITETTURA",
+        "IDBENE_BORGO",
+        "IDBENE_COMPLESSO",
+        "IDBENE_EDIFICIO",
+        "MUNICIPIO",
+        "ID_NIL",
+        "NIL",
+        "WGS84_X",
+        "WGS84_Y",
+        "Location"
+      ],
+      "encoding": "utf-8",
+      "separator": ";",
+      "header_row": 0,
+      "anomalie": [
+        "windows_lineend"
+      ]
+    },
+    {
+      "seq": 337,
+      "id": "71760901-3f52-41cd-93e5-b2972d131369",
+      "name": "architetture-beni-culturali-milano",
+      "title": "Patrimonio architettonico beni culturali Comune di Milano",
+      "org": "comune-di-milano",
+      "ente": "Comune di Milano",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "EDUC"
+      ],
+      "tema_onto": [
+        "Cultural-ON",
+        "MUAPIT",
+        "CLV",
+        "POI"
+      ],
+      "tema_target": [
+        "Cultural-ON",
+        "MUAPIT",
+        "CLV",
+        "POI",
+        "TI"
+      ],
+      "score": 30,
+      "resource_id": "be1c4b05-0fed-4c65-8dc6-64ec7b88c00d",
+      "csv_url": "https://dati.comune.milano.it/dataset/d251acbc-8292-45cf-b131-68f001348ebd/resource/be1c4b05-0fed-4c65-8dc6-64ec7b88c00d/download/ds585_architetture_nel_comune__2zdd-j7wz_final.csv",
+      "gap_categoria": "Cultural-ON",
+      "gap_note": "ASCII, sep ;, 21 colonne: NUM_SCHEDA_SIRBEC TIPO_ARCHITETTURA DENOMINAZIONE AUTORI DATAZIONE STATO_CONSERV USO_ATTUALE lat/lng — mappa su arco:ArchitecturalOrLandscapeHeritage",
+      "col_names": [
+        "NUM_SCHEDA_SIRBEC",
+        "TIPO_ARCHITETTURA",
+        "DENOMINAZIONE",
+        "COMPLESSITA_DEL_BENE",
+        "DENOMINAZIONE_BENE_COMPLESSO",
+        "NUM_SCHEDA_BENE_COMPLESSO",
+        "PROVINCIA",
+        "LOCALITA",
+        "INDIRIZZO",
+        "AUTORI",
+        "STILE_SCUOLA",
+        "DATAZIONE",
+        "STATO_CONSERV",
+        "USO_ATTUALE",
+        "USO_STORICO",
+        "MUNICIPIO",
+        "ID_NIL",
+        "NIL",
+        "lng",
+        "lat",
+        "Location"
+      ],
+      "encoding": "ascii",
+      "separator": ";",
+      "header_row": 0,
+      "anomalie": []
     }
   ]
 }

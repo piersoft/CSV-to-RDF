@@ -21,8 +21,8 @@ const ONTO_RULES = [
   { keys: ['parcheggio','parking','posto','stallo'],                       ontos: ['PARK'] },
   { keys: ['servizio','service','prestazione','sportello'],                ontos: ['CPSV-AP'] },
   { keys: ['hotel','albergo','accommodation','ricettivo','posti.letto','posti_letto','camere','stelle'],  ontos: ['ACCO'] },
-  { keys: ['patrimonio','culturale','museo','monumento','arte','biblioteca','archivio','nome museo','ldcn'], ontos: ['Cultural-ON'] },
-  { keys: ['subject','identifier','prenotazioni','immagine','image','luogo cultura','istituto culturale','denominazione','luogo_cultura'], ontos: ['Cultural-ON','CLV','SM'] },
+  { keys: ['patrimonio','culturale','museo','monumento','biblioteca','archivio','nome museo','ldcn'], ontos: ['Cultural-ON'] },
+  { keys: ['subject','identifier','prenotazioni','immagine','image','luogo cultura','istituto culturale','luogo_cultura'], ontos: ['Cultural-ON','CLV','SM'] },
   { keys: ['culturalinstituteorsite','beniculturali','mibact','mibac','luoghicultura'], ontos: ['Cultural-ON'] },
   { keys: ['titolo','spettacolo','evento','manifestazione','concerto','teatro','rassegna','patrocinio','organizzazione_associazione'], ontos: ['Cultural-ON','TI'] },
   { keys: ['tecnologia','area_tecnologica','settore','disciplina','campo'],  ontos: ['ADMS','L0'] },
@@ -812,7 +812,7 @@ function detectOntologiesDeterministic(headers, rows) {
   });
   // FIX3: 'museo'/'teatro' nei valori non bastano — richiede colonne specifiche beni culturali
   if(_cultHdr.length>0 || has(['beniculturali','mibact','mibac','cis:','luoghicultura',
-      'nome_museo','mostra','pinacoteca','galleria','sito_archeologico','tipo_bene_culturale']))
+      'nome_museo','pinacoteca','galleria','sito_archeologico','tipo_bene_culturale']))
     if(!result.has('SMAPIT')&&!result.has('GTFS')&&!result.has('IoT')){
       result.add('Cultural-ON'); result.add('CulturalON'); }
   if(result.has('Cultural-ON') && result.has('POI') && !has(['tipo_poi','dae','defibrillatore']))
@@ -832,7 +832,9 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['slug','version','creation_date','last_edit_date','api_url',
           'distribution_url','asset','ontologia','vocabolario']) ||
      (has(['versione']) && has(['stato','formato','licenza','tipo_asset','editore'])) ||
-     (has(['identifier','nome_dataset','nome_risorsa']) && has(['formato','numero_righe'])))
+     (has(['identifier','nome_dataset','nome_risorsa']) && has(['formato','numero_righe'])) ||
+     (has(['tema']) && has(['dataset']) && has(['produttore'])) ||
+     (has(['dataset']) && has(['produttore','tema','categoria_dataset','argomento'])))
     result.add('ADMS');
 
   // Arricchisci con il corpus se disponibile

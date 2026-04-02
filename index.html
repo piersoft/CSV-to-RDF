@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.04.02.04 -->
+  <!-- build:v2026.04.02.05 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -745,7 +745,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.04.02.04</span>
+<span id="app-version">v2026.04.02.05</span>
 </footer>
 
 <script>
@@ -5432,6 +5432,33 @@ function showPanel(headers){
     var c=r.confidence[t]||0,col=COLORI[t]||"#555";
     return"<span class=\"corpus-badge\" style=\"background:"+col+"\">"+t+" <span style=\"opacity:.75\">"+c+"%</span></span>";
   }).join("");
+  // Attiva le pill per le ontologie suggerite dal corpus con confidenza >= 60%
+  // solo se l'utente non ha modificato manualmente le selezioni
+  if(!window._userModifiedPills && typeof setExampleOntos==='function') {
+    var highConf = r.temi.filter(function(t){ return (r.confidence[t]||0)>=60; });
+    if(highConf.length>0) {
+      var normH = new Set(headers.map(function(h){return h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');}));
+      // Gate: Cultural-ON dal corpus richiede colonne specifiche culturali (non solo geo)
+      var CORPUS_PILL_GATE = {
+        'Cultural-ON': ['museo','biblioteca','archivio','patrimonio','bene_culturale','istituto_culturale',
+                        'ldcn','nome_museo','tipo_bene','tipo_istituto','disciplina','denominazione_istituto'],
+        'ACCO':  ['stelle','posti_letto','letti','camere','albergo','hotel','agriturismo','tipo_struttura'],
+        'SMAPIT':['codice_scuola','tipo_scuola','codice_istituto','ciclo'],
+        'QB':    ['valore','obs_value','numero_residenti','importo','misura','anno','trimestre'],
+        'IoT':   ['sensore','id_sensore','proprieta_osservata','valore_medio','avgspeed'],
+        'GTFS':  ['stop_id','stop_name','stop_lat','stop_lon','route_id','agency_id']
+      };
+      var currentActive = [...document.querySelectorAll('#onto-selector .pill.active, #onto-selector-adv .pill.active')]
+        .map(function(p){return p.dataset.onto;});
+      var merged = currentActive.slice();
+      highConf.forEach(function(t){
+        var gate = CORPUS_PILL_GATE[t];
+        if(gate && !gate.some(function(col){return normH.has(col);})) return; // gate non soddisfatto
+        if(merged.indexOf(t)<0) merged.push(t);
+      });
+      if(merged.length > currentActive.length) setExampleOntos(merged);
+    }
+  }
   document.getElementById("corpus-count").textContent=r.examples.length;
   document.getElementById("corpus-examples").innerHTML=r.examples.map(function(ex){
     var tstr=(ex.temi||[]).join(" - ");

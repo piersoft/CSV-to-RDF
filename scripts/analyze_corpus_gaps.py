@@ -66,11 +66,11 @@ ONTO_KEYWORDS = {
     "GTFS":       ["route","trip","stop","shape","agency","gtfs","orario","corsa","fermata","linea"],
     "IoT-AP_IT":  ["sensore","sensor","temperatura","umidita","pressione","pm10","pm2","co2","inquinante"],
     "ACCO":       ["hotel","struttura","turismo","ospitalita","camere","posti_letto","albergo","stelle"],
-    "MUAPIT":     ["museo","bene","culturale","monumento","patrimonio","opera","collezione","biblioteca"],
+    "Cultural-ON": ["museo","bene_culturale","monumento","patrimonio","collezione","biblioteca","archivio","titolo_risorsa","identificativo_risorsa"],
     "SMAPIT":     ["scuola","istituto","plesso","classe","alunni","studenti","docenti","istruzione"],
     "PublicOrg":  ["ente","amministrazione","ipa","codice_ipa","organizzazione"],
     "CPV":        ["popolazione","residenti","abitanti","nati","morti","stranieri","anagrafe","demograf"],
-    "Cultural-ON":["teatro","cinema","festival","evento","spettacolo","esposizione","archivio"],
+    "Cultural-ON-eventi":["teatro","cinema","festival","evento","spettacolo","esposizione"],
     "COV-AP_IT":  ["dipendenti","personale","organico","ruolo","incarico","dirigente","azienda","impresa"],
 }
 

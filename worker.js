@@ -460,7 +460,7 @@ function detGetMainOnto(ontos){var priority=['GTFS','SMAPIT','ACCO','IoT','Cultu
 
 function detFindColIdx(nh,cands){for(var i=0;i<cands.length;i++){var x=nh.indexOf(cands[i]);if(x>=0)return x;}return-1;}
 
-function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat','lon','ubicazione_esercizio','indirizzo_esercizio','n_civico','numero_civico','citta','città','city','stazione','nome_stazione'].some(function(c){return nh.indexOf(c)>=0;});}
+function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat','lon','ubicazione_esercizio','indirizzo_esercizio','n_civico','numero_civico','citta','città','city','nome_stazione'].some(function(c){return nh.indexOf(c)>=0;});}
 
 function detHasTime(nh,ontos){return ontos.indexOf('TI')>=0&&['inizio','termine','data','quando','data_sopralluogo','data_ispezione','data_controllo','data_campionamento','data_rilevamento','data_misura','data_verifica','data_accertamento'].some(function(c){return nh.indexOf(c)>=0;});}
 
@@ -1216,6 +1216,8 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
     var subURI=base+seg+'/'+idVal;
     var triples=[{pred:'a',val:mainClass,raw:true}];
     if(ontos.indexOf('QB')>=0)triples.push({pred:'qb:dataSet',val:'<'+dsUri+'>',raw:true});
+    var _singleValPreds=new Set(['dct:type','dct:identifier','dct:date','dct:publisher','geo:lat','geo:long','dct:spatial','dct:temporal']);
+    var _usedSinglePreds=new Set();
     headers.forEach(function(origH,i){
       var normH=nh[i];
       var val=(row[i]||'').trim();
@@ -1223,8 +1225,10 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       var rule=detFindRule(normH,ontos);
       if(rule&&rule.type==='_clvnode')return; // gestito da addrMap come nodo clv:Address
       if(!rule){var _n=detNormH(origH);if(_n==='_skip'||_n.startsWith('_'))return;if(val)triples.push({pred:'rdfs:comment',val:'"'+origH+': '+val.replace(/"/g,'\\"' )+('"@it'),raw:true,unmapped:true});return;}
-      if(rule.type==='skip')return;      var litVal=detFormatLit(rule,val);
-      if(litVal)triples.push({pred:rule.pred,val:litVal,raw:true});
+      if(rule.type==='skip')return;
+      if(_singleValPreds.has(rule.pred)&&_usedSinglePreds.has(rule.pred))return;
+      var litVal=detFormatLit(rule,val);
+      if(litVal){triples.push({pred:rule.pred,val:litVal,raw:true});if(_singleValPreds.has(rule.pred))_usedSinglePreds.add(rule.pred);}
     });
     var addrURI=base+'address/'+idVal;
     triples = triples.filter(function(t){return t.pred!=='clv:hasAddress'||t.raw;});

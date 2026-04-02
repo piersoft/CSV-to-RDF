@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.04.02.05 -->
+  <!-- build:v2026.04.02.06 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -745,7 +745,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.04.02.05</span>
+<span id="app-version">v2026.04.02.06</span>
 </footer>
 
 <script>
@@ -5440,8 +5440,6 @@ function showPanel(headers){
       var normH = new Set(headers.map(function(h){return h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');}));
       // Gate: Cultural-ON dal corpus richiede colonne specifiche culturali (non solo geo)
       var CORPUS_PILL_GATE = {
-        'Cultural-ON': ['museo','biblioteca','archivio','patrimonio','bene_culturale','istituto_culturale',
-                        'ldcn','nome_museo','tipo_bene','tipo_istituto','disciplina','denominazione_istituto'],
         'ACCO':  ['stelle','posti_letto','letti','camere','albergo','hotel','agriturismo','tipo_struttura'],
         'SMAPIT':['codice_scuola','tipo_scuola','codice_istituto','ciclo'],
         'QB':    ['valore','obs_value','numero_residenti','importo','misura','anno','trimestre'],

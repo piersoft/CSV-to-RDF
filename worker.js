@@ -31,6 +31,7 @@ const ONTO_RULES = [
   { keys: ['percorso','route','itinerario','tracciato'],                   ontos: ['Route'] },
   { keys: ['lingua','language','lang'],                                    ontos: ['Language'] },
   { keys: ['sensore','iot','device','dispositivo','misurazione'],          ontos: ['IoT'] },
+  { keys: ['postazione','km_inizio','km_fine','flusso_ascendente','flusso_discendente','numero_tratta'], ontos: ['IoT','TI','QB'] },
   { keys: ['trasparenza','obbligo','pubblicazione'],                       ontos: ['Transparency'] },
 ];
 
@@ -653,6 +654,7 @@ function detectOntologiesDeterministic(headers, rows) {
           'ordine_scuola','grado_scolastico','codice_meccanografico']) ||
      (has(['scuola','liceo','comprensivo','istruzione']) && !has(['cig','importo','appalto','museo','biblioteca','ospedale','banca','dae','defibrillatore','aed']) && !allText.includes('dae-') && !allText.includes('defibrillator')))
     result.add('SMAPIT');
+  if(has(['cod_nazionale_struttura','denominazione_struttura','tipo_struttura','cod_nazionale_asl','denom_struttura','cod_struttura'])) result.add('SMAPIT');
 
   // ACCO — strutture ricettive con varianti PA regionali
   // FN-ACCO FIX: aggiunge "classificazione/categoria_struttura/RTA/B&B" comuni
@@ -851,7 +853,7 @@ function detectOntologiesDeterministic(headers, rows) {
   // L0 — sempre aggiunto come base
   if(has(['parcheggio','parking','stalli','posti_auto','capacita_posti','tariffa_oraria','posti_disabili'])) result.add('PARK');
   if(has(['prezzo_intero','prezzo_ridotto','biglietto','tariffa_ingresso','costo_biglietto'])&&!result.has('ACCO')) result.add('POT');
-  if(has(['cig','cup','importo_aggiudicazione','stazione_appaltante','oggetto_contratto','aggiudicatario','cpv_codice'])) result.add('PublicContract');
+  if(has(['cig','cup','importo_aggiudicazione','stazione_appaltante','oggetto_contratto','aggiudicatario','cpv_codice','submisura','soggetto_attuatore','numero_concessione','concessione_demaniale'])) result.add('PublicContract');
   if(has(['tipo_percorso','lunghezza_km','difficolta','dislivello','numero_tappe','sentiero','percorso_ciclabile','itinerario','tracciato','lat_start','lon_start','durata_stimata','nome_breve_percorso','nome_esteso_percorso'])) result.add('Route');
   if(has(['qualifica_dipendente','contratto_lavoro','ccnl','livello_contrattuale','ore_settimanali'])) result.add('RPO');
   if(has(['titolo_corso','ore_formazione','crediti','ects','titolo_rilasciato','durata_corso'])) result.add('Learning');

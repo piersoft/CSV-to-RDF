@@ -675,9 +675,30 @@
   "POT": {
     "prefix": "pot",
     "ttl_file": "POT-AP_IT.ttl",
-    "classes": [],
-    "objectProperties": [],
-    "datatypeProperties": []
+    "classes": [
+      "pot:Card",
+      "pot:Currency",
+      "pot:Offer",
+      "pot:PriceSpecification",
+      "pot:Ticket",
+      "pot:UserType",
+      "pot:Validity"
+    ],
+    "objectProperties": [
+      "pot:forAccessTo",
+      "pot:hasCurrency",
+      "pot:hasEligibleUser",
+      "pot:hasOffer",
+      "pot:hasPriceSpecification",
+      "pot:hasTicket",
+      "pot:hasValidity",
+      "pot:includes",
+      "pot:offers"
+    ],
+    "datatypeProperties": [
+      "pot:VAT",
+      "pot:hasCurrencyValue"
+    ]
   },
   "PublicContract": {
     "prefix": "pc",
@@ -1308,16 +1329,118 @@
   "Learning": {
     "prefix": "learn",
     "ttl_file": "Learning-AP_IT.ttl",
-    "classes": [],
-    "objectProperties": [],
-    "datatypeProperties": []
+    "classes": [
+      "learn:AcademicYear",
+      "learn:DegreeClass",
+      "learn:DegreeCourse",
+      "learn:EducationalOffering",
+      "learn:EducationalOfferingSite",
+      "learn:Enrolment",
+      "learn:EnrolmentStatus",
+      "learn:Examination",
+      "learn:FinalExamination",
+      "learn:Grade",
+      "learn:GradingScale",
+      "learn:Institute",
+      "learn:InstituteType",
+      "learn:Learning",
+      "learn:LearningAchievementSpecification",
+      "learn:Profession",
+      "learn:ProgrammeType",
+      "learn:Qualification",
+      "learn:QualificationLevel",
+      "learn:Student"
+    ],
+    "objectProperties": [
+      "learn:atInstitute",
+      "learn:attends",
+      "learn:definesDegreeCourse",
+      "learn:definesProgrammeType",
+      "learn:enablesLearning",
+      "learn:enablesProfession",
+      "learn:entitlesTo",
+      "learn:hasAcademicYear",
+      "learn:hasAchievedTitle",
+      "learn:hasDegreeClass",
+      "learn:hasDegreeCourse",
+      "learn:hasEOSite",
+      "learn:hasEducationalOffering",
+      "learn:hasEnrolment",
+      "learn:hasEnrolmentStatus",
+      "learn:hasEnrolmentValidity",
+      "learn:hasGrade",
+      "learn:hasGradingScale",
+      "learn:hasInstituteType",
+      "learn:hasLastEnrolmentYear",
+      "learn:hasLevel",
+      "learn:hasMaximumGrade",
+      "learn:hasMinimumGrade",
+      "learn:hasProgrammeType",
+      "learn:hasRegistrationYear",
+      "learn:includesExamination",
+      "learn:isDegreeClassOf",
+      "learn:isEnrolmentOf",
+      "learn:issuedBy",
+      "learn:leadsTo",
+      "learn:providedBy"
+    ],
+    "datatypeProperties": [
+      "learn:academicYear",
+      "learn:achievedTitleName",
+      "learn:courseYear",
+      "learn:credit",
+      "learn:gradeValue",
+      "learn:instituteCode",
+      "learn:instituteName",
+      "learn:isVocational",
+      "learn:qualificationDate"
+    ]
   },
   "Transparency": {
     "prefix": "tr",
     "ttl_file": "Transparency-AP_IT.ttl",
-    "classes": [],
-    "objectProperties": [],
-    "datatypeProperties": []
+    "classes": [
+      "tr:Format",
+      "tr:TransparencyActivity",
+      "tr:TransparencyActivityTypology",
+      "tr:TransparencyArchiveActivity",
+      "tr:TransparencyDataTypology",
+      "tr:TransparencyObligation",
+      "tr:TransparencyObligationStatus",
+      "tr:TransparencyPublicationActivity",
+      "tr:TransparencyResource",
+      "tr:TransparencySubject",
+      "tr:TransparencyUpdateActivity",
+      "tr:UpdateFrequency"
+    ],
+    "objectProperties": [
+      "tr:appliesToOrganization",
+      "tr:definesUpdateFrequency",
+      "tr:generatedBy",
+      "tr:generatesResource",
+      "tr:hasAllowedFormat",
+      "tr:hasTransparencyActivityTypology",
+      "tr:hasTransparencyStatus",
+      "tr:hasTransparencySubject",
+      "tr:isClassifiedBy",
+      "tr:isPerformedByAgent",
+      "tr:isVersionOf",
+      "tr:mustBeUptodatedWithin",
+      "tr:obligedToEnforce",
+      "tr:performsTransparencyActivity",
+      "tr:refersToTransparencyEntity",
+      "tr:refersToTransparencySubject",
+      "tr:subTransparencyObligationOf",
+      "tr:superTransparencyObligationOf",
+      "tr:triggeredBy",
+      "tr:triggers"
+    ],
+    "datatypeProperties": [
+      "tr:accessURL",
+      "tr:downloadURL",
+      "tr:exceptionObligationNote",
+      "tr:regulationReference"
+    ]
   },
   "Indicator": {
     "prefix": "indicator",
@@ -1523,10 +1646,33 @@
   },
   "CulturalHeritage": {
     "prefix": "ch",
-    "ttl_file": "CulturalHeritage-AP_IT.ttl",
-    "classes": [],
-    "objectProperties": [],
-    "datatypeProperties": []
+    "ttl_file": "wrapper-imports-arco",
+    "note": "CulturalHeritage-AP_IT importa la rete ArCo. Classi principali da arco:",
+    "classes": [
+      "ch:CulturalHeritage",
+      "ch:CulturalProperty",
+      "ch:MovableCulturalProperty",
+      "ch:ImmovableCulturalProperty",
+      "ch:ArchaeologicalProperty",
+      "ch:HistoricOrArtisticProperty",
+      "ch:ArchitecturalOrLandscapeHeritage",
+      "ch:PhotographicHeritage",
+      "ch:CatalogueRecord"
+    ],
+    "objectProperties": [
+      "ch:hasProtection",
+      "ch:hasConstraint",
+      "ch:hasCatalogueRecord",
+      "ch:isPartOf",
+      "ch:hasLocation"
+    ],
+    "datatypeProperties": [
+      "ch:conservationStatus",
+      "ch:inventoryNumber",
+      "ch:catalogueCode",
+      "ch:hasProtection",
+      "ch:hasConstraint"
+    ]
   },
   "Project": {
     "prefix": "prj",
@@ -1560,6 +1706,89 @@
       "prj:projectTotalCost",
       "prj:uniqueProjectCodeType",
       "prj:uniqueProjectCodeValue"
+    ]
+  },
+  "GTFS": {
+    "prefix": "gtfs",
+    "ttl_file": "external:http://vocab.gtfs.org/terms",
+    "classes": [
+      "gtfs:Agency",
+      "gtfs:Calendar",
+      "gtfs:CalendarRule",
+      "gtfs:FareClass",
+      "gtfs:FareRule",
+      "gtfs:Feed",
+      "gtfs:Frequency",
+      "gtfs:Route",
+      "gtfs:Service",
+      "gtfs:Shape",
+      "gtfs:ShapePoint",
+      "gtfs:Stop",
+      "gtfs:StopTime",
+      "gtfs:Transfer",
+      "gtfs:Trip"
+    ],
+    "objectProperties": [
+      "gtfs:agency",
+      "gtfs:arrivalTime",
+      "gtfs:bikesAllowed",
+      "gtfs:block",
+      "gtfs:departureTime",
+      "gtfs:dropOffType",
+      "gtfs:feed",
+      "gtfs:frequencyOf",
+      "gtfs:headsign",
+      "gtfs:parentStation",
+      "gtfs:pickupType",
+      "gtfs:route",
+      "gtfs:routeType",
+      "gtfs:service",
+      "gtfs:shape",
+      "gtfs:shapeDistTraveled",
+      "gtfs:stop",
+      "gtfs:stopSequence",
+      "gtfs:timeZone",
+      "gtfs:trip",
+      "gtfs:wheelchairAccessible"
+    ],
+    "datatypeProperties": [
+      "gtfs:code",
+      "gtfs:color",
+      "gtfs:direction",
+      "gtfs:distanceTraveled",
+      "gtfs:headway",
+      "gtfs:latitude",
+      "gtfs:longName",
+      "gtfs:longitude",
+      "gtfs:shortName",
+      "gtfs:textColor",
+      "gtfs:zone"
+    ]
+  },
+  "SMAPIT": {
+    "prefix": "smapit",
+    "ttl_file": "external:italian-school-AP_IT",
+    "classes": [
+      "smapit:School",
+      "smapit:HighSchool",
+      "smapit:PrimarySchool",
+      "smapit:KindergartenSchool",
+      "smapit:ComprehensiveInstitute",
+      "smapit:SchoolBuilding",
+      "smapit:SchoolClass"
+    ],
+    "objectProperties": [
+      "smapit:hasManager",
+      "smapit:hasSchoolBuilding",
+      "smapit:hasSchoolClass",
+      "smapit:isPartOf"
+    ],
+    "datatypeProperties": [
+      "smapit:schoolCode",
+      "smapit:schoolType",
+      "smapit:schoolName",
+      "smapit:numberOfStudents",
+      "smapit:numberOfTeachers"
     ]
   }
 }

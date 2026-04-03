@@ -1,0 +1,112 @@
+name: Rebuild Ontology Index
+
+on:
+  schedule:
+    # Ogni lunedì alle 03:00 UTC (05:00 ora italiana)
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Forza rigenerazione anche se non ci sono modifiche'
+        required: false
+        default: 'false'
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout CSV-to-RDF
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Verifica aggiornamenti dati-semantic-assets
+        id: check_updates
+        run: |
+          # Controlla la data dell'ultimo commit su dati-semantic-assets/Ontologie
+          LAST_COMMIT=$(curl -s \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/italia/dati-semantic-assets/commits?path=Ontologie&per_page=1" \
+            | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[0]['commit']['committer']['date'][:10])" 2>/dev/null || echo "unknown")
+
+          # Controlla la data dell'ultimo aggiornamento del nostro indice
+          LAST_INDEX=$(python3 -c "
+          import json
+          try:
+              with open('ontology_index.json') as f:
+                  d = json.load(f)
+              print(d.get('_meta',{}).get('generated_at','')[:10])
+          except:
+              print('never')
+          ")
+
+          echo "Ultimo commit dati-semantic-assets: $LAST_COMMIT"
+          echo "Ultimo aggiornamento indice: $LAST_INDEX"
+
+          if [ "$LAST_COMMIT" \> "$LAST_INDEX" ] || [ "${{ github.event.inputs.force }}" = "true" ] || [ "$LAST_INDEX" = "never" ]; then
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+            echo "→ Rigenerazione necessaria"
+          else
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+            echo "→ Indice già aggiornato, skip"
+          fi
+
+      - name: Rigenera ontology_index.json
+        if: steps.check_updates.outputs.needs_update == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/rebuild_ontology_index.py
+
+      - name: Verifica qualità indice generato
+        if: steps.check_updates.outputs.needs_update == 'true'
+        run: |
+          python3 -c "
+          import json, sys
+
+          with open('ontology_index.json') as f:
+              idx = json.load(f)
+
+          meta = idx.get('_meta', {})
+          ontos = {k:v for k,v in idx.items() if not k.startswith('_')}
+
+          print(f'Ontologie: {len(ontos)}')
+          print(f'Classi totali: {meta.get(\"total_classes\",0)}')
+          print(f'Proprietà totali: {meta.get(\"total_properties\",0)}')
+
+          # Verifica che nessuna ontologia critica sia vuota
+          critical = ['CLV','COV','TI','POI','ACCO','CPV','CPSV','PublicContract']
+          empty = []
+          for onto in critical:
+              if onto in ontos:
+                  total = len(ontos[onto].get('classes',[])) + len(ontos[onto].get('objectProperties',[])) + len(ontos[onto].get('datatypeProperties',[]))
+                  if total == 0:
+                      empty.append(onto)
+
+          if empty:
+              print(f'ERRORE: ontologie critiche vuote: {empty}', file=sys.stderr)
+              sys.exit(1)
+
+          errors = meta.get('errors', [])
+          if errors:
+              print(f'Warning: {len(errors)} errori non critici: {errors}')
+
+          print('Verifica qualità: OK')
+          "
+
+      - name: Commit ontology_index.json aggiornato
+        if: steps.check_updates.outputs.needs_update == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add ontology_index.json
+          git diff --staged --quiet || git commit -m "auto: rigenera ontology_index.json da dati-semantic-assets $(date +%Y%m%d)"
+          git push

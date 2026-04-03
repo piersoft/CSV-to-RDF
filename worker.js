@@ -1122,6 +1122,11 @@ function buildTTLHeader(paname, ipa) {
 `;
 }
 
+function tqe(s) {
+  if (s == null) return '';
+  return String(s).replace(/\\/g, '\\\\').replace(/"""/g, '\\"\\"\\"');
+}
+
 function buildDeterministicTriples(cols, rows, entityBase, deterMappings, typeSegment='resource', ontos=[]) {
   const lines = [];
   // Colonne da saltare completamente (tipo _SKIP_ o pivot non mappabili)

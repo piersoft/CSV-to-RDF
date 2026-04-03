@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.04.02.07 -->
+  <!-- build:v2026.04.03.02 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -745,7 +745,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.04.02.07</span>
+<span id="app-version">v2026.04.03.02</span>
 </footer>
 
 <script>
@@ -764,6 +764,13 @@ fetch('https://raw.githubusercontent.com/piersoft/CSV-to-RDF/main/fixtures_v9.js
     // Corpus non disponibile — usa solo il motore deterministico base
     window._corpus = null;
   });
+
+// Carica ontology_index.json per validazione proprietà vs ontologie ufficiali
+window._ontologyIndex = null;
+fetch('https://raw.githubusercontent.com/piersoft/CSV-to-RDF/main/ontology_index.json')
+  .then(function(r){return r.json();})
+  .then(function(data){ window._ontologyIndex = data; })
+  .catch(function(){ window._ontologyIndex = null; });
 
 function buildCorpusIndex(data) {
   var idx = {}; // colonna_normalizzata → {onto: count}
@@ -4997,6 +5004,74 @@ async function validateTTL() {
   for (const p of prefixesUsed) {
     if (!KNOWN.includes(p.toLowerCase()))
       warnings.push(`Prefisso inatteso: "${p}:" — ontologia non standard PA italiana`);
+  }
+
+
+  // ── 18c. PROPRIETÀ NON IN ONTOLOGY_INDEX ─────────────────────────────
+  // Controlla ogni predicato usato nel TTL contro l'indice delle ontologie ufficiali
+  if (window._ontologyIndex) {
+    // Costruisce set globale di tutte le proprietà note
+    const _knownProps = new Set();
+    const _knownClasses = new Set();
+    for (const [onto, data] of Object.entries(window._ontologyIndex)) {
+      (data.objectProperties || []).forEach(p => _knownProps.add(p));
+      (data.datatypeProperties || []).forEach(p => _knownProps.add(p));
+      (data.classes || []).forEach(c => _knownClasses.add(c));
+    }
+    // Aggiungi proprietà standard non-ontologia (rdf, rdfs, dct, owl, skos, xsd, foaf, geo, qb, sdmx-*)
+    const _stdProps = new Set([
+      'rdf:type','rdfs:label','rdfs:comment','rdfs:isDefinedBy','rdfs:subClassOf',
+      'dct:title','dct:description','dct:identifier','dct:publisher','dct:issued',
+      'dct:modified','dct:source','dct:license','dct:format','dct:type','dct:date',
+      'dct:creator','dct:contributor','dct:relation','dct:temporal','dct:spatial',
+      'dct:subject','dct:extent','dct:rights','dct:rightsHolder','dct:valid',
+      'dct:accessRights','dct:hasPart','dct:isPartOf','dct:conformsTo',
+      'dct:accrualPeriodicity','dct:language','dct:provenance',
+      'owl:sameAs','owl:equivalentClass',
+      'skos:prefLabel','skos:altLabel','skos:notation','skos:broader','skos:narrower',
+      'skos:inScheme','skos:Concept',
+      'foaf:name','foaf:Agent','foaf:Organization','foaf:Person','foaf:homepage',
+      'geo:lat','geo:long','geo:Point',
+      'xsd:string','xsd:date','xsd:dateTime','xsd:integer','xsd:decimal','xsd:boolean',
+      'qb:dataSet','qb:observation','qb:DataSet','qb:Observation','qb:DimensionProperty',
+      'qb:MeasureProperty','qb:AttributeProperty','qb:structure','qb:component',
+      'sdmx-dimension:refArea','sdmx-dimension:refPeriod','sdmx-measure:obsValue',
+      'sdmx-attribute:obsStatus','sdmx-attribute:unitMeasure',
+      'dcat:distribution','dcat:downloadURL','dcat:accessURL','dcat:mediaType',
+      'dcat:byteSize','dcat:theme','dcat:keyword','dcat:contactPoint','dcat:landingPage',
+      'schema:location','schema:performer','schema:isAccessibleForFree',
+      'cov:IPAcode','cov:legalName','cpsv:hasParticipant','cpsv:isGroupedUnder',
+      'gtfs:code','gtfs:shortName','gtfs:longName','gtfs:zone','gtfs:locationType',
+      'gtfs:parentStation','gtfs:agency','gtfs:routeType','gtfs:stopSequence',
+      'gtfs:arrivalTime','gtfs:departureTime','adms:version','adms:status',
+      'dct:issued'
+    ]);
+    // Estrae tutti i predicati usati nel TTL (non 'a')
+    const _predRe = /^\s+([a-zA-Z_][\w-]*:[a-zA-Z_][\w.]*)\s+/gm;
+    const _usedPreds = new Set();
+    for (const m of ttl.matchAll(_predRe)) {
+      const p = m[1];
+      if (p !== 'a' && !p.startsWith('//') && p.includes(':')) _usedPreds.add(p);
+    }
+    // Trova predicati che non sono né noti né standard
+    const _unknownPreds = [];
+    for (const p of _usedPreds) {
+      const prefix = p.split(':')[0];
+      // Salta prefissi non PA
+      if (['rdf','rdfs','owl','xsd','skos','dct','foaf','geo','schema','dcat',
+           'qb','sdmx-dimension','sdmx-measure','sdmx-attribute'].includes(prefix)) continue;
+      if (!_stdProps.has(p) && !_knownProps.has(p)) {
+        _unknownPreds.push(p);
+      }
+    }
+    if (_unknownPreds.length > 0) {
+      warnings.push(
+        `Proprietà non verificate nell'ontology index (${_unknownPreds.length}): ` +
+        _unknownPreds.slice(0,5).join(', ') +
+        (_unknownPreds.length > 5 ? ` +${_unknownPreds.length-5} altre` : '') +
+        ' — potrebbero non esistere nelle ontologie ufficiali'
+      );
+    }
   }
 
   // ── 18b. AVVISO COLONNE NON MAPPATE ─────────────────────────────────

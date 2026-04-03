@@ -224,10 +224,12 @@
       "aop:hasNearbyAccommodation",
       "aop:hasNearbyPointOfInterest",
       "aop:hasNearbyRestaurant",
+      "aop:hasQuantifiedPathSurfacing",
       "aop:hasQuantifiedPathwayPaving",
       "aop:hasQuantityOfPaving",
       "aop:hasSecurityLevel",
       "aop:hasServiceType",
+      "aop:hasSignage",
       "aop:hasSignposting",
       "aop:hasSupportService",
       "aop:hasSurveillance",
@@ -1032,6 +1034,7 @@
     ],
     "objectProperties": [
       "prj:hasCall",
+      "prj:hasFundingProgramme",
       "prj:hasParticipantingAgent",
       "prj:hasProgramme",
       "prj:hasSummary",
@@ -1100,6 +1103,7 @@
       "pc:WorkProgressReport"
     ],
     "objectProperties": [
+      "cpsv:hasParticipant",
       "pc:appliesToLot",
       "pc:approvedInWPR",
       "pc:attachesTenderDocument",
@@ -1205,6 +1209,8 @@
       "ro:isRoleIn",
       "ro:isRoleInTimeOf",
       "ro:isRoleOf",
+      "ro:roleHolder",
+      "ro:roleIn",
       "ro:withRole"
     ],
     "datatypeProperties": []
@@ -1255,6 +1261,7 @@
       "rpo:hasRegistryOfficeRegistrationMotivation",
       "rpo:hasRegistryOfficeRemovalMotivation",
       "rpo:hasRole",
+      "rpo:holdsRole",
       "rpo:immediatelyPrecedes",
       "rpo:inRegisteredFamily",
       "rpo:isCurrentlyAcquiredCitizen",

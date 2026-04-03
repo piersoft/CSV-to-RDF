@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.04.03.02 -->
+  <!-- build:v2026.04.03.03 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -745,7 +745,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.04.03.02</span>
+<span id="app-version">v2026.04.03.03</span>
 </footer>
 
 <script>
@@ -3416,6 +3416,139 @@ function litQ(s,lang){
   s=s.replace(/\\/g,'\\\\').replace(/"/g,'\\"');
   return lang?'"'+s+'"@'+lang:'"'+s+'"^^xsd:string';
 }
+
+// ── POST-FILTRO ONTOLOGY INDEX ─────────────────────────────────────────────
+// Analizza il TTL generato dall'AI e sostituisce proprietà non esistenti
+// nell'ontology_index con equivalenti corretti o con rdfs:comment come fallback.
+function applyOntologyPostFilter(ttl, ontos) {
+  if (!window._ontologyIndex || !ttl) return ttl;
+
+  // Costruisce set di proprietà note per le ontologie selezionate + standard
+  const knownProps = new Set([
+    // Proprietà standard sempre ammesse
+    'rdf:type','rdfs:label','rdfs:comment','rdfs:isDefinedBy','rdfs:subClassOf',
+    'dct:title','dct:description','dct:identifier','dct:publisher','dct:issued',
+    'dct:modified','dct:source','dct:license','dct:format','dct:type','dct:date',
+    'dct:creator','dct:contributor','dct:relation','dct:temporal','dct:spatial',
+    'dct:subject','dct:extent','dct:rights','dct:rightsHolder','dct:valid',
+    'dct:accessRights','dct:hasPart','dct:isPartOf','dct:conformsTo','dct:issued',
+    'dct:accrualPeriodicity','dct:language','dct:provenance',
+    'owl:sameAs','owl:equivalentClass',
+    'skos:prefLabel','skos:altLabel','skos:notation','skos:broader','skos:narrower',
+    'skos:inScheme','skos:definition',
+    'foaf:name','foaf:homepage','foaf:mbox',
+    'geo:lat','geo:long',
+    'qb:dataSet','qb:observation','qb:structure','qb:component',
+    'sdmx-dimension:refArea','sdmx-dimension:refPeriod','sdmx-measure:obsValue',
+    'sdmx-attribute:obsStatus','sdmx-attribute:unitMeasure',
+    'dcat:distribution','dcat:downloadURL','dcat:accessURL','dcat:mediaType',
+    'dcat:byteSize','dcat:theme','dcat:keyword','dcat:contactPoint','dcat:landingPage',
+    'schema:location','schema:performer','schema:isAccessibleForFree',
+    'adms:version','adms:status',
+  ]);
+
+  // Aggiungi proprietà delle ontologie selezionate
+  const ontoMap = {
+    'CLV':'CLV','COV':'COV','CPV':'CPV','TI':'TI','POI':'POI','ACCO':'ACCO',
+    'SM':'SM','IoT':'IoT','GTFS':'GTFS','PublicContract':'PublicContract',
+    'CPSV':'CPSV','CPSV-AP':'CPSV','RO':'RO','RPO':'RPO','Route':'Route',
+    'PARK':'PARK','Learning':'Learning','Transparency':'Transparency',
+    'Indicator':'Indicator','POT':'POT','CPEV':'CPEV','ADMS':'ADMS',
+    'Cultural-ON':'Cultural-ON','CulturalHeritage':'CulturalHeritage',
+    'QB':'Indicator', // QB usa sdmx-* già in knownProps
+    'SMAPIT':'SMAPIT','l0':'l0','L0':'l0',
+    'AtlasOfPaths':'AtlasOfPaths','NDC':'NDC','MU':'MU','Project':'Project',
+    'AccessCondition':'AccessCondition',
+  };
+
+  for (const onto of (ontos || [])) {
+    const key = ontoMap[onto] || onto;
+    const data = window._ontologyIndex[key];
+    if (!data) continue;
+    (data.objectProperties || []).forEach(p => knownProps.add(p));
+    (data.datatypeProperties || []).forEach(p => knownProps.add(p));
+  }
+
+  // Mappa di correzioni note — proprietà inventate → corrette
+  const CORRECTIONS = {
+    'clv:hasStreet':        'clv:fullAddress',
+    'clv:hasStreetName':    'clv:fullAddress',
+    'clv:hasPostalCode':    'clv:postCode',
+    'clv:hasStreetNumber':  null,  // non esiste — usa streetNumber su Address
+    'clv:hasName':          'rdfs:label',
+    'clv:hasFeature':       null,
+    'acco:numberOfRooms':   'acco:totalRoom',
+    'acco:numberOfBeds':    'acco:totalBed',
+    'acco:numberOfBathrooms': 'acco:totalToilet',
+    'acco:stars':           'acco:accoStarRatingID',
+    'cov:Company':          'cov:Organization',
+    'ti:startDate':         'ti:startTime',
+    'ti:endDate':           'ti:endTime',
+    'ti:hasDayOfWeek':      null,  // non esiste in TI
+    'sm:hasPhone':          'sm:hasTelephone',
+    'sm:phone':             'sm:hasTelephone',
+    'sm:email':             'sm:hasEmail',
+    'sm:website':           'sm:hasWebSite',
+    'poi:hasCategory':      'poi:POIcategoryName',
+    'poi:name':             'poi:POIofficialName',
+    'pc:amount':            'pc:hasAmount',
+    'pc:cpv':               'pc:hasCPV',
+    'pc:cig':               'pc:hasCIG',
+    'pc:cup':               'pc:hasCUP',
+  };
+
+  let fixed = 0;
+  let fallback = 0;
+  const issues = [];
+
+  // Processa riga per riga
+  const lines = ttl.split('\n');
+  const result = lines.map(line => {
+    // Cerca predicato nella riga: "  pred:Name valor"
+    const m = line.match(/^(\s+)([a-zA-Z_][\w-]*:[a-zA-Z_][\w.]*)\s+(.*)/);
+    if (!m) return line;
+    const [, indent, pred, rest] = m;
+
+    // Salta 'a' e prefissi standard
+    if (pred === 'a') return line;
+    const prefix = pred.split(':')[0];
+    if (['rdf','rdfs','owl','xsd','skos','dct','foaf','geo','schema',
+         'dcat','qb','sdmx-dimension','sdmx-measure','sdmx-attribute'].includes(prefix)) {
+      return line;
+    }
+
+    // Controlla se è nota
+    if (knownProps.has(pred)) return line;
+
+    // Controlla se è una correzione nota
+    if (CORRECTIONS[pred] !== undefined) {
+      const correction = CORRECTIONS[pred];
+      if (correction) {
+        issues.push(`${pred} → ${correction}`);
+        fixed++;
+        return `${indent}${correction} ${rest}`;
+      } else {
+        // Proprietà inesistente senza sostituto — converti in rdfs:comment
+        const val = rest.replace(/[;.]\s*$/, '').trim();
+        const sep = rest.match(/[;.]\s*$/)?.[0] || '';
+        issues.push(`${pred} → rdfs:comment (nessun equivalente)`);
+        fallback++;
+        return `${indent}rdfs:comment "${pred}: ${val.replace(/"/g,'\\"')}"@it${sep ? ' '+sep.trim() : ''}`;
+      }
+    }
+
+    // Proprietà sconosciuta non nella mappa — logga ma non tocca
+    // (evita falsi positivi su proprietà valide ma non nell'indice parziale)
+    return line;
+  });
+
+  if (issues.length > 0) {
+    console.log('[PostFilter]', fixed, 'correzioni,', fallback, 'fallback:', issues.join('; '));
+  }
+
+  return result.join('\n');
+}
+
 function buildDeterministicTTL(csvText,ontos,ipa,ente){
   if(!csvText||!csvText.trim())return'';
   if(!ontos||!ontos.length)return'';
@@ -4656,6 +4789,8 @@ async function startConversion() {
       const prompt = buildPromptChunk(cols, chunks[i], ontos, i, chunks.length, vocabSection, ontoSection, new Set(), ipa);
       let deterTriples = buildDeterministicTriples(cols, chunks[i], entityBase, deterMappings, typeSegment, ontos);
       let llmTriples = prompt ? fixURIs(sanitizeTTL(cleanTTL(await callAI(prompt))), ipa) : '';
+      // POST-FILTRO: corregge proprietà non esistenti nelle ontologie ufficiali
+      if (llmTriples) llmTriples = applyOntologyPostFilter(llmTriples, ontos);
       // Merge: inietta le triple deterministiche dentro le risorse LLM
       let chunk;
       // Strategia: LLM ha priorità assoluta quando produce output.

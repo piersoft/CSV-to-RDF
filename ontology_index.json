@@ -251,8 +251,10 @@
       "aop:withPaving"
     ],
     "datatypeProperties": [
+      "aop:name",
       "aop:pathNumber",
-      "aop:stageNumber"
+      "aop:stageNumber",
+      "aop:value"
     ]
   },
   "CLV": {
@@ -1167,6 +1169,7 @@
       "pc:currentSuppliesAmount",
       "pc:currentTotalAmount",
       "pc:currentWorksAmount",
+      "pc:description",
       "pc:estimatedEndDate",
       "pc:expireDate",
       "pc:increaseAmount",
@@ -1213,7 +1216,9 @@
       "ro:roleIn",
       "ro:withRole"
     ],
-    "datatypeProperties": []
+    "datatypeProperties": [
+      "ro:name"
+    ]
   },
   "RPO": {
     "prefix": "rpo",
@@ -1334,6 +1339,7 @@
       "route:routelLength"
     ],
     "datatypeProperties": [
+      "route:duration",
       "route:numberOfStages",
       "route:routeEstDuration",
       "route:routeLongName",

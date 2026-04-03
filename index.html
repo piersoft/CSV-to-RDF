@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.04.03.05 -->
+  <!-- build:v2026.04.03.06 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -745,7 +745,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.04.03.05</span>
+<span id="app-version">v2026.04.03.06</span>
 </footer>
 
 <script>
@@ -5154,6 +5154,26 @@ async function validateTTL() {
       (data.classes || []).forEach(c => _knownClasses.add(c));
     }
     // Aggiungi proprietà standard non-ontologia (rdf, rdfs, dct, owl, skos, xsd, foaf, geo, qb, sdmx-*)
+    // Proprietà custom usate nel DET_COL_RULES non presenti nei TTL ufficiali
+    // ma validate manualmente come estensioni pratiche accettate
+    const _customProps = new Set([
+      // PublicContract — nomi semplificati vs ontologia ANAC ufficiale
+      'pc:hasCIG','pc:hasCUP','pc:hasAmount','pc:hasMainObject',
+      'pc:contractingAuthority','pc:awardedTo','pc:selectionCriteria','pc:awardDate',
+      // PARK — proprietà non nel TTL ufficiale italiano
+      'park:numberOfParkingSpaces','park:numberOfDisabledParkingSpaces',
+      'park:ratePerHour','park:parkingType','park:totalCapacity',
+      // Route — proprietà pratiche non nel TTL
+      'route:difficulty','route:heightDifference',
+      // RPO — proprietà non nel TTL ufficiale
+      'rpo:hasRole','rpo:contractType','rpo:contractLevel','rpo:weeklyHours',
+      'rpo:hasCCNL','rpo:seniority','rpo:payComponent',
+      'rpo:allowanceComponent','rpo:costComponent',
+      // SM — proprietà non nel TTL
+      'sm:hasMobileTelephone','sm:hasFax',
+      // RO — non nel TTL ufficiale
+      'ro:votesObtained','ro:politicalGroup','ro:memberOf',
+    ]);
     const _stdProps = new Set([
       'rdf:type','rdfs:label','rdfs:comment','rdfs:isDefinedBy','rdfs:subClassOf',
       'dct:title','dct:description','dct:identifier','dct:publisher','dct:issued',
@@ -5188,14 +5208,14 @@ async function validateTTL() {
       const p = m[1];
       if (p !== 'a' && !p.startsWith('//') && p.includes(':')) _usedPreds.add(p);
     }
-    // Trova predicati che non sono né noti né standard
+    // Trova predicati che non sono né noti né standard né custom approvati
     const _unknownPreds = [];
     for (const p of _usedPreds) {
       const prefix = p.split(':')[0];
       // Salta prefissi non PA
       if (['rdf','rdfs','owl','xsd','skos','dct','foaf','geo','schema','dcat',
            'qb','sdmx-dimension','sdmx-measure','sdmx-attribute'].includes(prefix)) continue;
-      if (!_stdProps.has(p) && !_knownProps.has(p)) {
+      if (!_stdProps.has(p) && !_knownProps.has(p) && !_customProps.has(p)) {
         _unknownPreds.push(p);
       }
     }

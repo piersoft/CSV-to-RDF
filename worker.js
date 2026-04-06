@@ -658,6 +658,9 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['dug___denominazione_urban','duf___denominazione_urban','codice_catastale_ente','numero_delibera','data_delibera_istituzione'])) result.add('CLV');
   if(has(['cod_nazionale_struttura','denominazione_struttura','tipo_struttura','cod_nazionale_asl','denom_struttura','cod_struttura','cod_distretto_asl','comune_sede'])) result.add('SMAPIT');
   if(has(['totale_rette','totale_pagamenti','pasti_erogati']) && has(['anno','scuola','mensa','alunni'])) { result.add('QB'); result.add('SMAPIT'); }
+  if(has(['tipo_pratica','totale_pratiche']) && has(['anno'])) result.add('QB');
+  if(has(['arrivi_italiani','presenze_italiani','arrivi_stranieri','presenze_stranieri'])) result.add('QB');
+  if(has(['capitolo_di_bilancio','descrizione_capitolo','stanziamento_assestato'])) result.add('QB');
 
   // ACCO — strutture ricettive con varianti PA regionali
   // FN-ACCO FIX: aggiunge "classificazione/categoria_struttura/RTA/B&B" comuni

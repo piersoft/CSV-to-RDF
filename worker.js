@@ -661,6 +661,9 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['ateneocod','ateneonome','annoa','classenumero','classenome'])) { result.add('QB'); result.add('Learning'); }
   if(has(['euro_0','euro_1','euro_2','euro_3']) && has(['comune'])) result.add('QB');
   if(has(['indicatore_isee','quota_annuale','istituto']) && has(['anno'])) { result.add('QB'); result.add('SMAPIT'); }
+  if(has(['parametromisurato','valorerilevato','unitamisura','zonanome']) || has(['parametro','limiti_di_legge','acqua_di_milano'])) { result.add('IoT'); result.add('QB'); }
+  if(has(['nlista','partito','candidato','luogonascita','datanascita'])) { result.add('CPV'); result.add('RO'); }
+  if(has(['fondo___fund','asse','codice_locale_progetto___','codice_fiscale_beneficiar'])) { result.add('PublicContract'); result.add('TI'); }
   if(has(['dug___denominazione_urban','duf___denominazione_urban','codice_catastale_ente','numero_delibera','data_delibera_istituzione'])) result.add('CLV');
   if(has(['cod_nazionale_struttura','denominazione_struttura','tipo_struttura','cod_nazionale_asl','denom_struttura','cod_struttura','cod_distretto_asl','comune_sede'])) result.add('SMAPIT');
   if(has(['totale_rette','totale_pagamenti','pasti_erogati']) && has(['anno','scuola','mensa','alunni'])) { result.add('QB'); result.add('SMAPIT'); }

@@ -662,6 +662,10 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['euro_0','euro_1','euro_2','euro_3']) && has(['comune'])) result.add('QB');
   if(has(['indicatore_isee','quota_annuale','istituto']) && has(['anno'])) { result.add('QB'); result.add('SMAPIT'); }
   if(has(['parametromisurato','valorerilevato','unitamisura','zonanome']) || has(['parametro','limiti_di_legge','acqua_di_milano'])) { result.add('IoT'); result.add('QB'); }
+  if(has(['fondo___fund','asse','codice_locale_progetto___','codice_fiscale_beneficiar'])) { result.add('PublicContract'); result.add('TI'); }
+  if(has(['nlista','partito','candidato','luogonascita','datanascita'])) { result.add('CPV'); result.add('RO'); }
+  if(has(["settore_di_attivita'_non_",'numero_addetti','numero_volontari'])) result.add('QB');
+  if(has(['parametromisurato','valorerilevato','unitamisura','zonanome']) || has(['parametro','limiti_di_legge','acqua_di_milano'])) { result.add('IoT'); result.add('QB'); }
   if(has(['nlista','partito','candidato','luogonascita','datanascita'])) { result.add('CPV'); result.add('RO'); }
   if(has(['fondo___fund','asse','codice_locale_progetto___','codice_fiscale_beneficiar'])) { result.add('PublicContract'); result.add('TI'); }
   if(has(['dug___denominazione_urban','duf___denominazione_urban','codice_catastale_ente','numero_delibera','data_delibera_istituzione'])) result.add('CLV');

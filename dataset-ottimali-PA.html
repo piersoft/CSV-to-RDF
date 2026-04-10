@@ -47,7 +47,7 @@
   <div class="meta">
     <span>v2026.04.09.01</span>
     <span>29 ontologie</span>
-    <span>389 dataset PA reali</span>
+    <span>393 dataset PA reali</span>
     <span>22+7 CSV sacri testati</span>
     <span><a href="https://piersoft.github.io/CSV-to-RDF/" style="color:#c7d2fe">Apri il tool</a></span>
   </div>
@@ -597,6 +597,50 @@
 
       <div class="dataset-card">
         <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">CLV</span>
+          <h3>Toponimi stradali nome, classe e codice</h3>
+        </div>
+        <p>Rete viaria comunale: codice, nome_toponimo, classe_toponimo, storico, codice_toponimo. Formato Regione Lombardia per anagrafe vie. Complementare allo stradario DUG/DUF.</p>
+        <div class="col-examples">
+          <code>nome_toponimo</code><code>classe_toponimo</code><code>storico</code><code>codice_toponimo</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">PARK · CLV · POI</span>
+          <h3>Parcheggi con ID tipologia e codice catastale</h3>
+        </div>
+        <p>Anagrafe parcheggi comunali: ID_Parcheggio, Tipologia, Provincia, Comune, Codice_catastale, Toponimo, Indirizzo. Pattern Comuni lombardi con ID univoco.</p>
+        <div class="col-examples">
+          <code>id_parcheggio</code><code>tipologia</code><code>codice_catastale</code><code>toponimo</code><code>indirizzo</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">POI · CLV</span>
+          <h3>Esercizi e servizi comunali POI</h3>
+        </div>
+        <p>Registro esercizi pubblici e servizi: Denominazione, Provincia, Comune, Codice_catastale, Toponimo, Indirizzo. Pattern Comuni lombardi per pubblici esercizi e servizi alla persona.</p>
+        <div class="col-examples">
+          <code>denominazione</code><code>provincia</code><code>comune</code><code>codice_catastale</code><code>toponimo</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">QB · CPV · CLV</span>
+          <h3>Popolazione residente al 31 dicembre per comune</h3>
+        </div>
+        <p>Statistiche demografiche annuali per comune: codice comune, descrizione, popolazione maschi/femmine/totale al 31 dicembre, numero famiglie, numero medio componenti. Pattern Città Metropolitana Milano.</p>
+        <div class="col-examples">
+          <code>codice_comune</code><code>descrizione_comune</code><code>popolazione_al_31_dicembre_maschi</code><code>numero_di_famiglie</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
           <span class="onto-badge" style="background:#0066cc">CPV · CLV · SMAPIT</span>
           <h3>Medici di medicina generale e pediatri</h3>
         </div>
@@ -1012,6 +1056,6 @@
     <p style="margin-top:.8rem;font-size:.85rem;"><a href="https://github.com/piersoft/CSV-to-RDF">Sorgente su GitHub</a> · <a href="https://piersoft.github.io/CSV-to-RDF/">Tool online</a> · <a href="https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html">Questa pagina</a></p>
   </div>
 </div>
-<footer>CSV→RDF PA Italiana · piersoft · v2026.04.09.01 · 29 ontologie · 389 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
+<footer>CSV→RDF PA Italiana · piersoft · v2026.04.09.01 · 29 ontologie · 393 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
 </body>
 </html>

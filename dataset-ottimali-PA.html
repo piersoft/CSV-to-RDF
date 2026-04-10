@@ -47,7 +47,7 @@
   <div class="meta">
     <span>v2026.04.09.01</span>
     <span>29 ontologie</span>
-    <span>403 dataset PA reali</span>
+    <span>407 dataset PA reali</span>
     <span>22+7 CSV sacri testati</span>
     <span><a href="https://piersoft.github.io/CSV-to-RDF/" style="color:#c7d2fe">Apri il tool</a></span>
   </div>
@@ -751,6 +751,50 @@
 
       <div class="dataset-card">
         <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">QB · ACCO · CLV</span>
+          <h3>BDSR — Strutture ricettive per comune e categoria ISTAT</h3>
+        </div>
+        <p>Banca Dati Strutture Ricettive MiTur: codice/nome Regione, Provincia, Comune ISTAT, Macrocategoria/Categoria/Sottocategoria ISTAT, totale strutture con CIN verificato/non verificato/senza CIN. 705.769 strutture nazionali.</p>
+        <div class="col-examples">
+          <code>macrocategoria_istat</code><code>categoria_istat</code><code>comune</code><code>totale_strutture</code><code>totale_strutture_con_cin_verificato</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">ACCO · QB</span>
+          <h3>Cammini religiosi — Ministero del Turismo</h3>
+        </div>
+        <p>Catalogo cammini religiosi italiani MiTur: nome cammino, lunghezza complessiva (km), numero standard posseduti, tracciato percorribile, georeferenziazione, logo, segnaletica, sito web. Avviso MiTur 28/11/2022.</p>
+        <div class="col-examples">
+          <code>elenco_cammini</code><code>lunghezza_complessiva</code><code>numero_standard_posseduti</code><code>georeferenziazione</code><code>segnaletica</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">QB · CLV</span>
+          <h3>Cammini religiosi per regione NUTS2 — MiTur</h3>
+        </div>
+        <p>Distribuzione cammini religiosi per regione NUTS2: nome cammino + flag presenza in ciascuna regione (itc1-piemonte, itc4-lombardia, itd3-veneto, ite1-toscana, ecc.). Matrice pivot geografica MiTur.</p>
+        <div class="col-examples">
+          <code>elenco_cammini</code><code>itc1_piemonte</code><code>itc4_lombardia</code><code>ite1_toscana</code><code>itf6_calabria</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">QB · CPV</span>
+          <h3>Professioni turistiche per paese di conseguimento — MiTur</h3>
+        </div>
+        <p>Professioni turistiche riconosciute per paese: guide con diritto di stabilimento, guide temporanee, accompagnatori turistici, direttori tecnici agenzia viaggi. Fonte MiTur ex D.Lgs. 206/2007, aggiornato marzo 2026.</p>
+        <div class="col-examples">
+          <code>paese_di_conseguimento</code><code>numero_guide_turistiche_stabilimento</code><code>numero_guide_temporanee</code><code>numero_accompagnatori_turistici</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
           <span class="onto-badge" style="background:#0066cc">CPV · CLV · SMAPIT</span>
           <h3>Medici di medicina generale e pediatri</h3>
         </div>
@@ -1166,6 +1210,6 @@
     <p style="margin-top:.8rem;font-size:.85rem;"><a href="https://github.com/piersoft/CSV-to-RDF">Sorgente su GitHub</a> · <a href="https://piersoft.github.io/CSV-to-RDF/">Tool online</a> · <a href="https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html">Questa pagina</a></p>
   </div>
 </div>
-<footer>CSV→RDF PA Italiana · piersoft · v2026.04.09.01 · 29 ontologie · 403 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
+<footer>CSV→RDF PA Italiana · piersoft · v2026.04.09.01 · 29 ontologie · 407 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
 </body>
 </html>

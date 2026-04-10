@@ -655,6 +655,12 @@ function detectOntologiesDeterministic(headers, rows) {
           'ordine_scuola','grado_scolastico','codice_meccanografico']) ||
      (has(['scuola','liceo','comprensivo','istruzione']) && !has(['cig','importo','appalto','museo','biblioteca','ospedale','banca','dae','defibrillatore','aed']) && !allText.includes('dae-') && !allText.includes('defibrillator')))
     result.add('SMAPIT');
+  if(has(['cod_amm','des_amm','tipologia_istat','tipologia_amm']) && has(['cf','sito_istituzionale'])) { result.add('COV'); result.add('CLV'); }
+  if(has(['codice_ipa','codice_uni_uo','descrizione_uo','codice_uni_aoo'])) { result.add('COV'); result.add('CLV'); }
+  if(has(['id_servizio','tipologia_servizio','descrizione_servizio','url_servizio']) && has(['codice_ipa'])) { result.add('CPSV'); result.add('COV'); }
+  if(has(['nome_responsabile','cognome_responsabile','mail_responsabile']) && has(['codice_ipa','codice_uni_uo'])) { result.add('COV'); result.add('CPV'); result.add('RO'); }
+  if(has(['cup','oc_titolo_progetto','oc_tema_sintetico','fondo_comunitario'])) { result.add('PublicContract'); result.add('COV'); result.add('CLV'); }
+  if(has(['cup_cod_settore','cup_descr_settore','finanz_ue','finanz_stato'])) { result.add('PublicContract'); result.add('QB'); }
   if(has(['cognomemedico','nomemedico','codiceasl_ao','codiceregionalemedico','indirizzostudiomedico_str'])) { result.add('CPV'); result.add('CLV'); result.add('SMAPIT'); }
   if(has(['dipartimento','direzionegenerale']) && has(['dataatto','numeroatto','tipologiaatto'])) { result.add('PublicContract'); result.add('TI'); }
   if(has(['ato','kg_di_rifiuti_differenzia','kg_di_rifiuti_non_differe','totale_kg_di_rifiuti_prod'])) result.add('QB');

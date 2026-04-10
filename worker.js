@@ -666,6 +666,10 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['ato','kg_di_rifiuti_differenzia','kg_di_rifiuti_non_differe','totale_kg_di_rifiuti_prod'])) result.add('QB');
   if(has(['ateneocod','ateneonome','annoa','classenumero','classenome'])) { result.add('QB'); result.add('Learning'); }
   if(has(['euro_0','euro_1','euro_2','euro_3']) && has(['comune'])) result.add('QB');
+  if(has(['macrocategoria_istat','categoria_istat','totale_strutture','codice_macrocategoria_istat'])) { result.add('ACCO'); result.add('QB'); result.add('CLV'); }
+  if(has(['totale_strutture_con_cin_ve','totale_strutture_senza_cin','sottocategoria_istat'])) { result.add('ACCO'); result.add('QB'); }
+  if(has(['elenco_cammini','lunghezza_complessiva','numero_standard_posseduti','tracciato_definito_e_percorribile'])) { result.add('ACCO'); result.add('QB'); }
+  if(has(['paese_di_conseguimento','numero_guide_turistiche_con_','numero_guide_turistiche_temp','numero_accompagnatori_turisti'])) { result.add('QB'); result.add('CPV'); }
   if(has(['indicatore_isee','quota_annuale','istituto']) && has(['anno'])) { result.add('QB'); result.add('SMAPIT'); }
   if(has(['parametromisurato','valorerilevato','unitamisura','zonanome']) || has(['parametro','limiti_di_legge','acqua_di_milano'])) { result.add('IoT'); result.add('QB'); }
   if(has(['fondo___fund','asse','codice_locale_progetto___','codice_fiscale_beneficiar'])) { result.add('PublicContract'); result.add('TI'); }

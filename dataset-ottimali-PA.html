@@ -47,7 +47,7 @@
   <div class="meta">
     <span>v2026.04.09.01</span>
     <span>29 ontologie</span>
-    <span>397 dataset PA reali</span>
+    <span>403 dataset PA reali</span>
     <span>22+7 CSV sacri testati</span>
     <span><a href="https://piersoft.github.io/CSV-to-RDF/" style="color:#c7d2fe">Apri il tool</a></span>
   </div>
@@ -685,6 +685,72 @@
 
       <div class="dataset-card">
         <div class="card-header">
+          <span class="onto-badge" style="background:#1a6b35">COV · CLV</span>
+          <h3>IndicePA — Anagrafe amministrazioni</h3>
+        </div>
+        <p>Anagrafe enti PA da IndicePA: cod_amm, des_amm, tipologia ISTAT e amministrativa, codice fiscale, sito istituzionale, indirizzo, comune, provincia, regione. Dataset ufficiale IPA aggiornato continuamente.</p>
+        <div class="col-examples">
+          <code>cod_amm</code><code>des_amm</code><code>tipologia_istat</code><code>tipologia_amm</code><code>cf</code><code>sito_istituzionale</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#1a6b35">COV · CLV · CPV</span>
+          <h3>IndicePA — Unità organizzative</h3>
+        </div>
+        <p>Unità organizzative PA da IndicePA: Codice_IPA, Codice_uni_uo, Codice_uni_aoo, Descrizione_uo, responsabile, indirizzo, CAP, codice comune ISTAT. Dataset IPA ufficiale.</p>
+        <div class="col-examples">
+          <code>codice_ipa</code><code>codice_uni_uo</code><code>descrizione_uo</code><code>codice_uni_aoo</code><code>indirizzo</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#1a6b35">CPSV · COV</span>
+          <h3>IndicePA — Servizi digitali</h3>
+        </div>
+        <p>Catalogo servizi digitali PA da IndicePA ex art.1 CAD: Codice_IPA, Id_servizio, Tipologia_servizio, Descrizione_servizio, Url_servizio. Ogni ente PA pubblica i propri servizi online.</p>
+        <div class="col-examples">
+          <code>codice_ipa</code><code>id_servizio</code><code>tipologia_servizio</code><code>descrizione_servizio</code><code>url_servizio</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#1a6b35">COV · CPV · RO</span>
+          <h3>IndicePA — Responsabili Transizione Digitale</h3>
+        </div>
+        <p>Anagrafe RTD ex art.17 CAD da IndicePA: Codice_IPA, ente, unità organizzativa, nome e cognome responsabile, mail e telefono RTD. Un RTD per ogni PA italiana.</p>
+        <div class="col-examples">
+          <code>codice_ipa</code><code>codice_uni_uo</code><code>nome_responsabile</code><code>cognome_responsabile</code><code>mail_responsabile</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#1a6b35">PublicContract · COV · CLV · TI</span>
+          <h3>OpenCoesione — Progetti con CUP e beneficiario</h3>
+        </div>
+        <p>Progetti politiche di coesione da OpenCoesione: CUP, titolo, tema sintetico, programma, fondo comunitario, beneficiario (CF e denominazione), forma giuridica, regione, comune, pagamenti totali. Tracciato esteso 201 colonne.</p>
+        <div class="col-examples">
+          <code>cup</code><code>oc_titolo_progetto</code><code>fondo_comunitario</code><code>oc_denom_beneficiario</code><code>tot_pagamenti</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#1a6b35">PublicContract · QB · COV · CLV</span>
+          <h3>OpenCoesione — Progetti con settore CUP e finanziamenti UE</h3>
+        </div>
+        <p>Variante tracciato esteso OpenCoesione con classificazione CUP (natura, settore, sottosettore) e finanziamenti disaggregati per fonte: UE, Stato, Regione, Comune. Attuatore con CF e forma giuridica.</p>
+        <div class="col-examples">
+          <code>cup_cod_settore</code><code>cup_descr_settore</code><code>finanz_ue</code><code>finanz_stato</code><code>oc_denom_attuatore</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
           <span class="onto-badge" style="background:#0066cc">CPV · CLV · SMAPIT</span>
           <h3>Medici di medicina generale e pediatri</h3>
         </div>
@@ -1100,6 +1166,6 @@
     <p style="margin-top:.8rem;font-size:.85rem;"><a href="https://github.com/piersoft/CSV-to-RDF">Sorgente su GitHub</a> · <a href="https://piersoft.github.io/CSV-to-RDF/">Tool online</a> · <a href="https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html">Questa pagina</a></p>
   </div>
 </div>
-<footer>CSV→RDF PA Italiana · piersoft · v2026.04.09.01 · 29 ontologie · 397 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
+<footer>CSV→RDF PA Italiana · piersoft · v2026.04.09.01 · 29 ontologie · 403 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
 </body>
 </html>

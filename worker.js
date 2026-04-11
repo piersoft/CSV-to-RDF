@@ -655,6 +655,27 @@ function detectOntologiesDeterministic(headers, rows) {
           'ordine_scuola','grado_scolastico','codice_meccanografico']) ||
      (has(['scuola','liceo','comprensivo','istruzione']) && !has(['cig','importo','appalto','museo','biblioteca','ospedale','banca','dae','defibrillatore','aed']) && !allText.includes('dae-') && !allText.includes('defibrillator')))
     result.add('SMAPIT');
+  if(has(['tipo_atto','media_gg_approvazione','totale_mandati_collegati'])) { result.add('CPSV'); result.add('TI'); result.add('QB'); }
+  if(has(['anno_protocollo','tipo_protocollo','tipo_spedizione','numero_protocolli'])) { result.add('QB'); result.add('TI'); }
+  if(has(['tipo_pubblicazione','numero_pubblicazioni']) && has(['anno'])) { result.add('QB'); result.add('TI'); }
+  if(has(['stanziato','accertato','incassato','impegnato','pagato'])) { result.add('QB'); result.add('TI'); }
+  if(has(['residui_attivi','residui_passivi','totale_entrate','totale_uscite'])) { result.add('QB'); result.add('TI'); }
+  if(has(['nati','decessi','immigrati','emigrati']) && has(['anno'])) { result.add('QB'); result.add('CPV'); result.add('TI'); }
+  if(has(['gruppo_politico','orario_ricevimento','organo','ruolo']) && has(['cognome','nome'])) { result.add('CPV'); result.add('RO'); result.add('COV'); }
+  if(has(['numero_componenti','di_cui_minorenni','totale_famiglie'])) { result.add('QB'); result.add('CPV'); }
+  if(has(['anno_nascita','sesso','cittadinanza','totale_cittadini'])) { result.add('QB'); result.add('CPV'); }
+  if(has(['totale_uomini','totale_donne','eta_media_uomini','eta_media_donne'])) { result.add('QB'); result.add('COV'); }
+  if(has(['ufficio','pec','orari_pubblico'])) { result.add('COV'); result.add('CLV'); result.add('CPSV'); }
+  if(has(['permessi_rilasciati','entro_termini','fuori_termini'])) { result.add('QB'); result.add('TI'); result.add('CPSV'); }
+  if(has(['tipologia','totale']) && has(['anno']) && !has(['titolo','descrizione'])) { result.add('QB'); result.add('TI'); }
+  if(has(['nome_associazione','latitudine','longitudine','categoria']) && has(['indirizzo'])) { result.add('COV'); result.add('CLV'); result.add('POI'); }
+  if(has(['bandito_da','oggetto','data_scadenza','numero_posti','gazzetta_ufficiale'])) { result.add('CPSV'); result.add('TI'); }
+  if(has(['totale_costo']) && has(['anno','mese']) && !has(['impegnato'])) { result.add('QB'); result.add('TI'); }
+  if(has(['tipo_operazione','numero_sanzioni']) && has(['anno','mese'])) { result.add('QB'); result.add('TI'); }
+  if(has(['totale_nati','totale_morti','totale_iscritti_per_trasferim'])) { result.add('QB'); result.add('CPV'); result.add('CLV'); }
+  if(has(['numero_famiglie','residenti_in_famiglie_maschi','numero_convivenze'])) { result.add('QB'); result.add('CPV'); result.add('CLV'); }
+  if(has(['tasso_mortalita_','tasso_natalita_','tasso_iscrizione','tasso_cancellazione'])) { result.add('QB'); result.add('CLV'); }
+  if(has(['codice_missione','descmissione','codiceprogramma','residuipresunti'])) { result.add('QB'); result.add('TI'); }
   if(has(['descrizione_piano','descrizione_capitolo','descrizione_macro_ob','linea_di_azione','percentuale'])) { result.add('CPSV'); result.add('TI'); }
   if(has(['cod_amm','des_amm','tipologia_istat','tipologia_amm']) && has(['cf','sito_istituzionale'])) { result.add('COV'); result.add('CLV'); }
   if(has(['codice_ipa','codice_uni_uo','descrizione_uo','codice_uni_aoo'])) { result.add('COV'); result.add('CLV'); }

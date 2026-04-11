@@ -47,7 +47,7 @@
   <div class="meta">
     <span>v2026.04.09.01</span>
     <span>29 ontologie</span>
-    <span>408 dataset PA reali</span>
+    <span>429 dataset PA reali</span>
     <span>22+7 CSV sacri testati</span>
     <span><a href="https://piersoft.github.io/CSV-to-RDF/" style="color:#c7d2fe">Apri il tool</a></span>
   </div>
@@ -806,6 +806,237 @@
 
       <div class="dataset-card">
         <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">CPSV · TI · QB</span>
+          <h3>Atti amministrativi per tipo e mese</h3>
+        </div>
+        <p>Atti PA per anno, mese e tipo: determina, delibera di giunta/consiglio, media giorni approvazione, totale impegnato, mandati collegati. Obbligo trasparenza. Pattern boxxapps 57+ Comuni.</p>
+        <div class="col-examples">
+          <code>tipo_atto</code><code>media_gg_approvazione</code><code>totale_impegnato</code><code>totale_mandati_collegati</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">QB · TI</span>
+          <h3>Protocolli per anno, tipologia e spedizione</h3>
+        </div>
+        <p>Registro protocolli aggregato: anno, tipo protocollo (entrata/uscita), tipo spedizione (digitale/cartacea), numero protocolli. Pattern boxxapps 37+ Comuni.</p>
+        <div class="col-examples">
+          <code>anno_protocollo</code><code>tipo_protocollo</code><code>tipo_spedizione</code><code>numero_protocolli</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">QB · TI</span>
+          <h3>Pubblicazioni PA per anno e tipo</h3>
+        </div>
+        <p>Pubblicazioni Albo Pretorio aggregate per anno e tipo: avvisi pubblici, delibere, ordinanze. Obbligo art. 32 L. 69/2009. Pattern boxxapps 46+ Comuni.</p>
+        <div class="col-examples">
+          <code>anno</code><code>tipo_pubblicazione</code><code>numero_pubblicazioni</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">QB · TI</span>
+          <h3>Andamento entrate e uscite di competenza</h3>
+        </div>
+        <p>Bilancio di competenza pluriennale: stanziato, accertato, incassato, impegnato, pagato per anno. Trasparenza finanziaria. Pattern boxxapps 33+ Comuni.</p>
+        <div class="col-examples">
+          <code>anno</code><code>stanziato</code><code>accertato</code><code>incassato</code><code>impegnato</code><code>pagato</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">QB · TI</span>
+          <h3>Residui finali per esercizio</h3>
+        </div>
+        <p>Residui di bilancio per esercizio: totale entrate/uscite, accertato, incassato, impegnato, pagato, residui attivi e passivi. Pattern boxxapps 31+ Comuni.</p>
+        <div class="col-examples">
+          <code>anno</code><code>residui_attivi</code><code>residui_passivi</code><code>totale_entrate</code><code>totale_uscite</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">QB · CPV · TI</span>
+          <h3>Andamento demografico annuale</h3>
+        </div>
+        <p>Demografica pluriennale per anno: nati, decessi, immigrati, emigrati, totale. Trasparenza anagrafica. Pattern boxxapps 29+ Comuni.</p>
+        <div class="col-examples">
+          <code>anno</code><code>nati</code><code>decessi</code><code>immigrati</code><code>emigrati</code><code>totale</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">CPV · RO · COV</span>
+          <h3>Titolari incarichi politici — organo e ruolo</h3>
+        </div>
+        <p>Componenti organi di indirizzo politico: cognome, nome, gruppo politico, orario ricevimento, organo (consiglio/giunta), ruolo. Obbligo D.Lgs. 33/2013 art. 14. Pattern boxxapps 26+ Comuni.</p>
+        <div class="col-examples">
+          <code>cognome</code><code>nome</code><code>gruppo_politico</code><code>organo</code><code>ruolo</code><code>orario_ricevimento</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">QB · CPV</span>
+          <h3>Composizione famiglie per numero componenti</h3>
+        </div>
+        <p>Distribuzione famiglie per numero componenti e minorenni: numero_componenti, di_cui_minorenni, totale_famiglie. Pattern boxxapps 26+ Comuni.</p>
+        <div class="col-examples">
+          <code>numero_componenti</code><code>di_cui_minorenni</code><code>totale_famiglie</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">QB · CPV</span>
+          <h3>Cittadini per sesso, anno di nascita e cittadinanza</h3>
+        </div>
+        <p>Anagrafe disaggregata: anno di nascita, sesso, cittadinanza (italiana/straniera), totale cittadini. Pattern boxxapps 25+ Comuni per statistiche anagrafiche.</p>
+        <div class="col-examples">
+          <code>anno_nascita</code><code>sesso</code><code>cittadinanza</code><code>totale_cittadini</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">QB · COV</span>
+          <h3>Analisi dipendenti ente per mese</h3>
+        </div>
+        <p>Personale dipendente mensile aggregato: anno, mese, totale uomini, totale donne, età media uomini, età media donne. Trasparenza organizzativa. Pattern boxxapps 20+ Comuni.</p>
+        <div class="col-examples">
+          <code>anno</code><code>mese</code><code>totale_uomini</code><code>totale_donne</code><code>eta_media_uomini</code><code>eta_media_donne</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">COV · CLV · CPSV</span>
+          <h3>Articolazione uffici con orari al pubblico</h3>
+        </div>
+        <p>Elenco uffici PA con contatti e orari: ufficio, indirizzo, telefono, mail, PEC, orari al pubblico. Obbligo D.Lgs. 33/2013 art. 13. Pattern boxxapps 19+ Comuni.</p>
+        <div class="col-examples">
+          <code>ufficio</code><code>indirizzo</code><code>mail</code><code>pec</code><code>orari_pubblico</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">QB · TI · CPSV</span>
+          <h3>Pratiche edilizie — permessi entro e fuori termini</h3>
+        </div>
+        <p>Pratiche edilizie rilasciate per tipo e mese: tipologia (PDC, SCIA), permessi rilasciati, entro termini, fuori termini. Pattern boxxapps 7+ Comuni per monitoraggio procedimenti.</p>
+        <div class="col-examples">
+          <code>tipologia</code><code>permessi_rilasciati</code><code>entro_termini</code><code>fuori_termini</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">QB · TI</span>
+          <h3>Servizi cimiteriali per tipologia e anno</h3>
+        </div>
+        <p>Servizi cimiteriali per anno e tipologia: tumulazioni, esumazioni ordinarie, cremazioni, totale. Pattern boxxapps 4+ Comuni.</p>
+        <div class="col-examples">
+          <code>anno</code><code>tipologia</code><code>totale</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">COV · CLV · POI</span>
+          <h3>Elenco associazioni con geolocalizzazione</h3>
+        </div>
+        <p>Registro associazioni del Comune: nome, indirizzo, civico, latitudine, longitudine, telefono, email, categoria. Pattern boxxapps 4+ Comuni per albo associazioni.</p>
+        <div class="col-examples">
+          <code>nome_associazione</code><code>indirizzo</code><code>latitudine</code><code>longitudine</code><code>categoria</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">CPSV · TI</span>
+          <h3>Concorsi pubblici — posti e scadenza</h3>
+        </div>
+        <p>Bandi di concorso pubblico: ente bandente, oggetto, data scadenza, data pubblicazione, Gazzetta Ufficiale, numero posti, posti riservati. Obbligo trasparenza. Pattern boxxapps 9+ Comuni.</p>
+        <div class="col-examples">
+          <code>bandito_da</code><code>oggetto</code><code>data_scadenza</code><code>numero_posti</code><code>gazzetta_ufficiale</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">QB · TI</span>
+          <h3>Costo del personale mensile</h3>
+        </div>
+        <p>Costo mensile del personale dipendente: anno, mese, totale costo. Schema minimalista ma uniforme. Pattern boxxapps 9+ Comuni per trasparenza costo del lavoro.</p>
+        <div class="col-examples">
+          <code>anno</code><code>mese</code><code>totale_costo</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">QB · TI</span>
+          <h3>Sanzioni Codice della Strada per tipo e mese</h3>
+        </div>
+        <p>Sanzioni CDS per anno, mese e tipo operazione: preavviso accertamento, verbale CDS, numero sanzioni. Pattern boxxapps Comuni con polizia locale.</p>
+        <div class="col-examples">
+          <code>anno</code><code>mese</code><code>tipo_operazione</code><code>numero_sanzioni</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#c45e00">QB · CPV · CLV</span>
+          <h3>Movimento anagrafico totale — Maggioli</h3>
+        </div>
+        <p>Movimento anagrafico per comune da Maggioli: anno, codice e nome provincia/comune, totale nati (di cui femmine), totale morti (di cui femmine), iscritti per trasferimento. Pattern Maggioli 29+ Comuni.</p>
+        <div class="col-examples">
+          <code>totale_nati</code><code>totale_morti</code><code>totale_iscritti_per_trasferimento</code><code>codice_comune</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#c45e00">QB · CPV · CLV</span>
+          <h3>Famiglie totali e residenti — Maggioli</h3>
+        </div>
+        <p>Famiglie per comune da Maggioli: anno, codice/nome provincia e comune, numero famiglie, residenti maschi/femmine/totale, numero convivenze. Pattern Maggioli 30+ Comuni.</p>
+        <div class="col-examples">
+          <code>numero_famiglie</code><code>residenti_in_famiglie_maschi</code><code>residenti_in_famiglie_totale</code><code>numero_convivenze</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#c45e00">QB · CLV</span>
+          <h3>Tassi popolazione residente — Maggioli</h3>
+        </div>
+        <p>Tassi demografici per comune da Maggioli: anno, codice/nome comune, tasso mortalità, tasso natalità, tasso iscrizione, tasso cancellazione (per 1000 abitanti). Pattern Maggioli 32+ Comuni.</p>
+        <div class="col-examples">
+          <code>tasso_mortalita</code><code>tasso_natalita</code><code>tasso_iscrizione</code><code>tasso_cancellazione</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#c45e00">QB · TI</span>
+          <h3>Bilancio di previsione spesa per missione/programma — Maggioli</h3>
+        </div>
+        <p>Bilancio previsione spesa da Maggioli: esercizio, codice e descrizione missione, codice e descrizione programma, titolo, residui presunti, previsione definitiva competenza. Pattern Maggioli 15+ Comuni.</p>
+        <div class="col-examples">
+          <code>esercizio</code><code>codice_missione</code><code>descmissione</code><code>codiceprogramma</code><code>residuipresunti</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
           <span class="onto-badge" style="background:#0066cc">CPV · CLV · SMAPIT</span>
           <h3>Medici di medicina generale e pediatri</h3>
         </div>
@@ -1221,6 +1452,6 @@
     <p style="margin-top:.8rem;font-size:.85rem;"><a href="https://github.com/piersoft/CSV-to-RDF">Sorgente su GitHub</a> · <a href="https://piersoft.github.io/CSV-to-RDF/">Tool online</a> · <a href="https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html">Questa pagina</a></p>
   </div>
 </div>
-<footer>CSV→RDF PA Italiana · piersoft · v2026.04.09.01 · 29 ontologie · 408 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
+<footer>CSV→RDF PA Italiana · piersoft · v2026.04.09.01 · 29 ontologie · 429 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
 </body>
 </html>

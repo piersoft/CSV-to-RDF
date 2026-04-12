@@ -678,13 +678,13 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['oggetto_gara','importo_complessivo_gara','oggetto_principale_contratto','denominazione_amministrazion'])) { result.add('PublicContract'); result.add('COV'); result.add('CLV'); result.add('TI'); }
   if(has(['cig','oggetto_gara','tipo_scelta_contraente','cf_amministrazione_appaltant'])) { result.add('PublicContract'); result.add('COV'); }
   if(has(['cig','tipo_soggetto','id_aggiudicazione']) && has(['denominazione','codice_fiscale'])) { result.add('PublicContract'); result.add('COV'); }
-  if(has(['cig','descrizione_evento','importo_lavori','importo_progettazione','somme_a_disposizione'])) { result.add('PublicContract'); result.add('QB'); }
+  if(has(['importo_lavori']) && has(['importo_progettazione']) && has(['somme_a_disposizione'])) { result.add('PublicContract'); result.add('QB'); }
   if(has(['cig','id_subappalto','cf_subappaltante','cod_categoria','classe_importo'])) { result.add('PublicContract'); result.add('COV'); result.add('TI'); }
-  if(has(['anno_mese_riferimento','numero_ricorsi_pendenti','codice_sede','nome_sede'])) { result.add('QB'); result.add('TI'); result.add('CPSV'); }
-  if(has(['anno_deposito','classificazione_ricorso','numero_ricorsi_pervenuti'])) { result.add('QB'); result.add('TI'); result.add('CPSV'); }
+  if(has(['anno_mese_riferimento']) && has(['numero_ricorsi_pendenti'])) { result.add('QB'); result.add('TI'); result.add('CPSV'); }
+  if(has(['numero_ricorsi_pervenuti']) && has(['anno_deposito','classificazione_ricorso'])) { result.add('QB'); result.add('TI'); result.add('CPSV'); }
   if(has(['tipo_ricorso','numero_ricorsi_pervenuti']) && has(['anno_deposito','codice_sede'])) { result.add('QB'); result.add('TI'); }
   if(has(['tipo_provvedimento','numero_provvedimento','numero_ricorso','esito_provvedimento']) && has(['codice_sezione','nome_sezione'])) { result.add('CPSV'); result.add('TI'); }
-  if(has(['anno_deposito_ricorso','numero_ricorso','data_deposito_ricorso','codice_cig'])) { result.add('CPSV'); result.add('PublicContract'); result.add('TI'); }
+  if(has(['anno_deposito_ricorso','numero_ricorso','data_deposito_ricorso','codice_cig'])) { result.add('CPSV'); result.add('PublicContract'); result.add('TI'); result.add('COV'); }
   if(has(['anno_udienza','tipo_udienza','data_udienza']) && has(['codice_sede','codice_sezione'])) { result.add('CPSV'); result.add('TI'); }
   if(has(['id_variante','cod_motivo_variante','motivo_variante','data_approvazione_variant'])) { result.add('PublicContract'); result.add('TI'); }
   if(has(['01_motocicli','02_auto_e_monovolume','tgm_annuale'])) { result.add('QB'); result.add('TI'); result.add('POI'); }
@@ -741,7 +741,8 @@ function detectOntologiesDeterministic(headers, rows) {
   var _isStrutturaSociale = (hasH(['tipo_struttura']) || hasH(['codice_struttura'])) &&
                            hasH(['nome_struttura','nome_centro','nome_presidio','nome_istituto']);
   var _isEsercizioCommerciale = hasH(['insegna','insegna_commerciale']) && hasH(['ragione_sociale']);
-  if((_accoStrong || _accoCtx) && !_narrativeCSV && !_isEsercizioCommerciale && !_isStrutturaSociale)
+  var _isCIGDataset = has(['codice_cig','anno_deposito_ricorso']) || has(['numero_lotti_componenti','stato_gara','codice_cig']) || has(['cig','numero_lotti_componenti','stato_gara']) || has(['cig','importo_aggiudicazione']) || has(['cig','oggetto_contratto','modalita_scelta']) || has(['cig','oggetto_gara','importo_complessivo_gara']);
+  if((_accoStrong || _accoCtx) && !_narrativeCSV && !_isEsercizioCommerciale && !_isStrutturaSociale && !_isCIGDataset)
     result.add('ACCO');
 
   // IOT — sensori fisici: richiede identificatore sensore O proprietà misurata specifica
@@ -787,7 +788,7 @@ function detectOntologiesDeterministic(headers, rows) {
     result.delete('SMAPIT');
     result.delete('Cultural-ON');
     result.delete('ACCO');
-    if(result.has('TI') && !has(['data_inizio','data_fine','data_da','data_a','data_evento','quando','inizio','termine','tipo_evento','nome_evento','titolo_evento','manifestazione'])) result.delete('TI');
+    if(result.has('TI') && !has(['data_inizio','data_fine','data_da','data_a','data_evento','quando','inizio','termine','tipo_evento','nome_evento','titolo_evento','manifestazione','data_deposito_ricorso','data_pubblicazione','data_scadenza_offerta','data_approvazione_variant','data_udienza','data_sospensione','data_autorizzazione'])) result.delete('TI');
   }
 
   // COV — organizzazioni: FIX1 esclude codice_ipa quando accompagnato da colonne di altri domini
@@ -814,7 +815,7 @@ function detectOntologiesDeterministic(headers, rows) {
            'qualifica','contratto','ccnl','cig','cup','obbligo_trasparenza',
            'ubicazione_esercizio','n_civico','insegna','ragione_sociale'])) {
     if(result.has('COV') && !has(['codice_ipa','cf_ente','ragione_sociale','tipo_ente','nome_centro','nome_struttura','nome_presidio','unita_operativa'])) result.delete('COV');
-    if(result.has('TI')  && !has(['data_inizio','data_fine','data_da','data_a','data_evento','quando','inizio','termine','data','data_rilevazione','data_campionamento','ora','feriti','morti','tipo_incidente'])) result.delete('TI');
+    if(result.has('TI')  && !has(['data_inizio','data_fine','data_da','data_a','data_evento','quando','inizio','termine','data','data_rilevazione','data_campionamento','ora','feriti','morti','tipo_incidente','data_deposito_ricorso','data_pubblicazione','data_scadenza_offerta','data_approvazione_variant','data_udienza','data_sospensione','data_autorizzazione'])) result.delete('TI');
     if(result.has('POI') && !has(['tipo_poi','nome_poi','dae','lat','lon','insegna','insegna_commerciale','stazione','nome_stazione','stazione_id','codice_stazione'])) result.delete('POI');
     if(result.has('CPV') && !has(['cognome','codice_fiscale','nome_completo','data_nascita'])) result.delete('CPV');
   }
@@ -866,7 +867,7 @@ function detectOntologiesDeterministic(headers, rows) {
      !has(['stazione_id','codice_stazione','nome_stazione']) &&  // meteo → IoT non QB
      !has(['tratta','capolinea','fermata_origine','fermata_arrivo']) &&
      !has(['codice_civico','cod_civico','numero_civico']))  // B3: codici geo —  QB
-    if(!_narrativeCSV) result.add('QB');
+    if(!_narrativeCSV && !_isCIGDataset) result.add('QB');
 
   // TI — R6-FIX: richiede date esplicite O combo evento+luogo (non solo titolo/tipo)
   var _tiStrong = has(['data_inizio','data_fine','data_da','data_a','data_inizio_evento','data_fine_evento','inizio','termine','quando','orario_inizio',

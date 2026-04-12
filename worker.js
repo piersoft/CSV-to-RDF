@@ -675,6 +675,10 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['totale_nati','totale_morti','totale_iscritti_per_trasferim'])) { result.add('QB'); result.add('CPV'); result.add('CLV'); }
   if(has(['numero_famiglie','residenti_in_famiglie_maschi','numero_convivenze'])) { result.add('QB'); result.add('CPV'); result.add('CLV'); }
   if(has(['tasso_mortalita_','tasso_natalita_','tasso_iscrizione','tasso_cancellazione'])) { result.add('QB'); result.add('CLV'); }
+  if(has(['01_motocicli','02_auto_e_monovolume','tgm_annuale'])) { result.add('QB'); result.add('TI'); result.add('POI'); }
+  if(has(['comunecoltivazione','numazbio','hacondotti','hasau','habio'])) { result.add('QB'); result.add('CLV'); }
+  if(has(['tipo_stud','idoneita','fascia_isee']) && has(['ifp','tipo_corso'])) { result.add('QB'); result.add('CPV'); }
+  if(has(['trimestre','valore','unita_di_misura']) || has(['periodo','indice_tempestivita_pagamento'])) { result.add('QB'); result.add('TI'); }
   if(has(['codice_missione','descmissione','codiceprogramma','residuipresunti'])) { result.add('QB'); result.add('TI'); }
   if(has(['descrizione_piano','descrizione_capitolo','descrizione_macro_ob','linea_di_azione','percentuale'])) { result.add('CPSV'); result.add('TI'); }
   if(has(['cod_amm','des_amm','tipologia_istat','tipologia_amm']) && has(['cf','sito_istituzionale'])) { result.add('COV'); result.add('CLV'); }

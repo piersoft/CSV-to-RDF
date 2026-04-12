@@ -680,6 +680,12 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['cig','tipo_soggetto','id_aggiudicazione']) && has(['denominazione','codice_fiscale'])) { result.add('PublicContract'); result.add('COV'); }
   if(has(['cig','descrizione_evento','importo_lavori','importo_progettazione','somme_a_disposizione'])) { result.add('PublicContract'); result.add('QB'); }
   if(has(['cig','id_subappalto','cf_subappaltante','cod_categoria','classe_importo'])) { result.add('PublicContract'); result.add('COV'); result.add('TI'); }
+  if(has(['anno_mese_riferimento','numero_ricorsi_pendenti','codice_sede','nome_sede'])) { result.add('QB'); result.add('TI'); result.add('CPSV'); }
+  if(has(['anno_deposito','classificazione_ricorso','numero_ricorsi_pervenuti'])) { result.add('QB'); result.add('TI'); result.add('CPSV'); }
+  if(has(['tipo_ricorso','numero_ricorsi_pervenuti']) && has(['anno_deposito','codice_sede'])) { result.add('QB'); result.add('TI'); }
+  if(has(['tipo_provvedimento','numero_provvedimento','numero_ricorso','esito_provvedimento']) && has(['codice_sezione','nome_sezione'])) { result.add('CPSV'); result.add('TI'); }
+  if(has(['anno_deposito_ricorso','numero_ricorso','data_deposito_ricorso','codice_cig'])) { result.add('CPSV'); result.add('PublicContract'); result.add('TI'); }
+  if(has(['anno_udienza','tipo_udienza','data_udienza']) && has(['codice_sede','codice_sezione'])) { result.add('CPSV'); result.add('TI'); }
   if(has(['id_variante','cod_motivo_variante','motivo_variante','data_approvazione_variant'])) { result.add('PublicContract'); result.add('TI'); }
   if(has(['01_motocicli','02_auto_e_monovolume','tgm_annuale'])) { result.add('QB'); result.add('TI'); result.add('POI'); }
   if(has(['comunecoltivazione','numazbio','hacondotti','hasau','habio'])) { result.add('QB'); result.add('CLV'); }

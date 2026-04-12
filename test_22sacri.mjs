@@ -71,7 +71,8 @@ function detectOntologiesDeterministic(headers, rows) {
   var _isStrutturaSociale = (hasH(['tipo_struttura']) || hasH(['codice_struttura'])) &&
                            hasH(['nome_struttura','nome_centro','nome_presidio','nome_istituto']);
   var _isEsercizioCommerciale = hasH(['insegna','insegna_commerciale']) && hasH(['ragione_sociale']);
-  if((_accoStrong || _accoCtx) && !_narrativeCSV && !_isEsercizioCommerciale && !_isStrutturaSociale)
+  var _isCIGDataset = has(['codice_cig','anno_deposito_ricorso']) || has(['numero_lotti_componenti','stato_gara','codice_cig']) || has(['cig','importo_aggiudicazione']) || has(['cig','oggetto_contratto','modalita_scelta']) || has(['cig','oggetto_gara','importo_complessivo_gara']);
+  if((_accoStrong || _accoCtx) && !_narrativeCSV && !_isEsercizioCommerciale && !_isStrutturaSociale && !_isCIGDataset)
     result.add('ACCO');
 
   // IOT — sensori fisici: richiede identificatore sensore O proprietà misurata specifica
@@ -117,8 +118,22 @@ function detectOntologiesDeterministic(headers, rows) {
     result.delete('SMAPIT');
     result.delete('Cultural-ON');
     result.delete('ACCO');
-    if(result.has('TI') && !has(['data_inizio','data_fine','data_da','data_a','data_evento','quando','inizio','termine','tipo_evento','nome_evento','titolo_evento','manifestazione'])) result.delete('TI');
   }
+
+  // TAR/CDS — Giustizia Amministrativa (openga.giustizia-amministrativa.it)
+  if(has(['anno_mese_riferimento']) && has(['numero_ricorsi_pendenti'])) { result.add('QB'); result.add('TI'); result.add('CPSV'); }
+  if(has(['numero_ricorsi_pervenuti']) && has(['anno_deposito','classificazione_ricorso'])) { result.add('QB'); result.add('TI'); result.add('CPSV'); }
+  if(has(['tipo_provvedimento','numero_provvedimento','numero_ricorso','esito_provvedimento']) && has(['codice_sezione','nome_sezione'])) { result.add('CPSV'); result.add('TI'); }
+  if(has(['anno_deposito_ricorso','numero_ricorso','data_deposito_ricorso','codice_cig'])) { result.add('CPSV'); result.add('PublicContract'); result.add('TI'); result.add('COV'); }
+  if(has(['anno_udienza','tipo_udienza','data_udienza']) && has(['codice_sede','codice_sezione'])) { result.add('CPSV'); result.add('TI'); }
+  // ANAC BDNCP — contratti pubblici
+  if(has(['oggetto_gara','importo_complessivo_gara','oggetto_principale_contratto','denominazione_amministrazion'])) { result.add('PublicContract'); result.add('COV'); result.add('CLV'); result.add('TI'); }
+  if(has(['cig','tipo_soggetto','id_aggiudicazione']) && has(['denominazione','codice_fiscale'])) { result.add('PublicContract'); result.add('COV'); }
+  if(has(['importo_lavori']) && has(['importo_progettazione']) && has(['somme_a_disposizione'])) { result.add('PublicContract'); result.add('QB'); }
+  if(has(['cig','id_subappalto','cf_subappaltante','cod_categoria','classe_importo'])) { result.add('PublicContract'); result.add('COV'); result.add('TI'); }
+  if(has(['id_variante','cod_motivo_variante','motivo_variante','data_approvazione_variant'])) { result.add('PublicContract'); result.add('TI'); }
+  var _hasDateCol = ['data_deposito_ricorso','data_pubblicazione','data_scadenza_offerta','data_approvazione_variant','data_udienza','data_sospensione','data_autorizzazione','data_inizio','data_fine','data_da','data_a','data_evento','quando','inizio','termine','tipo_evento','nome_evento','titolo_evento','manifestazione','data','data_rilevazione','data_campionamento','ora'].some(function(t){return allText.includes(t);});
+  if(result.has('TI') && !_hasDateCol) result.delete('TI');
 
   // COV — organizzazioni: FIX1 esclude codice_ipa quando accompagnato da colonne di altri domini
   var _hasCOVStrong = has(['codice_ipa','codice_ente','partita_iva','codice_fiscale_ente','ragione_sociale','segnalatore','ente_segnalatore','soggetto_segnalante','amministrazione_titolare','nome_centro','nome_struttura','nome_presidio']) &&
@@ -144,7 +159,7 @@ function detectOntologiesDeterministic(headers, rows) {
            'qualifica','contratto','ccnl','cig','cup','obbligo_trasparenza',
            'ubicazione_esercizio','n_civico','insegna','ragione_sociale'])) {
     if(result.has('COV') && !has(['codice_ipa','cf_ente','ragione_sociale','tipo_ente','nome_centro','nome_struttura','nome_presidio','unita_operativa'])) result.delete('COV');
-    if(result.has('TI')  && !has(['data_inizio','data_fine','data_da','data_a','data_evento','quando','inizio','termine','data','data_rilevazione','data_campionamento','ora','feriti','morti','tipo_incidente'])) result.delete('TI');
+    if(result.has('TI') && !_hasDateCol) result.delete('TI'); // pulizia TI2 (usa _hasDateCol)
     if(result.has('POI') && !has(['tipo_poi','nome_poi','dae','lat','lon','insegna','insegna_commerciale','stazione','nome_stazione','stazione_id','codice_stazione'])) result.delete('POI');
     if(result.has('CPV') && !has(['cognome','codice_fiscale','nome_completo','data_nascita'])) result.delete('CPV');
   }
@@ -190,7 +205,7 @@ function detectOntologiesDeterministic(headers, rows) {
      !has(['nome_dataset','nome_risorsa','numero_righe','distribution_url']) &&
      !has(['tratta','capolinea','fermata_origine','fermata_arrivo']) &&
      !has(['codice_civico','cod_civico','numero_civico']))  // B3: codici geo —  QB
-    if(!_narrativeCSV) result.add('QB');
+    if(!_narrativeCSV && !_isCIGDataset) result.add('QB');
 
   // TI — R6-FIX: richiede date esplicite O combo evento+luogo (non solo titolo/tipo)
   var _tiStrong = has(['data_inizio','data_fine','data_da','data_a','data_inizio_evento','data_fine_evento','inizio','termine','quando','orario_inizio',
@@ -336,6 +351,10 @@ const sacri = [
   { name: 'anagrafica_istituti_scolastici', headers: ['codice_meccanografico','nome_istituto','tipo_istituto','comune','indirizzo','lat','lon','telefono','email','numero_alunni'], rows: [{'codice_meccanografico':'RMIS00100G','nome_istituto':'Liceo Fermi','tipo_istituto':'Liceo Scientifico','comune':'Roma','indirizzo':'Via Roma 1','lat':'41.9028','lon':'12.4964','telefono':'0612345','email':'info@fermi.it','numero_alunni':'1200'}], expected: ['SMAPIT','CLV','SM'] },
   { name: 'dati_meteo_stazioni', headers: ['data','ora','stazione_id','nome_stazione','lat','lon','temperatura_c','umidita_perc','pressione_hpa','precipitazioni_mm'], rows: [{'data':'2024-03-15','ora':'12:00','stazione_id':'VE001','nome_stazione':'Venezia Marghera','lat':'45.4654','lon':'12.2281','temperatura_c':'14.2','umidita_perc':'68','pressione_hpa':'1015.2','precipitazioni_mm':'0.0'}], expected: ['IoT','CLV','POI','TI'] },
   { name: 'movimento_demografico_comuni', headers: ['anno','comune','codice_istat','regione','popolazione_maschi','popolazione_femmine','popolazione_totale','nati','morti','saldo_naturale'], rows: [{'anno':'2023','comune':'Venezia','codice_istat':'027042','regione':'Veneto','popolazione_maschi':'124500','popolazione_femmine':'131200','popolazione_totale':'255700','nati':'1820','morti':'2650','saldo_naturale':'-830'}], expected: ['QB','CLV'] },
+  { name: 'tar_cds_ricorsi_appalto_cig',
+    headers: ['ANNO_DEPOSITO_RICORSO','CODICE_SEDE','NOME_SEDE','CODICE_SEZIONE','NOME_SEZIONE','NUMERO_RICORSO','DATA_DEPOSITO_RICORSO','CLASSIFICAZIONE_RICORSO','CODICE_CIG','CODICE_ACCORDO_QUADRO','NUMERO_GARA','OGGETTO_GARA','IMPORTO_COMPLESSIVO_GARA','NUMERO_LOTTI_COMPONENTI','OGGETTO_LOTTO','IMPORTO_LOTTO','STATO_GARA','SETTORE','LUOGO_ISTAT','PROVINCIA','DATA_PUBBLICAZIONE','DATA_SCADENZA_OFFERTA','CF_AMMINISTRAZIONE_APPALTANTE','DENOMINAZIONE_AMMINISTRAZIONE_APPALTANTE'],
+    rows: [{ANNO_DEPOSITO_RICORSO:'2024',CODICE_SEDE:'002',NOME_SEDE:'CdS GIURISDIZIONALE - ROMA',CODICE_SEZIONE:'5',NOME_SEZIONE:'SEZIONE V',NUMERO_RICORSO:'202408609',DATA_DEPOSITO_RICORSO:'2024-11-18',CLASSIFICAZIONE_RICORSO:'APPALTI PUBBLICI DI SERVIZI -> ESCLUSIONE',CODICE_CIG:'8164723E8D',CODICE_ACCORDO_QUADRO:'',NUMERO_GARA:'7651172',OGGETTO_GARA:'GARA SERVIZI VIGILANZA ARMATA',IMPORTO_COMPLESSIVO_GARA:'277017855.27',NUMERO_LOTTI_COMPONENTI:'34',OGGETTO_LOTTO:'LOTTO 18',IMPORTO_LOTTO:'2455491.48',STATO_GARA:'ATTIVO',SETTORE:'SETTORI ORDINARI',LUOGO_ISTAT:'',PROVINCIA:'',DATA_PUBBLICAZIONE:'2020-01-17',DATA_SCADENZA_OFFERTA:'2020-08-04',CF_AMMINISTRAZIONE_APPALTANTE:'05359681003',DENOMINAZIONE_AMMINISTRAZIONE_APPALTANTE:'CONSIP SPA UNIP.'}],
+    expected: ['CPSV', 'PublicContract', 'TI', 'COV'] },
 ];
 
 
@@ -364,8 +383,8 @@ for(const s of sacri){
 }
 
 console.log(`\n${'='.repeat(55)}`);
-console.log(`✅ OK: ${ok}/33  ❌ Problemi: ${issues.length}`);
-if(issues.length===0) console.log('🎉 TUTTI I 33 CSV SACRI PASSANO IL TEST!');
+console.log(`✅ OK: ${ok}/34  ❌ Problemi: ${issues.length}`);
+if(issues.length===0) console.log('🎉 TUTTI I 34 CSV SACRI PASSANO IL TEST!');
 
 
 // ── NUOVE ONTOLOGIE v186 ─────────────────────────────────────────────────────

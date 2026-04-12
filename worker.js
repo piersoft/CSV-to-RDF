@@ -675,6 +675,12 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['totale_nati','totale_morti','totale_iscritti_per_trasferim'])) { result.add('QB'); result.add('CPV'); result.add('CLV'); }
   if(has(['numero_famiglie','residenti_in_famiglie_maschi','numero_convivenze'])) { result.add('QB'); result.add('CPV'); result.add('CLV'); }
   if(has(['tasso_mortalita_','tasso_natalita_','tasso_iscrizione','tasso_cancellazione'])) { result.add('QB'); result.add('CLV'); }
+  if(has(['oggetto_gara','importo_complessivo_gara','oggetto_principale_contratto','denominazione_amministrazion'])) { result.add('PublicContract'); result.add('COV'); result.add('CLV'); result.add('TI'); }
+  if(has(['cig','oggetto_gara','tipo_scelta_contraente','cf_amministrazione_appaltant'])) { result.add('PublicContract'); result.add('COV'); }
+  if(has(['cig','tipo_soggetto','id_aggiudicazione']) && has(['denominazione','codice_fiscale'])) { result.add('PublicContract'); result.add('COV'); }
+  if(has(['cig','descrizione_evento','importo_lavori','importo_progettazione','somme_a_disposizione'])) { result.add('PublicContract'); result.add('QB'); }
+  if(has(['cig','id_subappalto','cf_subappaltante','cod_categoria','classe_importo'])) { result.add('PublicContract'); result.add('COV'); result.add('TI'); }
+  if(has(['id_variante','cod_motivo_variante','motivo_variante','data_approvazione_variant'])) { result.add('PublicContract'); result.add('TI'); }
   if(has(['01_motocicli','02_auto_e_monovolume','tgm_annuale'])) { result.add('QB'); result.add('TI'); result.add('POI'); }
   if(has(['comunecoltivazione','numazbio','hacondotti','hasau','habio'])) { result.add('QB'); result.add('CLV'); }
   if(has(['tipo_stud','idoneita','fascia_isee']) && has(['ifp','tipo_corso'])) { result.add('QB'); result.add('CPV'); }

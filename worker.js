@@ -675,7 +675,7 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['totale_nati','totale_morti','totale_iscritti_per_trasferim'])) { result.add('QB'); result.add('CPV'); result.add('CLV'); }
   if(has(['numero_famiglie','residenti_in_famiglie_maschi','numero_convivenze'])) { result.add('QB'); result.add('CPV'); result.add('CLV'); }
   if(has(['tasso_mortalita_','tasso_natalita_','tasso_iscrizione','tasso_cancellazione'])) { result.add('QB'); result.add('CLV'); }
-  if(has(['oggetto_gara','importo_complessivo_gara','oggetto_principale_contratto','denominazione_amministrazion'])) { result.add('PublicContract'); result.add('COV'); result.add('CLV'); result.add('TI'); }
+  if(has(['oggetto_gara','importo_complessivo_gara','oggetto_principale_contratto','denominazione_amministrazion'])) { result.add('PublicContract'); result.add('COV'); result.add('TI'); }
   if(has(['cig','oggetto_gara','tipo_scelta_contraente','cf_amministrazione_appaltant'])) { result.add('PublicContract'); result.add('COV'); }
   if(has(['cig','tipo_soggetto','id_aggiudicazione']) && has(['denominazione','codice_fiscale'])) { result.add('PublicContract'); result.add('COV'); }
   if(has(['importo_lavori']) && has(['importo_progettazione']) && has(['somme_a_disposizione'])) { result.add('PublicContract'); result.add('QB'); }

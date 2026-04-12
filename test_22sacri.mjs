@@ -127,7 +127,7 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['anno_deposito_ricorso','numero_ricorso','data_deposito_ricorso','codice_cig'])) { result.add('CPSV'); result.add('PublicContract'); result.add('TI'); result.add('COV'); }
   if(has(['anno_udienza','tipo_udienza','data_udienza']) && has(['codice_sede','codice_sezione'])) { result.add('CPSV'); result.add('TI'); }
   // ANAC BDNCP — contratti pubblici
-  if(has(['oggetto_gara','importo_complessivo_gara','oggetto_principale_contratto','denominazione_amministrazion'])) { result.add('PublicContract'); result.add('COV'); result.add('CLV'); result.add('TI'); }
+  if(has(['oggetto_gara','importo_complessivo_gara','oggetto_principale_contratto','denominazione_amministrazion'])) { result.add('PublicContract'); result.add('COV'); result.add('TI'); }
   if(has(['cig','tipo_soggetto','id_aggiudicazione']) && has(['denominazione','codice_fiscale'])) { result.add('PublicContract'); result.add('COV'); }
   if(has(['importo_lavori']) && has(['importo_progettazione']) && has(['somme_a_disposizione'])) { result.add('PublicContract'); result.add('QB'); }
   if(has(['cig','id_subappalto','cf_subappaltante','cod_categoria','classe_importo'])) { result.add('PublicContract'); result.add('COV'); result.add('TI'); }
@@ -354,7 +354,7 @@ const sacri = [
   { name: 'tar_cds_ricorsi_appalto_cig',
     headers: ['ANNO_DEPOSITO_RICORSO','CODICE_SEDE','NOME_SEDE','CODICE_SEZIONE','NOME_SEZIONE','NUMERO_RICORSO','DATA_DEPOSITO_RICORSO','CLASSIFICAZIONE_RICORSO','CODICE_CIG','CODICE_ACCORDO_QUADRO','NUMERO_GARA','OGGETTO_GARA','IMPORTO_COMPLESSIVO_GARA','NUMERO_LOTTI_COMPONENTI','OGGETTO_LOTTO','IMPORTO_LOTTO','STATO_GARA','SETTORE','LUOGO_ISTAT','PROVINCIA','DATA_PUBBLICAZIONE','DATA_SCADENZA_OFFERTA','CF_AMMINISTRAZIONE_APPALTANTE','DENOMINAZIONE_AMMINISTRAZIONE_APPALTANTE'],
     rows: [{ANNO_DEPOSITO_RICORSO:'2024',CODICE_SEDE:'002',NOME_SEDE:'CdS GIURISDIZIONALE - ROMA',CODICE_SEZIONE:'5',NOME_SEZIONE:'SEZIONE V',NUMERO_RICORSO:'202408609',DATA_DEPOSITO_RICORSO:'2024-11-18',CLASSIFICAZIONE_RICORSO:'APPALTI PUBBLICI DI SERVIZI -> ESCLUSIONE',CODICE_CIG:'8164723E8D',CODICE_ACCORDO_QUADRO:'',NUMERO_GARA:'7651172',OGGETTO_GARA:'GARA SERVIZI VIGILANZA ARMATA',IMPORTO_COMPLESSIVO_GARA:'277017855.27',NUMERO_LOTTI_COMPONENTI:'34',OGGETTO_LOTTO:'LOTTO 18',IMPORTO_LOTTO:'2455491.48',STATO_GARA:'ATTIVO',SETTORE:'SETTORI ORDINARI',LUOGO_ISTAT:'',PROVINCIA:'',DATA_PUBBLICAZIONE:'2020-01-17',DATA_SCADENZA_OFFERTA:'2020-08-04',CF_AMMINISTRAZIONE_APPALTANTE:'05359681003',DENOMINAZIONE_AMMINISTRAZIONE_APPALTANTE:'CONSIP SPA UNIP.'}],
-    expected: ['CPSV', 'PublicContract', 'TI', 'COV', 'CLV'] },
+    expected: ['CPSV', 'PublicContract', 'TI', 'COV'] },
 ];
 
 

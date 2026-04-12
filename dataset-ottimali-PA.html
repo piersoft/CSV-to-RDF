@@ -47,7 +47,7 @@
   <div class="meta">
     <span>v2026.04.09.01</span>
     <span>29 ontologie</span>
-    <span>433 dataset PA reali</span>
+    <span>438 dataset PA reali</span>
     <span>22+7 CSV sacri testati</span>
     <span><a href="https://piersoft.github.io/CSV-to-RDF/" style="color:#c7d2fe">Apri il tool</a></span>
   </div>
@@ -1037,6 +1037,61 @@
 
       <div class="dataset-card">
         <div class="card-header">
+          <span class="onto-badge" style="background:#b00020">PublicContract · COV · CLV · TI</span>
+          <h3>ANAC — CIG appalto principale BDNCP</h3>
+        </div>
+        <p>Banca Dati Nazionale Contratti Pubblici ANAC: CIG, oggetto gara, importo complessivo, tipo contratto (lavori/servizi/forniture), stato, settore, comune ISTAT, provincia, data pubblicazione, tipo scelta contraente, stazione appaltante (CF+denominazione), CPV, flag PNRR. 61 colonne. Aggiornamento mensile.</p>
+        <div class="col-examples">
+          <code>cig</code><code>oggetto_gara</code><code>importo_complessivo_gara</code><code>denominazione_amministrazione_appaltante</code><code>cod_cpv</code><code>flag_pnrr_pnc</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#b00020">PublicContract · COV</span>
+          <h3>ANAC — Aggiudicatari contratti pubblici BDNCP</h3>
+        </div>
+        <p>Aggiudicatari dei contratti pubblici: CIG, ruolo, codice fiscale, denominazione aggiudicatario, tipo soggetto (impresa singola/RTI/consorzio), identificativo aggiudicazione. Collegato al CIG principale.</p>
+        <div class="col-examples">
+          <code>cig</code><code>ruolo</code><code>codice_fiscale</code><code>denominazione</code><code>tipo_soggetto</code><code>id_aggiudicazione</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#b00020">PublicContract · QB · TI</span>
+          <h3>ANAC — Quadro economico appalto BDNCP</h3>
+        </div>
+        <p>Quadro economico degli appalti: CIG, data, tipo evento (consuntivo/preventivo), importo lavori, progettazione, servizi, forniture, sicurezza, somme a disposizione, ulteriori oneri. Appalti di importo rilevante.</p>
+        <div class="col-examples">
+          <code>cig</code><code>descrizione_evento</code><code>importo_lavori</code><code>importo_progettazione</code><code>somme_a_disposizione</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#b00020">PublicContract · COV · TI</span>
+          <h3>ANAC — Subappalti contratti pubblici BDNCP</h3>
+        </div>
+        <p>Subappalti dei contratti pubblici: CIG, identificativo subappalto, CF subappaltante, data autorizzazione, oggetto, codice e descrizione categoria (OS/OG), classe importo, CPV, denominazione subappaltatore, tipo soggetto.</p>
+        <div class="col-examples">
+          <code>cig</code><code>cf_subappaltante</code><code>cod_categoria</code><code>classe_importo</code><code>denominazione</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#b00020">PublicContract · TI</span>
+          <h3>ANAC — Varianti contratti pubblici BDNCP</h3>
+        </div>
+        <p>Varianti ai contratti pubblici ex art. 106 D.Lgs. 50/2016: identificativo variante, codice e descrizione motivo, data approvazione, CIG, identificativo aggiudicazione, CIG proroga, data atto aggiuntivo.</p>
+        <div class="col-examples">
+          <code>id_variante</code><code>cod_motivo_variante</code><code>motivo_variante</code><code>data_approvazione_variante</code><code>cig</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
           <span class="onto-badge" style="background:#0066cc">QB · TI · POI</span>
           <h3>Contatori traffico stradale per tipo veicolo</h3>
         </div>
@@ -1496,6 +1551,6 @@
     <p style="margin-top:.8rem;font-size:.85rem;"><a href="https://github.com/piersoft/CSV-to-RDF">Sorgente su GitHub</a> · <a href="https://piersoft.github.io/CSV-to-RDF/">Tool online</a> · <a href="https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html">Questa pagina</a></p>
   </div>
 </div>
-<footer>CSV→RDF PA Italiana · piersoft · v2026.04.09.01 · 29 ontologie · 433 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
+<footer>CSV→RDF PA Italiana · piersoft · v2026.04.09.01 · 29 ontologie · 438 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
 </body>
 </html>

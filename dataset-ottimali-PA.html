@@ -47,7 +47,7 @@
   <div class="meta">
     <span>v2026.04.09.01</span>
     <span>29 ontologie</span>
-    <span>429 dataset PA reali</span>
+    <span>433 dataset PA reali</span>
     <span>22+7 CSV sacri testati</span>
     <span><a href="https://piersoft.github.io/CSV-to-RDF/" style="color:#c7d2fe">Apri il tool</a></span>
   </div>
@@ -1037,6 +1037,50 @@
 
       <div class="dataset-card">
         <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">QB · TI · POI</span>
+          <h3>Contatori traffico stradale per tipo veicolo</h3>
+        </div>
+        <p>Flusso traffico per postazione e tipo veicolo: anno, motocicli, auto, auto con rimorchio, furgoncini, autobus, autoarticolati, TGM annuale. Pattern Regione Toscana sistema monitoraggio traffico.</p>
+        <div class="col-examples">
+          <code>anno</code><code>01_motocicli</code><code>02_auto_e_monovolume</code><code>04_furgoncini</code><code>tgm_annuale</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#1a6b35">QB · CLV</span>
+          <h3>Superfici agricole biologiche SAU bio per comune</h3>
+        </div>
+        <p>SAU biologica per comune: numero aziende bio, ettari condotti, SAU totale, SAU biologica, ettari in conversione, percentuale bio su SAU. Fonte AGEA/Regioni per PSR. Disponibile su dati.gov.it.</p>
+        <div class="col-examples">
+          <code>comunecoltivazione</code><code>numazbio</code><code>hacondotti</code><code>hasau</code><code>habio</code><code>bioinsau</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#1a6b35">QB · CPV</span>
+          <h3>Borse di studio per ISEE, fascia e idoneità</h3>
+        </div>
+        <p>Borse di studio universitarie per tipo studente, idoneità, fascia ISEE e ISPE, tipo corso, istituto di formazione. Fonte DSU regionale per diritto allo studio. Pattern 6+ Regioni.</p>
+        <div class="col-examples">
+          <code>tipo_stud</code><code>idoneita</code><code>fascia_isee</code><code>fascia_ispe</code><code>tipo_corso</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#1a6b35">QB · TI</span>
+          <h3>Indice tempestività pagamenti per trimestre</h3>
+        </div>
+        <p>Indice di tempestività dei pagamenti PA (obbligatorio art. 33 D.Lgs. 33/2013): trimestre o periodo, valore in giorni (negativo = anticipo), unità di misura. Pubblicato da tutte le PA italiane.</p>
+        <div class="col-examples">
+          <code>trimestre</code><code>valore</code><code>unita_di_misura</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
           <span class="onto-badge" style="background:#0066cc">CPV · CLV · SMAPIT</span>
           <h3>Medici di medicina generale e pediatri</h3>
         </div>
@@ -1452,6 +1496,6 @@
     <p style="margin-top:.8rem;font-size:.85rem;"><a href="https://github.com/piersoft/CSV-to-RDF">Sorgente su GitHub</a> · <a href="https://piersoft.github.io/CSV-to-RDF/">Tool online</a> · <a href="https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html">Questa pagina</a></p>
   </div>
 </div>
-<footer>CSV→RDF PA Italiana · piersoft · v2026.04.09.01 · 29 ontologie · 429 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
+<footer>CSV→RDF PA Italiana · piersoft · v2026.04.09.01 · 29 ontologie · 433 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
 </body>
 </html>

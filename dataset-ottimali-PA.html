@@ -47,7 +47,7 @@
   <div class="meta">
     <span>v2026.04.09.01</span>
     <span>29 ontologie</span>
-    <span>438 dataset PA reali</span>
+    <span>442 dataset PA reali</span>
     <span>22+7 CSV sacri testati</span>
     <span><a href="https://piersoft.github.io/CSV-to-RDF/" style="color:#c7d2fe">Apri il tool</a></span>
   </div>
@@ -1092,6 +1092,50 @@
 
       <div class="dataset-card">
         <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">QB · TI · CPSV</span>
+          <h3>TAR/CDS — Ricorsi pendenti e pervenuti per classificazione</h3>
+        </div>
+        <p>Statistiche ricorsi amministrativi: pendenti per periodo (anno-mese, sede, numero), pervenuti per classificazione (materia giuridica) e per tipologia (tipo ricorso). Schema uniforme per tutti i 31 TAR, Consiglio di Stato e CGA Sicilia. Fonte openga.giustizia-amministrativa.it.</p>
+        <div class="col-examples">
+          <code>anno_mese_riferimento</code><code>codice_sede</code><code>nome_sede</code><code>classificazione_ricorso</code><code>numero_ricorsi_pendenti</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">CPSV · TI</span>
+          <h3>TAR/CDS — Sentenze, ordinanze e decreti</h3>
+        </div>
+        <p>Provvedimenti giurisdizionali pubblicati: tipo provvedimento (sentenza/ordinanza cautelare/decreto), sede, sezione, numero provvedimento, numero ricorso, data pubblicazione, tipo udienza, esito. Schema identico per tutti i TAR/CDS. Fonte openga.giustizia-amministrativa.it.</p>
+        <div class="col-examples">
+          <code>tipo_provvedimento</code><code>numero_provvedimento</code><code>numero_ricorso</code><code>data_pubblicazione</code><code>esito_provvedimento</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">CPSV · PublicContract · TI</span>
+          <h3>TAR/CDS — Ricorsi in materia di appalto con CIG</h3>
+        </div>
+        <p>Ricorsi amministrativi in materia di appalti pubblici: anno e data deposito, sede, sezione, numero ricorso, classificazione, CIG, accordo quadro, numero e oggetto gara. Collega procedimento giurisdizionale al contratto ANAC. Fonte openga.giustizia-amministrativa.it.</p>
+        <div class="col-examples">
+          <code>numero_ricorso</code><code>data_deposito_ricorso</code><code>classificazione_ricorso</code><code>codice_cig</code><code>oggetto_gara</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#5c6f82">CPSV · TI</span>
+          <h3>TAR/CDS — Calendario udienze</h3>
+        </div>
+        <p>Calendario udienze programmate: anno, sede, sezione, tipo udienza (pubblica/cautelare/camerale), data udienza. Schema uniforme per tutti i 31 tribunali amministrativi. Fonte openga.giustizia-amministrativa.it.</p>
+        <div class="col-examples">
+          <code>anno_udienza</code><code>codice_sede</code><code>nome_sezione</code><code>tipo_udienza</code><code>data_udienza</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
           <span class="onto-badge" style="background:#0066cc">QB · TI · POI</span>
           <h3>Contatori traffico stradale per tipo veicolo</h3>
         </div>
@@ -1551,6 +1595,6 @@
     <p style="margin-top:.8rem;font-size:.85rem;"><a href="https://github.com/piersoft/CSV-to-RDF">Sorgente su GitHub</a> · <a href="https://piersoft.github.io/CSV-to-RDF/">Tool online</a> · <a href="https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html">Questa pagina</a></p>
   </div>
 </div>
-<footer>CSV→RDF PA Italiana · piersoft · v2026.04.09.01 · 29 ontologie · 438 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
+<footer>CSV→RDF PA Italiana · piersoft · v2026.04.09.01 · 29 ontologie · 442 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
 </body>
 </html>

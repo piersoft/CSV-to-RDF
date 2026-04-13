@@ -30141,6 +30141,40 @@
       ],
       "main_onto": "PublicContract",
       "notes": "OpenCUP/BDAP = formato standard DPCOE per progetti di investimento pubblico. IDENTIFICATORE PRINCIPALE: Codice CUP (es. D71B15000160007) → URI base .../contract/{CUP} + pc:CUP. Codice Locale Progetto → dct:identifier (codice interno BDAP, es. 1MISE#CSEE-N0620-BR-1). Descrizione CUP Integrale → rdfs:label (formato LUOGO*INDIRIZZO*OGGETTO separati da *). Codice Stato CUP (A=ATTIVO, C=CHIUSO) → dct:status tramite URI vocabolario. Data Inizio/Fine Validità CUP → ti:startTime / ti:endTime (formato dd/MM/yyyy; IGNORARE valori 30/12/1899 = null Excel e anni > 2100 = null Excel). Descrizione Titolare + Codice Fiscale Titolare → nodo cov:Organization con foaf:name + dct:identifier. Natura Intervento + Tipologia Intervento → dct:type su pc:Contract. Settore/Sottosettore/Categoria Interv Inv → dct:subject (classificazione DPCOE). FASI TEMPORALI: Inizio/Fine progettazione/esecuzione/conclusione/funzionalità previste/effettive → TI (ti:startTime + ti:endTime per fase); IGNORARE valori numerici seriali Excel (< 5 cifre interi puri) e date con anno > 2100. IMPORTI: Costo Lavori Previsto/Effettivo, Somme a disposizione, Oneri Investimento, Finanziamenti Statali/Europei/Enti Territoriali/Privati/Altre fonti → qb:MeasureProperty con mu:hasMeasurementUnit EUR; IGNORARE valori 0 e valori che sembrano date (formato dd/MM/yyyy). ATTENZIONE FALSI POSITIVI: Cultural-ON NON va attivato su questo CSV anche se la Descrizione CUP contiene parole come 'teatro', 'cultura', 'scuola' — il discriminante è la presenza di Codice CUP che identifica univocamente un contratto pubblico BDAP."
+    },
+    {
+      "seq": 445,
+      "id": "pluviometro-precipitazioni-orarie",
+      "name": "Precipitazioni pluviometriche orarie — dati storici",
+      "description": "Rilevazioni pluviometriche orarie con data scomposta in componenti separate: id, ora (HH:MM:SS), min, gg (giorno), mm (mese), aaaa (anno), millimetri (precipitazioni). Tipico export da sensori meteo o ARPA con timestamp scomposto. Varianti: pioggia_mm, precipitazione, rainfall, mm_pioggia, valore_mm.",
+      "headers": [
+        "id",
+        "ora",
+        "min",
+        "gg",
+        "mm",
+        "aaaa",
+        "millimetri"
+      ],
+      "norm_headers": [
+        "id",
+        "ora",
+        "min",
+        "gg",
+        "mm",
+        "aaaa",
+        "millimetri"
+      ],
+      "sample_values": [
+        "170178,24:00:00,,31,12,2020,0"
+      ],
+      "ontos": [
+        "IoT",
+        "TI",
+        "QB"
+      ],
+      "main_onto": "IoT",
+      "notes": "Sensore pluviometrico: millimetri → iot:hasObservationValue (precipitazione mm). ora → ti:startTime (HH:MM:SS). gg+mm+aaaa → data composta, usare come sdmx-dimension:refPeriod. id → dct:identifier. min → skip (ridondante con ora). Varianti header accettate: pioggia_mm, rainfall, precipitazione, valore_mm, mm_pioggia. Dataset tipico ARPA/Comuni con 8000+ righe annuali (1 riga/ora)."
     }
   ]
 }

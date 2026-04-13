@@ -21,7 +21,7 @@ GET https://csv2rdf.datigovit.workers.dev/?url={URL_CSV}&ipa={codice_ipa}&pa={no
 | `ipa` | string | no | Codice IPA dell'ente (es. `c_a662`). Usato per costruire gli URI RDF |
 | `pa` | string | no | Nome esteso dell'ente (es. `Comune di Bari`). Incluso nei commenti del TTL |
 | `onto` | string | no | Forzare ontologie specifiche, separate da virgola (es. `POI,CLV,L0`) |
-| `fmt` | string | no | Formato output: `ttl` (default) oppure `json` |
+| `fmt` | string | no | Formato output: `ttl` (default), `json`, `rdf` / `rdfxml` / `xml` |
 
 ---
 
@@ -68,6 +68,28 @@ curl "https://csv2rdf.datigovit.workers.dev/?url=https://esempio.it/dati.csv&fmt
 }
 ```
 
+### RDF/XML (W3C standard)
+
+```bash
+curl "https://csv2rdf.datigovit.workers.dev/?url=https://esempio.it/dati.csv&fmt=rdf&ipa=c_a662"
+# oppure: fmt=rdfxml oppure fmt=xml  (tutti equivalenti)
+```
+
+Risposta (`Content-Type: application/rdf+xml`):
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:dct="http://purl.org/dc/terms/">
+  <rdf:Description rdf:about="https://w3id.org/italia/data/c_a662/poi/1">
+    <rdf:type rdf:resource="https://w3id.org/italia/onto/POI/PointOfInterest"/>
+    <rdfs:label xml:lang="it">Fontanella Piazza Roma</rdfs:label>
+  </rdf:Description>
+</rdf:RDF>
+```
+
+---
+
 ### Forzare ontologie specifiche
 
 ```bash
@@ -89,8 +111,10 @@ Il TTL viene restituito con header utili per l'integrazione:
 
 | Header | Valore esempio | Descrizione |
 |--------|----------------|-------------|
-| `Content-Type` | `text/turtle; charset=utf-8` | Formato Turtle |
-| `Content-Disposition` | `attachment; filename="c_a662-1711188000000.ttl"` | Nome file download |
+| `Content-Type` | `text/turtle; charset=utf-8` | Formato Turtle (fmt=ttl) |
+| `Content-Type` | `application/rdf+xml; charset=utf-8` | Formato RDF/XML (fmt=rdf) |
+| `Content-Type` | `application/json` | Metadati + TTL (fmt=json) |
+| `Content-Disposition` | `attachment; filename="c_a662-1711188000000.ttl"` | Nome file (.ttl o .rdf secondo fmt) |
 | `X-Ontologie` | `CLV,POI,L0` | Ontologie rilevate |
 | `X-Righe` | `42` | Numero di righe convertite |
 | `Access-Control-Allow-Origin` | `*` | CORS abilitato per tutti |
@@ -220,8 +244,9 @@ Per il token: Cloudflare Dashboard → My Profile → API Tokens → Create Toke
 
 ## Versione e compatibilità
 
-- **Versione motore:** v2026.03.23.171
+- **Versione motore:** v2026.04.13.07
 - **Ontologie supportate:** 22 (CLV, COV, CPV, POI, RO, TI, ADMS, ACCO, GTFS, Cultural-ON, SMAPIT, IoT, QB, PARK, PublicContract, Route, RPO, Learning, Transparency, Indicator, POT, CPSV-AP)
+- **Formati output supportati:** `ttl` (Turtle, default), `json` (metadati + TTL), `rdf` / `rdfxml` / `xml` (RDF/XML W3C)
 - **Encoding CSV supportati:** UTF-8, UTF-8 con BOM, Latin-1/ISO-8859-1, CP1252
 - **Separatori CSV supportati:** `,` `;` `\t` `|` (rilevamento automatico)
 - **Runtime:** Cloudflare Workers (V8 isolate, non Node.js)

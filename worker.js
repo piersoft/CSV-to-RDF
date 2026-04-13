@@ -1225,9 +1225,20 @@ function buildDeterministicTriples(cols, rows, entityBase, deterMappings, typeSe
 
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
-    // URI entità: usa id/codice se disponibile, altrimenti indice
-    const idCol = cols.find(c => /^(id|codice|cod|n_enea|numero|num|pk)$/i.test(c));
-    const entityId = idCol ? String(row[idCol]).trim().replace(/[^a-zA-Z0-9_-]/g, '_') : String(i + 1);
+    // URI entità: logica a priorità per tipo entità
+    let entityId;
+    if (typeSegment === 'public-contract') {
+      // OpenCUP/BDAP: usa Codice CUP come chiave primaria (es. D71B15000160007)
+      const cupCol = cols.find(c => /^codice_cup$/i.test(c));
+      if (cupCol && row[cupCol]) {
+        entityId = String(row[cupCol]).trim().replace(/[^a-zA-Z0-9_-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+      }
+    }
+    if (!entityId) {
+      // Fallback generico: cerca colonna id/codice, altrimenti indice
+      const idCol = cols.find(c => /^(id|codice|cod|n_enea|numero|num|pk)$/i.test(c));
+      entityId = idCol ? String(row[idCol]).trim().replace(/[^a-zA-Z0-9_-]/g, '_') : String(i + 1);
+    }
     const uri = `<${entityBase}${typeSegment}/${entityId}>`;
 
     const triples = [];

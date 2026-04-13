@@ -1593,6 +1593,104 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
 }
 
 
+
+// ——— TTL → RDF/XML CONVERTER ——————————————————————————————————————
+
+function ttlToRdfXml(ttlText) {
+  const prefixes = {};
+  const prefixRe = /^@prefix\s+([a-zA-Z][\w-]*):\s*<([^>]+)>\s*\./gm;
+  let m;
+  while ((m = prefixRe.exec(ttlText)) !== null) prefixes[m[1]] = m[2];
+
+  function expandUri(t) {
+    t = t.trim();
+    if (t.startsWith('<') && t.endsWith('>')) return t.slice(1,-1);
+    const c = t.indexOf(':');
+    if (c > 0 && prefixes[t.slice(0,c)]) return prefixes[t.slice(0,c)] + t.slice(c+1);
+    return t;
+  }
+  function xe(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  // Rimuovi commenti e prefissi, normalizza whitespace
+  const body = ttlText
+    .split('\n')
+    .filter(l => !l.trim().startsWith('#') && !l.trim().startsWith('@prefix'))
+    .join('\n');
+
+  // Split in blocchi per soggetto (terminati da ".\n")
+  const rawBlocks = body.split(/\.\s*(?=\n\s*\n|\n\s*<|\n\s*[a-zA-Z][\w-]*:)/);
+  const xmlBlocks = [];
+
+  for (const block of rawBlocks) {
+    const b = block.trim().replace(/\.\s*$/, '');
+    if (!b) continue;
+    const firstWs = b.search(/\s/);
+    if (firstWs < 0) continue;
+    const subjRaw = b.slice(0, firstWs).trim();
+    const rest = b.slice(firstWs).trim();
+    const subjUri = expandUri(subjRaw);
+    if (!subjUri || !subjUri.startsWith('http')) continue;
+
+    const triples = rest.split(/\s*;\s*/);
+    let typeVal = null;
+    const props = [];
+
+    for (const tr of triples) {
+      const t = tr.trim();
+      if (!t) continue;
+      const si = t.search(/\s/);
+      if (si < 0) continue;
+      const pred = t.slice(0, si).trim();
+      const obj  = t.slice(si).trim();
+      const predUri = (pred === 'a') ? 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' : expandUri(pred);
+
+      if (predUri === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
+        typeVal = expandUri(obj);
+      } else if (obj.startsWith('<') || /^[a-zA-Z][\w-]*:[a-zA-Z]/.test(obj)) {
+        props.push({ pred: predUri, objUri: expandUri(obj) });
+      } else {
+        const lm  = obj.match(/^"""([\s\S]*?)"""@([\w-]+)/);
+        const lm2 = obj.match(/^"(.*?)"@([\w-]+)/);
+        const dm  = obj.match(/^"(.*?)"\^\^(\S+)/);
+        const pm  = obj.match(/^"(.*?)"/s);
+        let litVal='', lang=null, dtype=null;
+        if      (lm)  { litVal=lm[1];  lang=lm[2]; }
+        else if (lm2) { litVal=lm2[1]; lang=lm2[2]; }
+        else if (dm)  { litVal=dm[1];  dtype=expandUri(dm[2]); }
+        else if (pm)  { litVal=pm[1]; }
+        else          { litVal=obj; }
+        props.push({ pred: predUri, litVal, lang, dtype });
+      }
+    }
+
+    // Trova qname per predicato
+    function toQname(uri) {
+      for (const [pfx, ns] of Object.entries(prefixes))
+        if (uri.startsWith(ns)) return pfx + ':' + uri.slice(ns.length);
+      return null;
+    }
+
+    let xml = `  <rdf:Description rdf:about="${xe(subjUri)}">\n`;
+    if (typeVal) xml += `    <rdf:type rdf:resource="${xe(typeVal)}"/>\n`;
+    for (const p of props) {
+      const qn = toQname(p.pred);
+      const tag = qn || 'rdf:value';
+      if (p.objUri !== undefined) {
+        xml += `    <${tag} rdf:resource="${xe(p.objUri)}"/>\n`;
+      } else {
+        const attrs = p.lang ? ` xml:lang="${p.lang}"` : p.dtype ? ` rdf:datatype="${xe(p.dtype)}"` : '';
+        xml += `    <${tag}${attrs}>${xe(p.litVal || '')}</${tag}>\n`;
+      }
+    }
+    xml += `  </rdf:Description>`;
+    xmlBlocks.push(xml);
+  }
+
+  const nsDecls = Object.entries(prefixes).map(([p,u]) => `  xmlns:${p}="${u}"`).join('\n');
+  return `<?xml version="1.0" encoding="utf-8"?>\n<rdf:RDF\n  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"\n${nsDecls}>\n\n${xmlBlocks.join('\n\n')}\n</rdf:RDF>`;
+}
+
+
 // ——— CLOUDFLARE WORKER HANDLER ———————————————————————————————————
 
 const CORS_HEADERS = {
@@ -1723,6 +1821,21 @@ export default {
         `# https://piersoft.github.io/CSV-to-RDF/`,
         ''
       ].join('\n');
+
+      // Formato RDF/XML: conversione da TTL
+      if (fmtReq === 'rdfxml' || fmtReq === 'xml' || fmtReq === 'rdf') {
+        const fullTtl = header + ttl;
+        const rdfXml = ttlToRdfXml(fullTtl, ontos);
+        return new Response(rdfXml, {
+          headers: {
+            ...CORS_HEADERS,
+            'Content-Type': 'application/rdf+xml; charset=utf-8',
+            'Content-Disposition': `attachment; filename="${ipa}-${Date.now()}.rdf"`,
+            'X-Ontologie': ontos.join(','),
+            'X-Righe': String(parsed.rows.length),
+          }
+        });
+      }
 
       return new Response(header + ttl, {
         headers: {

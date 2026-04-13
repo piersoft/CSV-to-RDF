@@ -1298,7 +1298,13 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
   var seg=DET_URI_SEG[mainOnto]||'resource';
   var mainClass=DET_CLASS[mainOnto]||'l0:Object';
   var base='https://w3id.org/italia/data/'+(ipa||'ipa')+'/';
-  var idIdx=detFindColIdx(nh,['id','codice','codicescuola','stop_id','codice_scuola','cig','slug','remoteid','identifier','codice_fiscale','id_area','id_punto','codice_stazione','titolo','titolo_corso','denominazione']);
+  // Per OpenCUP/BDAP: usa codice_cup come chiave primaria dell'URI
+  var idIdx;
+  if(ontos.indexOf('PublicContract')>=0 && nh.indexOf('codice_cup')>=0){
+    idIdx=nh.indexOf('codice_cup');
+  } else {
+    idIdx=detFindColIdx(nh,['id','codice','codicescuola','stop_id','codice_scuola','cig','slug','remoteid','identifier','codice_fiscale','id_area','id_punto','codice_stazione','titolo','titolo_corso','denominazione']);
+  }
   if(idIdx<0)idIdx=0;
   var used=new Set(['rdfs','dct','foaf','xsd','l0','geo','sm']);
   ontos.forEach(function(o){detAddPrefix(o,used);});

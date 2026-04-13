@@ -47,7 +47,7 @@
   <div class="meta">
     <span>v2026.04.09.01</span>
     <span>29 ontologie</span>
-    <span>442 dataset PA reali</span>
+    <span>454 dataset PA reali</span>
     <span>22+7 CSV sacri testati</span>
     <span><a href="https://piersoft.github.io/CSV-to-RDF/" style="color:#c7d2fe">Apri il tool</a></span>
   </div>
@@ -1136,6 +1136,138 @@
 
       <div class="dataset-card">
         <div class="card-header">
+          <span class="onto-badge" style="background:#1a6b35">TI · COV · QB</span>
+          <h3>PNRR Macchine agricole — beneficiari e importi</h3>
+        </div>
+        <p>Contributi PNRR per macchine agricole: beneficiario, data concessione, importo concesso, spesa saldo, data saldo. Schema per monitoraggio fondi PA. Regione Puglia.</p>
+        <div class="col-examples">
+          <code>soggetto_beneficiario</code><code>data_concessione</code><code>importo_concesso</code><code>spesa_saldo</code><code>data_saldo</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#1a6b35">TI · CLV · Cultural-ON</span>
+          <h3>Calendario manifestazioni fieristiche regionali</h3>
+        </div>
+        <p>Fiere ed esposizioni regionali: denominazione, date inizio/fine, comune, anno, livello (nazionale/internazionale), settori merceologici. Schema uniforme per calendari fiere PA.</p>
+        <div class="col-examples">
+          <code>denominazione_fiera</code><code>data_inizio</code><code>data_fine</code><code>comune</code><code>anno</code><code>livello</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#1a6b35">TI · QB · CPSV</span>
+          <h3>Debiti fuori bilancio — Regione Puglia</h3>
+        </div>
+        <p>Debiti fuori bilancio riconosciuti dal Consiglio Regionale: dipartimento, sezione proponente, numero SDL, numero e data DDL, data arrivo in Consiglio, numero atto consiliare, oggetto, importo. Trasparenza bilancio.</p>
+        <div class="col-examples">
+          <code>dipartimento_struttura</code><code>numero_sdl</code><code>data_disegno_di_legge</code><code>nr_atto_consiliare</code><code>oggetto</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#c45e00">PublicContract · TI · COV · QB</span>
+          <h3>Tempi affidamento appalti servizi e forniture — PA</h3>
+        </div>
+        <p>Monitoraggio tempi di affidamento negli appalti pubblici: stazione appaltante, CIG, tipo affidamento, oggetto, date pubblicazione e aggiudicazione, giorni impiegati. Indicatore trasparenza appalti.</p>
+        <div class="col-examples">
+          <code>cig</code><code>stazione_appaltante</code><code>tipo_affidamento</code><code>data_pubblicazione</code><code>data_aggiudicazione</code><code>giorni_affidamento</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">QB · TI · CPSV · COV</span>
+          <h3>Tempi attesa prestazioni sanitarie — monitoraggio ex post</h3>
+        </div>
+        <p>Tempi di attesa ex post per prestazioni sanitarie: regione, ASL, anno, periodo, ID e descrizione prestazione, erogazioni, tempo medio attesa giorni, quota entro 30/60/180 giorni. Standard LEA.</p>
+        <div class="col-examples">
+          <code>asl</code><code>anno</code><code>desc_prestazione</code><code>erogazioni</code><code>tempo_medio_attesa_gg</code><code>quota_entro_30gg</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">CLV · COV · CPSV</span>
+          <h3>Giudici di Pace — uffici e indirizzi Trentino Alto-Adige</h3>
+        </div>
+        <p>Uffici dei Giudici di Pace in Trentino Alto-Adige: ufficio (it/de), indirizzo, CAP, città, telefono, fax, email, apertura al pubblico. 56 colonne, schema bilingue.</p>
+        <div class="col-examples">
+          <code>gdp_id</code><code>ufficio</code><code>indirizzo</code><code>cap</code><code>citta</code><code>apertura_al_pubblico</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">CPSV · CLV · TI · COV</span>
+          <h3>Registri strutture socio-assistenziali — Puglia</h3>
+        </div>
+        <p>Registri regionali strutture e servizi socio-assistenziali: registro, articolo normativo, tipologia, provincia, posizione, numero e data provvedimento iscrizione, scadenza. Autorizzazioni e accreditamenti.</p>
+        <div class="col-examples">
+          <code>registro</code><code>tipologia</code><code>provincia_registro</code><code>num_provv_iscrizione_registro</code><code>data_iscrizione_registro</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">COV · QB · TI</span>
+          <h3>Parco autobus trasporto pubblico locale — Puglia</h3>
+        </div>
+        <p>Parco veicolare autobus TPL in Puglia: azienda di trasporto, alimentazione, modello, posti totali/seduti/non seduti/disabili, anno immatricolazione, km percorsi. Dataset mobilità PA.</p>
+        <div class="col-examples">
+          <code>azienda_di_trasporto</code><code>alimentazione</code><code>modello</code><code>posti_tot</code><code>posti_h</code><code>anno_immatricolazione</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">COV · CLV · Learning</span>
+          <h3>Organismi formativi accreditati — Regione Puglia</h3>
+        </div>
+        <p>Enti di formazione professionale accreditati: codice pratica, denominazione, partita IVA/CF, provincia e comune sede, indirizzo, CAP, tipologia accreditamento, settori formativi. Albo regionale.</p>
+        <div class="col-examples">
+          <code>codice_pratica</code><code>denominazione</code><code>partita_ivacf</code><code>comune_sede</code><code>indirizzo_sede</code><code>cap_sede</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#1a6b35">TI · CLV · QB</span>
+          <h3>Recupero fauna selvatica — schede intervento</h3>
+        </div>
+        <p>Schede di recupero fauna selvatica: ID scheda, specie (nome comune e scientifico), comune e provincia ritrovamento, data accettazione, età, sesso, esito, causa ricovero. Monitoraggio biodiversità.</p>
+        <div class="col-examples">
+          <code>specie_nome_comune</code><code>specie_nome_scientifico</code><code>comune</code><code>data_accettazione</code><code>esito</code><code>causa_ricovero</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">CPV · CLV · COV</span>
+          <h3>PIN Giovani — professionisti accompagnatori</h3>
+        </div>
+        <p>Professionisti accreditati per il programma PIN Giovani: ID, cognome, nome, settore, professione, sedi operative (comune e provincia). Programma regionale orientamento professionale.</p>
+        <div class="col-examples">
+          <code>professionista_id</code><code>cognome</code><code>nome</code><code>settore</code><code>professione</code><code>sedi_operative_comune</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">COV · CLV · QB</span>
+          <h3>Chirurgia robotica — distribuzione tecnologie strutture sanitarie</h3>
+        </div>
+        <p>Sistemi robotici chirurgici nelle strutture sanitarie: ambito provinciale, denominazione e tipologia struttura, azienda, natura giuridica, comune, quantità robot. Mappa tecnologica SSN.</p>
+        <div class="col-examples">
+          <code>denominazione_struttura</code><code>tipologia_struttura</code><code>tipologia_di_azienda</code><code>comune_citta</code><code>robot_chirurgici_quantita</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
           <span class="onto-badge" style="background:#0066cc">QB · TI · POI</span>
           <h3>Contatori traffico stradale per tipo veicolo</h3>
         </div>
@@ -1595,6 +1727,6 @@
     <p style="margin-top:.8rem;font-size:.85rem;"><a href="https://github.com/piersoft/CSV-to-RDF">Sorgente su GitHub</a> · <a href="https://piersoft.github.io/CSV-to-RDF/">Tool online</a> · <a href="https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html">Questa pagina</a></p>
   </div>
 </div>
-<footer>CSV→RDF PA Italiana · piersoft · v2026.04.09.01 · 29 ontologie · 442 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
+<footer>CSV→RDF PA Italiana · piersoft · v2026.04.09.01 · 29 ontologie · 454 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
 </body>
 </html>

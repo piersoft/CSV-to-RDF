@@ -480,7 +480,7 @@ function detFindRule(normH,ontos){
 }
 function detGetTimeVal(nh,row){var tc=['inizio','data','quando','published','data_inizio','periodo','stagione','programmazione','data_sopralluogo','data_ispezione','data_controllo','data_campionamento','data_rilevamento','data_misura','data_verifica','data_accertamento'];for(var i=0;i<tc.length;i++){var x=nh.indexOf(tc[i]);if(x>=0&&row[x]&&row[x].trim())return row[x].trim();}return null;}
 
-function detAddPrefix(onto,set){var m={ACCO:'acco',GTFS:'gtfs',POI:'poi','IoT':'iot',COV:'cov',CPV:'cpv',RO:'ro',SMAPIT:'smapit',QB:'qb',CLV:'clv',TI:'ti',PARK:'park',POT:'pot',PublicContract:'pc',Route:'route',RPO:'rpo',MU:'mu',Learning:'learn',CPEV:'cpev',Transparency:'tr',Indicator:'indicator',CulturalON:'cis',ADMS:'adms',CPSV:'cpsv',L0:'l0'};if(m[onto])set.add(m[onto]);if(onto==='RO'){set.add('cov');set.add('cpv');}if(onto==='CPSV-AP'||onto==='CPSV'){set.add('cpsv');}if(onto==='QB'){set.add('sdmx-dimension');set.add('sdmx-measure');set.add('sdmx-attribute');}if(onto==='CulturalON'){set.add('schema');}if(onto==='TI'){set.add('schema');}if(onto==='PARK'){set.add('park');}if(onto==='POT'){set.add('pot');}if(onto==='PublicContract'){set.add('pc');set.add('cov');}if(onto==='Route'){set.add('route');}if(onto==='RPO'){set.add('rpo');set.add('cov');set.add('cpv');}if(onto==='MU'){set.add('mu');}if(onto==='Learning'){set.add('learn');}if(onto==='CPEV'){set.add('cpev');}if(onto==='Transparency'){set.add('tr');}if(onto==='Indicator'){set.add('indicator');set.add('qb');}if(onto==='AtlasOfPaths'){set.add('aop');}if(onto==='CulturalHeritage'){set.add('ch');}if(onto==='Project'){set.add('prj');}if(onto==='NDC'){set.add('ndc');set.add('dcat');}}
+function detAddPrefix(onto,set){var m={ACCO:'acco',GTFS:'gtfs',POI:'poi','IoT':'iot',COV:'cov',CPV:'cpv',RO:'ro',SMAPIT:'smapit',QB:'qb',CLV:'clv',TI:'ti',PARK:'park',POT:'pot',PublicContract:'pc',Route:'route',RPO:'rpo',MU:'mu',Learning:'learn',CPEV:'cpev',Transparency:'tr',Indicator:'indicator',CulturalON:'cis',ADMS:'adms',CPSV:'cpsv',L0:'l0'};if(m[onto])set.add(m[onto]);if(onto==='RO'){set.add('cov');set.add('cpv');}if(onto==='CPSV-AP'||onto==='CPSV'){set.add('cpsv');}if(onto==='QB'){set.add('sdmx-dimension');set.add('sdmx-measure');set.add('sdmx-attribute');}if(onto==='CulturalON'){set.add('schema');}if(onto==='TI'){set.add('schema');}if(onto==='PARK'){set.add('park');}if(onto==='POT'){set.add('pot');}if(onto==='PublicContract'){set.add('pc');set.add('cov');set.add('adms');set.add('cpv');}if(onto==='Route'){set.add('route');}if(onto==='RPO'){set.add('rpo');set.add('cov');set.add('cpv');}if(onto==='MU'){set.add('mu');}if(onto==='Learning'){set.add('learn');}if(onto==='CPEV'){set.add('cpev');}if(onto==='Transparency'){set.add('tr');}if(onto==='Indicator'){set.add('indicator');set.add('qb');}if(onto==='AtlasOfPaths'){set.add('aop');}if(onto==='CulturalHeritage'){set.add('ch');}if(onto==='Project'){set.add('prj');}if(onto==='NDC'){set.add('ndc');set.add('dcat');}}
 
 function sanitizeEmailValue(v){
   v=(v||'').trim();if(!v)return null;
@@ -1570,6 +1570,25 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
   }).join('\n');
   // Esegui lo swap effettivo
   ttl = ttl.replace(/GEO_LONG_SWAP/g, 'geo:lat').replace(/GEO_LAT_SWAP/g, 'geo:long');
+
+  // Post-processing: rileva prefissi usati nel corpo ma non dichiarati e aggiungili
+  var bodyPrefixRe = /\b([a-zA-Z][a-zA-Z0-9_-]*):/g;
+  var m2, foundPrefixes = new Set();
+  while((m2 = bodyPrefixRe.exec(ttl)) !== null) { foundPrefixes.add(m2[1]); }
+  var declaredPrefixes = new Set();
+  var declRe = /@prefix\s+([a-zA-Z][a-zA-Z0-9_-]*):/g;
+  while((m2 = declRe.exec(ttl)) !== null) { declaredPrefixes.add(m2[1]); }
+  var extraPrefixes = '';
+  foundPrefixes.forEach(function(p) {
+    if(!declaredPrefixes.has(p) && DET_PREFIXES[p]) {
+      extraPrefixes += '@prefix ' + p + ': <' + DET_PREFIXES[p] + '> .\n';
+    }
+  });
+  if(extraPrefixes) {
+    // Inserisci dopo l'ultimo @prefix dichiarato
+    ttl = ttl.replace(/(@prefix[^\n]+\n)(?!@prefix)/, '$1' + extraPrefixes);
+  }
+
   return ttl.trim();
 }
 

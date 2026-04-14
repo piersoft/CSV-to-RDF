@@ -45,9 +45,9 @@
   <h1>Ontologie PA Italiana — CSV→RDF</h1>
   <p>Guida alle 29 ontologie supportate dal convertitore CSV→RDF/Turtle per la Pubblica Amministrazione italiana, basate sulla repo ufficiale <a href="https://github.com/italia/dati-semantic-assets" style="color:#c7d2fe">dati-semantic-assets</a>. Il corpus include ora dataset reali da <strong>Halley Boxxapps</strong> (Veneto e multiregionale).</p>
   <div class="meta">
-    <span>v2026.04.09.01</span>
+    <span>v2026.04.14.01</span>
     <span>29 ontologie</span>
-    <span>454 dataset PA reali</span>
+    <span>468 dataset PA reali</span>
     <span>22+7 CSV sacri testati</span>
     <span><a href="https://piersoft.github.io/CSV-to-RDF/" style="color:#c7d2fe">Apri il tool</a></span>
   </div>
@@ -1704,6 +1704,137 @@
       <div class="card-head"><div class="badge prio-media">TPL</div>
         <div><h3>Trasporto scolastico</h3><div class="ns">QB · Servizi scolastici</div></div>
       </div>
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0f6e56">IoT · QB</span>
+          <h3>Emissioni CO2 per settore — inventario PAES</h3>
+        </div>
+        <p>Inventario emissioni CO2 per settore: fonte, settore (residenziale/trasporti/industria), attivita, combustibile, emissioni in Kt/anno. Dataset PAES Piano Azione Energia Sostenibile. Fonte: Comune di Lecce.</p>
+        <div class="col-examples">
+          <code>fonte</code><code>settore</code><code>attivita</code><code>combustibile</code><code>inquinante_co2_ktanno</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0f6e56">IoT · CLV · TI · POI</span>
+          <h3>Monitoraggio precipitazioni annuali — stazioni meteo</h3>
+        </div>
+        <p>Precipitazioni da stazioni meteorologiche: ID, data, nome stazione, codice stazione, comune, anno, precipitazione mm, temperatura, pressione. Rete monitoraggio ambientale PA.</p>
+        <div class="col-examples">
+          <code>stazione_meteo</code><code>codice_stazione</code><code>comune</code><code>precipitazione_mm</code><code>temperatura</code><code>pressione</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0f6e56">IoT · POI · CLV</span>
+          <h3>Anagrafica sensori dighe — Provincia Autonoma di Trento</h3>
+        </div>
+        <p>Sensori monitoraggio dell'Ufficio Dighe: ID sensore, descrizione, tipologia, coordinate WGS84 (lat/lon/X/Y). Registro strutture idrauliche monitoraggio continuo.</p>
+        <div class="col-examples">
+          <code>idsensore</code><code>descrizione</code><code>tipologia</code><code>latitudine_wgs</code><code>longitudine_wgs</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0f6e56">ACCO · CLV · COV · POI</span>
+          <h3>Elenco agriturismi autorizzati — Regione Campania</h3>
+        </div>
+        <p>Agriturismi in Campania: comune, titolare, denominazione azienda, indirizzo, posti letto, posti macchina, posti tenda. Albo regionale strutture agrituristiche.</p>
+        <div class="col-examples">
+          <code>denominazione_azienda</code><code>comune_azienda</code><code>indirizzo_azienda</code><code>posti_letto</code><code>posti_tenda</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#3b6d11">POI · CLV · Cultural-ON</span>
+          <h3>Alberi monumentali — Regione Puglia</h3>
+        </div>
+        <p>Censimento alberi monumentali pugliesi: ID scheda, provincia, comune, localita, coordinate GIS, altitudine. Beni naturali tutelati D.Lgs. 34/2018.</p>
+        <div class="col-examples">
+          <code>id_scheda</code><code>provincia</code><code>comune</code><code>localita</code><code>latitudine_su_gis</code><code>altitudine_m_slm</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#3b6d11">POI · CLV · Cultural-ON</span>
+          <h3>Alberi monumentali — Regione Campania</h3>
+        </div>
+        <p>Alberi monumentali campani: ID, nome, provincia, localita, altitudine, nome scientifico e volgare della specie. Beni naturali vincolati con denominazione botanica.</p>
+        <div class="col-examples">
+          <code>name</code><code>provincia</code><code>localita</code><code>altitudine</code><code>nome_scientifico</code><code>nome_volgare</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">COV · CLV · QB · POI</span>
+          <h3>Censimento impianti sportivi — Regione Puglia</h3>
+        </div>
+        <p>Impianti sportivi pugliesi: ID ente, denominazione, tipo, provincia, comune, indirizzo, telefono, ID impianto, denominazione impianto, sport praticabili. Registro regionale.</p>
+        <div class="col-examples">
+          <code>denominazione_ente</code><code>comune_ente</code><code>indirizzo</code><code>id_impianto</code><code>denominazione_impianto</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#c45e00">PublicContract · COV · TI · QB</span>
+          <h3>Progetti e beneficiari POR FESR 2014-2020 — Regione Campania</h3>
+        </div>
+        <p>Progetti finanziati POR FESR Campania assi 1-2: fondo, asse, codice progetto, CUP, CF e nome beneficiario, denominazione operazione. Schema DCAT-AP/OpenCoesione.</p>
+        <div class="col-examples">
+          <code>fondo</code><code>asse</code><code>codice_unico_progetto</code><code>codice_fiscale_beneficiario</code><code>nome_beneficiario</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#1a6b35">TI · QB · CPSV</span>
+          <h3>Fornitura teleriscaldamento — Comune di Merano (bilingue it/de)</h3>
+        </div>
+        <p>Forniture teleriscaldamento di Merano: tipo fornitura, stato, utenza, fattura, letture, consumi, costi. 74 colonne bilingui it/de. Dataset consumi energetici servizio pubblico.</p>
+        <div class="col-examples">
+          <code>tipo_fornitura_refid</code><code>stato</code><code>utenza_refid</code><code>fattura_refid</code><code>importazione_refid</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">QB · TI</span>
+          <h3>Iscritti scuola infanzia storici 1945-2003 — Valle del Savio</h3>
+        </div>
+        <p>Serie storica iscritti scuola dell'infanzia 1945-2003 (64 colonne pivot ANNO_SCOLASTICO_YYYY_YYYY). Dataset demografico-scolastico storico per analisi longitudinale.</p>
+        <div class="col-examples">
+          <code>anno_scolastico_1973_1974</code><code>anno_scolastico_1954_1955</code><code>anno_scolastico_1983_1984</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">QB · SMAPIT · TI</span>
+          <h3>Iscritti per plesso e anno — Unione Comuni Valle del Savio</h3>
+        </div>
+        <p>Iscritti scolastici correnti per plesso: anno scolastico, sezioni, stranieri, disabili, nome scuola, totale iscritti. Aggiornamento annuale. Complementa la serie storica pivot.</p>
+        <div class="col-examples">
+          <code>plesso</code><code>anno_scolastico</code><code>n_sezioni</code><code>stranieri</code><code>disabili</code><code>nome_scuola</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">QB · CLV · POI</span>
+          <h3>Appesca — stato infrastrutture porti pugliesi</h3>
+        </div>
+        <p>Stato infrastrutture dei porti pugliesi: ID porto, banchina, nome porto, indicatori presenza/assenza di 129 servizi (illuminazione, rifiuti, acqua, energia), norme di riferimento. ASSET Puglia.</p>
+        <div class="col-examples">
+          <code>id_porto</code><code>porto</code><code>s1_illuminazione_pubblica</code><code>s1_1_presenzaassenza</code><code>s1_2_norma_di_riferimento</code>
+        </div>
+      </div>
       <p>Servizio di trasporto scolastico per tragitto: totale alunni trasportati, rette emesse e pagamenti ricevuti per anno.</p>
       <div class="triggers">
         <span class="trig">ANNO, TRAGITTO</span>
@@ -1727,6 +1858,6 @@
     <p style="margin-top:.8rem;font-size:.85rem;"><a href="https://github.com/piersoft/CSV-to-RDF">Sorgente su GitHub</a> · <a href="https://piersoft.github.io/CSV-to-RDF/">Tool online</a> · <a href="https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html">Questa pagina</a></p>
   </div>
 </div>
-<footer>CSV→RDF PA Italiana · piersoft · v2026.04.09.01 · 29 ontologie · 454 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
+<footer>CSV→RDF PA Italiana · piersoft · v2026.04.14.01 · 29 ontologie · 468 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
 </body>
 </html>

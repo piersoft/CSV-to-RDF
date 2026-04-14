@@ -1,9 +1,9 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.04.14.07 -->
+  <!-- build:v2026.04.14.08 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CSV-to-RDF v2026.04.14.07 — Linked Open Data PA</title>
+  <title>CSV-to-RDF v2026.04.14.08 — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
   <meta name="robots" content="index, follow"/>
   <link rel="canonical" href="https://piersoft.github.io/CSV-to-RDF/"/>
@@ -296,6 +296,9 @@
   <option value="sensori_dighe_trento">Sensori dighe Trento (IoT+POI+CLV)</option>
   <option value="agriturismi_campania">Agriturismi autorizzati (ACCO+CLV+COV+POI)</option>
   <option value="alberi_monumentali">Alberi monumentali (POI+CLV+Cultural-ON)</option>
+  <option value="andamento_demografico">Andamento demografico Comune (QB)</option>
+  <option value="elezioni_comunali">Elezioni comunali — liste e voti (CPV+RO+QB)</option>
+  <option value="movimenti_turistici">Movimenti turistici (ACCO+QB)</option>
   <option value="culturalheritage">CulturalHeritage — Beni culturali</option>
   <option value="project">Project — Progetti pubblici</option>
   <option value="mu">MU — Unità di misura</option>
@@ -755,7 +758,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.04.14.07</span>
+<span id="app-version">v2026.04.14.08</span>
 </footer>
 
 <script>
@@ -2153,6 +2156,18 @@ Avellino,Verde Antonio,Fattoria del Sole,Loc. Serino snc,8,10,5`,
 PUG-001,BA,Conversano,Contrada Castiello,40.9734,17.1156,210
 PUG-002,LE,Tricase,Loc. Depressa,39.9341,18.3654,87
 PUG-003,TA,Taranto,Periferia Nord,40.5234,17.2341,15`,
+    andamento_demografico: `ANNO,NATI,DECESSI,IMMIGRATI,EMIGRATI,SALDO_NATURALE,SALDO_MIGRATORIO,TOTALE
+2021,45,67,123,98,-22,25,8420
+2022,41,72,108,112,-31,-4,8385
+2023,38,69,134,101,-31,33,8387`,
+    elezioni_comunali: `ANNO,COMUNE,CODICE_ISTAT,LISTA,CANDIDATO_SINDACO,COGNOME,NOME,CODICE_FISCALE,VOTI_LISTA,VOTI_VALIDI,SEGGI_ASSEGNATI
+2024,Bari,072006,Lista Civica Futuro,Mario Rossi,Bianchi,Luigi,BNCLGU85A01A662Z,1245,8320,3
+2024,Bari,072006,Lista Civica Futuro,Mario Rossi,Verdi,Anna,VRDNNA90B41A662Z,987,8320,0
+2024,Bari,072006,Partito Democratico,Lucia Neri,Esposito,Carlo,SPSCRL75C01A662Z,2341,8320,5`,
+    movimenti_turistici: `ANNO,MESE,TIPO_STRUTTURA,PROVENIENZA,ARRIVI,PRESENZE,DURATA_MEDIA_NOTTI,COMUNE,PROVINCIA
+2023,7,Albergo,Italia,1245,3890,3.1,Alberobello,BA
+2023,7,Albergo,Estero,892,4120,4.6,Alberobello,BA
+2023,8,Bed and Breakfast,Italia,678,1456,2.1,Alberobello,BA`,
     atlasofpaths: `id,numero_percorso,nome_percorso,numero_tappe,lunghezza_km,dislivello_m,pavimentazione,segnaletica,livello_sicurezza,tipo_servizio,difficolta,comune_partenza,comune_arrivo,lat_start,lon_start
 1,TR-001,Via Appia Traiana,5,48.5,320,sterrato,presente,alto,rifugio,medio,Benevento,Brindisi,41.1300,14.7800
 2,CIC-042,Ciclovia dell'Acquedotto,8,510,1200,misto,presente,alto,assistenza,facile,Caposele,Santa Maria di Leuca,40.8500,15.4200
@@ -2258,6 +2273,9 @@ BAIS012008,Liceo Linguistico Moro,Liceo Linguistico,Bari,Corso Vittorio 5,41.127
     sensori_dighe_trento:['IoT','POI','CLV','L0'],
     agriturismi_campania:['ACCO','CLV','COV','POI','L0'],
     alberi_monumentali:['POI','CLV','Cultural-ON','L0'],
+    andamento_demografico:['QB','CLV','L0'],
+    elezioni_comunali:['CPV','RO','QB','COV','L0'],
+    movimenti_turistici:['ACCO','QB','TI','CLV','L0'],
     balneazione:['IoT','CLV','POI','TI','MU','L0'],
     culturalheritage:['CulturalHeritage','Cultural-ON','CLV','L0'],
     project:['Project','PublicContract','COV','TI','CLV','L0'],

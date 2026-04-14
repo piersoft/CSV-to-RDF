@@ -1,7 +1,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.04.14.02 -->
+  <!-- build:v2026.04.14.03 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CSV → RDF/TTL — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
@@ -746,7 +746,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.04.14.02</span>
+<span id="app-version">v2026.04.14.03</span>
 </footer>
 
 <script>
@@ -1084,7 +1084,7 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['cup_cod_settore','cup_descr_settore','finanz_ue','finanz_stato'])) { result.add('PublicContract'); result.add('QB'); }
   if(has(['cognomemedico','nomemedico','codiceasl_ao','codiceregionalemedico','indirizzostudiomedico_str'])) { result.add('CPV'); result.add('CLV'); result.add('SMAPIT'); }
   if(has(['dipartimento','direzionegenerale']) && has(['dataatto','numeroatto','tipologiaatto'])) { result.add('PublicContract'); result.add('TI'); }
-  if(has(['ato','kg_di_rifiuti_differenzia','kg_di_rifiuti_non_differe','totale_kg_di_rifiuti_prod'])) result.add('QB');
+  if(has(['kg_di_rifiuti_differenzia']) || has(['kg_di_rifiuti_non_differe']) || has(['totale_kg_di_rifiuti_prod'])) result.add('QB');
   if(has(['ateneocod','ateneonome','annoa','classenumero','classenome'])) { result.add('QB'); result.add('Learning'); }
   if(has(['euro_0','euro_1','euro_2','euro_3']) && has(['comune'])) result.add('QB');
   if(has(['macrocategoria_istat','categoria_istat','totale_strutture','codice_macrocategoria_istat'])) { result.add('ACCO'); result.add('QB'); result.add('CLV'); }

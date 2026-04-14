@@ -1,9 +1,9 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.04.14.06 -->
+  <!-- build:v2026.04.14.07 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CSV-to-RDF v2026.04.14.06 — Linked Open Data PA</title>
+  <title>CSV-to-RDF v2026.04.14.07 — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
   <meta name="robots" content="index, follow"/>
   <link rel="canonical" href="https://piersoft.github.io/CSV-to-RDF/"/>
@@ -287,6 +287,15 @@
   <option value="accesscondition">AccessCondition — Condizioni accesso</option>
   <option value="atlasofpaths">AtlasOfPaths — Atlante percorsi</option>
   <option value="tar_cds_appalto">TAR/CDS — Ricorsi appalto (CPSV+PC+TI+COV)</option>
+  <option value="tempi_affidamento_appalti">Tempi affidamento appalti (PC+TI+COV+QB)</option>
+  <option value="tempi_attesa_sanitari">Tempi attesa sanitari LEA (QB+TI+CPSV+COV)</option>
+  <option value="giudici_pace_uffici">Giudici di Pace — uffici bilingue (CLV+COV+CPSV)</option>
+  <option value="organismi_formativi">Organismi formativi accreditati (COV+CLV+Learning)</option>
+  <option value="pin_giovani_professionisti">PIN Giovani — professionisti (CPV+CLV+COV)</option>
+  <option value="stazioni_meteo_puglia">Stazioni meteo — precipitazioni (IoT+CLV+TI+POI)</option>
+  <option value="sensori_dighe_trento">Sensori dighe Trento (IoT+POI+CLV)</option>
+  <option value="agriturismi_campania">Agriturismi autorizzati (ACCO+CLV+COV+POI)</option>
+  <option value="alberi_monumentali">Alberi monumentali (POI+CLV+Cultural-ON)</option>
   <option value="culturalheritage">CulturalHeritage — Beni culturali</option>
   <option value="project">Project — Progetti pubblici</option>
   <option value="mu">MU — Unità di misura</option>
@@ -746,7 +755,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.04.14.06</span>
+<span id="app-version">v2026.04.14.07</span>
 </footer>
 
 <script>
@@ -2107,6 +2116,43 @@ S003,Porta San Vitale,44.4881,11.3521,2,0,2`,
 2024,002,CDS GIURISDIZIONALE ROMA,5,SEZIONE V,202408609,2024-11-18,APPALTI PUBBLICI DI SERVIZI -> ESCLUSIONE,8164723E8D,,7651172,GARA SERVIZI VIGILANZA ARMATA MINISTERO GIUSTIZIA ID 2201,277017855.27,34,LOTTO 18 GARA SERVIZI VIGILANZA ARMATA,2455491.48,ATTIVO,SETTORI ORDINARI,,,2020-01-17,2020-08-04,05359681003,CONSIP SPA UNIP.
 2024,002,CDS GIURISDIZIONALE ROMA,5,SEZIONE V,202404685,2024-06-10,APPALTI PUBBLICI DI LAVORI -> AGGIUDICAZIONE,985730054A,,9128306,COSTRUZIONE SERRE SOLARI ESSICCAMENTO FANGO DISIDRATATO,17101021.63,1,P1644 COSTRUZIONE SERRE SOLARI,17101021.63,ATTIVO,SETTORI SPECIALI,,,2023-06-05,2023-07-05,00347000721,ACQUEDOTTO PUGLIESE SPA
 2024,004,TAR ABRUZZO LAQUILA,1,SEZIONE PRIMA,202400343,2024-10-17,APPALTI PUBBLICI DI SERVIZI -> AGGIUDICAZIONE,B552431AE5,,8901234,SERVIZI PULIZIA EDIFICI PUBBLICI,45000.00,1,LOTTO UNICO,45000.00,ATTIVO,SETTORI ORDINARI,066015,AQ,2024-08-01,2024-09-01,00115056460,COMUNE DI CASTELNUOVO GARFAGNANA`,
+
+    tempi_affidamento_appalti: `stazione_appaltante,cf_stazione_appaltante,cig,tipo_affidamento,oggetto,data_pubblicazione,data_aggiudicazione,giorni_affidamento
+Regione Puglia,80017210727,B1DD133F24,Affidamento diretto art.50 D.Lgs.36/2023,Stampa e fornitura volumi istituzionali,2024-05-28,2024-05-28,0
+Comune di Bari,80015010723,A2EE891B45,Procedura negoziata,Servizi di pulizia edifici comunali 2024,2024-03-10,2024-04-02,23
+ASL Bari,80007570720,C3FF002C56,Procedura aperta,Fornitura dispositivi medici monouso,2024-01-15,2024-03-20,64`,
+    tempi_attesa_sanitari: `REGIONE,ASL,ANNO,PERIODO_DI_RIFERIMENTO,ID_PRESTAZIONE,DESC_PRESTAZIONE,COD_PRESTAZIONE,EROGAZIONI,TEMPO_MEDIO_ATTESA_GG,QUOTA_ENTRO_30GG,QUOTA_ENTRO_60GG,QUOTA_ENTRO_180GG
+Puglia,ASL BARI,2023,Q4,ECG001,Elettrocardiogramma,89.52,12450,8.3,94.2,98.7,99.9
+Puglia,ASL BARI,2023,Q4,RMN001,Risonanza magnetica colonna,88.91.20,3280,45.6,42.1,78.3,96.4
+Puglia,ASL TARANTO,2023,Q4,ECO001,Ecografia addome completo,88.76.1,5640,22.1,68.4,91.2,99.1`,
+    giudici_pace_uffici: `gdp_id,ufficio,ufficio_td,indirizzo,indirizzo_td,cap,citta,citta_td,telefono,fax,email,apertura_al_pubblico
+1,Ufficio GdP Trento,Friedensgericht Trient,Via Verdi 2,Verdistraße 2,38122,Trento,Trient,0461491111,0461491112,gdp.trento@giustiziatrentino.it,Lun-Ven 09:00-12:00
+2,Ufficio GdP Bolzano,Friedensgericht Bozen,Piazza Tribunale 1,Gerichtsplatz 1,39100,Bolzano,Bozen,0471980111,0471980112,gdp.bolzano@giustiziaaltoadige.it,Lun-Ven 09:00-12:00
+3,Ufficio GdP Merano,Friedensgericht Meran,Via Roma 10,Romstraße 10,39012,Merano,Meran,0473250111,,gdp.merano@giustiziaaltoadige.it,Lun-Mer-Ven 09:00-12:00`,
+    organismi_formativi: `codice_pratica,denominazione,partita_ivacf,provincia_sede,comune_sede,indirizzo_sede,numero_civico_sede,cap_sede
+2024/FOR/001,Istituto Formazione Professionale Bari Srl,07123456789,BA,Bari,Via Calefati,15,70121
+2024/FOR/002,Centro Studi e Formazione Puglia,06987654321,LE,Lecce,Via Imperatore Adriano,22,73100
+2024/FOR/003,Accademia del Lavoro Taranto,08765432100,TA,Taranto,Corso Italia,50,74121`,
+    pin_giovani_professionisti: `professionista_id,cognome,nome,settore,professione,sedi_operative_comune,sedi_operative_provincia
+PRO001,Rossi,Marco,Digitale e ICT,Consulente informatico,Bari,BA
+PRO002,Bianchi,Laura,Economia e finanza,Consulente aziendale,Lecce,LE
+PRO003,Verdi,Anna,Comunicazione,Social media manager,Foggia,FG`,
+    stazioni_meteo_puglia: `id,data,stazione_meteo,codice_stazione,comune,anno,precipitazione_mm,temperatura,pressione
+1,2024-01-15,Stazione Bari Centro,ST-BA-001,Bari,2024,12.4,9.2,1015.3
+2,2024-01-15,Stazione Lecce Sud,ST-LE-002,Lecce,2024,8.1,11.5,1013.7
+3,2024-01-16,Stazione Foggia Est,ST-FG-003,Foggia,2024,22.6,7.8,1010.2`,
+    sensori_dighe_trento: `idsensore,descrizione,tipologia,latitudine_wgs,longitudine_wgs,x_wgs,y_wgs
+SEN-001,Sensore livello diga Santa Giustina,Idrometro,46.3421,11.0123,665432,5133210
+SEN-002,Sensore portata scarico Pieve di Cadore,Idrometro,46.5234,12.3456,712345,5156780
+SEN-003,Pluviometro Molveno,Pluviometro,46.1234,10.9876,659876,5111234`,
+    agriturismi_campania: `comune_azienda,titolare,denominazione_azienda,indirizzo_azienda,posti_letto,posti_macchina,posti_tenda
+Caserta,Rossi Giovanni,Agriturismo Il Casolare,Contrada Campopiano 12,18,20,10
+Salerno,Bianchi Maria,Masseria Le Querce,Via Provinciale 45,12,15,0
+Avellino,Verde Antonio,Fattoria del Sole,Loc. Serino snc,8,10,5`,
+    alberi_monumentali: `id_scheda,provincia,comune,localita,latitudine_su_gis,longitudine_su_gis,altitudine_m_slm
+PUG-001,BA,Conversano,Contrada Castiello,40.9734,17.1156,210
+PUG-002,LE,Tricase,Loc. Depressa,39.9341,18.3654,87
+PUG-003,TA,Taranto,Periferia Nord,40.5234,17.2341,15`,
     atlasofpaths: `id,numero_percorso,nome_percorso,numero_tappe,lunghezza_km,dislivello_m,pavimentazione,segnaletica,livello_sicurezza,tipo_servizio,difficolta,comune_partenza,comune_arrivo,lat_start,lon_start
 1,TR-001,Via Appia Traiana,5,48.5,320,sterrato,presente,alto,rifugio,medio,Benevento,Brindisi,41.1300,14.7800
 2,CIC-042,Ciclovia dell'Acquedotto,8,510,1200,misto,presente,alto,assistenza,facile,Caposele,Santa Maria di Leuca,40.8500,15.4200
@@ -2203,6 +2249,15 @@ BAIS012008,Liceo Linguistico Moro,Liceo Linguistico,Bari,Corso Vittorio 5,41.127
     accesscondition:['AccessCondition','POI','CLV','L0'],
     atlasofpaths:  ['AtlasOfPaths','Route','CLV','L0'],
     tar_cds_appalto:['CPSV','PublicContract','TI','COV','L0'],
+    tempi_affidamento_appalti:['PublicContract','TI','COV','QB','L0'],
+    tempi_attesa_sanitari:['QB','TI','CPSV','COV','L0'],
+    giudici_pace_uffici:['CLV','COV','CPSV','L0'],
+    organismi_formativi:['COV','CLV','Learning','L0'],
+    pin_giovani_professionisti:['CPV','CLV','COV','L0'],
+    stazioni_meteo_puglia:['IoT','CLV','TI','POI','L0'],
+    sensori_dighe_trento:['IoT','POI','CLV','L0'],
+    agriturismi_campania:['ACCO','CLV','COV','POI','L0'],
+    alberi_monumentali:['POI','CLV','Cultural-ON','L0'],
     balneazione:['IoT','CLV','POI','TI','MU','L0'],
     culturalheritage:['CulturalHeritage','Cultural-ON','CLV','L0'],
     project:['Project','PublicContract','COV','TI','CLV','L0'],

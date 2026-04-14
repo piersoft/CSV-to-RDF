@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build:v2026.04.14.05 -->
+<!-- build:v2026.04.14.06 -->
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -262,7 +262,7 @@ footer a{color:#b0c4d8}
   Standard: <a href="https://schema.gov.it" target="_blank">schema.gov.it</a> &bull;
   <a href="https://github.com/italia/daf-ontologie-vocabolari-controllati" target="_blank">dati-semantic-assets</a> &bull;
   <a href="https://www.dati.gov.it" target="_blank">dati.gov.it</a>
-  <br>v<span id="app-version">2026.04.14.05</span>
+  <br>v<span id="app-version">2026.04.14.06</span>
 </footer>
 
 <script>
@@ -453,18 +453,22 @@ function checks_contenuto(rows, headers) {
     else push('C6','Separatore decimale corretto','Colonne numeriche usano il punto come separatore.','pass');
   } else push('C6','Nessuna colonna numerica rilevata','','info');
 
-  // C7 - Valori fuori range plausibile (euristica)
+  // C7 - Valori molto distanti dalla media della colonna
   const outRange = [];
   numColsIdx.forEach(ci=>{
     const vals = dataRows.map(r=>parseFloat((r[ci]||'').replace(',','.'))).filter(v=>!isNaN(v));
     if (!vals.length) return;
     const mean = vals.reduce((s,v)=>s+v,0)/vals.length;
     const std = Math.sqrt(vals.reduce((s,v)=>s+(v-mean)**2,0)/vals.length);
-    const outliers = vals.filter(v=>Math.abs(v-mean)>4*std).length;
-    if (outliers > 0) outRange.push(`"${headers[ci]}" (${outliers} outlier)`);
+    const anomali = vals.filter(v=>Math.abs(v-mean)>4*std);
+    if (anomali.length > 0) {
+      const esempi = anomali.slice(0,2).map(v=>v.toLocaleString('it-IT')).join(', ');
+      const mediaFmt = mean.toLocaleString('it-IT', {maximumFractionDigits:1});
+      outRange.push(`"${headers[ci]}": valore${anomali.length>1?'i':''} ${esempi} molto distante${anomali.length>1?'i':''} dalla media (${mediaFmt})`);
+    }
   });
-  if (outRange.length) push('C7','Possibili valori anomali',`${outRange.join('; ')} - verificare.`,'warn');
-  else push('C7','Nessun valore anomalo rilevato','','pass');
+  if (outRange.length) push('C7','Valori molto distanti dalla media',`${outRange.join('; ')}. Potrebbe essere un errore di inserimento, verificare.`,'warn');
+  else push('C7','Nessun valore fuori scala rilevato','Tutti i valori numerici rientrano in un intervallo coerente.','pass');
 
   // C8 - Lunghezza massima celle
   const longCells = [];

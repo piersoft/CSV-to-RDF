@@ -17,6 +17,7 @@ const ONTO_RULES = [
   { keys: ['brevetto','patent','pi','proprietà_intellettuale','tipo_pi','n_dom','deposito'], ontos: ['ADMS'] },
   { keys: ['data_evento','data_inizio','data_fine','startDate','endDate','ora','inizio','fine','apertura','scadenza'], ontos: ['TI'] },
   { keys: ['punto','poi','luogo','location','sede','struttura','dae','aed','defibrillatore','accessibile_h24','presenza_aed'], ontos: ['POI'] },
+  { keys: ['ogtd','tsk','nctn','ldcm','pvcp','pvcc','acqt','cdgg','cmpd','numero_inventario','tipo_bene','tipo_scheda'], ontos: ['CulturalON'] },
   { keys: ['lista','partito','candidato','sezione','voti','preferenze','ballottaggio','circoscrizione','sindaco'], ontos: ['COV','CPV'] },
   { keys: ['accesso','orario','prenotazione','ingresso'],                  ontos: ['AC'] },
   { keys: ['parcheggio','parking','posto','stallo'],                       ontos: ['PARK'] },
@@ -504,13 +505,13 @@ function detFormatLit(rule,val){
   if(rule.type==='decimal'){var n=parseFloat(val);return isNaN(n)?null:'"'+n+'"^^xsd:decimal';}
   if(rule.type==='integer'){var n2=parseInt(val);return isNaN(n2)?null:'"'+n2+'"^^xsd:integer';}
   if(rule.type==='boolean'){var b=val.toLowerCase();return(b==='si'||b==='true'||b==='1'||b==='yes')?'"true"^^xsd:boolean':'"false"^^xsd:boolean';}
-  if(rule.type==='date'){var d=val.replace(/\//g,'-');return'"'+d+'"^^xsd:date';}
+  if(rule.type==='date'){var _dv=val.trim();var _dm=_dv.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);if(_dm){_dv=_dm[3]+'-'+_dm[2].padStart(2,'0')+'-'+_dm[1].padStart(2,'0');}else{var _dm2=_dv.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/);if(_dm2){_dv=_dm2[1]+'-'+_dm2[2].padStart(2,'0')+'-'+_dm2[3].padStart(2,'0');} else if(!/^\d{4}-\d{2}-\d{2}/.test(_dv)){return null;}}return'"'+_dv+'"^^xsd:date';}
   if(rule.type==='datetime')return'"'+val+'"^^xsd:dateTime';
   if(rule.type==='typed'){
     var xsdType=rule.xsd||'xsd:string';
     if(xsdType==='xsd:decimal'){var nd=parseFloat(val);return isNaN(nd)?null:'"'+nd+'"^^xsd:decimal';}
     if(xsdType==='xsd:integer'){var ni=parseInt(val);return isNaN(ni)?null:'"'+ni+'"^^xsd:integer';}
-    if(xsdType==='xsd:date'){return'"'+val.replace(/\//g,'-')+'"^^xsd:date';}
+    if(xsdType==='xsd:date'){var _dv2=val.trim();var _dm3=_dv2.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);if(_dm3){_dv2=_dm3[3]+'-'+_dm3[2].padStart(2,'0')+'-'+_dm3[1].padStart(2,'0');}else{var _dm4=_dv2.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/);if(_dm4){_dv2=_dm4[1]+'-'+_dm4[2].padStart(2,'0')+'-'+_dm4[3].padStart(2,'0');}else if(!/^\d{4}-\d{2}-\d{2}/.test(_dv2)){return null;}}return'"'+_dv2+'"^^xsd:date';}
     if(xsdType==='xsd:dateTime')return'"'+val+'"^^xsd:dateTime';
     return'"'+val.replace(/\\/g,'\\\\').replace(/"/g,'\\"')+'"^^'+xsdType;
   }
@@ -813,7 +814,11 @@ function detectOntologiesDeterministic(headers, rows) {
                              'cig','importo_aggiudicazione','tipo_percorso','valore_indicatore']);
   var _hasCOVWeak   = hasH(['amministrazione','ente','pubblica_amministrazione','organizzazione','nome_centro','nome_struttura','unita_operativa','nome_presidio',
                            'comparto','inquadramento','codice_istituzione','codice_ente_bdap']);
-  // COV: permesso anche con POI se ragione_sociale presente (esercizi commerciali)
+  // Anti-falso-positivo: se insegna/ragione_sociale presente senza cup/cig → non PublicContract
+  var _hasEsercizioSegnali = has(['insegna','insegna_commerciale','ragione_sociale','tipo_esercizio','categoria_esercizio']);
+  var _hasContrattoSegnali = has(['cup','cig','cig_codice','codice_cig','importo_aggiudicazione','stazione_appaltante','oggetto_gara','oggetto_contratto']);
+  if(_hasEsercizioSegnali && !_hasContrattoSegnali) { result.delete('PublicContract'); }
+// COV: permesso anche con POI se ragione_sociale presente (esercizi commerciali)
   if(!result.has('ACCO') && !result.has('GTFS') &&
      (!result.has('POI') || _hasCOVStrong) &&
      (_hasCOVStrong || (_hasCOVWeak &&
@@ -1371,8 +1376,8 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         if(xi>=0&&row[xi]&&row[xi].trim()){var v=row[xi].trim();addrTriples.push({pred:addrMap[col],val:litQ(v,'it')});}
       });
       var latI=nh.indexOf('lat'),lonI=nh.indexOf('lon');
-      if(latI>=0&&row[latI])addrTriples.push({pred:'geo:lat',val:dq+row[latI].trim()+dq+'^^xsd:decimal'});
-      if(lonI>=0&&row[lonI])addrTriples.push({pred:'geo:long',val:dq+row[lonI].trim()+dq+'^^xsd:decimal'});
+      if(latI>=0&&row[latI]){var _la=parseFloat(row[latI].trim().replace(',','.'));if(!isNaN(_la))addrTriples.push({pred:'geo:lat',val:dq+_la+dq+'^^xsd:decimal'});}
+      if(lonI>=0&&row[lonI]){var _lo=parseFloat(row[lonI].trim().replace(',','.'));if(!isNaN(_lo))addrTriples.push({pred:'geo:long',val:dq+_lo+dq+'^^xsd:decimal'});}
       if(addrTriples.length>0){
         ttl+='<'+addrURI+'> a clv:Address'+(addrTriples.length>0?' ;':' .');
         addrTriples.forEach(function(t,ti){var sep=ti===addrTriples.length-1?' .':' ;';ttl+=nl+sp+t.pred+' '+t.val+sep;});
@@ -1393,8 +1398,8 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       if(idAreaI>=0&&row[idAreaI])poiTriples.push({pred:'dct:identifier',val:dq+(row[idAreaI]||'').trim()+dq});
       var latIp=nh.indexOf('lat');if(latIp<0)latIp=nh.indexOf('latitude');
       var lonIp=nh.indexOf('lon');if(lonIp<0)lonIp=nh.indexOf('longitude');
-      if(latIp>=0&&row[latIp])poiTriples.push({pred:'geo:lat',val:dq+(row[latIp]||'').trim()+dq+'^^xsd:decimal'});
-      if(lonIp>=0&&row[lonIp])poiTriples.push({pred:'geo:long',val:dq+(row[lonIp]||'').trim()+dq+'^^xsd:decimal'});
+      if(latIp>=0&&row[latIp]){var _lap=parseFloat((row[latIp]||'').trim().replace(',','.'));if(!isNaN(_lap))poiTriples.push({pred:'geo:lat',val:dq+_lap+dq+'^^xsd:decimal'});}
+      if(lonIp>=0&&row[lonIp]){var _lop=parseFloat((row[lonIp]||'').trim().replace(',','.'));if(!isNaN(_lop))poiTriples.push({pred:'geo:long',val:dq+_lop+dq+'^^xsd:decimal'});}
       if(poiTriples.length>0){
         ttl+='<'+poiURI+'> a poi:PointOfInterest ;'+nl;
         poiTriples.forEach(function(t,ti){var sep=ti===poiTriples.length-1?' .':' ;';ttl+=sp+t.pred+' '+t.val+sep+nl;});
@@ -1491,8 +1496,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       if(latSI>=0&&lonSI>=0&&row[latSI]&&row[lonSI]){
         var startURI=base+'location/start-'+idVal;
         ttl+='<'+startURI+'> a clv:Address ;'+nl;
-        ttl+=sp+'geo:lat '+dq+row[latSI].trim()+dq+'^^xsd:decimal ;'+nl;
-        ttl+=sp+'geo:long '+dq+row[lonSI].trim()+dq+'^^xsd:decimal .'+nl+nl;
+        {var _las=parseFloat(row[latSI].trim().replace(',','.'));var _los=parseFloat(row[lonSI].trim().replace(',','.'));if(!isNaN(_las))ttl+=sp+'geo:lat '+dq+_las+dq+'^^xsd:decimal ;'+nl;if(!isNaN(_los))ttl+=sp+'geo:long '+dq+_los+dq+'^^xsd:decimal .'+nl+nl;}
         used.add('clv');used.add('geo');
       }
     }

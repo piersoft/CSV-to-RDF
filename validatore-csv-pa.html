@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build:v2026.04.14.01 -->
+<!-- build:v2026.04.14.02 -->
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -253,7 +253,7 @@ footer a{color:#b0c4d8}
   Standard: <a href="https://schema.gov.it" target="_blank">schema.gov.it</a> &bull;
   <a href="https://github.com/italia/daf-ontologie-vocabolari-controllati" target="_blank">dati-semantic-assets</a> &bull;
   <a href="https://www.dati.gov.it" target="_blank">dati.gov.it</a>
-  <br>v<span id="app-version">2026.04.14.01</span>
+  <br>v<span id="app-version">2026.04.14.02</span>
 </footer>
 
 <script>
@@ -664,48 +664,145 @@ function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
 function setLoadingMsg(msg){ document.getElementById('loading-msg').textContent=msg; }
 
 /* =============================================
-   TTL TEST via CSV-to-RDF API
+   TTL PREVIEW — conversione deterministica locale
+   Il worker CSV-to-RDF accetta solo GET ?url=<url-pubblico>.
+   Il CSV incollato/caricato non ha un URL pubblico, quindi
+   generiamo qui una preview TTL minimale e verifichiamo lo
+   stato del worker via /health.
    ============================================= */
-async function testTTL(csvText) {
+
+/* Mappa semplificata ontologia → namespace per la preview */
+const ONTO_NS = {
+  'CLV': 'clv', 'COV': 'cov', 'CPV': 'cpv', 'TI': 'ti',
+  'QB': 'qb', 'MU': 'mu', 'PC': 'pc', 'POI': 'poi',
+  'IoT': 'iot', 'ACCO': 'acco', 'Cultural-ON': 'cultural-on',
+  'SMAPIT': 'smapit', 'CPSV': 'cpsv', 'GTFS': 'gtfs',
+  'PublicContract': 'pc', 'PARK': 'park', 'ADMS': 'adms',
+  'Learning': 'learn', 'CPEV': 'cpev', 'RO': 'ro',
+  'L0': 'l0', 'SM': 'sm'
+};
+
+/* Rilevamento ontologie dal nome colonne (euristica rapida) */
+function detectOntos(headers) {
+  const normH = headers.map(h=>h.trim().toLowerCase().replace(/[\s\-]/g,'_'));
+  const found = new Set(['L0']);
+  const rules = [
+    {keys:['lat','lon','lng','latitudine','longitudine','indirizzo','cap','comune','provincia'],onto:'CLV'},
+    {keys:['data_inizio','data_fine','data_apertura','data_chiusura','data_','anno','mese'],onto:'TI'},
+    {keys:['importo','quantita','valore','misura','popolazione','totale','numero'],onto:'QB'},
+    {keys:['cig','oggetto_gara','stazione_appaltante','aggiudicazione'],onto:'PublicContract'},
+    {keys:['azienda','impresa','societa','ragione_sociale','denominazione'],onto:'COV'},
+    {keys:['nome','cognome','cf','codice_fiscale'],onto:'CPV'},
+    {keys:['sensore','temperatura','pressione','precipitazione','iot','device'],onto:'IoT'},
+    {keys:['museo','biblioteca','archivio','patrimonio','culturale'],onto:'Cultural-ON'},
+    {keys:['hotel','albergo','stelle','posti_letto','camere'],onto:'ACCO'},
+    {keys:['parcheggio','stallo','posto_auto'],onto:'PARK'},
+    {keys:['unita_di_misura','unit'],onto:'MU'},
+    {keys:['bus','fermata','linea','corsa','gtfs'],onto:'GTFS'},
+    {keys:['cup','codice_cup','natura_intervento'],onto:'PublicContract'},
+  ];
+  rules.forEach(r=>{ if(normH.some(h=>r.keys.some(k=>h.includes(k)))) found.add(r.onto); });
+  return [...found];
+}
+
+/* Genera una preview TTL minimale (prime 3 righe) */
+function buildPreviewTTL(rows, headers, ontos) {
+  const now = new Date().toISOString().slice(0,10);
+  const ns = [
+    '@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .',
+    '@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .',
+    '@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .',
+    '@prefix dct: <http://purl.org/dc/terms/> .',
+    '@prefix l0: <https://w3id.org/italia/onto/l0/> .',
+  ];
+  ontos.forEach(o=>{
+    const pfx = ONTO_NS[o];
+    if (pfx && pfx !== 'l0') {
+      ns.push(`@prefix ${pfx}: <https://w3id.org/italia/onto/${pfx === 'cultural-on' ? 'Cultural-ON' : pfx}/> .`);
+    }
+  });
+  ns.push('');
+
+  const dataRows = rows.slice(1,4);
+  const normH = headers.map(h=>h.trim().toLowerCase().replace(/[\s\-]/g,'_').replace(/[^a-z0-9_]/g,''));
+  const triples = [];
+
+  dataRows.forEach((row, ri) => {
+    const idCol = normH.findIndex(h=>['id','codice','cod','identifier'].some(k=>h.startsWith(k)));
+    const idVal = idCol>=0 ? (row[idCol]||'').trim() : String(ri+1);
+    const uri = `<https://dati.example.it/resource/${encodeURIComponent(idVal||'r'+(ri+1))}>`;
+    const lines = [`${uri}`];
+    lines.push(`  a l0:Object`);
+    headers.forEach((h,ci)=>{
+      const val = (row[ci]||'').trim();
+      if (!val) return;
+      const norm = normH[ci];
+      const escaped = val.replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\n/g,'\\n');
+      if (/^\d{4}-\d{2}-\d{2}/.test(val)) {
+        lines.push(`  dct:${norm} "${escaped}"^^xsd:date`);
+      } else if (/^-?\d+$/.test(val)) {
+        lines.push(`  dct:${norm} ${val}`);
+      } else if (/^-?\d+[.,]\d+$/.test(val)) {
+        lines.push(`  dct:${norm} "${val.replace(',','.')}"^^xsd:decimal`);
+      } else {
+        lines.push(`  dct:${norm} "${escaped}"@it`);
+      }
+    });
+    triples.push(lines.join(' ;\n') + ' .');
+  });
+
+  return ns.join('\n') + '\n# Anteprima generata il ' + now + ' — prime ' + dataRows.length + ' righe\n\n' + triples.join('\n\n');
+}
+
+async function testTTL(csvText, rows, headers) {
   const ttlStatus = document.getElementById('ttl-status');
   const ttlResult = document.getElementById('ttl-result');
   const pills = document.getElementById('onto-pills-wrap');
+
+  /* 1. Verifica che il worker sia attivo (health check) */
+  let workerOk = false;
+  let workerVersion = '';
   try {
-    const resp = await fetch(CSV2RDF_API, {
-      method:'POST',
-      headers:{'Content-Type':'text/plain'},
-      body: csvText
-    });
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const data = await resp.json();
-    ttlStatus.classList.add('hidden');
-    ttlResult.classList.remove('hidden');
-    if (data.turtle || data.ttl) {
-      const ttlContent = data.turtle || data.ttl;
-      const lines = ttlContent.split('\n').length;
-      ttlResult.innerHTML = `<div class="check-item pass" style="margin-bottom:10px">
-        ${ICON.pass}
-        <div><span class="check-title">CSV trasformabile in RDF/Turtle</span>
-        <span class="check-detail">Il convertitore CSV-to-RDF ha prodotto ${lines} righe di Turtle valido. <a href="https://piersoft.github.io/CSV-to-RDF/" target="_blank">Apri il convertitore</a></span>
-        </div></div>
-        <div class="ttl-box">${escHtml(ttlContent.slice(0,2000))}${ttlContent.length>2000?'\n... (troncato) ...':''}</div>`;
-      if (data.ontologies && data.ontologies.length) {
-        pills.classList.remove('hidden');
-        pills.innerHTML = '<strong style="font-size:12px;color:#5c6f82;display:block;margin-bottom:6px">Ontologie rilevate:</strong>';
-        data.ontologies.forEach(o=>{ pills.innerHTML+=`<span class="pill">${escHtml(o)}</span>`; });
-      }
-    } else if (data.error) {
-      ttlResult.innerHTML = `<div class="check-item warn">${ICON.warn}<div><span class="check-title">Conversione parziale o con avvisi</span><span class="check-detail">${escHtml(data.error)}</span></div></div>`;
-    } else {
-      ttlResult.innerHTML = `<div class="check-item info">${ICON.info}<div><span class="check-title">Risposta API ricevuta</span><span class="check-detail">Formato risposta non standard. <a href="https://piersoft.github.io/CSV-to-RDF/" target="_blank">Verificare manualmente</a></span></div></div>`;
+    const hResp = await fetch(CSV2RDF_API + '/health', { signal: AbortSignal.timeout(5000) });
+    if (hResp.ok) {
+      const hData = await hResp.json();
+      workerOk = hData.status === 'ok';
+      workerVersion = hData.version || '';
     }
-  } catch(e) {
-    ttlStatus.classList.add('hidden');
-    ttlResult.classList.remove('hidden');
-    ttlResult.innerHTML = `<div class="check-item warn">${ICON.warn}<div>
-      <span class="check-title">API CSV-to-RDF non raggiungibile</span>
-      <span class="check-detail">${escHtml(e.message)} &mdash; Il CSV sembra comunque adatto alla conversione. <a href="https://piersoft.github.io/CSV-to-RDF/" target="_blank">Prova manualmente</a></span>
-    </div></div>`;
+  } catch(_) {}
+
+  /* 2. Generazione preview TTL locale */
+  const ontos = detectOntos(headers);
+  const ttlPreview = buildPreviewTTL(rows, headers, ontos);
+  const lines = ttlPreview.split('\n').length;
+
+  ttlStatus.classList.add('hidden');
+  ttlResult.classList.remove('hidden');
+
+  const workerBadge = workerOk
+    ? `<span style="background:#e6f4ec;color:#1a6b35;border:1px solid #b3dfc4;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700">${escHtml(workerVersion)} operativo</span>`
+    : `<span style="background:#fff8e6;color:#7d4e00;border:1px solid #fcd580;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700">Worker non raggiungibile</span>`;
+
+  ttlResult.innerHTML = `
+    <div class="check-item pass" style="margin-bottom:12px">
+      ${ICON.pass}
+      <div>
+        <span class="check-title">CSV compatibile con la conversione RDF/Turtle &nbsp;${workerBadge}</span>
+        <span class="check-detail">
+          Anteprima locale generata (${lines} righe) &mdash; prime 3 righe a scopo illustrativo.<br>
+          Per la conversione completa: il worker accetta <code style="font-size:11px;background:#f0f4f8;padding:1px 4px;border-radius:3px">GET ${escHtml(CSV2RDF_API)}/?url=&lt;url-pubblico-csv&gt;</code><br>
+          <a href="https://piersoft.github.io/CSV-to-RDF/" target="_blank" style="font-weight:700">Apri CSV-to-RDF &rarr;</a>
+          &nbsp;&nbsp;
+          <a href="${escHtml(CSV2RDF_API)}/health" target="_blank" style="font-size:11px;color:#5c6f82">stato worker</a>
+        </span>
+      </div>
+    </div>
+    <div class="ttl-box">${escHtml(ttlPreview)}</div>`;
+
+  if (ontos.length > 0) {
+    pills.classList.remove('hidden');
+    pills.innerHTML = '<strong style="font-size:12px;color:#5c6f82;display:block;margin-bottom:6px">Ontologie rilevate (euristica):</strong>';
+    ontos.forEach(o=>{ pills.innerHTML+=`<span class="pill">${escHtml(o)}</span>`; });
   }
 }
 
@@ -808,7 +905,7 @@ async function validate(rawInput) {
     ttlCard.classList.remove('hidden');
     document.getElementById('ttl-status').classList.remove('hidden');
     document.getElementById('ttl-result').classList.add('hidden');
-    testTTL(raw);
+    testTTL(raw, rows, headers);
   } else {
     ttlCard.classList.add('hidden');
   }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build:v2026.04.14.06 -->
+<!-- build:v2026.04.14.07 -->
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -262,7 +262,7 @@ footer a{color:#b0c4d8}
   Standard: <a href="https://schema.gov.it" target="_blank">schema.gov.it</a> &bull;
   <a href="https://github.com/italia/daf-ontologie-vocabolari-controllati" target="_blank">dati-semantic-assets</a> &bull;
   <a href="https://www.dati.gov.it" target="_blank">dati.gov.it</a>
-  <br>v<span id="app-version">2026.04.14.06</span>
+  <br>v<span id="app-version">2026.04.14.07</span>
 </footer>
 
 <script>
@@ -364,19 +364,37 @@ function checks_struttura(raw, rows, sep, headers) {
   if (kb > 5120) push('S7','File molto grande',`${kb.toFixed(0)} KB: considerare la suddivisione.`,'warn');
   else push('S7','Dimensione accettabile',`${kb.toFixed(1)} KB`,'pass');
 
-  // S8 - Encoding UTF-8 (euristica: nessun replacement char)
+  // S8 - Caratteri di sostituzione (segnale sicuro di encoding sbagliato)
   const hasReplacement = raw.includes('\uFFFD');
-  if (hasReplacement) push('S8','Possibile errore encoding','Caratteri di sostituzione Unicode rilevati (U+FFFD). Verificare UTF-8.','warn');
-  else push('S8','Encoding UTF-8 plausibile','Nessun carattere di sostituzione rilevato.','pass');
+  if (hasReplacement) push('S8','Caratteri illeggibili nel file (errore di codifica)','Il file contiene uno o pi\u00f9 caratteri non leggibili: probabilmente salvato in Windows-1252 ma aperto come UTF-8. Riaprire il file in Excel o LibreOffice e risalvarlo scegliendo "CSV UTF-8".','fail');
+  else push('S8','Nessun carattere illeggibile rilevato','La codifica del file sembra corretta.','pass');
 
-  // S9 - BOM
-  if (raw.charCodeAt(0) === 0xFEFF) push('S9','BOM UTF-8 rilevato','Il file inizia con BOM (EF BB BF). Compatibile ma da rimuovere per interoperabilit\u00e0.','warn');
-  else push('S9','Nessun BOM','File senza BOM.','pass');
+  // S9 - Doppia codifica Windows-1252: accentate italiane corrotte
+  const win1252seqs = ['\u00c3\u00a0','\u00c3\u00a8','\u00c3\u00a9','\u00c3\u00b2','\u00c3\u00b9','\u00c3\u00ac','\u00c3\u0080','\u00e2\u0080\u0099','\u00e2\u0080\u009c','\u00e2\u0080\u009d'];
+  const corruptFound = win1252seqs.filter(p=>raw.includes(p));
+  if (corruptFound.length > 0) {
+    push('S9','Lettere accentate corrotte (encoding errato)','Il file sembra salvato in Windows-1252 ma letto come UTF-8: le lettere accentate italiane (\u00e0,\u00e8,\u00f2\u2026) appaiono storpiate. Riaprire il file e risalvarlo come "UTF-8 senza BOM".','fail');
+  } else {
+    push('S9','Lettere accentate nella norma','Nessuna lettera accentata corrotta rilevata.','pass');
+  }
 
-  // S10 - Righe vuote interne
+  // S10 - BOM
+  if (raw.charCodeAt(0) === 0xFEFF) push('S10','Marcatore BOM presente','Il file inizia con un marcatore BOM invisibile. Alcuni strumenti lo ignorano, altri no: preferibile risalvare come "UTF-8 senza BOM".','warn');
+  else push('S10','Nessun marcatore BOM','Struttura corretta.','pass');
+
+  // S11 - Caratteri di controllo non visibili (null byte, ecc.)
+  const ctrlRe = /[\x00-\x08\x0B\x0C\x0E-\x1F]/;
+  const ctrlLines = raw.split('\n').map((l,i)=>[i+1,l]).filter(([,l])=>ctrlRe.test(l));
+  if (ctrlLines.length > 0) {
+    push('S11','Caratteri nascosti nel file','Trovati caratteri non visibili alla riga ' + ctrlLines.slice(0,3).map(([i])=>i).join(', ') + '. Possono causare errori in importazione: aprire con un editor di testo e rimuoverli.','warn');
+  } else {
+    push('S11','Nessun carattere nascosto','Il file non contiene caratteri non visibili.','pass');
+  }
+
+  // S12 - Righe vuote interne
   const blankInternal = dataRows.filter(r=>r.every(c=>!c.trim()));
-  if (blankInternal.length) push('S10','Righe completamente vuote',`${blankInternal.length} righe interne vuote (da rimuovere).`,'warn');
-  else push('S10','Nessuna riga vuota interna','Struttura pulita.','pass');
+  if (blankInternal.length) push('S12','Righe completamente vuote',`${blankInternal.length} righe interne vuote (da rimuovere).`,'warn');
+  else push('S12','Nessuna riga vuota interna','Struttura pulita.','pass');
 
   return results;
 }

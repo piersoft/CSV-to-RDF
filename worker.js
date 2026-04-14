@@ -706,7 +706,7 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['cup_cod_settore','cup_descr_settore','finanz_ue','finanz_stato'])) { result.add('PublicContract'); result.add('QB'); }
   if(has(['cognomemedico','nomemedico','codiceasl_ao','codiceregionalemedico','indirizzostudiomedico_str'])) { result.add('CPV'); result.add('CLV'); result.add('SMAPIT'); }
   if(has(['dipartimento','direzionegenerale']) && has(['dataatto','numeroatto','tipologiaatto'])) { result.add('PublicContract'); result.add('TI'); }
-  if(has(['ato','kg_di_rifiuti_differenzia','kg_di_rifiuti_non_differe','totale_kg_di_rifiuti_prod'])) result.add('QB');
+  if(has(['kg_di_rifiuti_differenzia']) || has(['kg_di_rifiuti_non_differe']) || has(['totale_kg_di_rifiuti_prod'])) result.add('QB');
   if(has(['ateneocod','ateneonome','annoa','classenumero','classenome'])) { result.add('QB'); result.add('Learning'); }
   if(has(['euro_0','euro_1','euro_2','euro_3']) && has(['comune'])) result.add('QB');
   if(has(['macrocategoria_istat','categoria_istat','totale_strutture','codice_macrocategoria_istat'])) { result.add('ACCO'); result.add('QB'); result.add('CLV'); }
@@ -1731,7 +1731,7 @@ export default {
     const reqUrl = new URL(request.url);
 
     if (reqUrl.pathname === '/health') {
-      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.04.14.02' }), {
+      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.04.14.03' }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
     }

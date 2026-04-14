@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build:v2026.04.14.03 -->
+<!-- build:v2026.04.14.04 -->
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -120,8 +120,12 @@ footer a{color:#b0c4d8}
 
 /* Tabs sezione controlli */
 .tab-bar{display:flex;border-bottom:2px solid #dce3ea;margin-bottom:16px}
-.tab{padding:8px 16px;font-size:13px;font-weight:600;color:#5c6f82;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .15s,border-color .15s}
+.tab{padding:8px 16px;font-size:13px;font-weight:600;color:#5c6f82;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .15s,border-color .15s;display:inline-flex;align-items:center;gap:5px}
 .tab.active{color:#0066cc;border-bottom-color:#0066cc}
+.tab-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:99px;font-size:10px;font-weight:700;line-height:1}
+.tab-badge.b-warn{background:#fff3cd;color:#7d4e00;border:1px solid #fcd580}
+.tab-badge.b-fail{background:#fde8e8;color:#b00020;border:1px solid #f5c0c0}
+.tab-badge.b-ok{background:#e6f4ec;color:#1a6b35;border:1px solid #b3dfc4}
 .tab-panel.hidden{display:none}
 
 @media(max-width:600px){
@@ -203,10 +207,10 @@ footer a{color:#b0c4d8}
       </div>
       <div class="card-body">
         <div class="tab-bar">
-          <div class="tab active" data-tab="struttura">Struttura</div>
-          <div class="tab" data-tab="contenuto">Contenuto</div>
-          <div class="tab" data-tab="opendata">Open Data PA</div>
-          <div class="tab" data-tab="linkeddata">Linked Data</div>
+          <div class="tab active" data-tab="struttura"><span>Struttura</span></div>
+          <div class="tab" data-tab="contenuto"><span>Contenuto</span></div>
+          <div class="tab" data-tab="opendata"><span>Qualit&agrave; Open Data</span></div>
+          <div class="tab" data-tab="linkeddata"><span>Linked Data</span></div>
         </div>
         <div class="results-grid" id="tab-struttura"></div>
         <div class="results-grid hidden tab-panel" id="tab-contenuto"></div>
@@ -253,7 +257,7 @@ footer a{color:#b0c4d8}
   Standard: <a href="https://schema.gov.it" target="_blank">schema.gov.it</a> &bull;
   <a href="https://github.com/italia/daf-ontologie-vocabolari-controllati" target="_blank">dati-semantic-assets</a> &bull;
   <a href="https://www.dati.gov.it" target="_blank">dati.gov.it</a>
-  <br>v<span id="app-version">2026.04.14.03</span>
+  <br>v<span id="app-version">2026.04.14.04</span>
 </footer>
 
 <script>
@@ -638,6 +642,46 @@ const ICON = {
   skip:`<svg class="check-icon" viewBox="0 0 24 24" fill="#8898a9"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>`
 };
 
+/* Aggiorna i badge numerici sulle tab in base ai risultati */
+function updateTabBadges(map) {
+  // map: { struttura: checks[], contenuto: checks[], opendata: checks[], linkeddata: checks[] }
+  Object.entries(map).forEach(([name, checks]) => {
+    const tab = document.querySelector(`.tab[data-tab="${name}"]`);
+    if (!tab) return;
+    const fails = checks.filter(c => c.status === 'fail').length;
+    const warns = checks.filter(c => c.status === 'warn').length;
+    // rimuovi badge precedente
+    const old = tab.querySelector('.tab-badge');
+    if (old) old.remove();
+    if (fails > 0) {
+      const b = document.createElement('span');
+      b.className = 'tab-badge b-fail';
+      b.textContent = fails;
+      b.title = fails + (fails === 1 ? ' errore' : ' errori');
+      tab.appendChild(b);
+    } else if (warns > 0) {
+      const b = document.createElement('span');
+      b.className = 'tab-badge b-warn';
+      b.textContent = warns;
+      b.title = warns + (warns === 1 ? ' avviso' : ' avvisi');
+      tab.appendChild(b);
+    } else if (checks.filter(c => c.status !== 'skip').length > 0) {
+      const b = document.createElement('span');
+      b.className = 'tab-badge b-ok';
+      b.textContent = '✓';
+      b.title = 'Tutti i check superati';
+      tab.appendChild(b);
+    }
+    // colora la tab label in base allo stato peggiore
+    tab.style.color = '';
+    const span = tab.querySelector('span');
+    if (!span) return;
+    if (fails > 0) span.style.color = '#b00020';
+    else if (warns > 0) span.style.color = '#7d4e00';
+    else span.style.color = '';
+  });
+}
+
 function renderCheckItem(c) {
   return `<div class="check-item ${c.status}">
     ${ICON[c.status]||ICON.info}
@@ -895,6 +939,7 @@ async function validate(rawInput) {
   document.getElementById('tab-contenuto').innerHTML = contChecks.map(renderCheckItem).join('');
   document.getElementById('tab-opendata').innerHTML = odChecks.map(renderCheckItem).join('');
   document.getElementById('tab-linkeddata').innerHTML = ldChecks.map(renderCheckItem).join('');
+  updateTabBadges({struttura:strChecks, contenuto:contChecks, opendata:odChecks, linkeddata:ldChecks});
 
   // Preview
   document.getElementById('preview-table').innerHTML = headers.length > 0 ? renderPreview(rows, headers) : '<p style="color:#8898a9;font-size:13px">Nessun dato da visualizzare.</p>';

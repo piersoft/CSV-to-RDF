@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build:v2026.04.14.02 -->
+<!-- build:v2026.04.14.03 -->
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -253,7 +253,7 @@ footer a{color:#b0c4d8}
   Standard: <a href="https://schema.gov.it" target="_blank">schema.gov.it</a> &bull;
   <a href="https://github.com/italia/daf-ontologie-vocabolari-controllati" target="_blank">dati-semantic-assets</a> &bull;
   <a href="https://www.dati.gov.it" target="_blank">dati.gov.it</a>
-  <br>v<span id="app-version">2026.04.14.02</span>
+  <br>v<span id="app-version">2026.04.14.03</span>
 </footer>
 
 <script>
@@ -490,8 +490,8 @@ function checks_opendata(rows, headers, raw) {
 
   // O4 - Intestazioni snake_case / lowercase
   const notSnake = headers.filter(h=>/[A-Z\s\-]/.test(h.trim()));
-  if (notSnake.length) push('O4','Intestazioni non in snake_case',`${notSnake.map(h=>'"'+h+'"').join(', ')} - preferire minuscolo con underscore.`,'warn');
-  else push('O4','Intestazioni in snake_case','Formato ottimale per interoperabilit\u00e0.','pass');
+  if (notSnake.length) push('O4','Intestazioni con spazi o maiuscole',`${notSnake.map(h=>'"'+h+'"').join(', ')} — preferire minuscolo con underscore al posto di spazi e maiuscole (es. \'data_apertura\' invece di \'Data Apertura\').`,'warn');
+  else push('O4','Intestazioni in formato corretto','Minuscolo con underscore: formato ottimale per interoperabilit\u00e0 (es. codice_comune, data_apertura).','pass');
 
   // O5 - Presenza colonna geografica
   const geoKeys = ['lat','lon','lng','latitude','longitude','x','y','comune','municipio','regione','provincia','codice_istat','cod_istat','codice_comune','indirizzo','address','geometry','wkt'];

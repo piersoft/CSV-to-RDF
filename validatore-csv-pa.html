@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<!-- build:v2026.04.14.01 -->
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Validatore CSV per PA | dati.gov.it</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Titillium Web',sans-serif;background:#f0f4f8;color:#1a1a2e;font-size:16px;line-height:1.6}
+a{color:#0066cc;text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Header */
+header{background:#0066cc;color:#fff;padding:0}
+.header-top{background:#004a99;padding:6px 24px;font-size:12px;letter-spacing:.5px;display:flex;align-items:center;gap:8px}
+.header-top svg{width:14px;height:14px;fill:#fff;opacity:.8}
+.header-main{padding:20px 24px 18px;display:flex;align-items:center;gap:16px}
+.header-main svg{width:36px;height:36px;fill:#fff}
+.header-main h1{font-size:22px;font-weight:700;letter-spacing:.3px}
+.header-main p{font-size:13px;opacity:.85;margin-top:2px}
+
+/* Layout */
+.container{max-width:960px;margin:0 auto;padding:24px 20px}
+
+/* Cards */
+.card{background:#fff;border-radius:6px;border:1px solid #dce3ea;margin-bottom:20px;overflow:hidden}
+.card-header{background:#f5f7fa;border-bottom:1px solid #dce3ea;padding:12px 20px;font-size:14px;font-weight:700;color:#0066cc;text-transform:uppercase;letter-spacing:.6px;display:flex;align-items:center;gap:8px}
+.card-header svg{width:16px;height:16px;flex-shrink:0}
+.card-body{padding:20px}
+
+/* Drop zone */
+.dropzone{border:2px dashed #b0c4d8;border-radius:6px;padding:40px 24px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s}
+.dropzone:hover,.dropzone.drag-over{border-color:#0066cc;background:#e8f0fa}
+.dropzone svg{width:48px;height:48px;fill:#5c6f82;margin-bottom:12px}
+.dropzone p{color:#5c6f82;font-size:15px}
+.dropzone .hint{font-size:13px;color:#8898a9;margin-top:4px}
+.dropzone input[type=file]{display:none}
+
+/* Textarea CSV */
+textarea{width:100%;font-family:'Courier New',monospace;font-size:12px;border:1px solid #dce3ea;border-radius:4px;padding:10px;resize:vertical;min-height:120px;color:#1a1a2e;background:#fafbfc;line-height:1.4}
+textarea:focus{outline:none;border-color:#0066cc;box-shadow:0 0 0 2px rgba(0,102,204,.15)}
+
+/* Pulsanti */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;font-family:'Titillium Web',sans-serif;font-size:14px;font-weight:600;border-radius:4px;border:none;cursor:pointer;transition:background .15s}
+.btn-primary{background:#0066cc;color:#fff}
+.btn-primary:hover{background:#004a99}
+.btn-secondary{background:#f5f7fa;color:#0066cc;border:1px solid #b0c4d8}
+.btn-secondary:hover{background:#e8f0fa}
+.btn svg{width:14px;height:14px;fill:currentColor}
+
+/* Separator / or */
+.sep{display:flex;align-items:center;gap:10px;color:#8898a9;font-size:13px;margin:12px 0}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:#dce3ea}
+
+/* Checklist risultati */
+.results-grid{display:grid;gap:10px}
+.check-item{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:5px;border:1px solid transparent;font-size:14px;line-height:1.4}
+.check-item.pass{background:#f0faf4;border-color:#b3dfc4;color:#1a6b35}
+.check-item.warn{background:#fff8e6;border-color:#fcd580;color:#7d4e00}
+.check-item.fail{background:#fef0f0;border-color:#f5c0c0;color:#b00020}
+.check-item.info{background:#e8f0fa;border-color:#b0c4d8;color:#004a99}
+.check-item.skip{background:#f5f5f5;border-color:#dce3ea;color:#5c6f82}
+.check-icon{width:20px;height:20px;flex-shrink:0;margin-top:1px}
+.check-title{font-weight:700;display:block}
+.check-detail{display:block;font-size:12px;margin-top:2px;opacity:.85}
+
+/* Score badge */
+.score-bar-wrap{background:#dce3ea;border-radius:99px;height:10px;overflow:hidden;margin:8px 0}
+.score-bar{height:100%;border-radius:99px;transition:width .5s}
+.score-ok{background:#1a6b35}
+.score-warn{background:#f07b05}
+.score-fail{background:#b00020}
+
+/* Summary box */
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:20px}
+.stat-card{background:#f5f7fa;border-radius:5px;padding:12px;text-align:center}
+.stat-num{font-size:26px;font-weight:700;display:block}
+.stat-label{font-size:11px;color:#5c6f82;text-transform:uppercase;letter-spacing:.5px}
+.stat-ok .stat-num{color:#1a6b35}
+.stat-warn .stat-num{color:#7d4e00}
+.stat-fail .stat-num{color:#b00020}
+.stat-info .stat-num{color:#0066cc}
+
+/* Verdict finale */
+.verdict{border-radius:6px;padding:18px 20px;font-size:15px;font-weight:700;display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.verdict.green{background:#e6f4ec;border:2px solid #1a6b35;color:#1a6b35}
+.verdict.amber{background:#fff4e0;border:2px solid #f07b05;color:#7d4e00}
+.verdict.red{background:#fde8e8;border:2px solid #b00020;color:#b00020}
+.verdict svg{width:28px;height:28px;flex-shrink:0;fill:currentColor}
+
+/* TTL result */
+.ttl-box{background:#1a1a2e;color:#a8d8a8;font-family:'Courier New',monospace;font-size:11px;padding:14px;border-radius:5px;max-height:280px;overflow-y:auto;white-space:pre;line-height:1.5;margin-top:12px}
+
+/* Sample values table */
+.sample-table{width:100%;border-collapse:collapse;font-size:12px}
+.sample-table th{background:#f5f7fa;padding:6px 10px;text-align:left;border:1px solid #dce3ea;font-weight:700;color:#5c6f82;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+.sample-table td{padding:6px 10px;border:1px solid #dce3ea;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#1a1a2e}
+.sample-table tr:nth-child(even) td{background:#fafbfc}
+
+/* Spinner */
+.spinner{width:28px;height:28px;border:3px solid #dce3ea;border-top-color:#0066cc;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Sezione nascosta */
+.hidden{display:none!important}
+
+/* Badge ontologia */
+.onto-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;background:#e8f0fa;color:#004a99;border:1px solid #b0c4d8}
+
+/* Footer */
+footer{background:#1a1a2e;color:#8898a9;text-align:center;padding:18px;font-size:12px;margin-top:32px}
+footer a{color:#b0c4d8}
+
+/* Tooltip */
+.tip{font-size:11px;color:#5c6f82;margin-top:4px;font-style:italic}
+
+/* Tabs sezione controlli */
+.tab-bar{display:flex;border-bottom:2px solid #dce3ea;margin-bottom:16px}
+.tab{padding:8px 16px;font-size:13px;font-weight:600;color:#5c6f82;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .15s,border-color .15s}
+.tab.active{color:#0066cc;border-bottom-color:#0066cc}
+.tab-panel.hidden{display:none}
+
+@media(max-width:600px){
+  .header-main h1{font-size:17px}
+  .summary{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+    Strumento ufficiale per la validazione di CSV aperti della Pubblica Amministrazione italiana
+  </div>
+  <div class="header-main">
+    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+    <div>
+      <h1>Validatore CSV per la Pubblica Amministrazione</h1>
+      <p>Verifica la qualit&agrave; e la trasformabilit&agrave; in RDF Linked Data secondo le ontologie dati-semantic-assets / schema.gov.it</p>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- INPUT CARD -->
+  <div class="card" id="input-card">
+    <div class="card-header">
+      <svg viewBox="0 0 24 24" style="fill:#0066cc"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+      Carica o incolla il tuo CSV
+    </div>
+    <div class="card-body">
+      <div class="dropzone" id="dropzone">
+        <svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+        <p>Trascina qui il file CSV oppure clicca per sceglierlo</p>
+        <p class="hint">Formati accettati: .csv, .tsv &mdash; max 5 MB</p>
+        <input type="file" id="file-input" accept=".csv,.tsv,.txt">
+      </div>
+      <div class="sep">oppure incolla il contenuto</div>
+      <textarea id="csv-paste" placeholder="id,comune,data_apertura,importo&#10;1,Roma,2024-01-15,1500.00&#10;2,Milano,2024-02-20,3200.50" rows="6"></textarea>
+      <div class="tip">Il separatore viene rilevato automaticamente (virgola, punto e virgola, tabulazione, pipe).</div>
+      <div style="margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-primary" id="validate-btn">
+          <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+          Avvia validazione
+        </button>
+        <button class="btn btn-secondary" id="clear-btn">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          Azzera
+        </button>
+        <span class="tip" id="file-name-label"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="card hidden" id="loading-card">
+    <div class="card-body" style="text-align:center;padding:32px">
+      <div class="spinner"></div>
+      <p style="margin-top:12px;color:#5c6f82;font-size:14px" id="loading-msg">Analisi in corso...</p>
+    </div>
+  </div>
+
+  <!-- RISULTATI -->
+  <div class="hidden" id="results-section">
+
+    <!-- VERDICT -->
+    <div id="verdict-box"></div>
+
+    <!-- SOMMARIO NUMERI -->
+    <div class="summary" id="summary-nums"></div>
+
+    <!-- TABS CHECKS -->
+    <div class="card">
+      <div class="card-header">
+        <svg viewBox="0 0 24 24" style="fill:#0066cc"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
+        Checklist di qualit&agrave;
+      </div>
+      <div class="card-body">
+        <div class="tab-bar">
+          <div class="tab active" data-tab="struttura">Struttura</div>
+          <div class="tab" data-tab="contenuto">Contenuto</div>
+          <div class="tab" data-tab="opendata">Open Data PA</div>
+          <div class="tab" data-tab="linkeddata">Linked Data</div>
+        </div>
+        <div class="results-grid" id="tab-struttura"></div>
+        <div class="results-grid hidden tab-panel" id="tab-contenuto"></div>
+        <div class="results-grid hidden tab-panel" id="tab-opendata"></div>
+        <div class="results-grid hidden tab-panel" id="tab-linkeddata"></div>
+      </div>
+    </div>
+
+    <!-- ANTEPRIMA DATI -->
+    <div class="card" id="preview-card">
+      <div class="card-header">
+        <svg viewBox="0 0 24 24" style="fill:#0066cc"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        Anteprima dati (prime 5 righe)
+      </div>
+      <div class="card-body" style="overflow-x:auto">
+        <div id="preview-table"></div>
+      </div>
+    </div>
+
+    <!-- SEZIONE TTL (solo se supera) -->
+    <div class="card hidden" id="ttl-card">
+      <div class="card-header">
+        <svg viewBox="0 0 24 24" style="fill:#1a6b35"><path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z"/></svg>
+        Trasformazione RDF/Turtle &mdash; test su CSV-to-RDF
+      </div>
+      <div class="card-body">
+        <p style="font-size:13px;color:#5c6f82;margin-bottom:10px">Il CSV ha superato tutti i controlli critici. Verifica della trasformabilit&agrave; tramite l'API del convertitore CSV-to-RDF.</p>
+        <div id="ttl-status">
+          <div class="spinner"></div>
+          <p style="text-align:center;margin-top:8px;font-size:13px;color:#5c6f82">Chiamata all&apos;API CSV-to-RDF in corso...</p>
+        </div>
+        <div class="hidden" id="ttl-result"></div>
+        <div class="onto-pills hidden" id="onto-pills-wrap"></div>
+      </div>
+    </div>
+
+  </div><!-- /results-section -->
+
+</div><!-- /container -->
+
+<footer>
+  Validatore CSV per la Pubblica Amministrazione italiana &mdash; complementare a
+  <a href="https://piersoft.github.io/CSV-to-RDF/" target="_blank">CSV-to-RDF</a> |
+  Standard: <a href="https://schema.gov.it" target="_blank">schema.gov.it</a> &bull;
+  <a href="https://github.com/italia/daf-ontologie-vocabolari-controllati" target="_blank">dati-semantic-assets</a> &bull;
+  <a href="https://www.dati.gov.it" target="_blank">dati.gov.it</a>
+  <br>v<span id="app-version">2026.04.14.01</span>
+</footer>
+
+<script>
+/* =============================================
+   VALIDATORE CSV PA - core engine
+   ============================================= */
+
+const CSV2RDF_API = 'https://csv2rdf.datigovit.workers.dev';
+
+/* --- Rilevamento separatore --- */
+function detectSep(raw) {
+  const line = raw.split('\n')[0] || '';
+  const counts = {',': 0, ';': 0, '\t': 0, '|': 0};
+  for (const ch of line) if (ch in counts) counts[ch]++;
+  return Object.entries(counts).sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+/* --- Parser CSV minimal robusto --- */
+function parseCSV(raw, sep) {
+  const lines = raw.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
+  const rows = [];
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    const fields = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') {
+        if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+        else inQ = !inQ;
+      } else if (c === sep && !inQ) {
+        fields.push(cur); cur = '';
+      } else cur += c;
+    }
+    fields.push(cur);
+    rows.push(fields);
+  }
+  return rows;
+}
+
+/* --- Normalizza header --- */
+function normHeader(h) {
+  return h.trim().toLowerCase().replace(/[\s\-]/g,'_').replace(/[^a-z0-9_]/g,'');
+}
+
+/* =============================================
+   CHECK FUNCTIONS - restituiscono {id,cat,title,detail,status}
+   status: 'pass'|'warn'|'fail'|'info'|'skip'
+   ============================================= */
+
+function checks_struttura(raw, rows, sep, headers) {
+  const results = [];
+  const push = (id,title,detail,status) => results.push({id,title,detail,status});
+
+  // S1 - File non vuoto
+  if (!raw || raw.trim().length === 0) {
+    push('S1','File vuoto','Il CSV non contiene dati.','fail');
+    return results;
+  }
+  push('S1','File non vuoto',`${raw.trim().length} caratteri totali.`,'pass');
+
+  // S2 - Separatore rilevato
+  const sepNames = {',':`virgola (,)`, ';':`punto e virgola (;)`, '\t':`tabulazione`, '|':`pipe (|)`};
+  push('S2','Separatore rilevato',`Rilevato: ${sepNames[sep]||sep}`,'pass');
+
+  // S3 - Riga intestazione presente
+  if (headers.length === 0) {
+    push('S3','Intestazione assente','Prima riga vuota o non rilevata.','fail');
+    return results;
+  }
+  push('S3','Intestazione presente',`${headers.length} colonne rilevate.`,'pass');
+
+  // S4 - Intestazioni duplicate
+  const hSet = new Set(headers);
+  if (hSet.size < headers.length) {
+    const dupes = headers.filter((h,i)=>headers.indexOf(h)!==i);
+    push('S4','Intestazioni duplicate',`Colonne duplicate: ${dupes.join(', ')}`,'fail');
+  } else push('S4','Intestazioni univoche','Nessuna colonna duplicata.','pass');
+
+  // S5 - Intestazioni vuote
+  const emptyHdr = headers.filter(h=>!h.trim());
+  if (emptyHdr.length) {
+    push('S5','Intestazioni vuote',`${emptyHdr.length} colonne senza nome.`,'warn');
+  } else push('S5','Tutte le intestazioni nominate','Nessuna colonna anonima.','pass');
+
+  // S6 - Numero colonne consistente
+  const dataRows = rows.slice(1);
+  if (dataRows.length === 0) {
+    push('S6','Nessuna riga dati','Il CSV ha solo l\'intestazione.','warn');
+  } else {
+    const irregular = dataRows.filter(r=>r.length !== headers.length);
+    if (irregular.length > 0) {
+      push('S6','Numero colonne inconsistente',`${irregular.length} righe con numero di campi diverso dall\'intestazione (${headers.length} attese).`,'fail');
+    } else push('S6','Numero colonne consistente',`Tutte le ${dataRows.length} righe hanno ${headers.length} colonne.`,'pass');
+  }
+
+  // S7 - Dimensione file
+  const kb = (new Blob([raw])).size / 1024;
+  if (kb > 5120) push('S7','File molto grande',`${kb.toFixed(0)} KB: considerare la suddivisione.`,'warn');
+  else push('S7','Dimensione accettabile',`${kb.toFixed(1)} KB`,'pass');
+
+  // S8 - Encoding UTF-8 (euristica: nessun replacement char)
+  const hasReplacement = raw.includes('\uFFFD');
+  if (hasReplacement) push('S8','Possibile errore encoding','Caratteri di sostituzione Unicode rilevati (U+FFFD). Verificare UTF-8.','warn');
+  else push('S8','Encoding UTF-8 plausibile','Nessun carattere di sostituzione rilevato.','pass');
+
+  // S9 - BOM
+  if (raw.charCodeAt(0) === 0xFEFF) push('S9','BOM UTF-8 rilevato','Il file inizia con BOM (EF BB BF). Compatibile ma da rimuovere per interoperabilit\u00e0.','warn');
+  else push('S9','Nessun BOM','File senza BOM.','pass');
+
+  // S10 - Righe vuote interne
+  const blankInternal = dataRows.filter(r=>r.every(c=>!c.trim()));
+  if (blankInternal.length) push('S10','Righe completamente vuote',`${blankInternal.length} righe interne vuote (da rimuovere).`,'warn');
+  else push('S10','Nessuna riga vuota interna','Struttura pulita.','pass');
+
+  return results;
+}
+
+function checks_contenuto(rows, headers) {
+  const results = [];
+  const push = (id,title,detail,status) => results.push({id,title,detail,status});
+  const dataRows = rows.slice(1);
+  if (dataRows.length === 0) { push('C0','Nessun dato','Nessuna riga dati da analizzare.','skip'); return results; }
+
+  const normH = headers.map(normHeader);
+
+  // C1 - Righe duplicate
+  const seen = new Set(), dupeRows = [];
+  dataRows.forEach((r,i)=>{ const k=r.join('|'); if(seen.has(k)) dupeRows.push(i+2); else seen.add(k); });
+  if (dupeRows.length) push('C1','Righe duplicate rilevate',`${dupeRows.length} righe duplicate (es. riga ${dupeRows.slice(0,3).join(', ')}).`,'warn');
+  else push('C1','Nessuna riga duplicata','Tutte le righe sono uniche.','pass');
+
+  // C2 - Tasso di valori mancanti
+  const totalCells = dataRows.length * headers.length;
+  const missingCells = dataRows.reduce((s,r)=>s+r.filter(c=>!c.trim()).length,0);
+  const missingPct = (missingCells/totalCells*100).toFixed(1);
+  if (missingPct > 30) push('C2','Molti valori mancanti',`${missingPct}% celle vuote (\u203a30% \u2192 dataset povero).`,'fail');
+  else if (missingPct > 10) push('C2','Valori mancanti presenti',`${missingPct}% celle vuote. Valutare l'integrit\u00e0.`,'warn');
+  else push('C2','Valori mancanti contenuti',`${missingPct}% celle vuote.`,'pass');
+
+  // C3 - Colonna ID univoco
+  const idCols = normH.filter(h=>['id','codice','cod','identifier','identificativo'].some(k=>h.includes(k)));
+  if (idCols.length > 0) {
+    const colIdx = normH.indexOf(idCols[0]);
+    const ids = dataRows.map(r=>r[colIdx]||'').filter(v=>v.trim());
+    const uniqIds = new Set(ids);
+    if (uniqIds.size < ids.length * 0.98) push('C3','Colonna ID con duplicati',`La colonna "${headers[colIdx]}" ha valori ripetuti.`,'warn');
+    else push('C3','Colonna ID univoca',`"${headers[colIdx]}" ha valori univoci.`,'pass');
+  } else push('C3','Nessuna colonna ID rilevata','Aggiungere una colonna identificatore univoco per il Linked Data.','warn');
+
+  // C4 - Coerenza tipi per colonna
+  const typeIssues = [];
+  headers.forEach((h,ci)=>{
+    const vals = dataRows.map(r=>(r[ci]||'').trim()).filter(v=>v);
+    if (vals.length < 3) return;
+    const numCount = vals.filter(v=>/^-?\d+([.,]\d+)?$/.test(v)).length;
+    const pct = numCount/vals.length;
+    if (pct > 0.5 && pct < 0.9) typeIssues.push(`"${h}" (${(pct*100).toFixed(0)}% numerico)`);
+  });
+  if (typeIssues.length) push('C4','Colonne a tipo misto',`${typeIssues.join('; ')}.`,'warn');
+  else push('C4','Tipi colonna omogenei','Nessuna colonna con valori misti rilevata.','pass');
+
+  // C5 - Date - formato ISO 8601
+  const dateCols = normH.map((h,i)=>[h,i]).filter(([h])=>/data|date|anno|year|timestamp/.test(h));
+  if (dateCols.length > 0) {
+    const badDates = [];
+    dateCols.forEach(([h,ci])=>{
+      const vals = dataRows.map(r=>(r[ci]||'').trim()).filter(v=>v);
+      const nonIso = vals.filter(v=> !/^\d{4}-\d{2}-\d{2}(T[\d:Z.+-]+)?$/.test(v) && !/^\d{4}$/.test(v));
+      if (nonIso.length > 0) badDates.push(`"${headers[ci]}" (es: ${nonIso[0]})`);
+    });
+    if (badDates.length) push('C5','Date non in formato ISO 8601',`${badDates.join('; ')}. Usare YYYY-MM-DD.`,'warn');
+    else push('C5','Date in formato ISO 8601','Tutte le date rilevate rispettano YYYY-MM-DD.','pass');
+  } else push('C5','Nessuna colonna data rilevata','Nessuna colonna di tipo data identificata.','info');
+
+  // C6 - Numeri con virgola vs punto
+  const numColsIdx = headers.map((_,ci)=>{
+    const vals = dataRows.map(r=>(r[ci]||'').trim()).filter(v=>v);
+    const pct = vals.filter(v=>/^-?\d+([.,]\d+)?$/.test(v)).length / (vals.length||1);
+    return pct > 0.7 ? ci : -1;
+  }).filter(i=>i>=0);
+  if (numColsIdx.length) {
+    const commaDecimal = numColsIdx.filter(ci=>{
+      const vals = dataRows.map(r=>(r[ci]||'').trim()).filter(v=>v);
+      return vals.some(v=>/\d,\d/.test(v));
+    });
+    if (commaDecimal.length) push('C6','Decimali con virgola in colonne numeriche',`Colonne: ${commaDecimal.map(i=>'"'+headers[i]+'"').join(', ')}. Usare il punto come separatore decimale.`,'warn');
+    else push('C6','Separatore decimale corretto','Colonne numeriche usano il punto come separatore.','pass');
+  } else push('C6','Nessuna colonna numerica rilevata','','info');
+
+  // C7 - Valori fuori range plausibile (euristica)
+  const outRange = [];
+  numColsIdx.forEach(ci=>{
+    const vals = dataRows.map(r=>parseFloat((r[ci]||'').replace(',','.'))).filter(v=>!isNaN(v));
+    if (!vals.length) return;
+    const mean = vals.reduce((s,v)=>s+v,0)/vals.length;
+    const std = Math.sqrt(vals.reduce((s,v)=>s+(v-mean)**2,0)/vals.length);
+    const outliers = vals.filter(v=>Math.abs(v-mean)>4*std).length;
+    if (outliers > 0) outRange.push(`"${headers[ci]}" (${outliers} outlier)`);
+  });
+  if (outRange.length) push('C7','Possibili valori anomali',`${outRange.join('; ')} - verificare.`,'warn');
+  else push('C7','Nessun valore anomalo rilevato','','pass');
+
+  // C8 - Lunghezza massima celle
+  const longCells = [];
+  headers.forEach((h,ci)=>{
+    const max = Math.max(...dataRows.map(r=>(r[ci]||'').length));
+    if (max > 500) longCells.push(`"${h}" (max ${max} car.)`);
+  });
+  if (longCells.length) push('C8','Celle molto lunghe',`${longCells.join(', ')} - potrebbe indicare dati non normalizzati.`,'warn');
+  else push('C8','Lunghezza celle nella norma','','pass');
+
+  return results;
+}
+
+function checks_opendata(rows, headers, raw) {
+  const results = [];
+  const push = (id,title,detail,status) => results.push({id,title,detail,status});
+  const normH = headers.map(normHeader);
+  const dataRows = rows.slice(1);
+
+  // O1 - Numero minimo di righe
+  if (dataRows.length < 10) push('O1','Dataset molto piccolo',`${dataRows.length} righe: un open dataset di qualit\u00e0 dovrebbe avere almeno 10 record.`,'warn');
+  else push('O1','Numero righe sufficiente',`${dataRows.length} righe.`,'pass');
+
+  // O2 - Numero colonne
+  if (headers.length < 3) push('O2','Poche colonne',`${headers.length} colonne: dataset molto sparso, verifica se mancano attributi rilevanti.`,'warn');
+  else push('O2','Numero colonne adeguato',`${headers.length} colonne.`,'pass');
+
+  // O3 - Intestazioni comprensibili (niente colonne crittiche tipo "col1")
+  const cryptic = headers.filter(h=>/^col\d+$|^campo\d+$|^field\d+$|^[a-z]$/i.test(h.trim()));
+  if (cryptic.length) push('O3','Intestazioni non descrittive',`Colonne con nomi generici: ${cryptic.map(h=>'"'+h+'"').join(', ')}.`,'warn');
+  else push('O3','Intestazioni descrittive','Tutti i nomi di colonna sembrano significativi.','pass');
+
+  // O4 - Intestazioni snake_case / lowercase
+  const notSnake = headers.filter(h=>/[A-Z\s\-]/.test(h.trim()));
+  if (notSnake.length) push('O4','Intestazioni non in snake_case',`${notSnake.map(h=>'"'+h+'"').join(', ')} - preferire minuscolo con underscore.`,'warn');
+  else push('O4','Intestazioni in snake_case','Formato ottimale per interoperabilit\u00e0.','pass');
+
+  // O5 - Presenza colonna geografica
+  const geoKeys = ['lat','lon','lng','latitude','longitude','x','y','comune','municipio','regione','provincia','codice_istat','cod_istat','codice_comune','indirizzo','address','geometry','wkt'];
+  const hasGeo = normH.some(h=>geoKeys.some(k=>h.includes(k)));
+  if (hasGeo) push('O5','Riferimento geografico presente','Colonna geografica o codice territoriale rilevato.','pass');
+  else push('O5','Nessun riferimento geografico','Considerare l\'aggiunta di coordinate o codici ISTAT.','info');
+
+  // O6 - Presenza colonna temporale
+  const timeKeys = ['data','date','anno','year','mese','month','timestamp','periodo'];
+  const hasTime = normH.some(h=>timeKeys.some(k=>h.includes(k)));
+  if (hasTime) push('O6','Dimensione temporale presente','Colonna data/periodo rilevata.','pass');
+  else push('O6','Nessuna dimensione temporale','Considerare l\'aggiunta di una colonna data.','info');
+
+  // O7 - Caratteri speciali in intestazioni
+  const specialHdr = headers.filter(h=>/[^\w\s\-\u00C0-\u017E]/.test(h));
+  if (specialHdr.length) push('O7','Caratteri speciali in intestazioni',`${specialHdr.map(h=>'"'+h+'"').join(', ')}.`,'warn');
+  else push('O7','Nessun carattere speciale nelle intestazioni','','pass');
+
+  // O8 - URI o URL nei dati
+  const colsWithUri = headers.filter((_,ci)=>{
+    const vals = dataRows.slice(0,20).map(r=>(r[ci]||'').trim());
+    return vals.some(v=>/^https?:\/\//.test(v));
+  });
+  if (colsWithUri.length) push('O8','URI/URL rilevati nei dati',`Colonne con URI: ${colsWithUri.map(h=>'"'+h+'"').join(', ')} - ottimo per Linked Data.`,'pass');
+  else push('O8','Nessun URI nei dati','Aggiungere URI di riferimento migliora l\'interoperabilit\u00e0.','info');
+
+  // O9 - Valori codificati (y/n, si/no, true/false vs 0/1)
+  const boolCols = headers.filter((_,ci)=>{
+    const vals = dataRows.slice(0,30).map(r=>(r[ci]||'').trim().toLowerCase()).filter(v=>v);
+    const boolSet = new Set(['0','1','true','false','si','no','s','n','y','n','yes','no','vero','falso']);
+    return vals.length > 0 && vals.every(v=>boolSet.has(v));
+  });
+  if (boolCols.length) push('O9','Colonne booleane rilevate',`${boolCols.map(h=>'"'+h+'"').join(', ')} - usare true/false o 0/1 in modo coerente.`,'info');
+  else push('O9','Nessuna colonna booleana rilevata','','pass');
+
+  // O10 - Commenti o metadati in coda
+  const lastLines = raw.trim().split('\n').slice(-3);
+  const hasComment = lastLines.some(l=>l.startsWith('#'));
+  if (hasComment) push('O10','Righe commento in fondo al file','Righe che iniziano con "#" in fondo al file - rimuoverle per massima compatibilit\u00e0.','warn');
+  else push('O10','Nessuna riga commento in coda','','pass');
+
+  return results;
+}
+
+function checks_linkeddata(rows, headers) {
+  const results = [];
+  const push = (id,title,detail,status) => results.push({id,title,detail,status});
+  const normH = headers.map(normHeader);
+  const dataRows = rows.slice(1);
+
+  // L1 - Chiave primaria candidata
+  const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const idCandidates = normH.map((h,i)=>[h,i]).filter(([h])=>/^id$|_id$|^codice|^cod_|^identifier|^uuid/.test(h));
+  let hasUUID = false;
+  idCandidates.forEach(([,ci])=>{
+    if (dataRows.some(r=>uuidRe.test((r[ci]||'').trim()))) hasUUID = true;
+  });
+  if (hasUUID) push('L1','UUID rilevato come identificatore','Eccellente per la generazione di URI stabili.','pass');
+  else if (idCandidates.length) push('L1','Identificatore non UUID',`Colonne: ${idCandidates.map(([h])=>'"'+h+'"').join(', ')}. Per URI stabili preferire UUID o IRI.`,'info');
+  else push('L1','Nessun identificatore univoco','Aggiungere una colonna ID per generare URI corretti in RDF.','warn');
+
+  // L2 - Colonne mappabili a ontologie dati-semantic-assets
+  const onto_map = {
+    'lat':'CLV (Geolocation)','lon':'CLV (Geolocation)','latitude':'CLV','longitude':'CLV',
+    'indirizzo':'CLV (Address)','cap':'CLV','comune':'CLV/ISTAT','provincia':'CLV',
+    'regione':'CLV','codice_istat':'CLV','cod_istat':'CLV',
+    'importo':'PC (PublicContract)','cig':'PC','cup':'PC','cig_lotto':'PC',
+    'data_inizio':'TI (TimeInterval)','data_fine':'TI','data_apertura':'TI','data_chiusura':'TI',
+    'quantita':'QB (DataCube)','valore':'QB','misura':'QB/MU',
+    'popolazione':'QB','reddito':'QB',
+    'nome':'Person','cognome':'Person','cf':'Person/CPV',
+    'azienda':'COV (Organization)','impresa':'COV','ragione_sociale':'COV',
+    'titolo':'Cultural-ON / ACCO','descrizione':'dct:description',
+    'sesso':'CPV/Vocabolario sex','forma_giuridica':'Vocabolario legal-status',
+    'codice_ateco':'Vocabolario ATECO','licenza':'Vocabolario licences',
+    'stelle':'ACCO (accommodation-star-rating)',
+  };
+  const matched = [];
+  normH.forEach(h=>{
+    for (const [key, onto] of Object.entries(onto_map)) {
+      if (h.includes(key) && !matched.find(m=>m.col===h)) {
+        matched.push({col: headers[normH.indexOf(h)], onto});
+        break;
+      }
+    }
+  });
+  if (matched.length > 0) {
+    const detail = matched.map(m=>`"${m.col}" \u2192 ${m.onto}`).join('; ');
+    push('L2','Colonne mappabili a ontologie italiane',detail,'pass');
+  } else push('L2','Nessuna colonna riconosciuta dalle ontologie italiane','Verificare naming conventions delle colonne o arricchire il dataset.','warn');
+
+  // L3 - Presenza codici ISTAT
+  const istatRe = /^\d{3,6}$/;
+  const istatCols = normH.map((h,i)=>[h,i]).filter(([h])=>/istat|cod_comune|codice_comune|pro_com/.test(h));
+  if (istatCols.length) {
+    const valid = istatCols.filter(([,ci])=>dataRows.slice(0,20).some(r=>istatRe.test((r[ci]||'').trim())));
+    if (valid.length) push('L3','Codici ISTAT rilevati','Ottimo per collegamento a vocabolari controllati ISTAT.','pass');
+    else push('L3','Colonna ISTAT con valori non standard','Verificare il formato dei codici ISTAT.','warn');
+  } else push('L3','Nessuna colonna ISTAT rilevata','I codici ISTAT migliorano il collegamento ai Linked Data PA.','info');
+
+  // L4 - CIG / CUP
+  const cigRe = /^[0-9A-Z]{10}$/;
+  const cupRe = /^[A-Z]\d{2}[A-Z]\d{11}$/;
+  const hasCIG = normH.some((h,ci)=>/cig/.test(h) && dataRows.slice(0,10).some(r=>cigRe.test((r[ci]||'').trim())));
+  const hasCUP = normH.some((h,ci)=>/cup/.test(h) && dataRows.slice(0,10).some(r=>cupRe.test((r[ci]||'').trim())));
+  if (hasCIG || hasCUP) push('L4','CIG/CUP rilevati','Collegamento all\'ontologia PublicContract e OpenCUP/BDAP.','pass');
+  else push('L4','Nessun CIG/CUP rilevato','','info');
+
+  // L5 - Namespaces / URI patterns nei valori
+  const linkedVals = dataRows.slice(0,30).flat().filter(v=>/^https?:\/\/(schema\.gov\.it|w3\.org|data\.europa\.eu|dati\.gov\.it)/.test((v||'').trim()));
+  if (linkedVals.length > 0) push('L5','URI di ontologie note nei valori',`${linkedVals.length} valori con URI schema.gov.it / w3.org / dati.gov.it.`,'pass');
+  else push('L5','Nessun URI di ontologia nei valori','Considerare l\'uso di URI da schema.gov.it per i valori codificati.','info');
+
+  // L6 - Numero minimo colonne per dataset PA 5-stella
+  const star5Min = 5;
+  if (headers.length >= star5Min && matched.length >= 2) push('L6','Potenziale 5 stelle Open Data','Dataset sufficientemente ricco e mappabile per la conversione RDF Linked Data.','pass');
+  else push('L6','Dataset da arricchire per 5 stelle',`Servono almeno ${star5Min} colonne ben nominate e mappabili alle ontologie italiane.`,'info');
+
+  return results;
+}
+
+/* =============================================
+   SCORE & VERDICT
+   ============================================= */
+function computeScore(allChecks) {
+  const weights = {pass:1, warn:0.5, fail:0, info:1, skip:1};
+  const total = allChecks.filter(c=>c.status!=='skip').length;
+  const score = allChecks.reduce((s,c)=>s+(weights[c.status]||0),0);
+  return total ? Math.round(score/total*100) : 0;
+}
+
+function isCriticalFail(allChecks) {
+  return allChecks.some(c=>['S1','S3','S6'].includes(c.id) && c.status==='fail');
+}
+
+/* =============================================
+   RENDER
+   ============================================= */
+const ICON = {
+  pass:`<svg class="check-icon" viewBox="0 0 24 24" fill="#1a6b35"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`,
+  warn:`<svg class="check-icon" viewBox="0 0 24 24" fill="#f07b05"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>`,
+  fail:`<svg class="check-icon" viewBox="0 0 24 24" fill="#b00020"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>`,
+  info:`<svg class="check-icon" viewBox="0 0 24 24" fill="#004a99"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`,
+  skip:`<svg class="check-icon" viewBox="0 0 24 24" fill="#8898a9"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>`
+};
+
+function renderCheckItem(c) {
+  return `<div class="check-item ${c.status}">
+    ${ICON[c.status]||ICON.info}
+    <div><span class="check-title">${c.title}</span><span class="check-detail">${c.detail||''}</span></div>
+  </div>`;
+}
+
+function renderPreview(rows, headers) {
+  const preview = rows.slice(0, 6);
+  let html = '<table class="sample-table"><thead><tr>';
+  headers.forEach(h=>{ html+=`<th>${escHtml(h)}</th>`; });
+  html += '</tr></thead><tbody>';
+  preview.slice(1).forEach(row=>{
+    html += '<tr>';
+    headers.forEach((_,i)=>{ html+=`<td title="${escHtml(row[i]||'')}">${escHtml((row[i]||'').slice(0,60))}</td>`; });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  return html;
+}
+
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function setLoadingMsg(msg){ document.getElementById('loading-msg').textContent=msg; }
+
+/* =============================================
+   TTL TEST via CSV-to-RDF API
+   ============================================= */
+async function testTTL(csvText) {
+  const ttlStatus = document.getElementById('ttl-status');
+  const ttlResult = document.getElementById('ttl-result');
+  const pills = document.getElementById('onto-pills-wrap');
+  try {
+    const resp = await fetch(CSV2RDF_API, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body: csvText
+    });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    ttlStatus.classList.add('hidden');
+    ttlResult.classList.remove('hidden');
+    if (data.turtle || data.ttl) {
+      const ttlContent = data.turtle || data.ttl;
+      const lines = ttlContent.split('\n').length;
+      ttlResult.innerHTML = `<div class="check-item pass" style="margin-bottom:10px">
+        ${ICON.pass}
+        <div><span class="check-title">CSV trasformabile in RDF/Turtle</span>
+        <span class="check-detail">Il convertitore CSV-to-RDF ha prodotto ${lines} righe di Turtle valido. <a href="https://piersoft.github.io/CSV-to-RDF/" target="_blank">Apri il convertitore</a></span>
+        </div></div>
+        <div class="ttl-box">${escHtml(ttlContent.slice(0,2000))}${ttlContent.length>2000?'\n... (troncato) ...':''}</div>`;
+      if (data.ontologies && data.ontologies.length) {
+        pills.classList.remove('hidden');
+        pills.innerHTML = '<strong style="font-size:12px;color:#5c6f82;display:block;margin-bottom:6px">Ontologie rilevate:</strong>';
+        data.ontologies.forEach(o=>{ pills.innerHTML+=`<span class="pill">${escHtml(o)}</span>`; });
+      }
+    } else if (data.error) {
+      ttlResult.innerHTML = `<div class="check-item warn">${ICON.warn}<div><span class="check-title">Conversione parziale o con avvisi</span><span class="check-detail">${escHtml(data.error)}</span></div></div>`;
+    } else {
+      ttlResult.innerHTML = `<div class="check-item info">${ICON.info}<div><span class="check-title">Risposta API ricevuta</span><span class="check-detail">Formato risposta non standard. <a href="https://piersoft.github.io/CSV-to-RDF/" target="_blank">Verificare manualmente</a></span></div></div>`;
+    }
+  } catch(e) {
+    ttlStatus.classList.add('hidden');
+    ttlResult.classList.remove('hidden');
+    ttlResult.innerHTML = `<div class="check-item warn">${ICON.warn}<div>
+      <span class="check-title">API CSV-to-RDF non raggiungibile</span>
+      <span class="check-detail">${escHtml(e.message)} &mdash; Il CSV sembra comunque adatto alla conversione. <a href="https://piersoft.github.io/CSV-to-RDF/" target="_blank">Prova manualmente</a></span>
+    </div></div>`;
+  }
+}
+
+/* =============================================
+   MAIN VALIDATE
+   ============================================= */
+async function validate(rawInput) {
+  const raw = rawInput.trim();
+  document.getElementById('loading-card').classList.remove('hidden');
+  document.getElementById('results-section').classList.add('hidden');
+  document.getElementById('input-card').classList.add('hidden');
+
+  await new Promise(r=>setTimeout(r,60));
+
+  setLoadingMsg('Rilevamento separatore e parsing...');
+  await new Promise(r=>setTimeout(r,40));
+
+  const sep = detectSep(raw);
+  const rows = parseCSV(raw, sep);
+  const headers = rows[0] || [];
+
+  setLoadingMsg('Analisi struttura CSV...');
+  await new Promise(r=>setTimeout(r,40));
+  const strChecks = checks_struttura(raw, rows, sep, headers);
+
+  setLoadingMsg('Analisi contenuto e qualit\u00e0...');
+  await new Promise(r=>setTimeout(r,40));
+  const contChecks = checks_contenuto(rows, headers);
+
+  setLoadingMsg('Verifica standard Open Data PA...');
+  await new Promise(r=>setTimeout(r,40));
+  const odChecks = checks_opendata(rows, headers, raw);
+
+  setLoadingMsg('Analisi compatibilit\u00e0 Linked Data...');
+  await new Promise(r=>setTimeout(r,40));
+  const ldChecks = checks_linkeddata(rows, headers);
+
+  const allChecks = [...strChecks,...contChecks,...odChecks,...ldChecks];
+  const score = computeScore(allChecks);
+  const critFail = isCriticalFail(allChecks);
+  const failCount = allChecks.filter(c=>c.status==='fail').length;
+  const warnCount = allChecks.filter(c=>c.status==='warn').length;
+  const passCount = allChecks.filter(c=>c.status==='pass').length;
+  const infoCount = allChecks.filter(c=>c.status==='info').length;
+
+  setLoadingMsg('Preparazione risultati...');
+  await new Promise(r=>setTimeout(r,40));
+
+  document.getElementById('loading-card').classList.add('hidden');
+  document.getElementById('results-section').classList.remove('hidden');
+
+  // Verdict
+  let verdictClass, verdictIcon, verdictText;
+  if (critFail || failCount > 3) {
+    verdictClass='red';
+    verdictIcon=`<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>`;
+    verdictText='CSV non accettabile. Correggere i problemi critici prima di pubblicare.';
+  } else if (failCount > 0 || warnCount > 5) {
+    verdictClass='amber';
+    verdictIcon=`<svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>`;
+    verdictText='CSV accettabile con riserva. Risolvere gli avvisi per migliorare la qualit\u00e0.';
+  } else {
+    verdictClass='green';
+    verdictIcon=`<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`;
+    verdictText='CSV di buona qualit\u00e0. Idoneo alla pubblicazione come open data.';
+  }
+
+  const barClass = score>=80?'score-ok':score>=50?'score-warn':'score-fail';
+  document.getElementById('verdict-box').innerHTML = `
+    <div class="verdict ${verdictClass}">
+      ${verdictIcon}
+      <div>
+        <div>${verdictText}</div>
+        <div style="font-size:13px;font-weight:400;margin-top:6px">Punteggio qualit\u00e0: ${score}/100</div>
+        <div class="score-bar-wrap"><div class="score-bar ${barClass}" style="width:${score}%"></div></div>
+      </div>
+    </div>`;
+
+  // Summary
+  document.getElementById('summary-nums').innerHTML = `
+    <div class="stat-card stat-ok"><span class="stat-num">${passCount}</span><span class="stat-label">Superati</span></div>
+    <div class="stat-card stat-warn"><span class="stat-num">${warnCount}</span><span class="stat-label">Avvisi</span></div>
+    <div class="stat-card stat-fail"><span class="stat-num">${failCount}</span><span class="stat-label">Errori</span></div>
+    <div class="stat-card stat-info"><span class="stat-num">${infoCount}</span><span class="stat-label">Informazioni</span></div>
+    <div class="stat-card"><span class="stat-num">${(rows.length-1)||0}</span><span class="stat-label">Righe dati</span></div>
+    <div class="stat-card"><span class="stat-num">${headers.length}</span><span class="stat-label">Colonne</span></div>`;
+
+  // Tabs
+  document.getElementById('tab-struttura').innerHTML = strChecks.map(renderCheckItem).join('');
+  document.getElementById('tab-contenuto').innerHTML = contChecks.map(renderCheckItem).join('');
+  document.getElementById('tab-opendata').innerHTML = odChecks.map(renderCheckItem).join('');
+  document.getElementById('tab-linkeddata').innerHTML = ldChecks.map(renderCheckItem).join('');
+
+  // Preview
+  document.getElementById('preview-table').innerHTML = headers.length > 0 ? renderPreview(rows, headers) : '<p style="color:#8898a9;font-size:13px">Nessun dato da visualizzare.</p>';
+
+  // TTL se idoneo
+  const ttlCard = document.getElementById('ttl-card');
+  if (!critFail && failCount === 0) {
+    ttlCard.classList.remove('hidden');
+    document.getElementById('ttl-status').classList.remove('hidden');
+    document.getElementById('ttl-result').classList.add('hidden');
+    testTTL(raw);
+  } else {
+    ttlCard.classList.add('hidden');
+  }
+
+  // Scroll to results
+  document.getElementById('results-section').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* =============================================
+   UI EVENT HANDLERS
+   ============================================= */
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('file-input');
+const csvPaste = document.getElementById('csv-paste');
+let _rawCSV = '';
+
+dropzone.addEventListener('click', ()=>fileInput.click());
+dropzone.addEventListener('dragover', e=>{ e.preventDefault(); dropzone.classList.add('drag-over'); });
+dropzone.addEventListener('dragleave', ()=>dropzone.classList.remove('drag-over'));
+dropzone.addEventListener('drop', e=>{
+  e.preventDefault(); dropzone.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f) loadFile(f);
+});
+fileInput.addEventListener('change', ()=>{ if(fileInput.files[0]) loadFile(fileInput.files[0]); });
+
+function loadFile(f) {
+  const maxMB = 5;
+  if (f.size > maxMB*1024*1024) { alert(`File troppo grande (max ${maxMB} MB).`); return; }
+  const reader = new FileReader();
+  reader.onload = ev=>{
+    _rawCSV = ev.target.result;
+    csvPaste.value = _rawCSV.slice(0, 3000) + (_rawCSV.length>3000?'\n... (troncato nella preview) ...':'');
+    document.getElementById('file-name-label').textContent = `File: ${f.name} (${(f.size/1024).toFixed(1)} KB)`;
+  };
+  reader.readAsText(f, 'UTF-8');
+}
+
+document.getElementById('validate-btn').addEventListener('click', ()=>{
+  const raw = _rawCSV || csvPaste.value;
+  if (!raw.trim()) { alert('Incolla un CSV o carica un file prima di procedere.'); return; }
+  validate(raw);
+});
+
+document.getElementById('clear-btn').addEventListener('click', ()=>{
+  csvPaste.value=''; _rawCSV='';
+  document.getElementById('file-name-label').textContent='';
+  fileInput.value='';
+  document.getElementById('results-section').classList.add('hidden');
+  document.getElementById('input-card').classList.remove('hidden');
+  document.getElementById('loading-card').classList.add('hidden');
+});
+
+// Tabs
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    const target = tab.dataset.tab;
+    ['struttura','contenuto','opendata','linkeddata'].forEach(name=>{
+      const el = document.getElementById('tab-'+name);
+      if (name===target) el.classList.remove('hidden');
+      else el.classList.add('hidden');
+    });
+  });
+});
+</script>
+</body>
+</html>

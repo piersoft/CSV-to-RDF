@@ -334,6 +334,7 @@ footer a { color: #f59e0b; text-decoration: none; }
 <!-- NAV -->
 <nav class="nav-pills">
   <div class="container">
+    <a href="#validatore-csv" style="font-weight:700;color:#f59e0b;">Validatore CSV</a>
     <a href="#come-funziona">Come funziona</a>
     <a href="#partire-da-zero">Partire da zero</a>
     <a href="#migliorare-csv">Migliorare un CSV</a>
@@ -345,6 +346,103 @@ footer a { color: #f59e0b; text-decoration: none; }
 </nav>
 
 <main>
+
+<!-- ══ 0. VALIDATORE CSV ══ -->
+<section class="sezione" id="validatore-csv">
+  <h2 class="sezione-title">0 &mdash; Validatore CSV: il punto di partenza</h2>
+
+  <div class="card" style="border-left:4px solid #f59e0b;margin-bottom:1.5rem;">
+    <p style="margin:0 0 .7rem;font-size:.95rem;"><strong>Prima di aprire il convertitore CSV-to-RDF, valida il tuo CSV.</strong> Il Validatore CSV &egrave; uno strumento separato e propedeutico che analizza il file su 34 controlli automatici e ti dice esattamente cosa correggere prima di procedere alla conversione.</p>
+    <a href="validatore-csv-pa.html" target="_blank" rel="noopener noreferrer"
+       style="display:inline-flex;align-items:center;gap:.4rem;background:#f59e0b;border:1px solid #d97706;color:#000;padding:.5rem 1.1rem;border-radius:5px;font-size:.85rem;font-weight:700;text-decoration:none;"
+       onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+      <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+      Apri il Validatore CSV
+    </a>
+  </div>
+
+  <h3>Perch&eacute; validare prima?</h3>
+  <p>Il convertitore CSV-to-RDF genera Turtle corretto solo se il CSV di partenza &egrave; strutturalmente sano. Un CSV con intestazioni duplicate, date non ISO 8601, o colonne senza nome produce TTL incompleto o errato. Il validatore intercetta questi problemi <em>prima</em> che diventino errori nel grafo RDF.</p>
+
+  <h3>Cosa controlla il validatore</h3>
+  <p>I 34 controlli sono divisi in quattro categorie:</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1rem 0 1.5rem;">
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:1rem;">
+      <div style="font-weight:700;color:#0066cc;margin-bottom:.4rem;font-size:.85rem;">STRUTTURA (S1&ndash;S10)</div>
+      <ul style="margin:0;padding-left:1.1rem;font-size:.82rem;color:#374151;line-height:1.7">
+        <li>File non vuoto</li>
+        <li>Separatore rilevato automaticamente</li>
+        <li>Intestazioni duplicate o vuote</li>
+        <li>Numero colonne consistente</li>
+        <li>Encoding UTF-8, BOM, righe vuote</li>
+      </ul>
+    </div>
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:1rem;">
+      <div style="font-weight:700;color:#0066cc;margin-bottom:.4rem;font-size:.85rem;">CONTENUTO (C1&ndash;C8)</div>
+      <ul style="margin:0;padding-left:1.1rem;font-size:.82rem;color:#374151;line-height:1.7">
+        <li>Righe duplicate</li>
+        <li>Percentuale celle vuote</li>
+        <li>Colonna ID univoca</li>
+        <li>Date in formato ISO 8601</li>
+        <li>Separatore decimale (punto vs virgola)</li>
+      </ul>
+    </div>
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:1rem;">
+      <div style="font-weight:700;color:#0066cc;margin-bottom:.4rem;font-size:.85rem;">OPEN DATA PA (O1&ndash;O10)</div>
+      <ul style="margin:0;padding-left:1.1rem;font-size:.82rem;color:#374151;line-height:1.7">
+        <li>Numero minimo righe e colonne</li>
+        <li>Intestazioni in snake_case</li>
+        <li>Dimensione geografica e temporale</li>
+        <li>URI nei valori</li>
+        <li>Caratteri speciali nelle intestazioni</li>
+      </ul>
+    </div>
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:1rem;">
+      <div style="font-weight:700;color:#0066cc;margin-bottom:.4rem;font-size:.85rem;">LINKED DATA (L1&ndash;L6)</div>
+      <ul style="margin:0;padding-left:1.1rem;font-size:.82rem;color:#374151;line-height:1.7">
+        <li>UUID come identificatore</li>
+        <li>Colonne mappabili alle ontologie italiane</li>
+        <li>Codici ISTAT, CIG, CUP</li>
+        <li>URI da schema.gov.it nei valori</li>
+        <li>Potenziale 5 stelle Open Data</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Il flusso consigliato</h3>
+  <div class="step-flow">
+    <div class="step-box">
+      <div class="num" style="background:#f59e0b;color:#000;">0</div>
+      <div class="label">Validatore CSV</div>
+      <div class="desc">Carica o incolla il CSV, leggi i 34 check</div>
+    </div>
+    <div class="step-box">
+      <div class="num">1</div>
+      <div class="label">Correggi</div>
+      <div class="desc">Risolvi errori (rosso) e avvisi (giallo) critici</div>
+    </div>
+    <div class="step-box">
+      <div class="num">2</div>
+      <div class="label">CSV-to-RDF</div>
+      <div class="desc">Incolla il CSV validato nel convertitore</div>
+    </div>
+    <div class="step-box">
+      <div class="num">3</div>
+      <div class="label">Verifica ontologie</div>
+      <div class="desc">Controlla le pill rilevate e aggiusta se serve</div>
+    </div>
+    <div class="step-box">
+      <div class="num" style="background:#1a6b35;">4</div>
+      <div class="label">Genera TTL</div>
+      <div class="desc">Scarica il Turtle e aggiungilo al catalogo DCAT</div>
+    </div>
+  </div>
+
+  <div class="card" style="background:#f0faf4;border-color:#b3dfc4;margin-top:1rem;">
+    <p style="margin:0;font-size:.85rem;color:#1a6b35;"><strong>Nota sul test TTL nel validatore:</strong> il Validatore CSV genera un&apos;anteprima Turtle locale (prime 3 righe) per confermare la compatibilit&agrave; strutturale. La conversione completa avviene nel tool CSV-to-RDF tramite il worker Cloudflare, che accetta file CSV gi&agrave; pubblicati online tramite <code>?url=</code>.</p>
+  </div>
+</section>
 
 <!-- ══ 1. COME FUNZIONA ══ -->
 <section class="sezione" id="come-funziona">
@@ -447,7 +545,8 @@ footer a { color: #f59e0b; text-decoration: none; }
 
 <!-- ══ 3. MIGLIORARE UN CSV ESISTENTE ══ -->
 <section class="sezione" id="migliorare-csv">
-  <h2 class="sezione-title">3 — Migliorare un CSV esistente</h2>
+  <h2 class="sezione-title">3 &mdash; Migliorare un CSV esistente</h2>
+  <p style="margin-bottom:1rem;">Usa il <a href="validatore-csv-pa.html" target="_blank" rel="noopener noreferrer" style="font-weight:700;color:#0066cc;">Validatore CSV</a> per ottenere una diagnosi automatica prima di intervenire manualmente. I punti seguenti espandono i check del validatore con consigli pratici.</p>
   <p>Hai già un CSV pubblicato e vuoi aumentare la qualità del TTL generato? Segui questa checklist.</p>
 
   <div class="two-col">
@@ -736,7 +835,7 @@ RSA San Giuseppe,RSA,80</span></pre>
 
 <footer>
   <p>CSV → RDF Linked Open Data PA · <a href="https://piersoft.github.io/CSV-to-RDF/" target="_blank">Apri il tool</a> · <a href="dataset-ottimali-PA.html" target="_blank">Catalogo dataset ottimali</a> · Ontologie: <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> · Vocabolari: <a href="https://schema.gov.it" target="_blank">schema.gov.it</a></p>
-<span style="margin-left:1rem;opacity:.6;font-family:'DM Mono',monospace;font-size:.7em;">v2026.04.14.01</span>
+<span style="margin-left:1rem;opacity:.6;font-family:'DM Mono',monospace;font-size:.7em;">v2026.04.14.02</span>
 </footer>
 
 </body>

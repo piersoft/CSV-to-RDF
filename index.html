@@ -1,9 +1,9 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.04.15.01 -->
+  <!-- build:v2026.04.15.02 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CSV-to-RDF v2026.04.15.01 — Linked Open Data PA</title>
+  <title>CSV-to-RDF v2026.04.15.02 — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
   <meta name="robots" content="index, follow"/>
   <link rel="canonical" href="https://piersoft.github.io/CSV-to-RDF/"/>
@@ -319,6 +319,7 @@
   <option value="andamento_demografico">Andamento demografico Comune (QB)</option>
   <option value="elezioni_comunali">Elezioni comunali — liste e voti (CPV+RO+QB)</option>
   <option value="movimenti_turistici">Movimenti turistici (ACCO+QB)</option>
+  <option value="peg_bilancio_comunale">PEG bilancio comunale — Missioni e PDC (QB+CPSV+COV)</option>
   <option value="culturalheritage">CulturalHeritage — Beni culturali</option>
   <option value="project">Project — Progetti pubblici</option>
   <option value="mu">MU — Unità di misura</option>
@@ -779,7 +780,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.04.15.01</span>
+<span id="app-version">v2026.04.15.02</span>
 </footer>
 
 <script>
@@ -2193,6 +2194,10 @@ PUG-003,TA,Taranto,Periferia Nord,40.5234,17.2341,15`,
 2023,7,Albergo,Italia,1245,3890,3.1,Alberobello,BA
 2023,7,Albergo,Estero,892,4120,4.6,Alberobello,BA
 2023,8,Bed and Breakfast,Italia,678,1456,2.1,Alberobello,BA`,
+    peg_bilancio_comunale: `Tipo;PDC-Missione;PDC-Descrizione Missione;PDC-Programma;PDC-Descrizione Programma;PDC-Livello1;PDC-Descrizione Livello1;PDC-Livello2;PDC-Descrizione Livello2;PDC-Livello3;PDC-Descrizione Livello3;PDC-Livello4;PDC-Descrizione Livello4;Centro di Costo;Descrizione Centro di Costo;Capitolo;Articolo;Numero;Descrizione capitolo;Centro di Responsabilità;Descrizione Centro di Responsabilità;Rendiconto 2023;Rendiconto 2024;Stanziamento 2025;Stanziamento 2026;Stanziamento 2027;Stanziamento di cassa 2025;Codice Direzione;Descrizione Direzione
+USCITE;1;SERVIZI ISTITUZIONALI GENERALI E DI GESTIONE;1;ORGANI ISTITUZIONALI;1;SPESE CORRENTI;1;REDDITI DA LAVORO DIPENDENTE;1;RETRIBUZIONI LORDE;1;RETRIBUZIONI IN DENARO;101;DECENTRAMENTO TERRITORIALE MUNICIPIO 1;11;1;1;RETRIBUZIONI IN DENARO;88;AREA AMMINISTRAZIONE RISORSE UMANE;531799.95;520000;510000;510000;510000;510000;DIR03;DIREZIONE ORGANIZZAZIONE E RISORSE UMANE
+USCITE;3;ORDINE PUBBLICO E SICUREZZA;1;POLIZIA LOCALE E AMMINISTRATIVA;1;SPESE CORRENTI;3;ACQUISTO DI BENI E SERVIZI;2;ACQUISTO DI SERVIZI;9;MANUTENZIONE ORDINARIA E RIPARAZIONI;201;POLIZIA MUNICIPALE;21;1;0;MANUTENZIONE VEICOLI POLIZIA;45;CORPO DI POLIZIA MUNICIPALE;17209.51;18000;18500;18500;18500;37000;DIR05;DIREZIONE SICUREZZA E POLIZIA LOCALE
+ENTRATE;4;ISTRUZIONE E DIRITTO ALLO STUDIO;1;ISTRUZIONE PRESCOLASTICA;4;ENTRATE IN CONTO CAPITALE;4;CONTRIBUTI AGLI INVESTIMENTI;1;TRASFERIMENTI IN CONTO CAPITALE DA AMMIN. CENTR.;0;;301;ISTRUZIONE - SETTORE SCOLASTICO;31;4;0;CONTRIBUTO REGIONALE EDILIZIA SCOLASTICA;12;AREA ISTRUZIONE E FORMAZIONE;0;0;150000;0;0;150000;DIR07;DIREZIONE ISTRUZIONE E CULTURA`,
     atlasofpaths: `id,numero_percorso,nome_percorso,numero_tappe,lunghezza_km,dislivello_m,pavimentazione,segnaletica,livello_sicurezza,tipo_servizio,difficolta,comune_partenza,comune_arrivo,lat_start,lon_start
 1,TR-001,Via Appia Traiana,5,48.5,320,sterrato,presente,alto,rifugio,medio,Benevento,Brindisi,41.1300,14.7800
 2,CIC-042,Ciclovia dell'Acquedotto,8,510,1200,misto,presente,alto,assistenza,facile,Caposele,Santa Maria di Leuca,40.8500,15.4200
@@ -2301,6 +2306,7 @@ BAIS012008,Liceo Linguistico Moro,Liceo Linguistico,Bari,Corso Vittorio 5,41.127
     andamento_demografico:['QB','CLV','L0'],
     elezioni_comunali:['CPV','RO','QB','COV','L0'],
     movimenti_turistici:['ACCO','QB','TI','CLV','L0'],
+    peg_bilancio_comunale:['QB','CPSV','COV','L0'],
     balneazione:['IoT','CLV','POI','TI','MU','L0'],
     culturalheritage:['CulturalHeritage','Cultural-ON','CLV','L0'],
     project:['Project','PublicContract','COV','TI','CLV','L0'],

@@ -656,7 +656,7 @@ function detectOntologiesDeterministic(headers, rows) {
           'ordine_scuola','grado_scolastico','codice_meccanografico']) ||
      (has(['scuola','liceo','comprensivo','istruzione']) && !has(['cig','importo','appalto','museo','biblioteca','ospedale','banca','dae','defibrillatore','aed']) && !allText.includes('dae-') && !allText.includes('defibrillator')))
     result.add('SMAPIT');
-  if(has(['tipo_atto','media_gg_approvazione','totale_mandati_collegati'])) { result.add('CPSV'); result.add('TI'); result.add('QB'); }
+  if(has(['tipo_atto','media_gg_approvazione','totale_mandati_collegati'])) { result.add('CPSV-AP'); result.add('TI'); result.add('QB'); }
   if(has(['anno_protocollo','tipo_protocollo','tipo_spedizione','numero_protocolli'])) { result.add('QB'); result.add('TI'); }
   if(has(['tipo_pubblicazione','numero_pubblicazioni']) && has(['anno'])) { result.add('QB'); result.add('TI'); }
   if(has(['stanziato','accertato','incassato','impegnato','pagato'])) { result.add('QB'); result.add('TI'); }
@@ -666,11 +666,11 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['numero_componenti','di_cui_minorenni','totale_famiglie'])) { result.add('QB'); result.add('CPV'); }
   if(has(['anno_nascita','sesso','cittadinanza','totale_cittadini'])) { result.add('QB'); result.add('CPV'); }
   if(has(['totale_uomini','totale_donne','eta_media_uomini','eta_media_donne'])) { result.add('QB'); result.add('COV'); }
-  if(has(['ufficio','pec','orari_pubblico'])) { result.add('COV'); result.add('CLV'); result.add('CPSV'); }
-  if(has(['permessi_rilasciati','entro_termini','fuori_termini'])) { result.add('QB'); result.add('TI'); result.add('CPSV'); }
+  if(has(['ufficio','pec','orari_pubblico'])) { result.add('COV'); result.add('CLV'); result.add('CPSV-AP'); }
+  if(has(['permessi_rilasciati','entro_termini','fuori_termini'])) { result.add('QB'); result.add('TI'); result.add('CPSV-AP'); }
   if(has(['tipologia','totale']) && has(['anno']) && !has(['titolo','descrizione'])) { result.add('QB'); result.add('TI'); }
   if(has(['nome_associazione','latitudine','longitudine','categoria']) && has(['indirizzo'])) { result.add('COV'); result.add('CLV'); result.add('POI'); }
-  if(has(['bandito_da','oggetto','data_scadenza','numero_posti','gazzetta_ufficiale'])) { result.add('CPSV'); result.add('TI'); }
+  if(has(['bandito_da','oggetto','data_scadenza','numero_posti','gazzetta_ufficiale'])) { result.add('CPSV-AP'); result.add('TI'); }
   if(has(['totale_costo']) && has(['anno','mese']) && !has(['impegnato'])) { result.add('QB'); result.add('TI'); }
   if(has(['tipo_operazione','numero_sanzioni']) && has(['anno','mese'])) { result.add('QB'); result.add('TI'); }
   if(has(['totale_nati','totale_morti','totale_iscritti_per_trasferim'])) { result.add('QB'); result.add('CPV'); result.add('CLV'); }
@@ -685,22 +685,22 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['codice_cup','tipologia_intervento','settore_interv_inv','finanziamenti_statali'])) { result.add('PublicContract'); result.add('COV'); result.add('TI'); result.add('QB'); }
   if(has(['codice_locale_progetto','codice_cup','descrizione_cup_integrale','codice_stato_cup'])) { result.add('PublicContract'); result.add('COV'); result.add('TI'); result.add('QB'); }
   if(has(['cig','id_subappalto','cf_subappaltante','cod_categoria','classe_importo'])) { result.add('PublicContract'); result.add('COV'); result.add('TI'); }
-  if(has(['anno_mese_riferimento']) && has(['numero_ricorsi_pendenti'])) { result.add('QB'); result.add('TI'); result.add('CPSV'); }
-  if(has(['numero_ricorsi_pervenuti']) && has(['anno_deposito','classificazione_ricorso'])) { result.add('QB'); result.add('TI'); result.add('CPSV'); }
+  if(has(['anno_mese_riferimento']) && has(['numero_ricorsi_pendenti'])) { result.add('QB'); result.add('TI'); result.add('CPSV-AP'); }
+  if(has(['numero_ricorsi_pervenuti']) && has(['anno_deposito','classificazione_ricorso'])) { result.add('QB'); result.add('TI'); result.add('CPSV-AP'); }
   if(has(['tipo_ricorso','numero_ricorsi_pervenuti']) && has(['anno_deposito','codice_sede'])) { result.add('QB'); result.add('TI'); }
-  if(has(['tipo_provvedimento','numero_provvedimento','numero_ricorso','esito_provvedimento']) && has(['codice_sezione','nome_sezione'])) { result.add('CPSV'); result.add('TI'); }
-  if(has(['anno_deposito_ricorso','numero_ricorso','data_deposito_ricorso','codice_cig'])) { result.add('CPSV'); result.add('PublicContract'); result.add('TI'); result.add('COV'); }
-  if(has(['anno_udienza','tipo_udienza','data_udienza']) && has(['codice_sede','codice_sezione'])) { result.add('CPSV'); result.add('TI'); }
+  if(has(['tipo_provvedimento','numero_provvedimento','numero_ricorso','esito_provvedimento']) && has(['codice_sezione','nome_sezione'])) { result.add('CPSV-AP'); result.add('TI'); }
+  if(has(['anno_deposito_ricorso','numero_ricorso','data_deposito_ricorso','codice_cig'])) { result.add('CPSV-AP'); result.add('PublicContract'); result.add('TI'); result.add('COV'); }
+  if(has(['anno_udienza','tipo_udienza','data_udienza']) && has(['codice_sede','codice_sezione'])) { result.add('CPSV-AP'); result.add('TI'); }
   if(has(['id_variante','cod_motivo_variante','motivo_variante','data_approvazione_variant'])) { result.add('PublicContract'); result.add('TI'); }
   if(has(['01_motocicli','02_auto_e_monovolume','tgm_annuale'])) { result.add('QB'); result.add('TI'); result.add('POI'); }
   if(has(['comunecoltivazione','numazbio','hacondotti','hasau','habio'])) { result.add('QB'); result.add('CLV'); }
   if(has(['tipo_stud','idoneita','fascia_isee']) && has(['ifp','tipo_corso'])) { result.add('QB'); result.add('CPV'); }
   if(has(['trimestre','valore','unita_di_misura']) || has(['periodo','indice_tempestivita_pagamento'])) { result.add('QB'); result.add('TI'); }
   if(has(['codice_missione','descmissione','codiceprogramma','residuipresunti'])) { result.add('QB'); result.add('TI'); }
-  if(has(['descrizione_piano','descrizione_capitolo','descrizione_macro_ob','linea_di_azione','percentuale'])) { result.add('CPSV'); result.add('TI'); }
+  if(has(['descrizione_piano','descrizione_capitolo','descrizione_macro_ob','linea_di_azione','percentuale'])) { result.add('CPSV-AP'); result.add('TI'); }
   if(has(['cod_amm','des_amm','tipologia_istat','tipologia_amm']) && has(['cf','sito_istituzionale'])) { result.add('COV'); result.add('CLV'); }
   if(has(['codice_ipa','codice_uni_uo','descrizione_uo','codice_uni_aoo'])) { result.add('COV'); result.add('CLV'); }
-  if(has(['id_servizio','tipologia_servizio','descrizione_servizio','url_servizio']) && has(['codice_ipa'])) { result.add('CPSV'); result.add('COV'); }
+  if(has(['id_servizio','tipologia_servizio','descrizione_servizio','url_servizio']) && has(['codice_ipa'])) { result.add('CPSV-AP'); result.add('COV'); }
   if(has(['nome_responsabile','cognome_responsabile','mail_responsabile']) && has(['codice_ipa','codice_uni_uo'])) { result.add('COV'); result.add('CPV'); result.add('RO'); }
   if(has(['cup','oc_titolo_progetto','oc_tema_sintetico','fondo_comunitario'])) { result.add('PublicContract'); result.add('COV'); result.add('CLV'); }
   if(has(['cup_cod_settore','cup_descr_settore','finanz_ue','finanz_stato'])) { result.add('PublicContract'); result.add('QB'); }
@@ -920,7 +920,7 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['cig','cup','aggiudicatario','appalto','gara','oggetto_appalto',
           'servizio_pubblico','cpsv','procedura','licitazione','affidamento',
           'scelta_contraente','oggetto_gara','struttura_proponente']))
-    result.add('CPSV');
+    result.add('CPSV-AP');
   // M4: servizi pubblici puri (senza CIG) → CPSV-AP
   if(has(['nome_servizio','canale_erogazione','requisiti_accesso','url_servizio']) && !has(['cig','appalto','gara']))
     result.add('CPSV-AP');
@@ -1731,7 +1731,7 @@ export default {
     const reqUrl = new URL(request.url);
 
     if (reqUrl.pathname === '/health') {
-      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.04.15.02' }), {
+      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.04.15.05' }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
     }

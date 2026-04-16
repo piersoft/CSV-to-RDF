@@ -1108,7 +1108,7 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['tipo_stud','idoneita','fascia_isee']) && has(['ifp','tipo_corso'])) { result.add('QB'); result.add('CPV'); }
   if(has(['trimestre','valore','unita_di_misura']) || has(['periodo','indice_tempestivita_pagamento'])) { result.add('QB'); result.add('TI'); }
   if(has(['codice_missione','descmissione','codiceprogramma','residuipresunti'])) { result.add('QB'); result.add('TI'); }
-  if(has(['descrizione_piano','descrizione_capitolo','descrizione_macro_ob','linea_di_azione','percentuale'])) { result.add('CPSV'); result.add('TI'); }
+  if(has(['descrizione_piano','descrizione_macro_ob','linea_di_azione','percentuale']) && !has(['stanziamento','capitolo','missione','programma','pdc'])) { result.add('CPSV'); result.add('TI'); }
   if(has(['cod_amm','des_amm','tipologia_istat','tipologia_amm']) && has(['cf','sito_istituzionale'])) { result.add('COV'); result.add('CLV'); }
   if(has(['codice_ipa','codice_uni_uo','descrizione_uo','codice_uni_aoo'])) { result.add('COV'); result.add('CLV'); }
   if(has(['id_servizio','tipologia_servizio','descrizione_servizio','url_servizio']) && has(['codice_ipa'])) { result.add('CPSV'); result.add('COV'); }
@@ -1337,6 +1337,10 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['nome_servizio','canale_erogazione','requisiti_accesso','url_servizio']) && !has(['cig','appalto','gara']))
     result.add('CPSV-AP');
 
+
+  // PEG bilancio comunale — Piano Esecutivo Gestione
+  if(has(['stanziamento','pdc_missione','rendiconto','capitolo','missione','programma']) && has(['missione','programma'])) { result.add('QB'); result.add('CPSV'); result.add('COV'); }
+  if(has(['stanziamento','pdc_missione','codice_direzione','centro_di_costo'])) { result.add('QB'); result.add('CPSV'); result.add('COV'); }
   // ADMS — cataloghi / asset semantici
   // FIX4: ADMS richiede contesto specifico, non solo 'versione'
   if(has(['slug','version','creation_date','last_edit_date','api_url',

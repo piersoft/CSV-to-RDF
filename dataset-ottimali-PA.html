@@ -45,9 +45,9 @@
   <h1>Ontologie PA Italiana — CSV→RDF</h1>
   <p>Guida alle 29 ontologie supportate dal convertitore CSV→RDF/Turtle per la Pubblica Amministrazione italiana, basate sulla repo ufficiale <a href="https://github.com/italia/dati-semantic-assets" style="color:#c7d2fe">dati-semantic-assets</a>. Il corpus include ora dataset reali da <strong>Halley Boxxapps</strong> (Veneto e multiregionale).</p>
   <div class="meta">
-    <span>v2026.04.14.01</span>
+    <span>v2026.04.15.01</span>
     <span>29 ontologie</span>
-    <span>468 dataset PA reali</span>
+    <span>473 dataset PA reali</span>
     <span>22+7 CSV sacri testati</span>
     <span><a href="https://piersoft.github.io/CSV-to-RDF/" style="color:#c7d2fe">Apri il tool</a></span>
   </div>
@@ -1835,6 +1835,60 @@
           <code>id_porto</code><code>porto</code><code>s1_illuminazione_pubblica</code><code>s1_1_presenzaassenza</code><code>s1_2_norma_di_riferimento</code>
         </div>
       </div>
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0f6e56">ACCO · CLV · POI · TI</span>
+          <h3>Strutture ricettive e locazioni turistiche — DMS Puglia</h3>
+        </div>
+        <p>Elenco strutture ricettive pugliesi: codice CIN, denominazione, comparto, tipologia, classificazione stelle, coordinate, comune, check-in/out, parcheggio, internet, numero sale congressi. 97 colonne. Sistema DMS Pugliapromozione.</p>
+        <div class="col-examples">
+          <code>codice_cin</code><code>tipologia</code><code>classicazione</code><code>latitudine</code><code>check_in</code><code>numero_sale</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">PARK · POI · CLV · COV</span>
+          <h3>Parcheggi pubblici e stalli di sosta — Comuni italiani</h3>
+        </div>
+        <p>Parcheggi comunali: nome, indirizzo, comune, provincia, coordinate, stalli totali/disabili/moto, tipo (scoperto/coperto/multipiano), tariffa oraria, orario apertura/chiusura, gestore. Schema uniforme per Comuni.</p>
+        <div class="col-examples">
+          <code>id_parcheggio</code><code>stalli_totali</code><code>stalli_disabili</code><code>tipo_parcheggio</code><code>tariffa_oraria</code><code>gestore</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0066cc">RO · CPV · COV · TI</span>
+          <h3>Incarichi dirigenziali — trasparenza PA (D.Lgs. 33/2013)</h3>
+        </div>
+        <p>Incarichi dirigenziali in sezione Trasparenza: CF, cognome, nome, data nomina, data fine, tipo incarico, ente conferente, codice IPA, ruolo, struttura organizzativa, compenso lordo annuo, tipo nomina.</p>
+        <div class="col-examples">
+          <code>codice_fiscale</code><code>data_nomina</code><code>ruolo</code><code>struttura_organizzativa</code><code>compenso_lordo_annuo</code><code>tipo_nomina</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#534AB7">CPEV · TI · CLV · POI · COV</span>
+          <h3>Calendario eventi pubblici — Comuni italiani</h3>
+        </div>
+        <p>Eventi pubblici comunali: titolo, tipo evento, date e orari, luogo, indirizzo, comune, coordinate, organizzatore, pubblico target, format (fisico/online/ibrido), prezzo ingresso, URL prenotazione.</p>
+        <div class="col-examples">
+          <code>titolo_evento</code><code>tipo_evento_pubblico</code><code>data_inizio</code><code>organizzatore</code><code>format_evento</code><code>prezzo_ingresso</code>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <div class="card-header">
+          <span class="onto-badge" style="background:#0f6e56">MU · IoT</span>
+          <h3>Unita di misura e grandezze fisiche — sensori PA</h3>
+        </div>
+        <p>Registro unita di misura per sensori e monitoraggi PA: grandezza fisica, simbolo, unita, tipo misura, sistema SI, definizione, fattore conversione, codice QUDT/OM2. Standard internazionale per dati IoT.</p>
+        <div class="col-examples">
+          <code>grandezza</code><code>unita_misura</code><code>simbolo</code><code>sistema_misura</code><code>fattore_conversione_si</code><code>codice_qudt</code>
+        </div>
+      </div>
       <p>Servizio di trasporto scolastico per tragitto: totale alunni trasportati, rette emesse e pagamenti ricevuti per anno.</p>
       <div class="triggers">
         <span class="trig">ANNO, TRAGITTO</span>
@@ -1858,6 +1912,6 @@
     <p style="margin-top:.8rem;font-size:.85rem;"><a href="https://github.com/piersoft/CSV-to-RDF">Sorgente su GitHub</a> · <a href="https://piersoft.github.io/CSV-to-RDF/">Tool online</a> · <a href="https://piersoft.github.io/CSV-to-RDF/dataset-ottimali-PA.html">Questa pagina</a></p>
   </div>
 </div>
-<footer>CSV→RDF PA Italiana · piersoft · v2026.04.14.01 · 29 ontologie · 468 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
+<footer>CSV→RDF PA Italiana · piersoft · v2026.04.15.01 · 29 ontologie · 473 dataset · <a href="https://github.com/italia/dati-semantic-assets">dati-semantic-assets</a></footer>
 </body>
 </html>

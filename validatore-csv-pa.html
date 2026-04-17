@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build:v2026.04.17.05 -->
+<!-- build:v2026.04.17.06 -->
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -164,6 +164,18 @@ footer a{color:#b0c4d8}
       <div class="sep">oppure incolla il contenuto</div>
       <textarea id="csv-paste" placeholder="id,comune,data_apertura,importo&#10;1,Roma,2024-01-15,1500.00&#10;2,Milano,2024-02-20,3200.50" rows="6"></textarea>
       <div class="tip">Il separatore viene rilevato automaticamente (virgola, punto e virgola, tabulazione, pipe).</div>
+      <div style="margin-top:12px;">
+        <label style="font-size:.82rem;color:#5c6f82;display:block;margin-bottom:5px;">oppure carica da URL (verifica Content-Type automatica)</label>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input type="url" id="url-input" placeholder="https://dati.gov.it/download/dataset/file.csv"
+            style="flex:1;min-width:240px;padding:7px 10px;border:1px solid #c0ccd8;border-radius:4px;font-size:.85rem;font-family:'Titillium Web',sans-serif;">
+          <button class="btn btn-secondary" id="btn-load-url" onclick="loadFromUrl()" style="white-space:nowrap">
+            <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+            Carica da URL
+          </button>
+        </div>
+        <div id="url-check-result" style="margin-top:7px;font-size:.82rem;display:none;"></div>
+      </div>
       <div style="margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
         <button class="btn btn-primary" id="validate-btn">
           <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
@@ -769,7 +781,123 @@ function setLoadingMsg(msg){ document.getElementById('loading-msg').textContent=
 /* =============================================
    MAIN VALIDATE
    ============================================= */
-async function validate(rawInput) {
+async async function loadFromUrl() {
+  const url = (document.getElementById('url-input').value || '').trim();
+  const resultDiv = document.getElementById('url-check-result');
+  if (!url) { resultDiv.style.display='none'; return; }
+
+  const btn = document.getElementById('btn-load-url');
+  btn.disabled = true;
+  btn.textContent = 'Verifica...';
+  resultDiv.style.display = 'block';
+  resultDiv.style.color = '#5c6f82';
+  resultDiv.textContent = 'Verifica Content-Type in corso...';
+
+  // Content-Type check via HEAD (con fallback GET se HEAD non supportato)
+  let contentType = '';
+  let finalUrl = url;
+  let errMsg = '';
+
+  try {
+    // Tentiamo HEAD
+    let resp = await fetch(url, {method:'HEAD', redirect:'follow', signal: AbortSignal.timeout(10000)});
+    finalUrl = resp.url || url;
+    contentType = (resp.headers.get('content-type') || '').toLowerCase();
+
+    // Se HEAD non restituisce content-type utile, proviamo GET con range
+    if (!contentType || contentType === 'application/octet-stream') {
+      resp = await fetch(url, {method:'GET', headers:{'Range':'bytes=0-1023'}, redirect:'follow', signal: AbortSignal.timeout(10000)});
+      contentType = (resp.headers.get('content-type') || '').toLowerCase();
+      finalUrl = resp.url || url;
+    }
+  } catch(e) {
+    errMsg = 'Impossibile raggiungere l'URL: ' + e.message;
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg> Carica da URL';
+
+  if (errMsg) {
+    resultDiv.style.color = '#b00020';
+    resultDiv.textContent = '✗ ' + errMsg;
+    return;
+  }
+
+  // Valuta content-type
+  const isCSV  = /text\/csv|text\/plain|application\/csv/.test(contentType);
+  const isHTML = /text\/html/.test(contentType);
+  const isZIP  = /zip|x-zip|octet-stream/.test(contentType);
+  const isPDF  = /pdf/.test(contentType);
+  const isXLS  = /excel|spreadsheetml|xls/.test(contentType);
+  const isJSON = /json/.test(contentType);
+
+  if (isHTML) {
+    resultDiv.style.color = '#b00020';
+    resultDiv.innerHTML = '<strong>✗ URL non valido:</strong> il server restituisce una pagina HTML, non un file CSV. '
+      + 'Probabilmente è la pagina del dataset (resource page) anziché il downloadURL diretto. '
+      + 'Cerca il link diretto al file CSV nella pagina del portale.<br>'
+      + '<span style="font-size:.78rem;color:#5c6f82">Content-Type ricevuto: ' + contentType + '</span>';
+    return;
+  }
+  if (isZIP) {
+    resultDiv.style.color = '#b00020';
+    resultDiv.innerHTML = '<strong>✗ Il file è uno ZIP,</strong> non un CSV. Il metadato sul portale indica CSV ma il file scaricato è compresso. '
+      + 'Decomprimere il file prima di validarlo.<br>'
+      + '<span style="font-size:.78rem;color:#5c6f82">Content-Type ricevuto: ' + contentType + '</span>';
+    return;
+  }
+  if (isPDF) {
+    resultDiv.style.color = '#b00020';
+    resultDiv.innerHTML = '<strong>✗ Il file è un PDF,</strong> non un CSV. Verificare il metadato sul portale.<br>'
+      + '<span style="font-size:.78rem;color:#5c6f82">Content-Type ricevuto: ' + contentType + '</span>';
+    return;
+  }
+  if (isXLS) {
+    resultDiv.style.color = '#b00020';
+    resultDiv.innerHTML = '<strong>✗ Il file è un foglio Excel (XLS/XLSX),</strong> non un CSV. Esportare in formato CSV prima di validare.<br>'
+      + '<span style="font-size:.78rem;color:#5c6f82">Content-Type ricevuto: ' + contentType + '</span>';
+    return;
+  }
+
+  if (!isCSV) {
+    resultDiv.style.color = '#c45e00';
+    resultDiv.innerHTML = '<strong>⚠ Content-Type inatteso:</strong> ' + (contentType || '(nessuno)') + '. '
+      + 'Il server non dichiara esplicitamente text/csv. Il file potrebbe comunque essere un CSV valido: scarico e verifico...';
+  } else {
+    resultDiv.style.color = '#1a6b35';
+    resultDiv.innerHTML = '<strong>✓ Content-Type CSV confermato</strong> (' + contentType + '). Scarico il file...';
+  }
+
+  // Scarico il contenuto e lo carico nel validatore
+  try {
+    await new Promise(r=>setTimeout(r,200));
+    const resp2 = await fetch(finalUrl, {signal: AbortSignal.timeout(30000)});
+    const text = await resp2.text();
+    const firstLine = text.trim().split('\n')[0] || '';
+
+    // Verifica che sia effettivamente testo CSV (non HTML nel body)
+    if (firstLine.toLowerCase().startsWith('<!doctype') || firstLine.toLowerCase().startsWith('<html')) {
+      resultDiv.style.color = '#b00020';
+      resultDiv.innerHTML = '<strong>✗ Il contenuto scaricato è HTML,</strong> non CSV. '
+        + 'L'URL punta alla pagina web del dataset, non al file diretto.';
+      return;
+    }
+
+    // Carica nella textarea e avvia validazione
+    document.getElementById('csv-paste').value = text.slice(0, 500000);
+    _rawCSV = text;
+    resultDiv.style.color = '#1a6b35';
+    resultDiv.innerHTML = '<strong>✓ File scaricato:</strong> ' + text.length.toLocaleString('it') + ' caratteri. Avvio validazione...';
+    await new Promise(r=>setTimeout(r,300));
+    validate(text);
+
+  } catch(e) {
+    resultDiv.style.color = '#b00020';
+    resultDiv.innerHTML = '<strong>✗ Errore download:</strong> ' + e.message;
+  }
+}
+
+function validate(rawInput) {
   const raw = rawInput.trim();
   document.getElementById('loading-card').classList.remove('hidden');
   document.getElementById('results-section').classList.add('hidden');

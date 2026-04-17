@@ -639,6 +639,10 @@ function detectOntologiesDeterministic(headers, rows) {
     return cols.some(function(c){ return norm.indexOf(c)>=0; });
   };
 
+  var _isStatAggregato = has(['bando_sda','n_pa_appaltanti','base_asta']) ||
+    (has(['tipologia_amministrazione']) && has(['regione_pa','provincia_pa']) && has(['valore_economico','importo_totale','totale_importo']));
+  if(_isStatAggregato) { result.add('QB'); }
+
   // CLV — SOLO se nelle intestazioni ci sono campi indirizzo/coordinate strutturati
   if(hasH(['lat','lon','indirizzo','via','civico','comune','cap','latitudine','longitudine','stop_lat','stop_lon',
             'lat_wgs84','lon_wgs84','coord_lat','coord_lon','georef_lat','georef_lon',
@@ -668,7 +672,7 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['totale_uomini','totale_donne','eta_media_uomini','eta_media_donne'])) { result.add('QB'); result.add('COV'); }
   if(has(['ufficio','pec','orari_pubblico'])) { result.add('COV'); result.add('CLV'); result.add('CPSV-AP'); }
   if(has(['permessi_rilasciati','entro_termini','fuori_termini'])) { result.add('QB'); result.add('TI'); result.add('CPSV-AP'); }
-  if(has(['tipologia','totale']) && has(['anno']) && !has(['titolo','descrizione'])) { result.add('QB'); result.add('TI'); }
+  if(!_isStatAggregato && has(['tipologia','totale']) && has(['anno']) && !has(['titolo','descrizione'])) { result.add('QB'); result.add('TI'); }
   if(has(['nome_associazione','latitudine','longitudine','categoria']) && has(['indirizzo'])) { result.add('COV'); result.add('CLV'); result.add('POI'); }
   if(has(['bandito_da','oggetto','data_scadenza','numero_posti','gazzetta_ufficiale'])) { result.add('CPSV-AP'); result.add('TI'); }
   if(has(['totale_costo']) && has(['anno','mese']) && !has(['impegnato'])) { result.add('QB'); result.add('TI'); }
@@ -695,7 +699,7 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['01_motocicli','02_auto_e_monovolume','tgm_annuale'])) { result.add('QB'); result.add('TI'); result.add('POI'); }
   if(has(['comunecoltivazione','numazbio','hacondotti','hasau','habio'])) { result.add('QB'); result.add('CLV'); }
   if(has(['tipo_stud','idoneita','fascia_isee']) && has(['ifp','tipo_corso'])) { result.add('QB'); result.add('CPV'); }
-  if(has(['trimestre','valore','unita_di_misura']) || has(['periodo','indice_tempestivita_pagamento'])) { result.add('QB'); result.add('TI'); }
+  if(!_isStatAggregato && (has(['trimestre','valore','unita_di_misura']) || has(['periodo','indice_tempestivita_pagamento']))) { result.add('QB'); result.add('TI'); }
   if(has(['codice_missione','descmissione','codiceprogramma','residuipresunti'])) { result.add('QB'); result.add('TI'); }
   if(has(['descrizione_piano','descrizione_capitolo','descrizione_macro_ob','linea_di_azione','percentuale'])) { result.add('CPSV-AP'); result.add('TI'); }
   if(has(['cod_amm','des_amm','tipologia_istat','tipologia_amm']) && has(['cf','sito_istituzionale'])) { result.add('COV'); result.add('CLV'); }
@@ -729,7 +733,7 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['codiceisil','statoquestionario','annofondazione','dsprov'])) { result.add('Cultural-ON'); result.add('CLV'); }
   if(has(['soggetto_organizzatore','denominazione_evento','luogo_evento','natura_intervento'])) { result.add('Cultural-ON'); result.add('COV'); }
   if(has(['nome_toponimo','classe_toponimo','codice_toponimo']) && has(['storico','codice'])) result.add('CLV');
-  if(has(['id_parcheggio','tipologia','codice_catastale','toponimo'])) { result.add('PARK'); result.add('POI'); result.add('CLV'); }
+  if(has(['id_parcheggio']) && has(['stalli_totali','stalli_disabili','tipo_parcheggio','tariffa_oraria','posti_auto'])) { result.add('PARK'); result.add('POI'); result.add('CLV'); }
   if(has(['popolazione_al_31_dicembr','numero_di_famiglie','codice_comune','descrizione_comune'])) { result.add('QB'); result.add('CPV'); }
   if(has(['dug___denominazione_urban','duf___denominazione_urban','codice_catastale_ente','numero_delibera','data_delibera_istituzione'])) result.add('CLV');
   if(has(['cod_nazionale_struttura','denominazione_struttura','tipo_struttura','cod_nazionale_asl','denom_struttura','cod_struttura','cod_distretto_asl','comune_sede'])) result.add('SMAPIT');
@@ -1731,7 +1735,7 @@ export default {
     const reqUrl = new URL(request.url);
 
     if (reqUrl.pathname === '/health') {
-      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.04.15.07' }), {
+      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.04.15.08' }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
     }

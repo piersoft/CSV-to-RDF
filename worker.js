@@ -643,15 +643,19 @@ function detectOntologiesDeterministic(headers, rows) {
     (has(['tipologia_amministrazione']) && has(['regione_pa','provincia_pa']) && has(['valore_economico','importo_totale','totale_importo']));
   if(_isStatAggregato) { result.add('QB'); }
 
+  var _isStatAggregato = has(['bando_sda','n_pa_appaltanti','base_asta']) ||
+    (has(['tipologia_amministrazione']) && has(['regione_pa','provincia_pa']) && has(['valore_economico','importo_totale','totale_importo']));
+  if(_isStatAggregato) { result.add('QB'); }
+
   // CLV — SOLO se nelle intestazioni ci sono campi indirizzo/coordinate strutturati
   if(hasH(['lat','lon','indirizzo','via','civico','comune','cap','latitudine','longitudine','stop_lat','stop_lon',
             'lat_wgs84','lon_wgs84','coord_lat','coord_lon','georef_lat','georef_lon',
-            'ubicazione_esercizio','n_civico','indirizzo_esercizio','coorx','coory','coor_x','coor_y','num_civic','num_civ','n_civ','tp_str_nom','tp_str_loc','geo_point','geometria','geom','location']))
+            'ubicazione_esercizio','n_civico','indirizzo_esercizio','coorx','coory','coor_x','coor_y','num_civic','num_civ','n_civ','tp_str_nom','tp_str_loc','geo_point','geometria','geom','location','coordinate']))
     result.add('CLV');
 
   // GTFS
-  if(has(['stop_id','stop_name','route_id','trip_id','agency_id','stop_lat','stop_lon',
-          'codice_fermata','nome_fermata','linea','capolinea','percorso','corsa','fermata_id']))
+  if(has(['stop_id','route_id','trip_id','agency_id','stop_lat','stop_lon','shape_id']) ||
+     (has(['codice_fermata','nome_fermata','fermata_id']) && has(['linea','capolinea','corsa','percorso'])))
     result.add('GTFS');
 
   // SMAPIT — scuole: richiede colonne specifiche istruzione
@@ -841,7 +845,7 @@ function detectOntologiesDeterministic(headers, rows) {
            'ubicazione_esercizio','n_civico','insegna','ragione_sociale'])) {
     if(result.has('COV') && !has(['codice_ipa','cf_ente','ragione_sociale','tipo_ente','nome_centro','nome_struttura','nome_presidio','unita_operativa'])) result.delete('COV');
     if(result.has('TI')  && !has(['data_inizio','data_fine','data_da','data_a','data_evento','quando','inizio','termine','data','data_rilevazione','data_campionamento','ora','feriti','morti','tipo_incidente','data_deposito_ricorso','data_pubblicazione','data_scadenza_offerta','data_approvazione_variant','data_udienza','data_sospensione','data_autorizzazione'])) result.delete('TI');
-    if(result.has('POI') && !has(['tipo_poi','nome_poi','dae','lat','lon','insegna','insegna_commerciale','stazione','nome_stazione','stazione_id','codice_stazione'])) result.delete('POI');
+    if(result.has('POI') && !has(['tipo_poi','nome_poi','dae','lat','lon','insegna','insegna_commerciale','stazione','nome_stazione','stazione_id','codice_stazione','coordinate','coorx','coory','coor_x','coor_y','geo_point','geometria'])) result.delete('POI');
     if(result.has('CPV') && !has(['cognome','codice_fiscale','nome_completo','data_nascita'])) result.delete('CPV');
   }
 
@@ -992,7 +996,8 @@ function detectOntologiesDeterministic(headers, rows) {
   // combo (datainizio|datafine|orari) + (nome|tipologia|categoria) = catalogo eventi PA
   if(has(['titolo_evento','evento_pubblico','tipo_evento_pubblico','public_event',
           'format_evento','pubblico_target','abstract_evento'])||
-     ((has(['datainizio','datafine','data_inizio','data_fine','orari','orario'])) &&
+     ((has(['datainizio','datafine','data_inizio','data_fine']) && 
+       has(['orari','orario'])) &&
       (has(['nome','tipologia','categoria','rassegna','manifestazione','spettacolo','concerto','festival'])))){
     result.add('CPEV');
     if(!result.has('TI')) result.add('TI');
@@ -1001,7 +1006,9 @@ function detectOntologiesDeterministic(headers, rows) {
   // —— AccessCondition — condizioni di accesso a luoghi
   if(has(['orario_apertura','orario_chiusura','tipo_ammissione',
           'condizione_accesso','motivazione_chiusura','giorno_chiusura',
-          'accesso_libero','tipo_accesso','admission_type'])){
+          'accesso_libero','tipo_accesso','admission_type',
+          'orari_di_apertura','orari_apertura','giorni_orari','apertura_al_pubblico',
+          'giorni_e_orari','orari_di_accesso'])){
     result.add('AccessCondition');
   }
 
@@ -1735,7 +1742,7 @@ export default {
     const reqUrl = new URL(request.url);
 
     if (reqUrl.pathname === '/health') {
-      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.04.15.08' }), {
+      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.04.15.09' }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
     }

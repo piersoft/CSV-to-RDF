@@ -1,9 +1,9 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.04.15.08 -->
+  <!-- build:v2026.04.15.09 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CSV-to-RDF v2026.04.15.08 — Linked Open Data PA</title>
+  <title>CSV-to-RDF v2026.04.15.09 — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
   <meta name="robots" content="index, follow"/>
   <link rel="canonical" href="https://piersoft.github.io/CSV-to-RDF/"/>
@@ -780,7 +780,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.04.15.08</span>
+<span id="app-version">v2026.04.15.09</span>
 </footer>
 
 <script>
@@ -1061,14 +1061,17 @@ function detectOntologiesDeterministic(headers, rows) {
             'lat_wgs84','lon_wgs84','coord_lat','coord_lon','georef_lat','georef_lon',
             'ubicazione_esercizio','n_civico','indirizzo_esercizio',
             'coorx','coory','coor_x','coor_y','num_civic','num_civ','n_civ',
-            'tp_str_nom','tp_str_loc','geo_point','geometria','geom','location']))
+            'tp_str_nom','tp_str_loc','geo_point','geometria','geom','location',
+            'coordinate']))
     result.add('CLV');
   // Stradario/civici con coordinate coorX/coorY → anche POI
   if(hasH(['coorx','coory','coor_x','coor_y'])) { result.add('CLV'); result.add('POI'); }
+  // Sedi con colonna 'coordinate' o 'geo' contenente lat,lon come valore → CLV+POI
+  if(hasH(['coordinate','geo_point','geometria','geom'])) { result.add('CLV'); result.add('POI'); }
 
   // GTFS
-  if(has(['stop_id','stop_name','route_id','trip_id','agency_id','stop_lat','stop_lon',
-          'codice_fermata','nome_fermata','linea','capolinea','percorso','corsa','fermata_id']))
+  if(has(['stop_id','route_id','trip_id','agency_id','stop_lat','stop_lon','shape_id']) ||
+     (has(['codice_fermata','nome_fermata','fermata_id']) && has(['linea','capolinea','corsa','percorso'])))
     result.add('GTFS');
 
   // SMAPIT — scuole: richiede colonne specifiche istruzione
@@ -1260,7 +1263,7 @@ function detectOntologiesDeterministic(headers, rows) {
            'ubicazione_esercizio','n_civico','insegna','ragione_sociale'])) {
     if(result.has('COV') && !has(['codice_ipa','cf_ente','ragione_sociale','tipo_ente','nome_centro','nome_struttura','nome_presidio','unita_operativa'])) result.delete('COV');
     if(result.has('TI')  && !has(['data_inizio','data_fine','data_da','data_a','data_evento','quando','inizio','termine','data','data_rilevazione','data_campionamento','ora','feriti','morti','tipo_incidente','data_deposito_ricorso','data_pubblicazione','data_scadenza_offerta','data_approvazione_variant','data_udienza','data_sospensione','data_autorizzazione'])) result.delete('TI');
-    if(result.has('POI') && !has(['tipo_poi','nome_poi','dae','lat','lon','insegna','insegna_commerciale','stazione','nome_stazione','stazione_id','codice_stazione'])) result.delete('POI');
+    if(result.has('POI') && !has(['tipo_poi','nome_poi','dae','lat','lon','insegna','insegna_commerciale','stazione','nome_stazione','stazione_id','codice_stazione','coordinate','coorx','coory','coor_x','coor_y','geo_point','geometria'])) result.delete('POI');
     if(result.has('CPV') && !has(['cognome','codice_fiscale','nome_completo','data_nascita'])) result.delete('CPV');
   }
 
@@ -1415,7 +1418,8 @@ function detectOntologiesDeterministic(headers, rows) {
   // combo (datainizio|datafine|orari) + (nome|tipologia|categoria) = catalogo eventi PA
   if(has(['titolo_evento','evento_pubblico','tipo_evento_pubblico','public_event',
           'format_evento','pubblico_target','abstract_evento'])||
-     ((has(['datainizio','datafine','data_inizio','data_fine','orari','orario'])) &&
+     ((has(['datainizio','datafine','data_inizio','data_fine']) && 
+       has(['orari','orario'])) &&
       (has(['nome','tipologia','categoria','rassegna','manifestazione','spettacolo','concerto','festival'])))){
     result.add('CPEV');
     if(!result.has('TI')) result.add('TI');
@@ -1424,7 +1428,9 @@ function detectOntologiesDeterministic(headers, rows) {
   // —— AccessCondition — condizioni di accesso a luoghi
   if(has(['orario_apertura','orario_chiusura','tipo_ammissione',
           'condizione_accesso','motivazione_chiusura','giorno_chiusura',
-          'accesso_libero','tipo_accesso','admission_type'])){
+          'accesso_libero','tipo_accesso','admission_type',
+          'orari_di_apertura','orari_apertura','giorni_orari','apertura_al_pubblico',
+          'giorni_e_orari','orari_di_accesso'])){
     result.add('AccessCondition');
   }
 

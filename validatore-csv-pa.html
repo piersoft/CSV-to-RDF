@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build:v2026.04.17.04 -->
+<!-- build:v2026.04.17.05 -->
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -273,7 +273,7 @@ footer a{color:#b0c4d8}
       </thead>
       <tbody>
         <tr style="border-bottom:1px solid #dce3ea"><td style="padding:8px 12px;font-weight:700;color:#0066cc">S1&ndash;S6</td><td style="padding:8px 12px">Struttura CSV: separatore, intestazioni, colonne</td><td style="padding:8px 12px"><a href="https://www.rfc-editor.org/rfc/rfc4180" target="_blank" style="color:#0066cc">RFC 4180</a> &mdash; Common Format and MIME Type for CSV</td><td style="padding:8px 12px"><span style="background:#e8f0fa;color:#004a99;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700">Standard formale</span></td></tr>
-        <tr style="border-bottom:1px solid #dce3ea;background:#fafbfc"><td style="padding:8px 12px;font-weight:700;color:#0066cc">S7</td><td style="padding:8px 12px">Dimensione file</td><td style="padding:8px 12px">Linee guida tecniche dati.gov.it / AGID</td><td style="padding:8px 12px"><span style="background:#fff3cd;color:#7d4e00;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700">Linee guida</span></td></tr>
+        <tr style="border-bottom:1px solid #dce3ea;background:#fafbfc"><td style="padding:8px 12px;font-weight:700;color:#0066cc">S7</td><td style="padding:8px 12px">Dimensione file</td><td style="padding:8px 12px">Nessuno standard formale definisce un limite di dimensione per i CSV. Check informativo basato su soglia pratica (5 MB).</td><td style="padding:8px 12px"><span style="background:#f5f5f5;color:#5c6f82;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700">Buona pratica</span></td></tr>
         <tr style="border-bottom:1px solid #dce3ea"><td style="padding:8px 12px;font-weight:700;color:#0066cc">S8&ndash;S11</td><td style="padding:8px 12px">Encoding UTF-8, BOM, caratteri corrotti, caratteri nascosti</td><td style="padding:8px 12px"><a href="https://www.rfc-editor.org/rfc/rfc4180" target="_blank" style="color:#0066cc">RFC 4180</a> &bull; <a href="https://www.w3.org/TR/tabular-data-primer/" target="_blank" style="color:#0066cc">W3C CSV on the Web (CSVW)</a> &bull; Unicode Standard</td><td style="padding:8px 12px"><span style="background:#e8f0fa;color:#004a99;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700">Standard formale</span></td></tr>
         <tr style="border-bottom:1px solid #dce3ea;background:#fafbfc"><td style="padding:8px 12px;font-weight:700;color:#0066cc">C1</td><td style="padding:8px 12px">Righe duplicate</td><td style="padding:8px 12px"><a href="https://www.iso.org/standard/35736.html" target="_blank" style="color:#0066cc">ISO/IEC 25012</a> &mdash; Data Quality Model (dimensione Unicità)</td><td style="padding:8px 12px"><span style="background:#e8f0fa;color:#004a99;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700">Standard formale</span></td></tr>
         <tr style="border-bottom:1px solid #dce3ea"><td style="padding:8px 12px;font-weight:700;color:#0066cc">C2</td><td style="padding:8px 12px">Valori mancanti</td><td style="padding:8px 12px"><a href="https://www.iso.org/standard/35736.html" target="_blank" style="color:#0066cc">ISO/IEC 25012</a> &mdash; Data Quality Model (dimensione Completezza)</td><td style="padding:8px 12px"><span style="background:#e8f0fa;color:#004a99;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700">Standard formale</span></td></tr>
@@ -304,7 +304,7 @@ footer a{color:#b0c4d8}
   <a href="https://schema.gov.it" target="_blank">schema.gov.it</a> &bull;
   <a href="https://github.com/italia/dati-semantic-assets" target="_blank">dati-semantic-assets</a> &bull;
   <a href="https://www.dati.gov.it" target="_blank">dati.gov.it</a>
-  <br>v<span id="app-version">2026.04.17.04</span>
+  <br>v<span id="app-version">2026.04.17.05</span>
 </footer>
 
 <script>
@@ -401,10 +401,11 @@ function checks_struttura(raw, rows, sep, headers) {
     } else push('S6','Numero colonne consistente',`Tutte le ${dataRows.length} righe hanno ${headers.length} colonne.`,'pass');
   }
 
-  // S7 - Dimensione file
+  // S7 - Dimensione file (informativo, nessuno standard formale definisce un limite)
   const kb = (new Blob([raw])).size / 1024;
-  if (kb > 5120) push('S7','File molto grande',`${kb.toFixed(0)} KB: considerare la suddivisione.`,'warn');
-  else push('S7','Dimensione accettabile',`${kb.toFixed(1)} KB`,'pass');
+  const kbStr = kb >= 1024 ? (kb/1024).toFixed(1)+' MB' : kb.toFixed(1)+' KB';
+  if (kb > 5120) push('S7','File di grandi dimensioni',`${kbStr} — file molto grandi possono rallentare il caricamento. Non esiste un limite formale: valutare la suddivisione per comodit\u00e0 d\'uso.`,'info');
+  else push('S7','Dimensione nella norma',`${kbStr} — nessun problema di dimensione rilevato.`,'info');
 
   // S8 - Caratteri di sostituzione (segnale sicuro di encoding sbagliato)
   const hasReplacement = raw.includes('\uFFFD');

@@ -1,9 +1,9 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.04.15.05 -->
+  <!-- build:v2026.04.15.07 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CSV-to-RDF v2026.04.15.05 — Linked Open Data PA</title>
+  <title>CSV-to-RDF v2026.04.15.07 — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
   <meta name="robots" content="index, follow"/>
   <link rel="canonical" href="https://piersoft.github.io/CSV-to-RDF/"/>
@@ -780,7 +780,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.04.15.05</span>
+<span id="app-version">v2026.04.15.07</span>
 </footer>
 
 <script>
@@ -1054,8 +1054,12 @@ function detectOntologiesDeterministic(headers, rows) {
   // CLV — SOLO se nelle intestazioni ci sono campi indirizzo/coordinate strutturati
   if(hasH(['lat','lon','indirizzo','via','civico','comune','cap','latitudine','longitudine','stop_lat','stop_lon',
             'lat_wgs84','lon_wgs84','coord_lat','coord_lon','georef_lat','georef_lon',
-            'ubicazione_esercizio','n_civico','indirizzo_esercizio']))
+            'ubicazione_esercizio','n_civico','indirizzo_esercizio',
+            'coorx','coory','coor_x','coor_y','num_civic','num_civ','n_civ',
+            'tp_str_nom','tp_str_loc','geo_point','geometria','geom','location']))
     result.add('CLV');
+  // Stradario/civici con coordinate coorX/coorY → anche POI
+  if(hasH(['coorx','coory','coor_x','coor_y'])) { result.add('CLV'); result.add('POI'); }
 
   // GTFS
   if(has(['stop_id','stop_name','route_id','trip_id','agency_id','stop_lat','stop_lon',
@@ -1180,7 +1184,8 @@ function detectOntologiesDeterministic(headers, rows) {
   // POI — R3-FIX: LATITUDINE/LONGITUDINE MAIUSCOLE + UTMX/UTMY
   var _hasPOIcoord = hasH(['lat','lon','latitudine','longitudine','utmx','utmy',
                             'x_wgs84','y_wgs84','coord_x','coord_y','longitude','latitude',
-                            'coordx','coordy','x_coord','y_coord']);
+                            'coordx','coordy','x_coord','y_coord',
+                            'coorx','coory','coor_x','coor_y','geo_point','geometria','geom']);
   // OSM schema: osm_id + lat/lon → POI forte (defibrillatori, punti interesse OSM)
   var _hasOSMschema = has(['osm_id','osm_type']) && _hasPOIcoord;
   // IoT con coordinate → POI; IoT con data → TI (misurazioni temporali geolocalizzate)
@@ -1632,7 +1637,7 @@ if (!window._exampleLocked) {
     suggested.add('L0');
 
   // Applica le regole — CLV SOLO su match esatto di colonna, non substring sui valori
-  const CLV_HEADER_KEYS = new Set(['lat','lon','lng','latitudine','longitudine','coord','indirizzo','address','via','strada','civico','cap','comune','stop_lat','stop_lon','lat_wgs84','lon_wgs84','ubicazione_esercizio','n_civico','insegna_commerciale']);
+  const CLV_HEADER_KEYS = new Set(['lat','lon','lng','latitudine','longitudine','coord','indirizzo','address','via','strada','civico','cap','comune','stop_lat','stop_lon','lat_wgs84','lon_wgs84','ubicazione_esercizio','n_civico','insegna_commerciale','coorx','coory','coor_x','coor_y','num_civic','num_civ','n_civ','tp_str_nom','tp_str_loc','location','geo_point','geometria','geom']);
   if (cols.some(c => CLV_HEADER_KEYS.has(c.toLowerCase().trim()))) suggested.add('CLV');
 
   ONTO_RULES.forEach(rule => {
@@ -3875,7 +3880,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         var xi=nh.indexOf(col);
         if(xi>=0&&row[xi]&&row[xi].trim()){var v=row[xi].trim();addrTriples.push({pred:addrMap[col],val:litQ(v,'it')});}
       });
-      var latI=nh.indexOf('lat'),lonI=nh.indexOf('lon');
+      var latI=nh.indexOf('lat');if(latI<0)latI=nh.indexOf('coory');if(latI<0)latI=nh.indexOf('coor_y');var lonI=nh.indexOf('lon');if(lonI<0)lonI=nh.indexOf('coorx');if(lonI<0)lonI=nh.indexOf('coor_x');
       if(latI>=0&&row[latI]){var _la=parseFloat(row[latI].trim().replace(',','.'));if(!isNaN(_la))addrTriples.push({pred:'geo:lat',val:dq+_la+dq+'^^xsd:decimal'});}
       if(lonI>=0&&row[lonI]){var _lo=parseFloat(row[lonI].trim().replace(',','.'));if(!isNaN(_lo))addrTriples.push({pred:'geo:long',val:dq+_lo+dq+'^^xsd:decimal'});}
       if(addrTriples.length>0){
@@ -3896,8 +3901,8 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       if(labelI2>=0&&row[labelI2])poiTriples.push({pred:'rdfs:label',val:litQ((row[labelI2]||'').trim(),'it')});
       var idAreaI=nh.indexOf('id_area');if(idAreaI<0)idAreaI=nh.indexOf('id_punto');if(idAreaI<0)idAreaI=nh.indexOf('codice_stazione');
       if(idAreaI>=0&&row[idAreaI])poiTriples.push({pred:'dct:identifier',val:dq+(row[idAreaI]||'').trim()+dq});
-      var latIp=nh.indexOf('lat');if(latIp<0)latIp=nh.indexOf('latitude');
-      var lonIp=nh.indexOf('lon');if(lonIp<0)lonIp=nh.indexOf('longitude');
+      var latIp=nh.indexOf('lat');if(latIp<0)latIp=nh.indexOf('latitude');if(latIp<0)latIp=nh.indexOf('coory');if(latIp<0)latIp=nh.indexOf('coor_y');
+      var lonIp=nh.indexOf('lon');if(lonIp<0)lonIp=nh.indexOf('longitude');if(lonIp<0)lonIp=nh.indexOf('coorx');if(lonIp<0)lonIp=nh.indexOf('coor_x');
       if(latIp>=0&&row[latIp]){var _lap=parseFloat((row[latIp]||'').trim().replace(',','.'));if(!isNaN(_lap))poiTriples.push({pred:'geo:lat',val:dq+_lap+dq+'^^xsd:decimal'});}
       if(lonIp>=0&&row[lonIp]){var _lop=parseFloat((row[lonIp]||'').trim().replace(',','.'));if(!isNaN(_lop))poiTriples.push({pred:'geo:long',val:dq+_lop+dq+'^^xsd:decimal'});}
       if(poiTriples.length>0){

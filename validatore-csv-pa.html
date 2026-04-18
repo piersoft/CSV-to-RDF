@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build:v2026.04.17.06 -->
+<!-- build:v2026.04.17.07 -->
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -574,10 +574,17 @@ function checks_opendata(rows, headers, raw) {
   if (cryptic.length) push('O3','Intestazioni non descrittive',`Colonne con nomi generici: ${cryptic.map(h=>'"'+h+'"').join(', ')}.`,'warn');
   else push('O3','Intestazioni descrittive','Tutti i nomi di colonna sembrano significativi.','pass');
 
-  // O4 - Intestazioni snake_case / lowercase
-  const notSnake = headers.filter(h=>/[A-Z\s\-]/.test(h.trim()));
-  if (notSnake.length) push('O4','Intestazioni con spazi o maiuscole',`${notSnake.map(h=>'"'+h+'"').join(', ')} — preferire minuscolo con underscore al posto di spazi e maiuscole (es. \'data_apertura\' invece di \'Data Apertura\').`,'warn');
-  else push('O4','Intestazioni in formato corretto','Minuscolo con underscore: formato ottimale per interoperabilit\u00e0 (es. codice_comune, data_apertura).','pass');
+  // O4 - Intestazioni: spazi (warn) e maiuscole (info)
+  // La PA italiana pubblica spesso con MAIUSCOLO_UNDERSCORE (ANAC, ISTAT, TAR/CDS) o mixed case.
+  // Le maiuscole sono una raccomandazione AGID (LG Open Data v1.0), non un obbligo normativo.
+  // Gli spazi nelle intestazioni sono invece un problema tecnico reale (parsing, interoperabilità).
+  const withSpaces = headers.filter(h=>/[\s\-]/.test(h.trim()));
+  const withUpper  = headers.filter(h=>!/[\s\-]/.test(h.trim()) && /[A-Z]/.test(h));
+  if (withSpaces.length) push('O4','Intestazioni con spazi o trattini',
+    `${withSpaces.map(h=>'"'+h+'"').join(', ')} — gli spazi nelle intestazioni causano problemi di parsing e interoperabilità. Usare underscore: es. "data_apertura" invece di "Data Apertura".`,'warn');
+  if (withUpper.length) push('O4','Intestazioni con lettere maiuscole',
+    `${withUpper.map(h=>'"'+h+'"').join(', ')} — le linee guida AGID Open Data raccomandano il minuscolo con underscore (es. "codice_comune" invece di "CODICE_COMUNE"), ma molti dataset PA usano il maiuscolo per convenzione storica. Non è un requisito normativo bloccante.`,'info');
+  if (!withSpaces.length && !withUpper.length) push('O4','Intestazioni in formato ottimale','Tutte le intestazioni sono in minuscolo con underscore: formato raccomandato dalle linee guida AGID Open Data.','pass');
 
   // O5 - Caratteri speciali in intestazioni
   const specialHdr = headers.filter(h=>/[^\w\s\-\u00C0-\u017E]/.test(h));

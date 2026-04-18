@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build:v2026.04.17.07 -->
+<!-- build:v2026.04.17.08 -->
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -788,7 +788,7 @@ function setLoadingMsg(msg){ document.getElementById('loading-msg').textContent=
 /* =============================================
    MAIN VALIDATE
    ============================================= */
-async async function loadFromUrl() {
+async function loadFromUrl() {
   const url = (document.getElementById('url-input').value || '').trim();
   const resultDiv = document.getElementById('url-check-result');
   if (!url) { resultDiv.style.display='none'; return; }

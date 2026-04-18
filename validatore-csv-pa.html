@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build:v2026.04.17.11 -->
+<!-- build:v2026.04.17.12 -->
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -472,9 +472,9 @@ function checks_contenuto(rows, headers) {
   const totalCells = dataRows.length * headers.length;
   const missingCells = dataRows.reduce((s,r)=>s+r.filter(c=>!c.trim()).length,0);
   const missingPct = (missingCells/totalCells*100).toFixed(1);
-  if (missingPct > 30) push('C2','Molti valori mancanti',`${missingPct}% celle vuote (\u203a30% \u2192 dataset povero).`,'fail');
-  else if (missingPct > 10) push('C2','Valori mancanti presenti',`${missingPct}% celle vuote. Valutare l'integrit\u00e0.`,'warn');
-  else push('C2','Valori mancanti contenuti',`${missingPct}% celle vuote.`,'pass');
+  if (missingPct > 30) push('C2','Troppe celle vuote nel file',`Il ${missingPct}% delle celle non contiene alcun valore (pi\u00f9 di 3 su 10). Il dataset risulta incompleto e poco utilizzabile.`,'fail');
+  else if (missingPct > 10) push('C2','Alcune celle vuote',`Il ${missingPct}% delle celle non contiene alcun valore. Verificare se le informazioni mancanti sono recuperabili.`,'warn');
+  else push('C2','Celle vuote nella norma',`Solo il ${missingPct}% delle celle \u00e8 vuoto: il dataset appare completo.`,'pass');
 
   // C3 - Colonna ID univoco
   const idCols = normH.filter(h=>['id','codice','cod','identifier','identificativo'].some(k=>h.includes(k)));

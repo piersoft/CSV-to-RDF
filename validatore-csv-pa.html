@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build:v2026.04.17.09 -->
+<!-- build:v2026.04.17.11 -->
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -886,7 +886,7 @@ async function loadFromUrl() {
     if (firstLine.toLowerCase().startsWith('<!doctype') || firstLine.toLowerCase().startsWith('<html')) {
       resultDiv.style.color = '#b00020';
       resultDiv.innerHTML = '<strong>✗ Il contenuto scaricato è HTML,</strong> non CSV. '
-        + 'L'URL punta alla pagina web del dataset, non al file diretto.';
+        + "L'URL punta alla pagina web del dataset, non al file diretto.";
       return;
     }
 
@@ -904,7 +904,7 @@ async function loadFromUrl() {
   }
 }
 
-function validate(rawInput) {
+async function validate(rawInput) {
   const raw = rawInput.trim();
   document.getElementById('loading-card').classList.remove('hidden');
   document.getElementById('results-section').classList.add('hidden');

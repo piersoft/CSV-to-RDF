@@ -1,9 +1,9 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.04.18.01 -->
+  <!-- build:v2026.04.19.01 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CSV-to-RDF v2026.04.18.01 — Linked Open Data PA</title>
+  <title>CSV-to-RDF v2026.04.19.01 — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
   <meta name="robots" content="index, follow"/>
   <link rel="canonical" href="https://piersoft.github.io/CSV-to-RDF/"/>
@@ -780,7 +780,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.04.18.01</span>
+<span id="app-version">v2026.04.19.01</span>
 </footer>
 
 <script>
@@ -1167,7 +1167,7 @@ function detectOntologiesDeterministic(headers, rows) {
   // FN-ACCO FIX: aggiunge "classificazione/categoria_struttura/RTA/B&B" comuni
   // ACCO — R5-FIX: trigger forti sempre; trigger deboli richiedono contesto
   var _accoStrong = has(['albergo','hotel','b&b','ostello','agriturismo','accommodation',
-                         'struttura_ricettiva','rta','affittacamere','casa_vacanze','codice_struttura_acco']);
+                         'struttura_ricettiva','affittacamere','casa_vacanze','codice_struttura_acco','residence_turistica_alberghiera']);
   var _accoCtx    = has(['stelle','posti_letto','numero_posti_letto','camere','letti',
                          'check_in','check_out','classificazione_struttura','categoria_struttura']);
   // ACCO: escludi se contesto esercizi commerciali (insegna+ragione_sociale = bar/ristorante/ecc)

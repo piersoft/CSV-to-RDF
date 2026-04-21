@@ -2506,10 +2506,15 @@ function parseAndPreviewCSV() {
     // Se BLOCCANTE: disabilita btn-convert e mostra solo il pannello
     var _btnConv = document.getElementById('btn-convert');
     if (_btnConv) {
-      _btnConv.disabled = (_gateResult.stato === 'BLOCCANTE');
-      _btnConv.title = (_gateResult.stato === 'BLOCCANTE')
-        ? 'Correggi il CSV prima di procedere'
+      var _gateBlocked = (_gateResult.stato === 'BLOCCANTE' || _gateResult.stato === 'MIGLIORABILE');
+      _btnConv.disabled = _gateBlocked;
+      _btnConv.title = _gateBlocked
+        ? (_gateResult.stato === 'BLOCCANTE'
+            ? 'CSV non convertibile — correggi i problemi indicati'
+            : 'CSV migliorabile — rinomina/aggiungi le colonne suggerite e ricarica il file')
         : '';
+      _btnConv.style.opacity = _gateBlocked ? '0.4' : '';
+      _btnConv.style.cursor  = _gateBlocked ? 'not-allowed' : '';
     }
   }
   // ── Fine Semantic Gate ────────────────────────────────────────────────────
@@ -4851,7 +4856,7 @@ async function startDeterministicConversion() {
   window._exampleLocked = false;
   // Guard: se il gate ha bloccato la conversione, non procedere
   var _lastGate = window._lastGateResult;
-  if (_lastGate && _lastGate.stato === 'BLOCCANTE') {
+  if (_lastGate && (_lastGate.stato === 'BLOCCANTE' || _lastGate.stato === 'MIGLIORABILE')) {
     showSemanticGate(_lastGate, null);
     return;
   }

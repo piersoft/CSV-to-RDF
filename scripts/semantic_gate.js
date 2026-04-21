@@ -282,7 +282,7 @@ function scoreLinkedData(headers, rows) {
     score += 5;
     warnings.push({
       id: 'L1',
-      msg: `${badCased.length} intestazioni non sono in formato snake_case: ${badCased.slice(0,4).map(h=>`"${h}"`).join(', ')}${badCased.length>4?'…':''}. Rinomina in minuscolo con underscore (es. "Data Inizio" → "data_inizio").`,
+      msg: `${badCased.length} intestazioni non seguono le etichette delle ontologie (minuscolo con underscore): ${badCased.slice(0,4).map(h=>`"${h}"`).join(', ')}${badCased.length>4?'…':''}. Le LG AGID Open Data (Allegato B) raccomandano di allineare i nomi colonna alle etichette dei vocabolari del Catalogo Nazionale della Semantica dei Dati (schema.gov.it).`,
     });
   } else {
     warnings.push({

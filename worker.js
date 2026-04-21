@@ -2041,10 +2041,10 @@ function scoreLinkedData(headers, rows) {
       .replace(/([a-z])([A-Z])/g,'$1_$2')
       .replace(/[\s\-]+/g,'_').toLowerCase()
       .replace(/[^a-z0-9_]/g,'_').replace(/_+/g,'_').replace(/^_|_$/g,'');
-    const renameHints = badCased.slice(0, 5).map(h => `"${h}" → "${toSnake(h)}"`).join(', ');
+    const renameHints = badCased.map(h => `"${h}" → "${toSnake(h)}"`).join(', ');
     warnings.push({
       id: 'L1',
-      msg: `La maggior parte delle intestazioni non segue le etichette delle ontologie del Catalogo Nazionale della Semantica dei Dati. Suggerimento rinominazione: ${renameHints}${badCased.length > 5 ? '…' : ''}.`,
+      msg: `La maggior parte delle intestazioni non segue le etichette delle ontologie del Catalogo Nazionale della Semantica dei Dati. Suggerimento rinominazione: ${renameHints}.`,
     });
   }
 

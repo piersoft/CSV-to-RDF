@@ -685,14 +685,14 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['numero_famiglie','residenti_in_famiglie_maschi','numero_convivenze'])) { result.add('QB'); result.add('CPV'); result.add('CLV'); }
   if(has(['tasso_mortalita_','tasso_natalita_','tasso_iscrizione','tasso_cancellazione'])) { result.add('QB'); result.add('CLV'); }
   if(has(['oggetto_gara','importo_complessivo_gara','oggetto_principale_contratto','denominazione_amministrazion'])) { result.add('PublicContract'); result.add('COV'); result.add('TI'); }
-  if(has(['cig','oggetto_gara','tipo_scelta_contraente','cf_amministrazione_appaltant'])) { result.add('PublicContract'); result.add('COV'); }
-  if(has(['cig','tipo_soggetto','id_aggiudicazione']) && has(['denominazione','codice_fiscale'])) { result.add('PublicContract'); result.add('COV'); }
+  if((_hasCIGheader || has(['oggetto_gara','tipo_scelta_contraente','cf_amministrazione_appaltant']))) { result.add('PublicContract'); result.add('COV'); }
+  if((_hasCIGheader || has(['tipo_soggetto','id_aggiudicazione'])) && has(['denominazione','codice_fiscale'])) { result.add('PublicContract'); result.add('COV'); }
   if(has(['importo_lavori']) && has(['importo_progettazione']) && has(['somme_a_disposizione'])) { result.add('PublicContract'); result.add('QB'); }
   // OpenCUP/BDAP: Codice CUP + Natura Intervento = formato DPCOE investimenti pubblici
   if(has(['codice_cup','natura_intervento','descrizione_titolare','codice_fiscale_titolare'])) { result.add('PublicContract'); result.add('COV'); result.add('TI'); result.add('QB'); }
   if(has(['codice_cup','tipologia_intervento','settore_interv_inv','finanziamenti_statali'])) { result.add('PublicContract'); result.add('COV'); result.add('TI'); result.add('QB'); }
   if(has(['codice_locale_progetto','codice_cup','descrizione_cup_integrale','codice_stato_cup'])) { result.add('PublicContract'); result.add('COV'); result.add('TI'); result.add('QB'); }
-  if(has(['cig','id_subappalto','cf_subappaltante','cod_categoria','classe_importo'])) { result.add('PublicContract'); result.add('COV'); result.add('TI'); }
+  if((_hasCIGheader || has(['id_subappalto','cf_subappaltante','cod_categoria','classe_importo']))) { result.add('PublicContract'); result.add('COV'); result.add('TI'); }
   if(has(['anno_mese_riferimento']) && has(['numero_ricorsi_pendenti'])) { result.add('QB'); result.add('TI'); result.add('CPSV-AP'); }
   if(has(['numero_ricorsi_pervenuti']) && has(['anno_deposito','classificazione_ricorso'])) { result.add('QB'); result.add('TI'); result.add('CPSV-AP'); }
   if(has(['tipo_ricorso','numero_ricorsi_pervenuti']) && has(['anno_deposito','codice_sede'])) { result.add('QB'); result.add('TI'); }
@@ -726,12 +726,11 @@ function detectOntologiesDeterministic(headers, rows) {
   // Pluviometro/meteo con data scomposta (gg+mm+aaaa) e misura in mm
   if(has(['gg','mm','aaaa']) && (has(['millimetri']) || has(['pioggia_mm']) || has(['precipitazione']) || has(['rainfall']) || has(['mm_pioggia']))) { result.add('IoT'); result.add('TI'); result.add('QB'); }
   if(has(['gg','mm','aaaa','ora']) && has(['millimetri'])) { result.add('IoT'); result.add('TI'); result.add('QB'); }
-  if(has(['fondo___fund','asse','codice_locale_progetto___','codice_fiscale_beneficiar'])) { result.add('PublicContract'); result.add('TI'); }
+  if(has(['fondo___fund','codice_locale_progetto___','codice_fiscale_beneficiar']) || (hasH(['asse']) && has(['fondo___fund']))) { result.add('PublicContract'); result.add('TI'); }
   if(has(['nlista','partito','candidato','luogonascita','datanascita'])) { result.add('CPV'); result.add('RO'); }
   if(has(["settore_di_attivita'_non_",'numero_addetti','numero_volontari'])) result.add('QB');
   if(has(['parametromisurato','valorerilevato','unitamisura','zonanome']) || has(['parametro','limiti_di_legge','acqua_di_milano'])) { result.add('IoT'); result.add('QB'); }
   if(has(['nlista','partito','candidato','luogonascita','datanascita'])) { result.add('CPV'); result.add('RO'); }
-  if(has(['fondo___fund','asse','codice_locale_progetto___','codice_fiscale_beneficiar'])) { result.add('PublicContract'); result.add('TI'); }
   if(has(['codice_museo','denominazione_museo','comune_sede','provincia_sede'])) { result.add('Cultural-ON'); result.add('CLV'); }
   if(has(['nome_museo','tipo_bene','numero_beni']) && has(['comune','indirizzo'])) { result.add('Cultural-ON'); result.add('QB'); result.add('CLV'); }
   if(has(['codiceisil','statoquestionario','annofondazione','dsprov'])) { result.add('Cultural-ON'); result.add('CLV'); }
@@ -757,7 +756,8 @@ function detectOntologiesDeterministic(headers, rows) {
   var _isStrutturaSociale = (hasH(['tipo_struttura']) || hasH(['codice_struttura'])) &&
                            hasH(['nome_struttura','nome_centro','nome_presidio','nome_istituto']);
   var _isEsercizioCommerciale = hasH(['insegna','insegna_commerciale']) && hasH(['ragione_sociale']);
-  var _isCIGDataset = has(['codice_cig','anno_deposito_ricorso']) || has(['numero_lotti_componenti','stato_gara','codice_cig']) || has(['cig','numero_lotti_componenti','stato_gara']) || has(['cig','importo_aggiudicazione']) || has(['cig','oggetto_contratto','modalita_scelta']) || has(['cig','oggetto_gara','importo_complessivo_gara']);
+  var _hasCIGheader = hasH(['cig','codice_cig','numero_cig','id_cig']);
+  var _isCIGDataset = has(['codice_cig','anno_deposito_ricorso']) || has(['numero_lotti_componenti','stato_gara','codice_cig']) || (_hasCIGheader && has(['numero_lotti_componenti','stato_gara'])) || (_hasCIGheader && has(['importo_aggiudicazione'])) || (_hasCIGheader && has(['oggetto_contratto','modalita_scelta'])) || (_hasCIGheader && has(['oggetto_gara','importo_complessivo_gara']));
   if((_accoStrong || _accoCtx) && !_narrativeCSV && !_isEsercizioCommerciale && !_isStrutturaSociale && !_isCIGDataset)
     result.add('ACCO');
 
@@ -925,9 +925,9 @@ function detectOntologiesDeterministic(headers, rows) {
     result.delete('POI'); // istituto culturale geolocalizzato —  POI generico
   // CPSV — servizi pubblici / appalti con varianti PA reali
   // FN-CPSV FIX: aggiunge "procedura/licitazione/affidamento" comuni nei dati PA
-  if(has(['cig','cup','aggiudicatario','appalto','gara','oggetto_appalto',
+  if((_hasCIGheader || has(['cup','aggiudicatario','appalto','gara','oggetto_appalto',
           'servizio_pubblico','cpsv','procedura','licitazione','affidamento',
-          'scelta_contraente','oggetto_gara','struttura_proponente']))
+          'scelta_contraente','oggetto_gara','struttura_proponente'])))
     result.add('CPSV-AP');
   // M4: servizi pubblici puri (senza CIG) → CPSV-AP
   if(has(['nome_servizio','canale_erogazione','requisiti_accesso','url_servizio']) && !has(['cig','appalto','gara']))
@@ -957,7 +957,7 @@ function detectOntologiesDeterministic(headers, rows) {
   // L0 — sempre aggiunto come base
   if(has(['parcheggio','parking','stalli','posti_auto','capacita_posti','tariffa_oraria','posti_disabili'])) result.add('PARK');
   if(has(['prezzo_intero','prezzo_ridotto','biglietto','tariffa_ingresso','costo_biglietto'])&&!result.has('ACCO')) result.add('POT');
-  if(has(['cig','cup','importo_aggiudicazione','stazione_appaltante','oggetto_contratto','aggiudicatario','cpv_codice','submisura','soggetto_attuatore','numero_concessione','concessione_demaniale'])) result.add('PublicContract');
+  if((_hasCIGheader || has(['cup','importo_aggiudicazione','stazione_appaltante','oggetto_contratto','aggiudicatario','cpv_codice','submisura','soggetto_attuatore','numero_concessione','concessione_demaniale']))) result.add('PublicContract');
   if(has(['nome_fiera','manifestazione_fieristica','fiera','data_inizio','data_fine']) && has(['comune','provincia'])) result.add('CPEV');
   if(has(['tipo_percorso','lunghezza_km','difficolta','dislivello','numero_tappe','sentiero','percorso_ciclabile','itinerario','tracciato','lat_start','lon_start','durata_stimata','nome_breve_percorso','nome_esteso_percorso'])) result.add('Route');
   if(has(['qualifica_dipendente','contratto_lavoro','ccnl','livello_contrattuale','ore_settimanali'])) result.add('RPO');

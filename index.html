@@ -1277,8 +1277,19 @@ function scoreOntologie(headers, rows, ontos) {
   const blockers = [], warnings = [];
   const normHeaders = headers.map(normH);
 
+  // Auto-rileva ontologie dagli header usando ONTO_PATTERNS (deterministico, indipendente dal corpus)
+  const autoDetected = [];
+  for (const [onto, pattern] of Object.entries(ONTO_PATTERNS)) {
+    const cnt = pattern.required_any.filter(req =>
+      normHeaders.some(h => h === req || h.includes(req))
+    ).length;
+    if (cnt >= 1) autoDetected.push({ onto, cnt });
+  }
+  autoDetected.sort((a, b) => b.cnt - a.cnt);
+  const resolvedOntos = autoDetected.length > 0 ? autoDetected.map(x => x.onto) : (ontos || []);
+
   // O1: almeno una ontologia riconosciuta (20 pt — bloccante se nessuna)
-  if (!ontos || ontos.length === 0) {
+  if (resolvedOntos.length === 0) {
     blockers.push({
       id: 'O1',
       msg: 'Nessuna ontologia PA italiana riconosciuta. Le intestazioni del CSV non corrispondono a nessun vocabolario controllato noto.',
@@ -1287,18 +1298,19 @@ function scoreOntologie(headers, rows, ontos) {
   }
   score += 20;
 
-  // O2: qualità delle ontologie rilevate (10 pt)
-  const primaryOnto = ontos[0];
-  const pattern = ONTO_PATTERNS[primaryOnto];
-  let matchCount = 0;
-  if (pattern) {
-    matchCount = pattern.required_any.filter(req => normHeaders.some(h => h.includes(req))).length;
-    if (matchCount >= 2) score += 10;
-    else if (matchCount === 1) { score += 4; warnings.push({ id:'O2', msg:`Solo 1 colonna chiave riconosciuta per ${primaryOnto}. Aggiungi più campi semantici.` }); }
-    else { warnings.push({ id:'O2', msg:`Ontologia ${primaryOnto} rilevata da contesto ma nessuna colonna chiave trovata.` }); }
+  // O2: qualità della prima ontologia (10 pt)
+  const primaryOnto = resolvedOntos[0];
+  const primaryItem = autoDetected.find(x => x.onto === primaryOnto);
+  const matchCount = primaryItem ? primaryItem.cnt : 0;
+  if (matchCount >= 2) score += 10;
+  else if (matchCount === 1) {
+    score += 4;
+    warnings.push({ id:'O2', msg:`Solo 1 colonna chiave riconosciuta per ${primaryOnto}. Aggiungi più campi semantici.` });
+  } else {
+    warnings.push({ id:'O2', msg:`Ontologia ${primaryOnto} rilevata da contesto ma nessuna colonna chiave trovata.` });
   }
 
-  // O3: coerenza (2+ ontologie compatibili) (10 pt)
+  // O3: coerenza tra ontologie (10 pt)
   const COMPATIBLE = {
     'CLV':    ['POI','TI','COV','ACCO','SMAPIT','Cultural-ON','CPSV-AP','PARK'],
     'POI':    ['CLV','TI','Cultural-ON','ACCO','PARK','SMAPIT'],
@@ -1315,14 +1327,14 @@ function scoreOntologie(headers, rows, ontos) {
     'CPSV-AP':['CLV','COV','TI','PublicContract'],
     'RO':     ['QB','TI','COV'],
   };
-  if (ontos.length >= 2) {
+  if (resolvedOntos.length >= 2) {
     const compatible = COMPATIBLE[primaryOnto] || [];
-    const secondOk = ontos.slice(1).some(o => compatible.includes(o));
+    const secondOk = resolvedOntos.slice(1).some(o => compatible.includes(o));
     if (secondOk) score += 10;
-    else warnings.push({ id:'O3', msg:`Combinazione ontologie insolita: ${ontos.join(' + ')}. Verifica che le colonne siano coerenti con un singolo dominio.` });
+    else warnings.push({ id:'O3', msg:`Combinazione ontologie insolita: ${resolvedOntos.slice(0,2).join(' + ')}.` });
   }
 
-  return { score, blockers, warnings, matched_ontos: ontos, match_count: matchCount };
+  return { score, blockers, warnings, matched_ontos: resolvedOntos, match_count: matchCount };
 }
 
 // ── Calcolo dimensione L (linked data) — 0-20 ────────────────────────────────

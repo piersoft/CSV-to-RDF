@@ -2132,7 +2132,7 @@ function computeSemanticScore(headers, rows, ontos, title, description, rawMeta)
   let stato;
   if (allBlockers.length > 0 || totalScore < 40) {
     stato = 'BLOCCANTE';
-  } else if (totalScore < 70) {
+  } else if (totalScore < 80) {
     stato = 'MIGLIORABILE';
   } else {
     stato = 'OTTIMALE';

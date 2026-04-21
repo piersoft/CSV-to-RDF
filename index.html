@@ -4824,7 +4824,7 @@ function runSemanticGate(headers, rows, ontos, title) {
   );
 }
 
-function startDeterministicConversion() {
+async function startDeterministicConversion() {
   var _gp = document.getElementById('graph-panel');
   if (_gp) _gp.style.display = 'none';
   window._exampleLocked = false;

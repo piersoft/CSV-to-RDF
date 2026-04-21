@@ -1368,7 +1368,7 @@ function scoreLinkedData(headers, rows) {
 }
 
 // ── Generazione suggerimenti specifici per ontologia ─────────────────────────
-function generateSuggestions(headers, ontos) {
+function generateSuggestions(headers, ontos, stato) {
   const normHeaders = headers.map(normH);
   const suggestions = [];
   const renamed_headers = {};
@@ -1386,7 +1386,7 @@ function generateSuggestions(headers, ontos) {
       // Controlla se il nome corretto è già presente
       if (normHeaders.some(h => h === rightNorm)) continue;
       // Controlla se il nome sbagliato è presente
-      const idx = normHeaders.findIndex(h => h === wrongNorm || h.includes(wrongNorm));
+      const idx = normHeaders.findIndex(h => h === wrongNorm);
       if (idx >= 0) {
         const originalName = headers[idx];
         renames.push({ da: originalName, a: right });
@@ -1394,8 +1394,8 @@ function generateSuggestions(headers, ontos) {
       }
     }
 
-    // Aggiungi: colonne required_any mancanti
-    for (const req of pattern.required_any) {
+    // Aggiungi: colonne required_any mancanti (solo se non OTTIMALE)
+    if (stato !== 'OTTIMALE') for (const req of pattern.required_any) {
       const reqNorm = normH(req);
       const present = normHeaders.some(h => h === reqNorm || h.includes(reqNorm));
       if (!present && !adds.find(a => a.colonna === req)) {
@@ -1404,9 +1404,9 @@ function generateSuggestions(headers, ontos) {
       }
     }
 
-    // Aggiungi: colonne bonus mancanti (max 3, non bloccanti)
+    // Aggiungi: colonne bonus mancanti (solo se non OTTIMALE)
     let bonusAdded = 0;
-    for (const bon of pattern.bonus) {
+    if (stato !== 'OTTIMALE') for (const bon of pattern.bonus) {
       if (bonusAdded >= 3) break;
       const bonNorm = normH(bon);
       const present = normHeaders.some(h => h === bonNorm || h.includes(bonNorm));
@@ -1460,7 +1460,7 @@ function computeSemanticScore(headers, rows, ontos, title, description, rawMeta)
     stato = 'OTTIMALE';
   }
 
-  const { suggestions, renamed_headers } = generateSuggestions(headers, ontos);
+  const { suggestions, renamed_headers } = generateSuggestions(headers, ontos, stato);
 
   return {
     stato,

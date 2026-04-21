@@ -2493,6 +2493,27 @@ function parseAndPreviewCSV() {
   validateCSV(parsed);
   // FONTE UNICA: solo motore deterministico — autoDetectOnto() rimossa (logica legacy)
   var _autoOntos = detectOntologiesDeterministic(parsed.headers, parsed.rows);
+
+  // ── Semantic Gate: valuta il CSV e mostra semaforo ───────────────────────
+  if (!window._exampleLocked) {
+    var _gateResult = runSemanticGate(
+      parsed.headers,
+      parsed.rows.slice(0, 10),
+      _autoOntos,
+      (document.getElementById('meta-paname')||{value:''}).value || ''
+    );
+    showSemanticGate(_gateResult, null);
+    // Se BLOCCANTE: disabilita btn-convert e mostra solo il pannello
+    var _btnConv = document.getElementById('btn-convert');
+    if (_btnConv) {
+      _btnConv.disabled = (_gateResult.stato === 'BLOCCANTE');
+      _btnConv.title = (_gateResult.stato === 'BLOCCANTE')
+        ? 'Correggi il CSV prima di procedere'
+        : '';
+    }
+  }
+  // ── Fine Semantic Gate ────────────────────────────────────────────────────
+
   // Se _exampleLocked è true, le pill sono già state impostate da loadExample tramite ontoMap
   // non sovrascrivere con il detect automatico
   if (!window._exampleLocked) {
@@ -4734,6 +4755,7 @@ function enforceOntologies(ttl, ontos) {
 
 // ── Funzione UI: mostra pannello Semantic Gate ────────────────────────────
 function showSemanticGate(result, onProceed) {
+  window._lastGateResult = result;  // memorizza per guard in startDeterministicConversion
   var panel = document.getElementById('semantic-gate-panel');
   if (!panel) return;
 
@@ -4827,33 +4849,16 @@ async function startDeterministicConversion() {
   var _gp = document.getElementById('graph-panel');
   if (_gp) _gp.style.display = 'none';
   window._exampleLocked = false;
+  // Guard: se il gate ha bloccato la conversione, non procedere
+  var _lastGate = window._lastGateResult;
+  if (_lastGate && _lastGate.stato === 'BLOCCANTE') {
+    showSemanticGate(_lastGate, null);
+    return;
+  }
   var csvText = (document.getElementById('csv-input')||{value:''}).value.trim();
   var ipa = (document.getElementById('meta-ipa')||{value:''}).value.trim();
   var ente = (document.getElementById('meta-paname')||{value:''}).value.trim()||ipa;
   var ontos = Array.from(document.querySelectorAll('#onto-selector .pill.active, #onto-selector-adv .pill.active')).map(function(p){return p.dataset.onto;}).filter(Boolean);
-  // ── Semantic Gate ────────────────────────────────────────────────────────
-  var _parsedForGate = parseCSV(csvText);
-  if (_parsedForGate) {
-    var _gateResult = runSemanticGate(
-      _parsedForGate.headers,
-      _parsedForGate.rows.slice(0, 10),
-      ontos,
-      ente
-    );
-    if (_gateResult.stato === 'BLOCCANTE') {
-      showSemanticGate(_gateResult, null);
-      return; // gate chiuso: non si procede
-    } else if (_gateResult.stato === 'MIGLIORABILE') {
-      showSemanticGate(_gateResult, null);
-      // gate semi-chiuso: mostra suggerimenti ma non converte
-      // L'utente deve migliorare il CSV e riprovare
-      return;
-    } else {
-      // OTTIMALE: nascondi eventuale pannello residuo e procedi
-      hideSemanticGate();
-    }
-  }
-  // ── Fine Semantic Gate ───────────────────────────────────────────────────
 
   if(!csvText){showStatus('Nessun CSV caricato.');return;}
   if(!ipa){showStatus('? Inserisci il Codice IPA dell\'ente titolare (STEP 3).', 'error');return;}

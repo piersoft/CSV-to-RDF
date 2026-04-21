@@ -1,0 +1,47 @@
+name: Enrich Gap Analysis
+
+on:
+  schedule:
+    # Ogni notte alle 03:30 UTC — dopo gap analysis (02:00) e ontology index (03:00)
+    - cron: '30 3 * * *'
+  workflow_dispatch:
+    inputs:
+      gap_date:
+        description: 'Data gap file da arricchire (YYYYMMDD, default=oggi)'
+        required: false
+        default: ''
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180   # 3 ore max
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install chardet pandas
+
+      - name: Run enrichment
+        run: python scripts/enrich_gap.py
+        env:
+          PYTHONUNBUFFERED: "1"
+
+      - name: Commit results
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add corpus/
+          git diff --staged --quiet || git commit -m "enrich: gap enrichment $(date +%Y%m%d)"
+          git push

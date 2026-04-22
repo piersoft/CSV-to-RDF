@@ -1,9 +1,9 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.04.22.01 -->
+  <!-- build:v2026.04.22.02 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CSV-to-RDF v2026.04.22.01 — Linked Open Data PA</title>
+  <title>CSV-to-RDF v2026.04.22.02 — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
   <meta name="robots" content="index, follow"/>
   <link rel="canonical" href="https://piersoft.github.io/CSV-to-RDF/"/>
@@ -827,7 +827,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.04.22.01</span>
+<span id="app-version">v2026.04.22.02</span>
 </footer>
 
 <script>
@@ -4398,7 +4398,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
     }
     if(detHasAddr(nh)&&ontos.indexOf('CLV')>=0){
       var addrTriples=[];
-      // Pattern ANNCSU: dug + denominazione_strada + numero_civico → clv:StreetToponym + clv:CivicNumbering
+      // Pattern ANNCSU: dug + denominazione_strada + numero_civico → clv:fullAddress + clv:hasNumber
       var _dugIdx=nh.indexOf('dug');
       var _dsIdx=nh.indexOf('denominazione_strada');if(_dsIdx<0)_dsIdx=nh.indexOf('nome_strada');
       var _civicoIdx=-1;
@@ -4411,17 +4411,12 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
           var _full=_dug+' '+_ds;
           if(_civicoIdx>=0&&row[_civicoIdx]&&row[_civicoIdx].trim()){_full+=' '+row[_civicoIdx].trim();}
           addrTriples.push({pred:'clv:fullAddress',val:litQ(_full,'it')});
-          var _streetURI=base+'street/'+_ds.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-          addrTriples.push({pred:'clv:hasStreetToponym',val:'<'+_streetURI+'>',raw:true});
-          addrTriples.push({pred:'_streetNode',val:_streetURI+'|||'+_dug+'|||'+_ds,raw:true});
           _anncsuHandled=true;
         }
       }
       if(_civicoIdx>=0&&row[_civicoIdx]&&row[_civicoIdx].trim()){
         var _civVal=row[_civicoIdx].trim().replace(/"/g,'\"');
-        var _civicURI=base+'civic/'+idVal;
-        addrTriples.push({pred:'clv:hasNumber',val:'<'+_civicURI+'>',raw:true});
-        addrTriples.push({pred:'_civicNode',val:_civicURI+'|||'+_civVal,raw:true});
+        addrTriples.push({pred:'clv:hasNumber',val:dq+_civVal+dq});
       }
       var addrMap={indirizzo:'clv:fullAddress',via:'clv:fullAddress',strada:'clv:fullAddress',cap:'clv:postCode',ubicazione_esercizio:'clv:fullAddress',indirizzo_esercizio:'clv:fullAddress',provincia:'clv:hasProvince',comune:'clv:hasCity',citta:'clv:hasCity',regione:'clv:hasRegion'};
       if(!_anncsuHandled){addrMap.denominazione_strada='clv:fullAddress';addrMap.nome_strada='clv:fullAddress';}
@@ -4441,29 +4436,11 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         if(!_hasCityA)addrTriples.push({pred:'clv:hasCity',val:litQ(_ipaData.n,'it')});
         if(!_hasProvA)addrTriples.push({pred:'clv:hasProvince',val:litQ(_ipaData.s,'it')});
       }
-      // Filtra nodi speciali
-      var _streetNodesA=[],_civicNodesA=[];
-      var addrTriplesF=addrTriples.filter(function(t){
-        if(t.pred==='_streetNode'){_streetNodesA.push(t.val);return false;}
-        if(t.pred==='_civicNode'){_civicNodesA.push(t.val);return false;}
-        return true;
-      });
-      if(addrTriplesF.length>0){
-        ttl+='<'+addrURI+'> a clv:Address'+(addrTriplesF.length>0?' ;':' .');
-        addrTriplesF.forEach(function(t,ti){var sep=ti===addrTriplesF.length-1?' .':' ;';ttl+=nl+sp+t.pred+' '+t.val+sep;});
+      if(addrTriples.length>0){
+        ttl+='<'+addrURI+'> a clv:Address'+(addrTriples.length>0?' ;':' .');
+        addrTriples.forEach(function(t,ti){var sep=ti===addrTriples.length-1?' .':' ;';ttl+=nl+sp+t.pred+' '+t.val+sep;});
         ttl+=nl+nl;
       }
-      _streetNodesA.forEach(function(nodeVal){
-        var parts=nodeVal.split('|||');
-        ttl+='<'+parts[0]+'> a clv:StreetToponym ;'+nl;
-        ttl+=sp+'clv:officialStreetName '+litQ(parts[2],'it')+' ;'+nl;
-        ttl+=sp+'clv:dug '+litQ(parts[1],'it')+' .'+nl+nl;
-      });
-      _civicNodesA.forEach(function(nodeVal){
-        var parts=nodeVal.split('|||');
-        ttl+='<'+parts[0]+'> a clv:CivicNumbering ;'+nl;
-        ttl+=sp+'clv:number '+dq+parts[1]+dq+' .'+nl+nl;
-      });
     }
     if(timeVal&&ontos.indexOf('TI')>=0){
       ttl+='<'+timeURI+'> a ti:TimeInstant ;'+nl;

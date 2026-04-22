@@ -1,0 +1,39 @@
+name: Sync worker.js → index.html
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'worker.js'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Sync shared functions from worker.js to index.html
+        run: python3 scripts/sync_worker_index.py worker.js index.html index.html
+
+      - name: Check if index.html changed
+        id: diff
+        run: |
+          if git diff --quiet index.html; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit updated index.html
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "chore: auto-sync shared functions from worker.js to index.html [skip ci]"
+          git push

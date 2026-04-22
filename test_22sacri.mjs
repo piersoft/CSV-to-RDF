@@ -355,6 +355,14 @@ const sacri = [
     headers: ['ANNO_DEPOSITO_RICORSO','CODICE_SEDE','NOME_SEDE','CODICE_SEZIONE','NOME_SEZIONE','NUMERO_RICORSO','DATA_DEPOSITO_RICORSO','CLASSIFICAZIONE_RICORSO','CODICE_CIG','CODICE_ACCORDO_QUADRO','NUMERO_GARA','OGGETTO_GARA','IMPORTO_COMPLESSIVO_GARA','NUMERO_LOTTI_COMPONENTI','OGGETTO_LOTTO','IMPORTO_LOTTO','STATO_GARA','SETTORE','LUOGO_ISTAT','PROVINCIA','DATA_PUBBLICAZIONE','DATA_SCADENZA_OFFERTA','CF_AMMINISTRAZIONE_APPALTANTE','DENOMINAZIONE_AMMINISTRAZIONE_APPALTANTE'],
     rows: [{ANNO_DEPOSITO_RICORSO:'2024',CODICE_SEDE:'002',NOME_SEDE:'CdS GIURISDIZIONALE - ROMA',CODICE_SEZIONE:'5',NOME_SEZIONE:'SEZIONE V',NUMERO_RICORSO:'202408609',DATA_DEPOSITO_RICORSO:'2024-11-18',CLASSIFICAZIONE_RICORSO:'APPALTI PUBBLICI DI SERVIZI -> ESCLUSIONE',CODICE_CIG:'8164723E8D',CODICE_ACCORDO_QUADRO:'',NUMERO_GARA:'7651172',OGGETTO_GARA:'GARA SERVIZI VIGILANZA ARMATA',IMPORTO_COMPLESSIVO_GARA:'277017855.27',NUMERO_LOTTI_COMPONENTI:'34',OGGETTO_LOTTO:'LOTTO 18',IMPORTO_LOTTO:'2455491.48',STATO_GARA:'ATTIVO',SETTORE:'SETTORI ORDINARI',LUOGO_ISTAT:'',PROVINCIA:'',DATA_PUBBLICAZIONE:'2020-01-17',DATA_SCADENZA_OFFERTA:'2020-08-04',CF_AMMINISTRAZIONE_APPALTANTE:'05359681003',DENOMINAZIONE_AMMINISTRAZIONE_APPALTANTE:'CONSIP SPA UNIP.'}],
     expected: ['CPSV', 'PublicContract', 'TI', 'COV'] },
+  { name: 'scuole_smapit_clv_lecce',
+    headers: ['codice_meccanografico','id','denominazione','tipologia','categoria','ist_comprensivo','dug','denominazione_strada','numero_civico','n_classi_sezioni','alunni','servizio_mensa','tempo_normale','lat','lon'],
+    rows: [
+      {codice_meccanografico:'LEAA001018',id:'1',denominazione:'CESARE BATTISTI',tipologia:'INFANZIA',categoria:'STATALE',ist_comprensivo:'NO',dug:'VIA',denominazione_strada:'SALVATORE TRINCHESE',numero_civico:'12',n_classi_sezioni:'7',alunni:'177',servizio_mensa:'SI',tempo_normale:'SI',lat:'40.3538',lon:'18.175'},
+      {codice_meccanografico:'LEEE07101Q',id:'2',denominazione:'E. DE AMICIS',tipologia:'PRIMARIA',categoria:'STATALE',ist_comprensivo:'NO',dug:'PIAZZETTA',denominazione_strada:'CONTE ACCARDO',numero_civico:'8',n_classi_sezioni:'13',alunni:'293',servizio_mensa:'NO',tempo_normale:'SI',lat:'40.35804',lon:'18.17178'},
+      {codice_meccanografico:'LEEE00101D',id:'3',denominazione:'C. BATTISTI',tipologia:'PRIMARIA',categoria:'STATALE',ist_comprensivo:'NO',dug:'VIA',denominazione_strada:'ACHILLE COSTA',numero_civico:'7',n_classi_sezioni:'23',alunni:'528',servizio_mensa:'NO',tempo_normale:'SI',lat:'40.35415',lon:'18.17555'},
+    ],
+    expected: ['CLV', 'SMAPIT'] },
 ];
 
 

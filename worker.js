@@ -1444,11 +1444,31 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
         if(!_hasProvFromCsv)addrTriples.push({pred:'clv:hasProvince',val:litQ(_ipaData.s,'it')});
         if(!_hasRegFromCsv)addrTriples.push({pred:'clv:hasRegion',val:litQ(_ipaData.r,'it')});
       }
-      if(addrTriples.length>0){
-        ttl+='<'+addrURI+'> a clv:Address'+(addrTriples.length>0?' ;':' .');
-        addrTriples.forEach(function(t,ti){var sep=ti===addrTriples.length-1?' .':' ;';ttl+=nl+sp+t.pred+' '+t.val+sep;});
+      // Filtra i nodi speciali (_streetNode, _civicNode) prima di emettere
+      var _streetNodesW=[],_civicNodesW=[];
+      var addrTriplesF=addrTriples.filter(function(t){
+        if(t.pred==='_streetNode'){_streetNodesW.push(t.val);return false;}
+        if(t.pred==='_civicNode'){_civicNodesW.push(t.val);return false;}
+        return true;
+      });
+      if(addrTriplesF.length>0){
+        ttl+='<'+addrURI+'> a clv:Address'+(addrTriplesF.length>0?' ;':' .');
+        addrTriplesF.forEach(function(t,ti){var sep=ti===addrTriplesF.length-1?' .':' ;';ttl+=nl+sp+t.pred+' '+t.val+sep;});
         ttl+=nl+nl;
       }
+      // Emetti nodi clv:StreetToponym
+      _streetNodesW.forEach(function(nodeVal){
+        var parts=nodeVal.split(' ');
+        ttl+='<'+parts[0]+'> a clv:StreetToponym ;'+nl;
+        ttl+=sp+'clv:officialStreetName '+litQ(parts[2],'it')+' ;'+nl;
+        ttl+=sp+'clv:dug '+litQ(parts[1],'it')+' .'+nl+nl;
+      });
+      // Emetti nodi clv:CivicNumbering
+      _civicNodesW.forEach(function(nodeVal){
+        var parts=nodeVal.split(' ');
+        ttl+='<'+parts[0]+'> a clv:CivicNumbering ;'+nl;
+        ttl+=sp+'clv:number '+dq+parts[1]+dq+' .'+nl+nl;
+      });
     }
     if(timeVal&&ontos.indexOf('TI')>=0){
       ttl+='<'+timeURI+'> a ti:TimeInstant ;'+nl;
@@ -2087,10 +2107,9 @@ function scoreLinkedData(headers, rows) {
     score += 5;
     warnings.push({
       id: 'L1',
-      msg: `${badCased.length} intestazioni non seguono le etichette delle ontologie (minuscolo con underscore): ${badCased.slice(0,4).map(h => `"${h}" → "${h.trim().replace(/([a-z])([A-Z])/g,'$1_$2').replace(/[\s\-]+/g,'_').toLowerCase().replace(/[^a-z0-9_]/g,'_').replace(/_+/g,'_').replace(/^_|_$/g,'')}"` ).join(', ')}${badCased.length>4?'…':''}.`,
+      msg: `${badCased.length} intestazioni non seguono le etichette delle ontologie (minuscolo con underscore): ${badCased.slice(0,4).map(h=>`"${h}"`).join(', ')}${badCased.length>4?'…':''}. Le LG AGID Open Data (Allegato B) raccomandano di allineare i nomi colonna alle etichette dei vocabolari del Catalogo Nazionale della Semantica dei Dati (schema.gov.it).`,
     });
   } else {
-    // Suggerisci rinomina snake_case per le colonne problematiche
     const toSnake = h => h.trim()
       .replace(/[àáâã]/g,'a').replace(/[èéêë]/g,'e').replace(/[ìíîï]/g,'i')
       .replace(/[òóôõ]/g,'o').replace(/[ùúûü]/g,'u')

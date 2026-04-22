@@ -2087,9 +2087,10 @@ function scoreLinkedData(headers, rows) {
     score += 5;
     warnings.push({
       id: 'L1',
-      msg: `${badCased.length} intestazioni non seguono le etichette delle ontologie (minuscolo con underscore): ${badCased.slice(0,4).map(h=>`"${h}"`).join(', ')}${badCased.length>4?'…':''}. Le LG AGID Open Data (Allegato B) raccomandano di allineare i nomi colonna alle etichette dei vocabolari del Catalogo Nazionale della Semantica dei Dati (schema.gov.it).`,
+      msg: `${badCased.length} intestazioni non seguono le etichette delle ontologie (minuscolo con underscore): ${badCased.slice(0,4).map(h => `"${h}" → "${h.trim().replace(/([a-z])([A-Z])/g,'$1_$2').replace(/[\s\-]+/g,'_').toLowerCase().replace(/[^a-z0-9_]/g,'_').replace(/_+/g,'_').replace(/^_|_$/g,'')}"` ).join(', ')}${badCased.length>4?'…':''}.`,
     });
   } else {
+    // Suggerisci rinomina snake_case per le colonne problematiche
     const toSnake = h => h.trim()
       .replace(/[àáâã]/g,'a').replace(/[èéêë]/g,'e').replace(/[ìíîï]/g,'i')
       .replace(/[òóôõ]/g,'o').replace(/[ùúûü]/g,'u')

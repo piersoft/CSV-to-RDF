@@ -1361,7 +1361,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       if(!val||normH==='id')return;
       var rule=detFindRule(normH,ontos);
       if(rule&&rule.type==='_clvnode')return; // gestito da addrMap come nodo clv:Address
-      if(!rule){var _n=detNormH(origH);if(_n==='_skip'||_n.startsWith('_'))return;var _addrKeys=['indirizzo','via','strada','cap','ubicazione_esercizio','indirizzo_esercizio','dislocazione','contrada','frazione','localita','provincia','comune','citta','regione','dug','denominazione_strada','nome_strada'];if(_addrKeys.indexOf(normH)>=0)return;if(val)triples.push({pred:'rdfs:comment',val:'"'+origH+': '+val.replace(/"/g,'\\"' )+('"@it'),raw:true,unmapped:true});return;}
+      if(!rule){var _n=detNormH(origH);if(_n==='_skip'||_n.startsWith('_'))return;var _addrKeys=['indirizzo','via','strada','cap','ubicazione_esercizio','indirizzo_esercizio','dislocazione','contrada','frazione','localita','provincia','comune','citta','regione','dug','denominazione_strada','nome_strada','civico','n_civico','numero_civico','num_civico'];if(_addrKeys.indexOf(normH)>=0)return;if(val)triples.push({pred:'rdfs:comment',val:'"'+origH+': '+val.replace(/"/g,'\\"' )+('"@it'),raw:true,unmapped:true});return;}
       if(rule.type==='skip')return;
       if(_singleValPreds.has(rule.pred)&&_usedSinglePreds.has(rule.pred))return;
       var litVal=detFormatLit(rule,val);
@@ -1384,18 +1384,36 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
     if(detHasAddr(nh)&&ontos.indexOf('CLV')>=0){
       var addrTriples=[];
       // Pattern ANNCSU/ISTAT: dug (Denominazione Urbanistica Generica: VIA/VIALE/PIAZZA)
-      // + denominazione_strada → concateno in clv:fullAddress "VIA SALVATORE TRINCHESE"
+      // + denominazione_strada + civico → concateno in clv:fullAddress "VIA SALVATORE TRINCHESE 10"
       var _dugIdx=nh.indexOf('dug');
       var _dsIdx=nh.indexOf('denominazione_strada');
       if(_dugIdx<0)_dsIdx=nh.indexOf('nome_strada')>=0?nh.indexOf('nome_strada'):_dsIdx;
+      // Cerca colonna civico (varianti comuni nei dataset PA)
+      var _civicoIdx=-1;
+      var _civicoKeys=['civico','n_civico','numero_civico','num_civico'];
+      for(var _ci=0;_ci<_civicoKeys.length && _civicoIdx<0;_ci++){
+        var _tmp=nh.indexOf(_civicoKeys[_ci]);
+        if(_tmp>=0)_civicoIdx=_tmp;
+      }
       var _anncsuHandled=false;
       if(_dugIdx>=0 && _dsIdx>=0 && row[_dugIdx] && row[_dsIdx]){
         var _dug=row[_dugIdx].trim();
         var _ds=row[_dsIdx].trim();
         if(_dug && _ds){
-          addrTriples.push({pred:'clv:fullAddress',val:litQ(_dug+' '+_ds,'it')});
+          var _full=_dug+' '+_ds;
+          // Se c'è civico, concatena: "VIA SALVATORE TRINCHESE 10"
+          if(_civicoIdx>=0 && row[_civicoIdx] && row[_civicoIdx].trim()){
+            _full+=' '+row[_civicoIdx].trim();
+          }
+          addrTriples.push({pred:'clv:fullAddress',val:litQ(_full,'it')});
           _anncsuHandled=true;
         }
+      }
+      // clv:hasNumber sempre generato se il civico è presente (indipendente da ANNCSU)
+      // Tipo: stringa semplice (non langlit), es. "10" o "25/A"
+      if(_civicoIdx>=0 && row[_civicoIdx] && row[_civicoIdx].trim()){
+        var _civVal=row[_civicoIdx].trim().replace(/"/g,'\\"');
+        addrTriples.push({pred:'clv:hasNumber',val:dq+_civVal+dq});
       }
       var addrMap={indirizzo:'clv:fullAddress',via:'clv:fullAddress',strada:'clv:fullAddress',cap:'clv:postCode',ubicazione_esercizio:'clv:fullAddress',indirizzo_esercizio:'clv:fullAddress',dislocazione:'clv:fullAddress',contrada:'clv:fullAddress',frazione:'clv:hasSpatialCoverage',localita:'clv:hasSpatialCoverage',provincia:'clv:hasProvince',comune:'clv:hasCity',citta:'clv:hasCity',regione:'clv:hasRegion'};
       // Se ANNCSU ha già popolato fullAddress, non duplicare con denominazione_strada da sola

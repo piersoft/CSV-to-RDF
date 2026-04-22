@@ -465,7 +465,7 @@ function detGetMainOnto(ontos){var priority=['GTFS','SMAPIT','ACCO','IoT','Cultu
 
 function detFindColIdx(nh,cands){for(var i=0;i<cands.length;i++){var x=nh.indexOf(cands[i]);if(x>=0)return x;}return-1;}
 
-function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat','lon','ubicazione_esercizio','indirizzo_esercizio','n_civico','numero_civico','citta','città','city','nome_stazione','dislocazione','contrada','frazione','localita'].some(function(c){return nh.indexOf(c)>=0;});}
+function detHasAddr(nh){return['indirizzo','via','comune','cap','provincia','lat','lon','ubicazione_esercizio','indirizzo_esercizio','n_civico','numero_civico','citta','città','city','nome_stazione','dislocazione','contrada','frazione','localita','dug','denominazione_strada','nome_strada'].some(function(c){return nh.indexOf(c)>=0;});}
 
 function detHasTime(nh,ontos){return ontos.indexOf('TI')>=0&&['inizio','termine','data','quando','data_sopralluogo','data_ispezione','data_controllo','data_campionamento','data_rilevamento','data_misura','data_verifica','data_accertamento'].some(function(c){return nh.indexOf(c)>=0;});}
 
@@ -1361,7 +1361,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       if(!val||normH==='id')return;
       var rule=detFindRule(normH,ontos);
       if(rule&&rule.type==='_clvnode')return; // gestito da addrMap come nodo clv:Address
-      if(!rule){var _n=detNormH(origH);if(_n==='_skip'||_n.startsWith('_'))return;var _addrKeys=['indirizzo','via','strada','cap','ubicazione_esercizio','indirizzo_esercizio','dislocazione','contrada','frazione','localita','provincia','comune','citta','regione'];if(_addrKeys.indexOf(normH)>=0)return;if(val)triples.push({pred:'rdfs:comment',val:'"'+origH+': '+val.replace(/"/g,'\\"' )+('"@it'),raw:true,unmapped:true});return;}
+      if(!rule){var _n=detNormH(origH);if(_n==='_skip'||_n.startsWith('_'))return;var _addrKeys=['indirizzo','via','strada','cap','ubicazione_esercizio','indirizzo_esercizio','dislocazione','contrada','frazione','localita','provincia','comune','citta','regione','dug','denominazione_strada','nome_strada'];if(_addrKeys.indexOf(normH)>=0)return;if(val)triples.push({pred:'rdfs:comment',val:'"'+origH+': '+val.replace(/"/g,'\\"' )+('"@it'),raw:true,unmapped:true});return;}
       if(rule.type==='skip')return;
       if(_singleValPreds.has(rule.pred)&&_usedSinglePreds.has(rule.pred))return;
       var litVal=detFormatLit(rule,val);
@@ -1383,7 +1383,23 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
     }
     if(detHasAddr(nh)&&ontos.indexOf('CLV')>=0){
       var addrTriples=[];
+      // Pattern ANNCSU/ISTAT: dug (Denominazione Urbanistica Generica: VIA/VIALE/PIAZZA)
+      // + denominazione_strada → concateno in clv:fullAddress "VIA SALVATORE TRINCHESE"
+      var _dugIdx=nh.indexOf('dug');
+      var _dsIdx=nh.indexOf('denominazione_strada');
+      if(_dugIdx<0)_dsIdx=nh.indexOf('nome_strada')>=0?nh.indexOf('nome_strada'):_dsIdx;
+      var _anncsuHandled=false;
+      if(_dugIdx>=0 && _dsIdx>=0 && row[_dugIdx] && row[_dsIdx]){
+        var _dug=row[_dugIdx].trim();
+        var _ds=row[_dsIdx].trim();
+        if(_dug && _ds){
+          addrTriples.push({pred:'clv:fullAddress',val:litQ(_dug+' '+_ds,'it')});
+          _anncsuHandled=true;
+        }
+      }
       var addrMap={indirizzo:'clv:fullAddress',via:'clv:fullAddress',strada:'clv:fullAddress',cap:'clv:postCode',ubicazione_esercizio:'clv:fullAddress',indirizzo_esercizio:'clv:fullAddress',dislocazione:'clv:fullAddress',contrada:'clv:fullAddress',frazione:'clv:hasSpatialCoverage',localita:'clv:hasSpatialCoverage',provincia:'clv:hasProvince',comune:'clv:hasCity',citta:'clv:hasCity',regione:'clv:hasRegion'};
+      // Se ANNCSU ha già popolato fullAddress, non duplicare con denominazione_strada da sola
+      if(!_anncsuHandled){addrMap.denominazione_strada='clv:hasStreetToponym';addrMap.nome_strada='clv:hasStreetToponym';}
       Object.keys(addrMap).forEach(function(col){
         var xi=nh.indexOf(col);
         if(xi>=0&&row[xi]&&row[xi].trim()){var v=row[xi].trim();addrTriples.push({pred:addrMap[col],val:litQ(v,'it')});}

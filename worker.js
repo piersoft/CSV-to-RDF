@@ -2432,7 +2432,7 @@ export default {
     const reqUrl = new URL(request.url);
 
     if (reqUrl.pathname === '/health') {
-      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.04.19.01' }), {
+      return new Response(JSON.stringify({ status: 'ok', version: 'v2026.04.22.03' }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
     }

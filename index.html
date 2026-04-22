@@ -1,9 +1,9 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.04.22.02 -->
+  <!-- build:v2026.04.22.03 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CSV-to-RDF v2026.04.22.02 — Linked Open Data PA</title>
+  <title>CSV-to-RDF v2026.04.22.03 — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
   <meta name="robots" content="index, follow"/>
   <link rel="canonical" href="https://piersoft.github.io/CSV-to-RDF/"/>
@@ -827,7 +827,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.04.22.02</span>
+<span id="app-version">v2026.04.22.03</span>
 </footer>
 
 <script>
@@ -4006,7 +4006,7 @@ function fillMissingConnectedResources(ttl,ontos,rows,ipa){
 // ═══ MOTORE TTL DETERMINISTICO (basato su fixtures_v9.json - 473 dataset reali, OSM fix) ═══
 var DET_COL_NORM={'osm_id':'id','osm_type':'_skip','osm_url':'sitoweb','indoor':'_skip','level':'_skip','ref':'_skip','access':'_skip','opening_hours':'_skip','name':'denominazione','operator':'gestore',coory:'lat',coorx:'lon',indirizzo_e_mail_autonomia:'email',indirizzo_e_mail_sede_corsi:'email',indirizzo_pec_sede_corsi:'email',e_mail:'email',email_scuola:'email',mail_scuola:'email',indirizzo_email_autonomia:'email',indirizzo_pec_autonomia:'email',telefono_sede_autonomia:'telefono',tipologia:'tipo',tipologia_sede:'tipo','tipo evento':'tipo_evento','tipologia scheda':'tipologia_scheda','tipologia attivita':'tipo',macrotipologia_autonomia:'tipo',tipologia_autonomia:'tipo',caratteristica_scuola:'tipo',codice:'id',localita:'comune',distr:'_skip',num_sedi_autonomia:'_skip',organico_autonomia:'_skip',organico_sede:'_skip',location:'_skip',codice_sede_riferimento:'_skip',codice_sede_di_direttivo:'_skip',indirizzo_sede_di_direttivo:'_skip',cod_comune_sede_dir:'_skip',comune_sede_di_direttivo:'_skip',cap_sede_dir:'_skip',s_comune_montano:'_skip',denominazione_sede_direttivo:'_skip',nome_poi:'nome',tipo_poi:'tipo',accessibile_h24:'accessibile',ident:'id',cod:'id',ident:'id',nome_poi:'nome',tipo_poi:'tipo',tipo_struttura:'tipo',nome_struttura:'nome',accessibile_h24:'accessibile',accessibilita:'accessibile',cod:'id',codice:'id',code:'id',pk:'id',indirizzo_completo:'indirizzo',email_referente:'email',latitudine:'lat',lat_wgs84:'lat',coordy:'lat',geo_lat:'lat',longitudine:'lon',lon_wgs84:'lon',coordx:'lon',geo_lon:'lon',lng:'lon',stop_lat:'lat',stop_lon:'lon',denominazionescuola:'denominazione',denominazione_scuola:'denominazione',nome_dataset:'denominazione',label:'denominazione',titolo:'denominazione',stop_name:'denominazione',nome_sensore:'denominazione',denominazioneistitutoriferimento:'denominazione',istituzione_scolastica:'denominazione',amministrazione:'denominazione',indirizzoscuola:'indirizzo',indirizzo_scuola:'indirizzo',ubicazione:'indirizzo',localizzazione:'indirizzo',address:'indirizzo',descrizionecomune:'comune',citta:'comune',city:'comune',capscuola:'cap',cap_scuola:'cap',postcode:'cap',codicescuola:'id',codice_scuola:'id',slug:'id',cig:'id',fid:'id',codiceistitutoriferimento:'id',codice_istituzione:'id',codice_ente_bdap:'id',id_consigliere:'id',id_sensore:'id',idsensore:'id',node_id:'id',remoteid:'id',pec:'email',mail:'email',sito_web:'sitoweb',website:'sitoweb',web:'sitoweb',url:'sitoweb',data_inizio:'inizio',data_da:'inizio',data_inizio_evento:'inizio',quando:'inizio',published:'inizio',creation_date:'inizio',issued:'inizio',data_fine:'termine',data_a:'termine',data_fine_evento:'termine',fine:'termine',last_edit_date:'modified',ultimamodifica:'modified',occorrenze:'valore',numero:'valore',totale:'valore',popolazione_residente:'valore',importo:'valore',tipologia:'tipo',tipo_bene:'tipo',tipo_evento:'tipo',tipo_struttura:'tipo',tipo_scuola:'tipo',descrizionetipologiagradoistruzione:'tipo',informazioni:'descrizione',note:'descrizione',oggetto:'descrizione',tel:'telefono',phone:'telefono',anno_rilevazione:'anno',annoscolastico:'anno',anno_scolastico:'anno',longitude:'lon',latitude:'lat'};
 var DET_URI_SEG={ACCO:'accommodation-facility',GTFS:'stop',POI:'point-of-interest','IoT':'sensor',COV:'public-organization',CPV:'person',RO:'role',SMAPIT:'school',QB:'observation',CLV:'address',TI:'event',CulturalON:'cultural-institute',ADMS:'asset',CPSV:'service',PARK:'parking-facility',PublicContract:'public-contract',Route:'route',RPO:'role-in-organization',Learning:'course',Transparency:'transparency-obligation',Indicator:'indicator',POT:'price-specification',CPEV:'public-event',AccessCondition:'access-condition',AtlasOfPaths:'path',CulturalHeritage:'cultural-heritage',Project:'project',MU:'measurement',NDC:'data-service'};
-var DET_CLASS={ACCO:'acco:Accommodation',GTFS:'gtfs:Stop',POI:'poi:PointOfInterest','IoT':'iot:Sensor',COV:'cov:PublicOrganization',CPV:'cpv:Person',RO:'ro:Role',SMAPIT:'smapit:School',QB:'qb:Observation',CLV:'clv:Address',TI:'l0:EventOrSituation',CulturalON:'cis:CulturalInstituteOrSite','Cultural-ON':'cis:CulturalInstituteOrSite',ADMS:'adms:SemanticAsset',CPSV:'cpsv:PublicService','CPSV-AP':'cpsv:PublicService',PARK:'park:ParkingFacility',PublicContract:'pc:Contract',Route:'route:Route',RPO:'rpo:RoleInOrganization',Learning:'learn:Course',Transparency:'tr:TransparencyObligation',Indicator:'indicator:Indicator',POT:'pot:PriceSpecification',CPEV:'cpev:PublicEvent',AccessCondition:'ac:AccessCondition',AtlasOfPaths:'aop:Path',CulturalHeritage:'ch:CulturalHeritage',Project:'prj:PublicInvestmentProject',MU:'mu:Value',NDC:'ndc:DataService'};
+var DET_CLASS={ACCO:'acco:Accommodation',GTFS:'gtfs:Stop',POI:'poi:PointOfInterest','IoT':'iot:Sensor',COV:'cov:PublicOrganization',CPV:'cpv:Person',RO:'ro:Role',SMAPIT:'smapit:School',QB:'qb:Observation',CLV:'clv:Address',TI:'l0:EventOrSituation',CulturalON:'cis:CulturalInstituteOrSite','Cultural-ON':'cis:CulturalInstituteOrSite',ADMS:'adms:SemanticAsset',CPSV:'cpsv:PublicService','CPSV-AP':'cpsv:PublicService',PARK:'park:CarPark',PublicContract:'pc:Contract',Route:'route:Route',RPO:'ro:Role',Learning:'learning:DegreeCourse',Transparency:'tr:TransparencyObligation',Indicator:'indicator:Indicator',POT:'pot:PriceSpecification',CPEV:'cpev:PublicEvent',AccessCondition:'ac:AccessCondition',AtlasOfPaths:'aop:Path',CulturalHeritage:'ch:CulturalHeritage',Project:'prj:PublicInvestmentProject',MU:'mu:Value',NDC:'ndc:DataService'};
 function detGetMainOnto(ontos){var priority=['GTFS','SMAPIT','ACCO','IoT','CulturalON','Cultural-ON','CulturalHeritage','PublicContract','RPO','Route','AtlasOfPaths','Learning','Transparency','Indicator','PARK','POT','CPEV','AccessCondition','Project','MU','NDC','CPSV-AP','RO','ADMS','QB','CPV','POI','COV','TI','CLV','L0'];for(var i=0;i<priority.length;i++){if(ontos.indexOf(priority[i])>=0)return priority[i];}return ontos[0]||'L0';}
 function detNormH(h){var n=h.toLowerCase().trim().replace(/[àáâä]/g,'a').replace(/[èéêë]/g,'e').replace(/[ìíîï]/g,'i').replace(/[òóôö]/g,'o').replace(/[ùúûü]/g,'u').replace(/ñ/g,'n').replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');return DET_COL_NORM[n]||n;}
 function detFindColIdx(nh,cands){for(var i=0;i<cands.length;i++){var x=nh.indexOf(cands[i]);if(x>=0)return x;}return-1;}
@@ -4061,7 +4061,7 @@ function detFormatLit(rule,val){
   if(rule.type==='phone')return'"'+val+'"^^xsd:string';
   return litQ(val,'it');
 }
-var DET_COL_RULES={denominazione:{pred:'rdfs:label',type:'langlit',lang:'it'},nome:{pred:'rdfs:label',type:'langlit',lang:'it'},nome_iniziativa:{pred:'rdfs:label',type:'langlit',lang:'it'},titolo_evento:{pred:'rdfs:label',type:'langlit',lang:'it'},titolo_manifestazione:{pred:'rdfs:label',type:'langlit',lang:'it'},descrizione:{pred:'dct:description',type:'langlit',lang:'it'},luogo:{pred:'schema:location',type:'langlit',lang:'it'},sede:{pred:'schema:location',type:'langlit',lang:'it'},dove:{pred:'l0:hasLocation',type:'langlit',lang:'it'},ingresso:{pred:'schema:isAccessibleForFree',type:'langlit',lang:'it'},biglietto:{pred:'schema:isAccessibleForFree',type:'langlit',lang:'it'},organizzatore:{pred:'dct:publisher',type:'langlit',lang:'it'},promotore:{pred:'dct:publisher',type:'langlit',lang:'it'},interpreti:{pred:'schema:performer',type:'langlit',lang:'it'},esecutori:{pred:'schema:performer',type:'langlit',lang:'it'},autore:{pred:'dct:creator',type:'langlit',lang:'it'},periodo:{pred:'dct:temporal',type:'langlit',lang:'it'},stagione:{pred:'dct:temporal',type:'langlit',lang:'it'},programmazione:{pred:'dct:temporal',type:'langlit',lang:'it'},stalli:{pred:'park:totalNumCarParkSpaces',type:'integer'},posti_auto:{pred:'park:totalNumCarParkSpaces',type:'integer'},capacita_posti:{pred:'park:totalNumCarParkSpaces',type:'integer'},posti_disabili:{pred:'park:numSpacesForDisabled',type:'integer'},tariffa_oraria:{pred:'park:numPayingParkingSpaces',type:'decimal'},tipo_parcheggio:{pred:'park:hasCarParkTypology',type:'langlit',lang:'it'},cig:{pred:'pc:CIG',type:'literal'},cup:{pred:'dct:identifier',type:'literal'},importo_aggiudicazione:{pred:'pc:totalAmount',type:'decimal'},importo_base:{pred:'pc:totalAmount',type:'decimal'},importo_contratto:{pred:'pc:totalAmount',type:'decimal'},oggetto_contratto:{pred:'pc:description',type:'langlit',lang:'it'},oggetto_gara:{pred:'pc:description',type:'langlit',lang:'it'},stazione_appaltante:{pred:'pc:hasProcuringEntity',type:'langlit',lang:'it'},aggiudicatario:{pred:'pc:winner',type:'langlit',lang:'it'},cpv_codice:{pred:'pc:hasCPV',type:'literal'},modalita_scelta:{pred:'pc:hasProcedureType',type:'langlit',lang:'it'},data_aggiudicazione:{pred:'pc:outcomeDate',type:'date'},lunghezza_km:{pred:'route:routelLength',type:'literal'},numero_tappe:{pred:'route:numberOfStages',type:'integer'},durata_stimata:{pred:'route:routeEstDuration',type:'literal'},nome_breve_percorso:{pred:'route:routeShortName',type:'literal'},nome_esteso_percorso:{pred:'route:routeLongName',type:'literal'},difficolta:{pred:'dct:description',type:'langlit',lang:'it'},dislivello:{pred:'dct:description',type:'decimal'},qualifica_dipendente:{pred:'ro:holdsRole',type:'langlit',lang:'it'},contratto_lavoro:{pred:'dct:description',type:'langlit',lang:'it'},livello_contrattuale:{pred:'dct:description',type:'literal'},ore_settimanali:{pred:'dct:description',type:'decimal'},ccnl:{pred:'dct:description',type:'langlit',lang:'it'},crediti:{pred:'learn:ects',type:'decimal'},ects:{pred:'learn:ects',type:'decimal'},ore_formazione:{pred:'learn:hours',type:'decimal'},durata_corso:{pred:'learn:duration',type:'langlit',lang:'it'},titolo_rilasciato:{pred:'learn:awardedTitle',type:'langlit',lang:'it'},titolo_corso:{pred:'rdfs:label',type:'langlit',lang:'it'},obbligo_trasparenza:{pred:'tr:hasTransparencyObligation',type:'langlit',lang:'it'},categoria_trasparenza:{pred:'tr:transparencyCategory',type:'langlit',lang:'it'},dato_obbligatorio:{pred:'tr:mandatoryData',type:'langlit',lang:'it'},norma_riferimento:{pred:'dct:source',type:'literal'},tipo_indicatore:{pred:'indicator:indicatorType',type:'langlit',lang:'it'},valore_indicatore:{pred:'sdmx-measure:obsValue',type:'decimal'},baseline:{pred:'indicator:baseline',type:'decimal'},target:{pred:'indicator:target',type:'decimal'},fonte_indicatore:{pred:'dct:source',type:'langlit',lang:'it'},partita_iva:{pred:'cov:VATnumber',type:'literal'},codice_ipa:{pred:'cov:IPAcode',type:'literal'},rea:{pred:'cov:REANumber',type:'literal'},data_costituzione:{pred:'cov:foundationDate',type:'date'},codice_univoco_ufficio:{pred:'cov:officeIdentifier',type:'literal'},oggetto_sociale:{pred:'cov:businessObjective',type:'langlit',lang:'it'},acronimo:{pred:'cov:orgAcronym',type:'literal'},cf:{pred:'cpv:taxCode',type:'literal'},codice_fiscale:{pred:'cpv:taxCode',type:'literal'},codice_sesso:{pred:'cpv:sexID',type:'literal'},grado_istruzione:{pred:'cpv:educationLevelID',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-people/education-level'},eta:{pred:'cpv:age',type:'integer'},nome_completo:{pred:'cpv:fullName',type:'literal'},numero_camere:{pred:'acco:totalRoom',type:'integer'},numero_bagni:{pred:'acco:totalToilet',type:'integer'},codice_struttura:{pred:'acco:accommodationCode',type:'literal'},codice_stelle:{pred:'acco:accoStarRatingID',type:'literal'},nome_ufficiale:{pred:'poi:POIofficialName',type:'langlit',lang:'it'},nome_alternativo:{pred:'poi:POIalternativeName',type:'langlit',lang:'it'},categoria_poi:{pred:'poi:POIcategoryName',type:'langlit',lang:'it'},id_poi:{pred:'poi:POIID',type:'literal'},forma_giuridica:{pred:'cov:hasLegalStatus',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-organizations/legal-status'},natura_giuridica:{pred:'cov:hasLegalStatus',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-organizations/legal-status'},codice_ateco:{pred:'cov:hasActivityType',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-organizations/ateco-2007'},settore_ateco:{pred:'cov:hasActivityType',type:'langlit',lang:'it'},licenza:{pred:'dct:license',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/licences'},tipo_licenza:{pred:'dct:license',type:'langlit',lang:'it'},numero_camere_totali:{pred:'acco:totalRoom',type:'integer'},tipo:{pred:'dct:type',type:'langlit',lang:'it'},categoria:{pred:'dct:type',type:'langlit',lang:'it'},email:{pred:'sm:hasEmail',type:'mailto'},sitoweb:{pred:'sm:hasWebSite',type:'url'},telefono:{pred:'sm:hasTelephone',type:'literal'},fax:{pred:'dct:description',type:'literal'},lat:{pred:'geo:lat',type:'typed',xsd:'xsd:decimal'},lon:{pred:'geo:long',type:'typed',xsd:'xsd:decimal'},modified:{pred:'dct:modified',type:'typed',xsd:'xsd:date'},numero_posti_letto:{pred:'acco:totalRoom',type:'typed',xsd:'xsd:integer',onto:'ACCO'},posti_letto:{pred:'acco:totalRoom',type:'typed',xsd:'xsd:integer',onto:'ACCO'},letti:{pred:'acco:totalBed',type:'typed',xsd:'xsd:integer',onto:'ACCO'},camere:{pred:'acco:totalRoom',type:'typed',xsd:'xsd:integer',onto:'ACCO'},stelle:{pred:'acco:accoStarRatingID',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-accommodation-facilities/accommodation-star-rating',onto:'ACCO'},stop_id:{pred:'dct:identifier',type:'literal',onto:'GTFS'},stop_code:{pred:'gtfs:code',type:'literal',onto:'GTFS'},zone_id:{pred:'gtfs:zone',type:'literal',onto:'GTFS'},location_type:{pred:'gtfs:locationType',type:'typed',xsd:'xsd:integer',onto:'GTFS'},parent_station:{pred:'gtfs:parentStation',type:'literal',onto:'GTFS'},route_id:{pred:'dct:identifier',type:'literal',onto:'GTFS'},route_short_name:{pred:'gtfs:shortName',type:'literal',onto:'GTFS'},route_long_name:{pred:'gtfs:longName',type:'langlit',lang:'it',onto:'GTFS'},route_type:{pred:'gtfs:routeType',type:'typed',xsd:'xsd:integer',onto:'GTFS'},agency_id:{pred:'gtfs:agency',type:'literal',onto:'GTFS'},arrival_time:{pred:'gtfs:arrivalTime',type:'literal',onto:'GTFS'},departure_time:{pred:'gtfs:departureTime',type:'literal',onto:'GTFS'},stop_sequence:{pred:'gtfs:stopSequence',type:'typed',xsd:'xsd:integer',onto:'GTFS'},valore:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},enterococchi_intestinali:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},escherichia_coli:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},limite_enterococchi:{pred:'iot:hasMeasurementQualityValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},limite_escherichiacoli:{pred:'iot:hasMeasurementQualityValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},conformita:{pred:'iot:hasQuality',type:'langlit',lang:'it',onto:'IoT'},unita_misura:{pred:'mu:hasMeasurementUnit',type:'langlit',lang:'it',onto:'MU'},unita_di_misura:{pred:'mu:hasMeasurementUnit',type:'langlit',lang:'it',onto:'MU'},data:{pred:'ti:startTime',type:'typed',xsd:'xsd:date',onto:'TI'},id_area:{pred:'dct:identifier',type:'literal'},valore_medio:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},unita:{pred:'mu:hasMeasurementUnit',type:'literal',onto:'IoT'},avgspeed:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},anno:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},mese:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},date:{pred:'sdmx-dimension:refPeriod',type:'typed',xsd:'xsd:date',onto:'QB'},datetime:{pred:'dct:date',type:'typed',xsd:'xsd:dateTime',onto:'QB'},timestamp:{pred:'dct:date',type:'typed',xsd:'xsd:dateTime',onto:'QB'},count:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},total:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},amount:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},value:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},asl:{pred:'sdmx-dimension:refArea',type:'langlit',lang:'it',onto:'QB'},azienda_sanitaria:{pred:'sdmx-dimension:refArea',type:'langlit',lang:'it',onto:'QB'},distretto:{pred:'sdmx-dimension:refArea',type:'langlit',lang:'it',onto:'QB'},eta:{pred:'sdmx-attribute:obsStatus',type:'langlit',lang:'it',onto:'QB'},fascia_eta:{pred:'sdmx-attribute:obsStatus',type:'langlit',lang:'it',onto:'QB'},classe_eta:{pred:'sdmx-attribute:obsStatus',type:'langlit',lang:'it',onto:'QB'},eta_:'skip',numero:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},valore_assoluto:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},frequenza:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},comparto:{pred:'dct:description',type:'langlit',lang:'it',onto:'COV'},inquadramento:{pred:'cov:hasLegalStatus',type:'langlit',lang:'it',onto:'COV'},cognome:{pred:'cpv:familyName',type:'langlit',lang:'it',onto:'CPV'},sesso:{pred:'cpv:sexID',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-people/sex',onto:'CPV'},cittadinanza:{pred:'dct:description',type:'langlit',lang:'it',onto:'CPV'},data_nascita:{pred:'cpv:dateOfBirth',type:'typed',xsd:'xsd:date',onto:'CPV'},ruolo:{pred:'rdfs:label',type:'langlit',lang:'it',onto:'RO'},legislatura:{pred:'dct:description',type:'langlit',lang:'it',onto:'RO'},voti_validi:{pred:'dct:description',type:'typed',xsd:'xsd:integer',onto:'RO'},gestore:{pred:'smapit:hasManager',type:'langlit',lang:'it',onto:'SMAPIT'},inizio:{pred:'ti:startTime',type:'typed',xsd:'xsd:dateTime',onto:'TI'},termine:{pred:'ti:endTime',type:'typed',xsd:'xsd:dateTime',onto:'TI'},durata:{pred:'ti:duration',type:'literal',onto:'TI'},dove:{pred:'l0:hasLocation',type:'langlit',lang:'it',onto:'TI'},accessibile:{pred:'dct:description',type:'literal',onto:'POI'},distr:{pred:'_skip',type:'skip'},location:{pred:'_skip',type:'skip'},s_comune_montano:{pred:'_skip',type:'skip'},organico_autonomia:{pred:'_skip',type:'skip'},organico_sede:{pred:'_skip',type:'skip'},accessibile:{pred:'dct:description',type:'literal',onto:'POI'},datazione:{pred:'dct:date',type:'literal',onto:'CulturalON'},datainizio:{pred:'ti:startTime',type:'typed',xsd:'xsd:date',onto:'CPEV'},datafine:{pred:'ti:endTime',type:'typed',xsd:'xsd:date',onto:'CPEV'},orari:{pred:'schema:openingHours',type:'langlit',lang:'it',onto:'CPEV'},tipoticket:{pred:'schema:isAccessibleForFree',type:'langlit',lang:'it',onto:'CPEV'},abstract:{pred:'dct:description',type:'langlit',lang:'it'},datamodifica:{pred:'dct:modified',type:'typed',xsd:'xsd:date'},numero_inventario:{pred:'dct:identifier',type:'literal',onto:'CulturalON'},version:{pred:'adms:version',type:'literal',onto:'ADMS'},versione:{pred:'adms:version',type:'literal',onto:'ADMS'},stato:{pred:'adms:status',type:'literal',onto:'ADMS'},formato:{pred:'dct:format',type:'literal',onto:'ADMS'},publisher:{pred:'dct:publisher',type:'langlit',lang:'it',onto:'ADMS'},aggiudicatario:{pred:'cpsv:hasParticipant',type:'langlit',lang:'it',onto:'CPSV'},cup:{pred:'dct:identifier',type:'literal',onto:'CPSV'},ufficio:{pred:'cpsv:isGroupedUnder',type:'langlit',lang:'it',onto:'CPSV'},indirizzo:{pred:'_skip',type:'skip'},comune:{pred:'_skip',type:'skip'},cap:{pred:'_skip',type:'skip'},provincia:{pred:'_skip',type:'skip'},civico:{pred:'_skip',type:'skip'},numerocivico:{pred:'_skip',type:'skip'},regione:{pred:'_skip',type:'skip'},via:{pred:'_skip',type:'skip'},strada:{pred:'_skip',type:'skip'},tipologia_provvedimento:{pred:'dct:type',type:'langlit',lang:'it'},numero_provvedimento:{pred:'dct:identifier',type:'literal'},data_approvazione:{pred:'dct:date',type:'date'},ufficio_proponente:{pred:'dct:publisher',type:'langlit',lang:'it'},uo_proponente:{pred:'dct:publisher',type:'langlit',lang:'it'},uo_responsabile:{pred:'dct:contributor',type:'langlit',lang:'it'},spesa_prevista:{pred:'sdmx-measure:obsValue',type:'decimal'},estremi_documenti_fascicolo:{pred:'dct:relation',type:'literal'},estremi_documenti_fascicoli:{pred:'dct:relation',type:'literal'},numero_atto:{pred:'dct:identifier',type:'literal'},data_atto:{pred:'dct:date',type:'date'},tipo_atto:{pred:'dct:type',type:'langlit',lang:'it'},norma:{pred:'dct:source',type:'langlit',lang:'it'},modalita:{pred:'dct:description',type:'langlit',lang:'it'},contenuto:{pred:'dct:description',type:'langlit',lang:'it'},occorrenze:{pred:'sdmx-measure:obsValue',type:'decimal'},iscrizioni_nascita:{pred:'sdmx-measure:obsValue',type:'decimal'},cancellazioni_morte:{pred:'sdmx-measure:obsValue',type:'decimal'},saldo_naturale:{pred:'sdmx-measure:obsValue',type:'decimal'},saldo_migratorio:{pred:'sdmx-measure:obsValue',type:'decimal'},saldo_totale:{pred:'sdmx-measure:obsValue',type:'decimal'},maschi:{pred:'sdmx-measure:obsValue',type:'decimal'},femmine:{pred:'sdmx-measure:obsValue',type:'decimal'},stranieri_maschi:{pred:'sdmx-measure:obsValue',type:'decimal'},stranieri_femmine:{pred:'sdmx-measure:obsValue',type:'decimal'},stranieri_totale:{pred:'sdmx-measure:obsValue',type:'decimal'},tasso_natalita:{pred:'sdmx-measure:obsValue',type:'decimal'},tasso_mortalita:{pred:'sdmx-measure:obsValue',type:'decimal'},numero_famiglie:{pred:'sdmx-measure:obsValue',type:'decimal'},sezione:{pred:'dct:identifier',type:'literal'},foglio:{pred:'dct:identifier',type:'literal'},particella:{pred:'dct:identifier',type:'literal'},subalterno:{pred:'dct:identifier',type:'literal'},rendita:{pred:'sdmx-measure:obsValue',type:'decimal'},consistenza:{pred:'dct:description',type:'literal'},qualita:{pred:'dct:type',type:'langlit',lang:'it'},ettari:{pred:'sdmx-measure:obsValue',type:'decimal'},reddito_dominicale:{pred:'sdmx-measure:obsValue',type:'decimal'},reddito_agrario:{pred:'sdmx-measure:obsValue',type:'decimal'},codice_via:{pred:'clv:hasStreetToponym',type:'literal'},descrizione_via:{pred:'rdfs:label',type:'langlit',lang:'it'},tipo_via:{pred:'dct:type',type:'langlit',lang:'it'},localita:{pred:'clv:hasSpatialCoverage',type:'langlit',lang:'it'},importo_aggiudicazione:{pred:'sdmx-measure:obsValue',type:'decimal'},aggiudicatario:{pred:'dct:publisher',type:'langlit',lang:'it'},scelta_contraente:{pred:'dct:description',type:'langlit',lang:'it'},codice_cpv:{pred:'dct:identifier',type:'literal'},richiedente:{pred:'dct:publisher',type:'langlit',lang:'it'},iniziativa:{pred:'rdfs:label',type:'langlit',lang:'it'},qualifica:{pred:'ro:holdsRole',type:'langlit',lang:'it',onto:'RPO'},totale_costo:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_retribuzione:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},voce_retributiva:{pred:'dct:description',type:'langlit',lang:'it',onto:'RPO'},totale_compensi:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},voce_accessoria:{pred:'dct:description',type:'langlit',lang:'it',onto:'RPO'},voce_costo:{pred:'dct:description',type:'langlit',lang:'it',onto:'RPO'},totale_uomini:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_donne:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},eta_media_uomini:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},eta_media_donne:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},tipo_distacco:{pred:'dct:description',type:'langlit',lang:'it',onto:'RPO'},titolo_di_studio:{pred:'cpv:educationLevelID',type:'langlit',lang:'it',onto:'CPV'},anzianita:{pred:'dct:description',type:'langlit',lang:'it',onto:'RPO'},nati:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},decessi:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},immigrati:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},emigrati:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},numero_componenti:{pred:'sdmx-dimension:refArea',type:'literal',onto:'QB'},di_cui_minorenni:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_famiglie:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_entrate:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_uscite:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},residui_attivi:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},residui_passivi:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},media_gg_approvazione:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_impegnato:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_mandati_collegati:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},permessi_rilasciati:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},entro_termini:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},fuori_termini:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},tipologia:{pred:'dct:type',type:'langlit',lang:'it'},anno_protocollo:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},tipo_protocollo:{pred:'dct:type',type:'langlit',lang:'it'},tipo_spedizione:{pred:'dct:description',type:'langlit',lang:'it'},numero_protocolli:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},bandito_da:{pred:'dct:publisher',type:'langlit',lang:'it',onto:'CPSV'},oggetto:{pred:'dct:description',type:'langlit',lang:'it',onto:'CPSV'},data_scadenza:{pred:'ti:endTime',type:'typed',xsd:'xsd:date',onto:'CPSV'},data_pubblicazione:{pred:'dct:issued',type:'typed',xsd:'xsd:date',onto:'CPSV'},gazzetta_ufficiale:{pred:'dct:source',type:'literal',onto:'CPSV'},numero_posti:{pred:'cpsv:numberOfVacancies',type:'integer',onto:'CPSV'},numero_posti_riservati:{pred:'cpsv:numberOfVacancies',type:'integer',onto:'CPSV'},gruppo_politico:{pred:'dct:description',type:'langlit',lang:'it',onto:'RO'},organo:{pred:'ro:isRoleIn',type:'langlit',lang:'it',onto:'RO'},orario_ricevimento:{pred:'ti:TimeInterval',type:'langlit',lang:'it'},nome_mercato:{pred:'rdfs:label',type:'langlit',lang:'it',onto:'POI'},fiera_mercato:{pred:'dct:type',type:'langlit',lang:'it',onto:'POI'},giorno:{pred:'ti:startTime',type:'langlit',lang:'it',onto:'TI'},inizio_periodo:{pred:'ti:startTime',type:'langlit',lang:'it',onto:'TI'},fine_periodo:{pred:'ti:endTime',type:'langlit',lang:'it',onto:'TI'},tipo_posteggio:{pred:'dct:type',type:'langlit',lang:'it'},totale_posteggi:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},nome_associazione:{pred:'rdfs:label',type:'langlit',lang:'it',onto:'COV'},latitudine:{pred:'geo:lat',type:'typed',xsd:'xsd:decimal'},longitudine:{pred:'geo:long',type:'typed',xsd:'xsd:decimal'},cellulare:{pred:'sm:hasTelephone',type:'literal',onto:'SM'},tragitto:{pred:'rdfs:label',type:'langlit',lang:'it'},totale_alunni:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_rette_trasporto:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_pagamenti_trasporto:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},insegna:{pred:'rdfs:label',type:'langlit',lang:'it'},attivita:{pred:'dct:type',type:'langlit',lang:'it'},ubicazione_esercizio:{pred:'_addr_fullAddress',type:'_clvnode'},n_civico:{pred:'_addr_streetNumber',type:'_clvnode'},tipo_esercizio:{pred:'dct:type',type:'langlit',lang:'it'},categoria_esercizio:{pred:'dct:type',type:'langlit',lang:'it'},ragione_sociale:{pred:'cov:legalName',type:'langlit',lang:'it'},azienda:{pred:'cov:legalName',type:'langlit',lang:'it'},ditta:{pred:'cov:legalName',type:'langlit',lang:'it'},impresa:{pred:'cov:legalName',type:'langlit',lang:'it'},societa:{pred:'cov:legalName',type:'langlit',lang:'it'},codice_cup:{pred:'dct:identifier',type:'literal',onto:'PublicContract'},codice_locale_progetto:{pred:'dct:identifier',type:'literal',onto:'PublicContract'},descrizione_cup_integrale:{pred:'rdfs:label',type:'langlit',lang:'it',onto:'PublicContract'},codice_stato_cup:{pred:'adms:status',type:'literal',onto:'PublicContract'},descrizione_stato_cup:{pred:'dct:description',type:'langlit',lang:'it',onto:'PublicContract'},data_inizio_validita_cup:{pred:'ti:startTime',type:'date',onto:'PublicContract'},data_fine_validita_cup:{pred:'ti:endTime',type:'date',onto:'PublicContract'},descrizione_titolare:{pred:'foaf:name',type:'langlit',lang:'it',onto:'COV'},codice_fiscale_titolare:{pred:'cpv:taxCode',type:'literal',onto:'COV'},descrizione_ente:{pred:'foaf:name',type:'langlit',lang:'it',onto:'COV'},natura_intervento:{pred:'dct:type',type:'langlit',lang:'it',onto:'PublicContract'},tipologia_intervento:{pred:'dct:description',type:'langlit',lang:'it',onto:'PublicContract'},settore_interv_inv:{pred:'dct:subject',type:'langlit',lang:'it',onto:'PublicContract'},sottosettore_interv_inv:{pred:'dct:subject',type:'langlit',lang:'it',onto:'PublicContract'},categoria_interv_inv:{pred:'dct:subject',type:'langlit',lang:'it',onto:'PublicContract'},finanziamenti_statali:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},finanziamenti_europei:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},finanziamenti_enti_territorial:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},finanziamenti_privati:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},altre_fonti_di_finanziamento:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},finanziamenti_da_reperire:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_economie:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},costo_lavori_previsto:{pred:'pc:totalAmount',type:'decimal',onto:'PublicContract'},costo_lavori_effettivo:{pred:'pc:totalAmount',type:'decimal',onto:'PublicContract'},somme_a_disposizione_previste:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},somme_a_disposizione_effettive:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},oneri_investimento_previsti:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},oneri_investimento_effettivi:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},inizio_esecuzione_prevista:{pred:'ti:startTime',type:'date',onto:'TI'},fine_esecuzione_prevista:{pred:'ti:endTime',type:'date',onto:'TI'},inizio_esecuzione_effettiva:{pred:'ti:startTime',type:'date',onto:'TI'},fine_esecuzione_effettiva:{pred:'ti:endTime',type:'date',onto:'TI'},inizio_conclusione_prevista:{pred:'ti:startTime',type:'date',onto:'TI'},fine_conclusione_prevista:{pred:'ti:endTime',type:'date',onto:'TI'},millimetri:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},pioggia_mm:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},rainfall:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},mm_pioggia:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},precipitazione:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},ora:{pred:'ti:startTime',type:'langlit',lang:'it',onto:'TI'},aaaa:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},gg:{pred:'_skip',type:'skip'},min:{pred:'_skip',type:'skip'},
+var DET_COL_RULES={denominazione:{pred:'rdfs:label',type:'langlit',lang:'it'},nome:{pred:'rdfs:label',type:'langlit',lang:'it'},nome_iniziativa:{pred:'rdfs:label',type:'langlit',lang:'it'},titolo_evento:{pred:'rdfs:label',type:'langlit',lang:'it'},titolo_manifestazione:{pred:'rdfs:label',type:'langlit',lang:'it'},descrizione:{pred:'dct:description',type:'langlit',lang:'it'},luogo:{pred:'schema:location',type:'langlit',lang:'it'},sede:{pred:'schema:location',type:'langlit',lang:'it'},dove:{pred:'l0:hasLocation',type:'langlit',lang:'it'},ingresso:{pred:'schema:isAccessibleForFree',type:'langlit',lang:'it'},biglietto:{pred:'schema:isAccessibleForFree',type:'langlit',lang:'it'},organizzatore:{pred:'dct:publisher',type:'langlit',lang:'it'},promotore:{pred:'dct:publisher',type:'langlit',lang:'it'},interpreti:{pred:'schema:performer',type:'langlit',lang:'it'},esecutori:{pred:'schema:performer',type:'langlit',lang:'it'},autore:{pred:'dct:creator',type:'langlit',lang:'it'},periodo:{pred:'dct:temporal',type:'langlit',lang:'it'},stagione:{pred:'dct:temporal',type:'langlit',lang:'it'},programmazione:{pred:'dct:temporal',type:'langlit',lang:'it'},stalli:{pred:'park:totalNumCarParkSpaces',type:'integer'},posti_auto:{pred:'park:totalNumCarParkSpaces',type:'integer'},capacita_posti:{pred:'park:totalNumCarParkSpaces',type:'integer'},posti_disabili:{pred:'park:numSpacesForDisabled',type:'integer'},tariffa_oraria:{pred:'park:numPayingParkingSpaces',type:'decimal'},tipo_parcheggio:{pred:'park:hasCarParkTypology',type:'langlit',lang:'it'},cig:{pred:'pc:CIG',type:'literal'},cup:{pred:'dct:identifier',type:'literal'},importo_aggiudicazione:{pred:'pc:totalAmount',type:'decimal'},importo_base:{pred:'pc:totalAmount',type:'decimal'},importo_contratto:{pred:'pc:totalAmount',type:'decimal'},oggetto_contratto:{pred:'dct:description',type:'langlit',lang:'it'},oggetto_gara:{pred:'dct:description',type:'langlit',lang:'it'},stazione_appaltante:{pred:'pc:hasProcuringEntity',type:'langlit',lang:'it'},aggiudicatario:{pred:'pc:winner',type:'langlit',lang:'it'},cpv_codice:{pred:'pc:hasCPV',type:'literal'},modalita_scelta:{pred:'pc:hasProcedureType',type:'langlit',lang:'it'},data_aggiudicazione:{pred:'pc:outcomeDate',type:'date'},lunghezza_km:{pred:'route:routelLength',type:'literal'},numero_tappe:{pred:'route:numberOfStages',type:'integer'},durata_stimata:{pred:'route:routeEstDuration',type:'literal'},nome_breve_percorso:{pred:'route:routeShortName',type:'literal'},nome_esteso_percorso:{pred:'route:routeLongName',type:'literal'},difficolta:{pred:'dct:description',type:'langlit',lang:'it'},dislivello:{pred:'dct:description',type:'decimal'},qualifica_dipendente:{pred:'ro:holdsRole',type:'langlit',lang:'it'},contratto_lavoro:{pred:'dct:description',type:'langlit',lang:'it'},livello_contrattuale:{pred:'dct:description',type:'literal'},ore_settimanali:{pred:'dct:description',type:'decimal'},ccnl:{pred:'dct:description',type:'langlit',lang:'it'},crediti:{pred:'learn:ects',type:'decimal'},ects:{pred:'learn:ects',type:'decimal'},ore_formazione:{pred:'learn:hours',type:'decimal'},durata_corso:{pred:'learn:duration',type:'langlit',lang:'it'},titolo_rilasciato:{pred:'learn:awardedTitle',type:'langlit',lang:'it'},titolo_corso:{pred:'rdfs:label',type:'langlit',lang:'it'},obbligo_trasparenza:{pred:'tr:regulationReference',type:'langlit',lang:'it'},categoria_trasparenza:{pred:'tr:hasTransparencyActivityTypology',type:'langlit',lang:'it'},dato_obbligatorio:{pred:'tr:mandatoryData',type:'langlit',lang:'it'},norma_riferimento:{pred:'dct:source',type:'literal'},tipo_indicatore:{pred:'indicator:hasIndicatorType',type:'langlit',lang:'it'},valore_indicatore:{pred:'sdmx-measure:obsValue',type:'decimal'},baseline:{pred:'indicator:baseline',type:'decimal'},target:{pred:'indicator:target',type:'decimal'},fonte_indicatore:{pred:'dct:source',type:'langlit',lang:'it'},partita_iva:{pred:'cov:VATnumber',type:'literal'},codice_ipa:{pred:'cov:IPAcode',type:'literal'},rea:{pred:'cov:REANumber',type:'literal'},data_costituzione:{pred:'cov:foundationDate',type:'date'},codice_univoco_ufficio:{pred:'cov:officeIdentifier',type:'literal'},oggetto_sociale:{pred:'cov:businessObjective',type:'langlit',lang:'it'},acronimo:{pred:'cov:orgAcronym',type:'literal'},cf:{pred:'cpv:taxCode',type:'literal'},codice_fiscale:{pred:'cpv:taxCode',type:'literal'},codice_sesso:{pred:'cpv:sexID',type:'literal'},grado_istruzione:{pred:'cpv:educationLevelID',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-people/education-level'},eta:{pred:'cpv:age',type:'integer'},nome_completo:{pred:'cpv:fullName',type:'literal'},numero_camere:{pred:'acco:totalRoom',type:'integer'},numero_bagni:{pred:'acco:totalToilet',type:'integer'},codice_struttura:{pred:'acco:accommodationCode',type:'literal'},codice_stelle:{pred:'acco:accoStarRatingID',type:'literal'},nome_ufficiale:{pred:'poi:POIofficialName',type:'langlit',lang:'it'},nome_alternativo:{pred:'poi:POIalternativeName',type:'langlit',lang:'it'},categoria_poi:{pred:'poi:POIcategoryName',type:'langlit',lang:'it'},id_poi:{pred:'poi:POIID',type:'literal'},forma_giuridica:{pred:'cov:hasLegalStatus',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-organizations/legal-status'},natura_giuridica:{pred:'cov:hasLegalStatus',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-organizations/legal-status'},codice_ateco:{pred:'cov:hasActivityType',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-organizations/ateco-2007'},settore_ateco:{pred:'cov:hasActivityType',type:'langlit',lang:'it'},licenza:{pred:'dct:license',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/licences'},tipo_licenza:{pred:'dct:license',type:'langlit',lang:'it'},numero_camere_totali:{pred:'acco:totalRoom',type:'integer'},tipo:{pred:'dct:type',type:'langlit',lang:'it'},categoria:{pred:'dct:type',type:'langlit',lang:'it'},email:{pred:'sm:hasEmail',type:'mailto'},sitoweb:{pred:'sm:hasWebSite',type:'url'},telefono:{pred:'sm:hasTelephone',type:'literal'},fax:{pred:'dct:description',type:'literal'},lat:{pred:'geo:lat',type:'typed',xsd:'xsd:decimal'},lon:{pred:'geo:long',type:'typed',xsd:'xsd:decimal'},modified:{pred:'dct:modified',type:'typed',xsd:'xsd:date'},numero_posti_letto:{pred:'acco:totalRoom',type:'typed',xsd:'xsd:integer',onto:'ACCO'},posti_letto:{pred:'acco:totalRoom',type:'typed',xsd:'xsd:integer',onto:'ACCO'},letti:{pred:'acco:totalBed',type:'typed',xsd:'xsd:integer',onto:'ACCO'},camere:{pred:'acco:totalRoom',type:'typed',xsd:'xsd:integer',onto:'ACCO'},stelle:{pred:'acco:accoStarRatingID',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-accommodation-facilities/accommodation-star-rating',onto:'ACCO'},stop_id:{pred:'dct:identifier',type:'literal',onto:'GTFS'},stop_code:{pred:'gtfs:code',type:'literal',onto:'GTFS'},zone_id:{pred:'gtfs:zone',type:'literal',onto:'GTFS'},location_type:{pred:'gtfs:locationType',type:'typed',xsd:'xsd:integer',onto:'GTFS'},parent_station:{pred:'gtfs:parentStation',type:'literal',onto:'GTFS'},route_id:{pred:'dct:identifier',type:'literal',onto:'GTFS'},route_short_name:{pred:'gtfs:shortName',type:'literal',onto:'GTFS'},route_long_name:{pred:'gtfs:longName',type:'langlit',lang:'it',onto:'GTFS'},route_type:{pred:'gtfs:routeType',type:'typed',xsd:'xsd:integer',onto:'GTFS'},agency_id:{pred:'gtfs:agency',type:'literal',onto:'GTFS'},arrival_time:{pred:'gtfs:arrivalTime',type:'literal',onto:'GTFS'},departure_time:{pred:'gtfs:departureTime',type:'literal',onto:'GTFS'},stop_sequence:{pred:'gtfs:stopSequence',type:'typed',xsd:'xsd:integer',onto:'GTFS'},valore:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},enterococchi_intestinali:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},escherichia_coli:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},limite_enterococchi:{pred:'iot:hasMeasurementQualityValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},limite_escherichiacoli:{pred:'iot:hasMeasurementQualityValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},conformita:{pred:'iot:hasQuality',type:'langlit',lang:'it',onto:'IoT'},unita_misura:{pred:'mu:hasMeasurementUnit',type:'langlit',lang:'it',onto:'MU'},unita_di_misura:{pred:'mu:hasMeasurementUnit',type:'langlit',lang:'it',onto:'MU'},data:{pred:'ti:startTime',type:'typed',xsd:'xsd:date',onto:'TI'},id_area:{pred:'dct:identifier',type:'literal'},valore_medio:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},unita:{pred:'mu:hasMeasurementUnit',type:'literal',onto:'IoT'},avgspeed:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},anno:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},mese:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},date:{pred:'sdmx-dimension:refPeriod',type:'typed',xsd:'xsd:date',onto:'QB'},datetime:{pred:'dct:date',type:'typed',xsd:'xsd:dateTime',onto:'QB'},timestamp:{pred:'dct:date',type:'typed',xsd:'xsd:dateTime',onto:'QB'},count:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},total:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},amount:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},value:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},asl:{pred:'sdmx-dimension:refArea',type:'langlit',lang:'it',onto:'QB'},azienda_sanitaria:{pred:'sdmx-dimension:refArea',type:'langlit',lang:'it',onto:'QB'},distretto:{pred:'sdmx-dimension:refArea',type:'langlit',lang:'it',onto:'QB'},eta:{pred:'sdmx-attribute:obsStatus',type:'langlit',lang:'it',onto:'QB'},fascia_eta:{pred:'sdmx-attribute:obsStatus',type:'langlit',lang:'it',onto:'QB'},classe_eta:{pred:'sdmx-attribute:obsStatus',type:'langlit',lang:'it',onto:'QB'},eta_:'skip',numero:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},valore_assoluto:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},frequenza:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},comparto:{pred:'dct:description',type:'langlit',lang:'it',onto:'COV'},inquadramento:{pred:'cov:hasLegalStatus',type:'langlit',lang:'it',onto:'COV'},cognome:{pred:'cpv:familyName',type:'langlit',lang:'it',onto:'CPV'},sesso:{pred:'cpv:sexID',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-people/sex',onto:'CPV'},cittadinanza:{pred:'dct:description',type:'langlit',lang:'it',onto:'CPV'},data_nascita:{pred:'cpv:dateOfBirth',type:'typed',xsd:'xsd:date',onto:'CPV'},ruolo:{pred:'rdfs:label',type:'langlit',lang:'it',onto:'RO'},legislatura:{pred:'dct:description',type:'langlit',lang:'it',onto:'RO'},voti_validi:{pred:'dct:description',type:'typed',xsd:'xsd:integer',onto:'RO'},gestore:{pred:'smapit:hasManager',type:'langlit',lang:'it',onto:'SMAPIT'},inizio:{pred:'ti:startTime',type:'typed',xsd:'xsd:dateTime',onto:'TI'},termine:{pred:'ti:endTime',type:'typed',xsd:'xsd:dateTime',onto:'TI'},durata:{pred:'ti:duration',type:'literal',onto:'TI'},dove:{pred:'l0:hasLocation',type:'langlit',lang:'it',onto:'TI'},accessibile:{pred:'dct:description',type:'literal',onto:'POI'},distr:{pred:'_skip',type:'skip'},location:{pred:'_skip',type:'skip'},s_comune_montano:{pred:'_skip',type:'skip'},organico_autonomia:{pred:'_skip',type:'skip'},organico_sede:{pred:'_skip',type:'skip'},accessibile:{pred:'dct:description',type:'literal',onto:'POI'},datazione:{pred:'dct:date',type:'literal',onto:'CulturalON'},datainizio:{pred:'ti:startTime',type:'typed',xsd:'xsd:date',onto:'CPEV'},datafine:{pred:'ti:endTime',type:'typed',xsd:'xsd:date',onto:'CPEV'},orari:{pred:'schema:openingHours',type:'langlit',lang:'it',onto:'CPEV'},tipoticket:{pred:'schema:isAccessibleForFree',type:'langlit',lang:'it',onto:'CPEV'},abstract:{pred:'dct:description',type:'langlit',lang:'it'},datamodifica:{pred:'dct:modified',type:'typed',xsd:'xsd:date'},numero_inventario:{pred:'dct:identifier',type:'literal',onto:'CulturalON'},version:{pred:'adms:version',type:'literal',onto:'ADMS'},versione:{pred:'adms:version',type:'literal',onto:'ADMS'},stato:{pred:'adms:status',type:'literal',onto:'ADMS'},formato:{pred:'dct:format',type:'literal',onto:'ADMS'},publisher:{pred:'dct:publisher',type:'langlit',lang:'it',onto:'ADMS'},aggiudicatario:{pred:'cpsv:hasParticipant',type:'langlit',lang:'it',onto:'CPSV'},cup:{pred:'dct:identifier',type:'literal',onto:'CPSV'},ufficio:{pred:'cpsv:isGroupedUnder',type:'langlit',lang:'it',onto:'CPSV'},indirizzo:{pred:'_skip',type:'skip'},comune:{pred:'_skip',type:'skip'},cap:{pred:'_skip',type:'skip'},provincia:{pred:'_skip',type:'skip'},civico:{pred:'_skip',type:'skip'},numerocivico:{pred:'_skip',type:'skip'},regione:{pred:'_skip',type:'skip'},via:{pred:'_skip',type:'skip'},strada:{pred:'_skip',type:'skip'},tipologia_provvedimento:{pred:'dct:type',type:'langlit',lang:'it'},numero_provvedimento:{pred:'dct:identifier',type:'literal'},data_approvazione:{pred:'dct:date',type:'date'},ufficio_proponente:{pred:'dct:publisher',type:'langlit',lang:'it'},uo_proponente:{pred:'dct:publisher',type:'langlit',lang:'it'},uo_responsabile:{pred:'dct:contributor',type:'langlit',lang:'it'},spesa_prevista:{pred:'sdmx-measure:obsValue',type:'decimal'},estremi_documenti_fascicolo:{pred:'dct:relation',type:'literal'},estremi_documenti_fascicoli:{pred:'dct:relation',type:'literal'},numero_atto:{pred:'dct:identifier',type:'literal'},data_atto:{pred:'dct:date',type:'date'},tipo_atto:{pred:'dct:type',type:'langlit',lang:'it'},norma:{pred:'dct:source',type:'langlit',lang:'it'},modalita:{pred:'dct:description',type:'langlit',lang:'it'},contenuto:{pred:'dct:description',type:'langlit',lang:'it'},occorrenze:{pred:'sdmx-measure:obsValue',type:'decimal'},iscrizioni_nascita:{pred:'sdmx-measure:obsValue',type:'decimal'},cancellazioni_morte:{pred:'sdmx-measure:obsValue',type:'decimal'},saldo_naturale:{pred:'sdmx-measure:obsValue',type:'decimal'},saldo_migratorio:{pred:'sdmx-measure:obsValue',type:'decimal'},saldo_totale:{pred:'sdmx-measure:obsValue',type:'decimal'},maschi:{pred:'sdmx-measure:obsValue',type:'decimal'},femmine:{pred:'sdmx-measure:obsValue',type:'decimal'},stranieri_maschi:{pred:'sdmx-measure:obsValue',type:'decimal'},stranieri_femmine:{pred:'sdmx-measure:obsValue',type:'decimal'},stranieri_totale:{pred:'sdmx-measure:obsValue',type:'decimal'},tasso_natalita:{pred:'sdmx-measure:obsValue',type:'decimal'},tasso_mortalita:{pred:'sdmx-measure:obsValue',type:'decimal'},numero_famiglie:{pred:'sdmx-measure:obsValue',type:'decimal'},sezione:{pred:'dct:identifier',type:'literal'},foglio:{pred:'dct:identifier',type:'literal'},particella:{pred:'dct:identifier',type:'literal'},subalterno:{pred:'dct:identifier',type:'literal'},rendita:{pred:'sdmx-measure:obsValue',type:'decimal'},consistenza:{pred:'dct:description',type:'literal'},qualita:{pred:'dct:type',type:'langlit',lang:'it'},ettari:{pred:'sdmx-measure:obsValue',type:'decimal'},reddito_dominicale:{pred:'sdmx-measure:obsValue',type:'decimal'},reddito_agrario:{pred:'sdmx-measure:obsValue',type:'decimal'},codice_via:{pred:'clv:hasStreetToponym',type:'literal'},descrizione_via:{pred:'rdfs:label',type:'langlit',lang:'it'},tipo_via:{pred:'dct:type',type:'langlit',lang:'it'},localita:{pred:'clv:hasSpatialCoverage',type:'langlit',lang:'it'},importo_aggiudicazione:{pred:'sdmx-measure:obsValue',type:'decimal'},aggiudicatario:{pred:'dct:publisher',type:'langlit',lang:'it'},scelta_contraente:{pred:'dct:description',type:'langlit',lang:'it'},codice_cpv:{pred:'dct:identifier',type:'literal'},richiedente:{pred:'dct:publisher',type:'langlit',lang:'it'},iniziativa:{pred:'rdfs:label',type:'langlit',lang:'it'},qualifica:{pred:'ro:holdsRole',type:'langlit',lang:'it',onto:'RPO'},totale_costo:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_retribuzione:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},voce_retributiva:{pred:'dct:description',type:'langlit',lang:'it',onto:'RPO'},totale_compensi:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},voce_accessoria:{pred:'dct:description',type:'langlit',lang:'it',onto:'RPO'},voce_costo:{pred:'dct:description',type:'langlit',lang:'it',onto:'RPO'},totale_uomini:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_donne:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},eta_media_uomini:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},eta_media_donne:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},tipo_distacco:{pred:'dct:description',type:'langlit',lang:'it',onto:'RPO'},titolo_di_studio:{pred:'cpv:educationLevelID',type:'langlit',lang:'it',onto:'CPV'},anzianita:{pred:'dct:description',type:'langlit',lang:'it',onto:'RPO'},nati:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},decessi:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},immigrati:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},emigrati:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},numero_componenti:{pred:'sdmx-dimension:refArea',type:'literal',onto:'QB'},di_cui_minorenni:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_famiglie:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_entrate:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_uscite:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},residui_attivi:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},residui_passivi:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},media_gg_approvazione:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_impegnato:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_mandati_collegati:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},permessi_rilasciati:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},entro_termini:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},fuori_termini:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},tipologia:{pred:'dct:type',type:'langlit',lang:'it'},anno_protocollo:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},tipo_protocollo:{pred:'dct:type',type:'langlit',lang:'it'},tipo_spedizione:{pred:'dct:description',type:'langlit',lang:'it'},numero_protocolli:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},bandito_da:{pred:'dct:publisher',type:'langlit',lang:'it',onto:'CPSV'},oggetto:{pred:'dct:description',type:'langlit',lang:'it',onto:'CPSV'},data_scadenza:{pred:'ti:endTime',type:'typed',xsd:'xsd:date',onto:'CPSV'},data_pubblicazione:{pred:'dct:issued',type:'typed',xsd:'xsd:date',onto:'CPSV'},gazzetta_ufficiale:{pred:'dct:source',type:'literal',onto:'CPSV'},numero_posti:{pred:'cpsv:numberOfVacancies',type:'integer',onto:'CPSV'},numero_posti_riservati:{pred:'cpsv:numberOfVacancies',type:'integer',onto:'CPSV'},gruppo_politico:{pred:'dct:description',type:'langlit',lang:'it',onto:'RO'},organo:{pred:'ro:isRoleIn',type:'langlit',lang:'it',onto:'RO'},orario_ricevimento:{pred:'ti:TimeInterval',type:'langlit',lang:'it'},nome_mercato:{pred:'rdfs:label',type:'langlit',lang:'it',onto:'POI'},fiera_mercato:{pred:'dct:type',type:'langlit',lang:'it',onto:'POI'},giorno:{pred:'ti:startTime',type:'langlit',lang:'it',onto:'TI'},inizio_periodo:{pred:'ti:startTime',type:'langlit',lang:'it',onto:'TI'},fine_periodo:{pred:'ti:endTime',type:'langlit',lang:'it',onto:'TI'},tipo_posteggio:{pred:'dct:type',type:'langlit',lang:'it'},totale_posteggi:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},nome_associazione:{pred:'rdfs:label',type:'langlit',lang:'it',onto:'COV'},latitudine:{pred:'geo:lat',type:'typed',xsd:'xsd:decimal'},longitudine:{pred:'geo:long',type:'typed',xsd:'xsd:decimal'},cellulare:{pred:'sm:hasTelephone',type:'literal',onto:'SM'},tragitto:{pred:'rdfs:label',type:'langlit',lang:'it'},totale_alunni:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_rette_trasporto:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_pagamenti_trasporto:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},insegna:{pred:'rdfs:label',type:'langlit',lang:'it'},attivita:{pred:'dct:type',type:'langlit',lang:'it'},ubicazione_esercizio:{pred:'_addr_fullAddress',type:'_clvnode'},n_civico:{pred:'_addr_streetNumber',type:'_clvnode'},tipo_esercizio:{pred:'dct:type',type:'langlit',lang:'it'},categoria_esercizio:{pred:'dct:type',type:'langlit',lang:'it'},ragione_sociale:{pred:'cov:legalName',type:'langlit',lang:'it'},azienda:{pred:'cov:legalName',type:'langlit',lang:'it'},ditta:{pred:'cov:legalName',type:'langlit',lang:'it'},impresa:{pred:'cov:legalName',type:'langlit',lang:'it'},societa:{pred:'cov:legalName',type:'langlit',lang:'it'},codice_cup:{pred:'dct:identifier',type:'literal',onto:'PublicContract'},codice_locale_progetto:{pred:'dct:identifier',type:'literal',onto:'PublicContract'},descrizione_cup_integrale:{pred:'rdfs:label',type:'langlit',lang:'it',onto:'PublicContract'},codice_stato_cup:{pred:'adms:status',type:'literal',onto:'PublicContract'},descrizione_stato_cup:{pred:'dct:description',type:'langlit',lang:'it',onto:'PublicContract'},data_inizio_validita_cup:{pred:'ti:startTime',type:'date',onto:'PublicContract'},data_fine_validita_cup:{pred:'ti:endTime',type:'date',onto:'PublicContract'},descrizione_titolare:{pred:'foaf:name',type:'langlit',lang:'it',onto:'COV'},codice_fiscale_titolare:{pred:'cpv:taxCode',type:'literal',onto:'COV'},descrizione_ente:{pred:'foaf:name',type:'langlit',lang:'it',onto:'COV'},natura_intervento:{pred:'dct:type',type:'langlit',lang:'it',onto:'PublicContract'},tipologia_intervento:{pred:'dct:description',type:'langlit',lang:'it',onto:'PublicContract'},settore_interv_inv:{pred:'dct:subject',type:'langlit',lang:'it',onto:'PublicContract'},sottosettore_interv_inv:{pred:'dct:subject',type:'langlit',lang:'it',onto:'PublicContract'},categoria_interv_inv:{pred:'dct:subject',type:'langlit',lang:'it',onto:'PublicContract'},finanziamenti_statali:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},finanziamenti_europei:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},finanziamenti_enti_territorial:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},finanziamenti_privati:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},altre_fonti_di_finanziamento:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},finanziamenti_da_reperire:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},totale_economie:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},costo_lavori_previsto:{pred:'pc:totalAmount',type:'decimal',onto:'PublicContract'},costo_lavori_effettivo:{pred:'pc:totalAmount',type:'decimal',onto:'PublicContract'},somme_a_disposizione_previste:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},somme_a_disposizione_effettive:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},oneri_investimento_previsti:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},oneri_investimento_effettivi:{pred:'sdmx-measure:obsValue',type:'decimal',onto:'QB'},inizio_esecuzione_prevista:{pred:'ti:startTime',type:'date',onto:'TI'},fine_esecuzione_prevista:{pred:'ti:endTime',type:'date',onto:'TI'},inizio_esecuzione_effettiva:{pred:'ti:startTime',type:'date',onto:'TI'},fine_esecuzione_effettiva:{pred:'ti:endTime',type:'date',onto:'TI'},inizio_conclusione_prevista:{pred:'ti:startTime',type:'date',onto:'TI'},fine_conclusione_prevista:{pred:'ti:endTime',type:'date',onto:'TI'},millimetri:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},pioggia_mm:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},rainfall:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},mm_pioggia:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},precipitazione:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},ora:{pred:'ti:startTime',type:'langlit',lang:'it',onto:'TI'},aaaa:{pred:'sdmx-dimension:refPeriod',type:'literal',onto:'QB'},gg:{pred:'_skip',type:'skip'},min:{pred:'_skip',type:'skip'},
 nome_centro:{pred:'cov:legalName',type:'langlit',lang:'it'},
 nome_struttura:{pred:'cov:legalName',type:'langlit',lang:'it'},
 nome_presidio:{pred:'cov:legalName',type:'langlit',lang:'it'},
@@ -4151,7 +4151,7 @@ tipologia_atto:{pred:'dct:type',type:'vocab_uri',vocab:'https://w3id.org/italia/
 categoria_poi:{pred:'poi:POIcategoryName',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/poi-category-classification'},
 };
 
-var DET_PREFIXES={'rdf':'http://www.w3.org/1999/02/22-rdf-syntax-ns#','rdfs':'http://www.w3.org/2000/01/rdf-schema#','xsd':'http://www.w3.org/2001/XMLSchema#','dct':'http://purl.org/dc/terms/','dcat':'http://www.w3.org/ns/dcat#','foaf':'http://xmlns.com/foaf/0.1/','skos':'http://www.w3.org/2004/02/skos/core#','geo':'http://www.w3.org/2003/01/geo/wgs84_pos#','vcard':'http://www.w3.org/2006/vcard/ns#','schema':'https://schema.org/','park':'https://w3id.org/italia/onto/PARK/','pot':'https://w3id.org/italia/onto/POT/','pc':'https://w3id.org/italia/onto/PublicContract/','route':'https://w3id.org/italia/onto/Route/','rpo':'https://w3id.org/italia/onto/RPO/','mu':'https://w3id.org/italia/onto/MU/','learn':'https://w3id.org/italia/onto/Learning/','cpev':'https://w3id.org/italia/onto/CPEV/','tr':'https://w3id.org/italia/onto/Transparency/','indicator':'https://w3id.org/italia/onto/Indicator/','l0':'https://w3id.org/italia/onto/l0/','clv':'https://w3id.org/italia/onto/CLV/','sm':'https://w3id.org/italia/onto/SM/','ti':'https://w3id.org/italia/onto/TI/','acco':'https://w3id.org/italia/onto/ACCO/','poi':'https://w3id.org/italia/onto/POI/','iot':'https://w3id.org/italia/onto/IoT/','cov':'https://w3id.org/italia/onto/COV/','cpv':'https://w3id.org/italia/onto/CPV/','ro':'https://w3id.org/italia/onto/RO/','smapit':'https://w3id.org/italia/onto/SMAPIT/','gtfs':'http://vocab.gtfs.org/terms#','cis':'https://w3id.org/italia/onto/Cultural-ON/','adms':'http://www.w3.org/ns/adms#','cpsv':'http://purl.org/vocab/cpsv#','qb':'http://purl.org/linked-data/cube#','sdmx-dimension':'http://purl.org/linked-data/sdmx/2009/dimension#','sdmx-measure':'http://purl.org/linked-data/sdmx/2009/measure#','sdmx-attribute':'http://purl.org/linked-data/sdmx/2009/attribute#','aop':'https://w3id.org/italia/onto/AtlasOfPaths/','ch':'https://w3id.org/italia/onto/CulturalHeritage/','prj':'https://w3id.org/italia/onto/Project/','ndc':'https://w3id.org/italia/onto/NDC/'};
+var DET_PREFIXES={'rdf':'http://www.w3.org/1999/02/22-rdf-syntax-ns#','rdfs':'http://www.w3.org/2000/01/rdf-schema#','xsd':'http://www.w3.org/2001/XMLSchema#','dct':'http://purl.org/dc/terms/','dcat':'http://www.w3.org/ns/dcat#','foaf':'http://xmlns.com/foaf/0.1/','skos':'http://www.w3.org/2004/02/skos/core#','geo':'http://www.w3.org/2003/01/geo/wgs84_pos#','vcard':'http://www.w3.org/2006/vcard/ns#','schema':'https://schema.org/','park':'https://w3id.org/italia/onto/PARK/','pot':'https://w3id.org/italia/onto/POT/','pc':'https://w3id.org/italia/onto/PublicContract/','route':'https://w3id.org/italia/onto/Route/','ro':'https://w3id.org/italia/onto/RO/','mu':'https://w3id.org/italia/onto/MU/','learning':'https://w3id.org/italia/onto/Learning/','cpev':'https://w3id.org/italia/onto/CPEV/','tr':'https://w3id.org/italia/onto/Transparency/','indicator':'https://w3id.org/italia/onto/Indicator/','l0':'https://w3id.org/italia/onto/l0/','clv':'https://w3id.org/italia/onto/CLV/','sm':'https://w3id.org/italia/onto/SM/','ti':'https://w3id.org/italia/onto/TI/','acco':'https://w3id.org/italia/onto/ACCO/','poi':'https://w3id.org/italia/onto/POI/','iot':'https://w3id.org/italia/onto/IoT/','cov':'https://w3id.org/italia/onto/COV/','cpv':'https://w3id.org/italia/onto/CPV/','ro':'https://w3id.org/italia/onto/RO/','smapit':'https://w3id.org/italia/onto/SMAPIT/','gtfs':'http://vocab.gtfs.org/terms#','cis':'https://w3id.org/italia/onto/Cultural-ON/','adms':'http://www.w3.org/ns/adms#','cpsv':'http://purl.org/vocab/cpsv#','qb':'http://purl.org/linked-data/cube#','sdmx-dimension':'http://purl.org/linked-data/sdmx/2009/dimension#','sdmx-measure':'http://purl.org/linked-data/sdmx/2009/measure#','sdmx-attribute':'http://purl.org/linked-data/sdmx/2009/attribute#','aop':'https://w3id.org/italia/onto/AtlasOfPaths/','ch':'https://w3id.org/italia/onto/CulturalHeritage/','prj':'https://w3id.org/italia/onto/Project/','ndc':'https://w3id.org/italia/onto/NDC/'};
 
 
 function litQ(s,lang){
@@ -4514,7 +4514,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
           var fullAddr=[ubicazioneV,civV].filter(Boolean).join(' ');
           ttl+='<'+addrURI_esc+'> a clv:Address ;'+nl;
           if(fullAddr)ttl+=sp+'clv:fullAddress '+litQ(fullAddr,'it')+' ;'+nl;
-          if(ubicazioneV)ttl+=sp+'clv:streetName '+litQ(ubicazioneV,'it');
+          if(ubicazioneV)ttl+=sp+'clv:officialStreetName '+litQ(ubicazioneV,'it');
           if(civV){
             ttl+=' ;'+nl;
             ttl+=sp+'clv:streetNumber '+litQ(civV,'it');
@@ -4573,7 +4573,7 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       if(personLabel2){
         var personURI2=base+'person/'+(cfI>=0&&row[cfI]?row[cfI].trim().toLowerCase():idVal);
         ttl+='<'+personURI2+'> a cpv:Person ;'+nl+sp+'rdfs:label '+litQ(personLabel2,'it')+' .'+nl;
-        ttl+=sp+'rpo:holdsRole <'+base+'role-in-organization/'+idVal+'> .'+nl+nl;
+        ttl+=sp+'ro:holdsRole <'+base+'role-in-organization/'+idVal+'> .'+nl+nl;
       }
       var enteV=enteI>=0?(row[enteI]||'').trim():'';
       var ipaV2=ipaI2>=0?(row[ipaI2]||'').trim():'';
@@ -4754,8 +4754,8 @@ function enforceOntologies(ttl, ontos) {
     'IoT':'iot:Sensor','COV':'cov:PublicOrganization','CPV':'cpv:Person','RO':'ro:Role',
     'SMAPIT':'smapit:School','QB':'qb:Observation','TI':'l0:EventOrSituation',
     'CulturalON':'cis:CulturalInstituteOrSite','Cultural-ON':'cis:CulturalInstituteOrSite',
-    'PARK':'park:ParkingFacility','POT':'pot:PriceSpecification','PublicContract':'pc:Contract',
-    'Route':'route:Route','RPO':'rpo:RoleInOrganization','MU':'mu:Value','Learning':'learn:Course',
+    'PARK':'park:CarPark','POT':'pot:PriceSpecification','PublicContract':'pc:Contract',
+    'Route':'route:Route','RPO':'ro:Role','MU':'mu:Value','Learning':'learning:DegreeCourse',
     'CPEV':'cpev:PublicEvent','Transparency':'tr:TransparencyObligation',
     'Indicator':'indicator:Indicator','ADMS':'adms:SemanticAsset','CLV':'clv:Address',
     'AccessCondition':'ac:AccessCondition','AtlasOfPaths':'aop:Path',
@@ -4764,7 +4764,7 @@ function enforceOntologies(ttl, ontos) {
   var PFX_MAP={'ACCO':'acco','GTFS':'gtfs','POI':'poi','IoT':'iot','COV':'cov','CPV':'cpv',
     'RO':'ro','SMAPIT':'smapit','QB':'qb','TI':'ti','CulturalON':'cis','Cultural-ON':'cis',
     'ADMS':'adms','CLV':'clv','PARK':'park','POT':'pot','PublicContract':'pc','Route':'route',
-    'RPO':'rpo','MU':'mu','Learning':'learn','CPEV':'cpev','Transparency':'tr',
+    'RPO':'ro','MU':'mu','Learning':'learning','CPEV':'cpev','Transparency':'tr',
     'Indicator':'indicator','L0':'l0','AccessCondition':'ac','AtlasOfPaths':'aop',
     'CulturalHeritage':'ch','Project':'prj','NDC':'ndc'};
   var ONTO_URI={'acco':'https://w3id.org/italia/onto/ACCO/','gtfs':'http://vocab.gtfs.org/terms#',
@@ -4775,8 +4775,8 @@ function enforceOntologies(ttl, ontos) {
     'cis':'http://dati.beniculturali.it/cis/','adms':'http://www.w3.org/ns/adms#',
     'clv':'https://w3id.org/italia/onto/CLV/','park':'https://w3id.org/italia/onto/PARK/',
     'pot':'https://w3id.org/italia/onto/POT/','pc':'https://w3id.org/italia/onto/PublicContract/',
-    'route':'https://w3id.org/italia/onto/Route/','rpo':'https://w3id.org/italia/onto/RPO/',
-    'mu':'https://w3id.org/italia/onto/MU/','learn':'https://w3id.org/italia/onto/Learning/',
+    'route':'https://w3id.org/italia/onto/Route/','ro':'https://w3id.org/italia/onto/RO/',
+    'mu':'https://w3id.org/italia/onto/MU/','learning':'https://w3id.org/italia/onto/Learning/',
     'cpev':'https://w3id.org/italia/onto/CPEV/','tr':'https://w3id.org/italia/onto/Transparency/',
     'indicator':'https://w3id.org/italia/onto/Indicator/',
     'ac':'https://w3id.org/italia/onto/AccessCondition/',
@@ -4934,7 +4934,7 @@ async function startDeterministicConversion() {
     // Cede il thread al browser (100ms) prima di avviare il calcolo pesante
     var ttl = await new Promise(function(resolve,reject){
       setTimeout(function(){
-        try{resolve(enforceOntologies(buildDeterministicTTL(csvText,ontos,ipa,ente),ontos));}
+        try{var _ttl=enforceOntologies(buildDeterministicTTL(csvText,ontos,ipa,ente),ontos);if(window.TTLNormalizer)_ttl=window.TTLNormalizer.normalizeTTL(_ttl);resolve(_ttl);}
         catch(e){reject(e);}
       },100);
     });
@@ -5716,6 +5716,7 @@ async function startConversion() {
           return v.includes(',') || v.includes('"') || v.includes('\n') ? '"'+v+'"' : v;
         }).join(','))).join('\n');
         chunk = buildDeterministicTTL(chunkCSV, ontos, ipa, paname);
+        if(window.TTLNormalizer)chunk=window.TTLNormalizer.normalizeTTL(chunk);
         // Rimuovi i prefissi dal chunk (vengono gestiti dal deduplicatePrefixes dopo)
         chunk = chunk.replace(/@prefix\s+\S+:\s*<[^>]+>\s*\.\n?/g, '').trim();
         // Rimuovi anche il nodo foaf:Agent (già nel header)
@@ -5840,9 +5841,9 @@ async function validateTTL() {
     'smapit':'https://w3id.org/italia/onto/SMAPIT/','dcatapit':'http://dati.gov.it/onto/dcatapit#',
     'pc':'https://w3id.org/italia/onto/PublicContract/',
     'route':'https://w3id.org/italia/onto/Route/',
-    'rpo':'https://w3id.org/italia/onto/RPO/',
+    'ro':'https://w3id.org/italia/onto/RO/',
     'mu':'https://w3id.org/italia/onto/MU/',
-    'learn':'https://w3id.org/italia/onto/Learning/',
+    'learning':'https://w3id.org/italia/onto/Learning/',
     'tr':'https://w3id.org/italia/onto/Transparency/',
     'indicator':'https://w3id.org/italia/onto/Indicator/',
     'pot':'https://w3id.org/italia/onto/POT/',
@@ -7008,5 +7009,261 @@ setInterval(function() {
 
 <!-- ===== FINE CORPUS MATCHER v7 ===== -->
 
+<script>
+// ttl-normalizer.js
+// ============================================================================
+// Normalizzatore TTL per piersoft/CSV-to-RDF
+//
+// Post-processor puro (no dipendenze) che ripulisce il TTL generato dal motore
+// deterministico `buildDeterministicTTL` (presente identico in index.html e
+// worker.js) prima della consegna all'utente.
+//
+// Fix applicati:
+//   SINTATTICI
+//     S1. Virgolette URL non escapate dentro rdfs:comment
+//         (es: `rdfs:comment "url: "https://x"@it.y"@it` → `rdfs:comment "url: https://x.y"@it`)
+//     S2. rdfs:comment senza virgolette (`rdfs:comment chiave: valore ;`)
+//         → `rdfs:comment "chiave: valore"@it ;`
+//     S3. Separatore orfano `.` → `;` tra tripla chiusa e predicato successivo
+//         nella stessa risorsa cpv:Person ... rpo:holdsRole
+//     S5. geo:lat / geo:long con `@it` → `^^xsd:decimal`
+//
+//   SEMANTICI — rimappatura termini non presenti nelle ontologie ufficiali
+//               OntoPiA verso i termini corretti.
+//     park:ParkingFacility         → park:CarPark
+//     rpo:RoleInOrganization       → ro:Role (RPO è anagrafe/stato civile)
+//     rpo:holdsRole                → ro:holdsRole
+//     learn:Course / learning:Course → learning:DegreeCourse
+//     learn:ects / learning:ects   → learning:credit
+//     learn:awardedTitle / learning:awardedTitle → learning:achievedTitleName
+//     learn:duration / learning:duration → rdfs:comment
+//     learn:hours / learning:hours → rdfs:comment
+//     tr:hasTransparencyObligation → tr:regulationReference
+//     tr:transparencyCategory      → tr:hasTransparencyActivityTypology
+//     tr:mandatoryData             → rdfs:comment
+//     indicator:indicatorType      → indicator:hasIndicatorType
+//     indicator:baseline           → rdfs:comment
+//     indicator:target             → rdfs:comment
+//     pc:description               → dct:description
+//     clv:streetName               → clv:officialStreetName
+//   Inoltre: alias prefisso `learn:` → `learning:` con injection del prefisso
+//   `@prefix learning: <https://w3id.org/italia/onto/Learning/>` e
+//   `@prefix ro: <https://w3id.org/italia/onto/RO/>` se referenziato.
+//
+// Regression test: 53/53 TTL (dei 53 esempi della select in index.html) passano
+// sia parsing Turtle (rdflib) sia validazione semantica contro 30 ontologie
+// OntoPiA ufficiali. Riferimento: corpus fixtures_v9.json + ontology_index.json
+// scaricato da raw.githubusercontent.com/piersoft/CSV-to-RDF/main.
+//
+// USO
+// ---
+// Browser / index.html (IIFE inline):
+//   const cleaned = normalizeTTL(ttl);
+//
+// Cloudflare Worker / worker.js:
+//   import { normalizeTTL } from './ttl-normalizer.js';   // ESM
+//   // oppure: const { normalizeTTL } = require('./ttl-normalizer.js');
+//   const cleaned = normalizeTTL(ttl);
+//
+// SIMBA (servizio esterno che consuma il worker):
+//   const response = await fetch(WORKER_BASE + '/convert?...');
+//   const ttl = await response.text();
+//   const cleaned = normalizeTTL(ttl);
+//
+// ============================================================================
+
+(function (root, factory) {
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = factory();           // CommonJS (Node/wrangler classic)
+  } else if (typeof define === 'function' && define.amd) {
+    define([], factory);                  // AMD
+  } else {
+    root.TTLNormalizer = factory();       // Browser global
+  }
+}(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  // --- Mappe ----------------------------------------------------------------
+
+  const CLASS_REMAP = {
+    'park:ParkingFacility':          'park:CarPark',
+    'rpo:RoleInOrganization':        'ro:Role',
+    'learn:Course':                  'learning:DegreeCourse',
+    'learning:Course':               'learning:DegreeCourse',
+  };
+
+  // `null` come valore → il predicato va convertito in rdfs:comment
+  // conservando il local name come etichetta.
+  const PROP_REMAP = {
+    'rpo:holdsRole':                 'ro:holdsRole',
+    'tr:hasTransparencyObligation':  'tr:regulationReference',
+    'tr:transparencyCategory':       'tr:hasTransparencyActivityTypology',
+    'tr:mandatoryData':               null,
+    'indicator:baseline':             null,
+    'indicator:target':               null,
+    'indicator:indicatorType':       'indicator:hasIndicatorType',
+    'pc:description':                'dct:description',
+    'clv:streetName':                'clv:officialStreetName',
+    'learn:duration':                 null,
+    'learn:hours':                    null,
+    'learn:ects':                    'learning:credit',
+    'learn:awardedTitle':            'learning:achievedTitleName',
+    'learning:duration':              null,
+    'learning:hours':                 null,
+    'learning:ects':                 'learning:credit',
+    'learning:awardedTitle':         'learning:achievedTitleName',
+  };
+
+  const PREFIX_ALIAS = { 'learn': 'learning' };
+
+  const ONTO_URI = {
+    'ro':       'https://w3id.org/italia/onto/RO/',
+    'learning': 'https://w3id.org/italia/onto/Learning/',
+  };
+
+  // --- Regex helpers --------------------------------------------------------
+
+  // S1 — virgolette URL non escapate (tipico output cpsv/ndc/transparency)
+  const RE_S1 = /rdfs:comment\s+"([^"]+?):\s+"([^"]+?)"@it([^"\n]*?)"@it/g;
+
+  // S2 — rdfs:comment chiave: valore (no quote, no @it)
+  const RE_S2 = /^(\s+)rdfs:comment\s+([a-zA-Z_][\w]*)\s*:\s*([^"\n;.]+?)\s*([;.])\s*$/gm;
+
+  // S3 — person chiuso con . seguito da rpo:holdsRole orfano
+  const RE_S3 = /(<[^>]+\/person\/[^>]+>\s+a\s+cpv:Person\s*;\s*\n\s+rdfs:label\s+"[^"]+"@it\s*)\.\s*\n(\s+rpo:holdsRole\s+<[^>]+>\s*)\./g;
+
+  // S5 — geo:lat/long "N.M"@it → "N.M"^^xsd:decimal
+  const RE_S5 = /(geo:(?:lat|long))\s+"([\d.\-+]+)"@it/g;
+
+  function escLit(s) {
+    return String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  }
+
+  function reEsc(s) {
+    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  // --- Fix steps ------------------------------------------------------------
+
+  function fixS1(ttl) {
+    return ttl.replace(RE_S1, function (_m, k, url, tail) {
+      const full = escLit(k + ': ' + url + (tail || ''));
+      return 'rdfs:comment "' + full + '"@it';
+    });
+  }
+
+  function fixS2(ttl) {
+    return ttl.replace(RE_S2, function (_m, indent, key, val, sep) {
+      const esc = escLit(val.trim());
+      return indent + 'rdfs:comment "' + key + ': ' + esc + '"@it ' + sep;
+    });
+  }
+
+  function fixS3(ttl) {
+    return ttl.replace(RE_S3, function (_m, a, b) { return a + ';\n' + b + '.'; });
+  }
+
+  function fixS5(ttl) {
+    return ttl.replace(RE_S5, function (_m, p, n) {
+      return p + ' "' + n + '"^^xsd:decimal';
+    });
+  }
+
+  function remapPrefixes(ttl) {
+    Object.keys(PREFIX_ALIAS).forEach(function (oldP) {
+      const newP = PREFIX_ALIAS[oldP];
+      const uri = ONTO_URI[newP];
+      // Sostituisce @prefix learn: <...> .
+      ttl = ttl.replace(
+        new RegExp('@prefix\\s+' + reEsc(oldP) + ':\\s*<[^>]+>\\s*\\.', 'g'),
+        '@prefix ' + newP + ': <' + uri + '> .'
+      );
+      // Sostituisce usi inline: learn:X → learning:X
+      ttl = ttl.replace(new RegExp('\\b' + reEsc(oldP) + ':', 'g'), newP + ':');
+    });
+    return ttl;
+  }
+
+  function remapClasses(ttl) {
+    Object.keys(CLASS_REMAP).forEach(function (oldC) {
+      const newC = CLASS_REMAP[oldC];
+      if (oldC === newC) return;
+      ttl = ttl.replace(new RegExp('\\b' + reEsc(oldC) + '\\b', 'g'), newC);
+    });
+    return ttl;
+  }
+
+  function remapProperties(ttl) {
+    const lines = ttl.split('\n');
+    const out = [];
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      let done = false;
+      for (const oldP in PROP_REMAP) {
+        const newP = PROP_REMAP[oldP];
+        const re = new RegExp('^(\\s*)(' + reEsc(oldP) + ')\\s+(.*?)(\\s*[;.])\\s*$');
+        const m = line.match(re);
+        if (!m) continue;
+        const indent = m[1], rest = m[3], sep = m[4];
+        if (newP === null) {
+          const local = oldP.split(':', 2)[1];
+          let val = rest
+            .replace(/\^\^xsd:\w+$/, '').trim()
+            .replace(/@\w+$/, '').trim()
+            .replace(/^["']|["']$/g, '');
+          val = escLit(val);
+          out.push(indent + 'rdfs:comment "' + local + ': ' + val + '"@it' + sep);
+        } else {
+          out.push(indent + newP + ' ' + rest + sep);
+        }
+        done = true;
+        break;
+      }
+      if (!done) out.push(line);
+    }
+    return out.join('\n');
+  }
+
+  function ensurePrefixes(ttl) {
+    const toAdd = [];
+    Object.keys(ONTO_URI).forEach(function (pfx) {
+      const used = new RegExp('(?:^|[\\s<;.])' + pfx + ':').test(ttl);
+      const declared = ttl.indexOf('@prefix ' + pfx + ':') >= 0;
+      if (used && !declared) toAdd.push('@prefix ' + pfx + ': <' + ONTO_URI[pfx] + '> .');
+    });
+    if (!toAdd.length) return ttl;
+    const lines = ttl.split('\n');
+    let lastPfx = -1;
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].trim().indexOf('@prefix') === 0) lastPfx = i;
+    }
+    if (lastPfx >= 0) {
+      lines.splice.apply(lines, [lastPfx + 1, 0].concat(toAdd));
+    } else {
+      Array.prototype.unshift.apply(lines, toAdd);
+    }
+    return lines.join('\n');
+  }
+
+  // --- Pipeline pubblica ----------------------------------------------------
+
+  function normalizeTTL(ttl) {
+    if (!ttl || typeof ttl !== 'string') return ttl;
+    let out = ttl;
+    out = fixS1(out);
+    out = fixS2(out);
+    out = fixS3(out);
+    out = fixS5(out);
+    out = remapPrefixes(out);
+    out = remapClasses(out);
+    out = remapProperties(out);
+    out = ensurePrefixes(out);
+    return out;
+  }
+
+  return { normalizeTTL: normalizeTTL, version: '1.0.0' };
+}));
+
+</script>
 </body>
 </html>

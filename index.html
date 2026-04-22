@@ -1,9 +1,9 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.04.19.06 -->
+  <!-- build:v2026.04.19.07 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CSV-to-RDF v2026.04.19.06 — Linked Open Data PA</title>
+  <title>CSV-to-RDF v2026.04.19.07 — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
   <meta name="robots" content="index, follow"/>
   <link rel="canonical" href="https://piersoft.github.io/CSV-to-RDF/"/>
@@ -827,7 +827,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.04.19.06</span>
+<span id="app-version">v2026.04.19.07</span>
 </footer>
 
 <script>
@@ -2578,10 +2578,10 @@ function loadExample(tipo) {
 1,Defibrillatore Piazza Repubblica,DAE,41.9028,12.4964,Piazza della Repubblica,Roma,si,dae@comune.roma.it
 2,Defibrillatore Stazione Termini,DAE,41.9009,12.5018,Piazza dei Cinquecento,Roma,si,
 3,Defibrillatore Parco Borghese,DAE,41.9135,12.4820,Viale del Museo Borghese,Roma,no,`,
-    smapit: `id,codice_scuola,denominazione,tipo_scuola,indirizzo,comune,provincia,cap,lat,lon,email
-1,RMIS00100G,Liceo Scientifico Fermi,Liceo Scientifico,Via Roma 1,Roma,RM,00100,41.8902,12.4922,segreteria@fermi.it
-2,MIIC8FJ00T,IC Milano Centro,Istituto Comprensivo,Via Dante 10,Milano,MI,20121,45.4654,9.1860,segreteria@icmilano.it
-3,FIIS00200B,IIS Leonardo da Vinci,Ist. Istruzione Superiore,Via Cavour 5,Firenze,FI,50129,43.7696,11.2558,info@iis-davinci.fi.it`,
+    smapit: `codice_meccanografico,id,denominazione,tipologia,categoria,ist_comprensivo,dug,denominazione_strada,numero_civico,n_classi_sezioni,alunni,servizio_mensa,tempo_normale,lat,lon
+LEAA001018,1,CESARE BATTISTI,INFANZIA,STATALE,NO,VIA,SALVATORE TRINCHESE,12,7,177,SI,SI,40.3538,18.175
+LEEE07101Q,2,E. DE AMICIS,PRIMARIA,STATALE,NO,PIAZZETTA,CONTE ACCARDO,8,13,293,NO,SI,40.35804,18.17178
+LEEE00101D,3,C. BATTISTI,PRIMARIA,STATALE,NO,VIA,ACHILLE COSTA,7,23,528,NO,SI,40.35415,18.17555`,
     cpev: `id,titolo_evento,tipo_evento,data_inizio,data_fine,luogo,comune,lat,lon,organizzatore,pubblico_target,format_evento
 1,Festival del Jazz 2024,festival,2024-07-01T20:00:00,2024-07-03T23:00:00,Piazza del Comune,Bari,41.1253,16.8620,Comune di Bari,tutti,fisico
 2,Mostra d'Arte Contemporanea,mostra,2024-09-15T10:00:00,2024-10-15T18:00:00,Castello Svevo,Bari,41.1278,16.8718,Pinacoteca Bari,adulti,fisico
@@ -2800,7 +2800,7 @@ BAIS012008,Liceo Linguistico Moro,Liceo Linguistico,Bari,Corso Vittorio 5,41.127
   document.getElementById('csv-input').value = csv;
   const ontoMap = {
     poi:['CLV','POI','L0'],
-    smapit:['CLV','L0','SMAPIT'],
+    smapit:['CLV','SMAPIT','L0'],
     iot:['IoT','TI','CLV','L0'],
     acco:['CLV','POI','ACCO','L0'],
     cpsv:['COV','CPSV-AP','L0'],

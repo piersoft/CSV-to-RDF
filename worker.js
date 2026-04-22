@@ -1355,10 +1355,18 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
     if(ontos.indexOf('QB')>=0)triples.push({pred:'qb:dataSet',val:'<'+dsUri+'>',raw:true});
     var _singleValPreds=new Set(['dct:type','dct:identifier','dct:date','dct:publisher','geo:lat','geo:long','dct:spatial','dct:temporal']);
     var _usedSinglePreds=new Set();
+    // Se il blocco clv:Address sarà attivo per questa riga, lat/lon/latitudine/longitudine
+    // verranno emessi nel nodo Address (insieme al POI quando presente). Non duplichiamoli
+    // sul soggetto principale: il CLV (entità spaziale) è il contenitore corretto secondo
+    // le best practice AgID/DCAT-AP_IT.
+    var _willHaveAddr = detHasAddr(nh) && ontos.indexOf('CLV')>=0;
+    var _skipOnMainSubject = _willHaveAddr ? ['lat','lon','latitudine','longitudine'] : [];
     headers.forEach(function(origH,i){
       var normH=nh[i];
       var val=(row[i]||'').trim();
       if(!val||normH==='id')return;
+      // Skip lat/lon sul soggetto principale: finiranno nel nodo clv:Address (no duplicazione)
+      if(_skipOnMainSubject.indexOf(normH)>=0)return;
       var rule=detFindRule(normH,ontos);
       if(rule&&rule.type==='_clvnode')return; // gestito da addrMap come nodo clv:Address
       if(!rule){var _n=detNormH(origH);if(_n==='_skip'||_n.startsWith('_'))return;var _addrKeys=['indirizzo','via','strada','cap','ubicazione_esercizio','indirizzo_esercizio','dislocazione','contrada','frazione','localita','provincia','comune','citta','regione','dug','denominazione_strada','nome_strada','civico','n_civico','numero_civico','num_civico'];if(_addrKeys.indexOf(normH)>=0)return;if(val)triples.push({pred:'rdfs:comment',val:'"'+origH+': '+val.replace(/"/g,'\\"' )+('"@it'),raw:true,unmapped:true});return;}

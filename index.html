@@ -1354,10 +1354,9 @@ function scoreLinkedData(headers, rows) {
     score += 5;
     warnings.push({
       id: 'L1',
-      msg: `${badCased.length} intestazioni non seguono le etichette delle ontologie (minuscolo con underscore): ${badCased.slice(0,4).map(h => `"${h}" → "${h.trim().replace(/([a-z])([A-Z])/g,'$1_$2').replace(/[\s\-]+/g,'_').toLowerCase().replace(/[^a-z0-9_]/g,'_').replace(/_+/g,'_').replace(/^_|_$/g,'')}"` ).join(', ')}${badCased.length>4?'…':''}.`,
+      msg: `${badCased.length} intestazioni non seguono le etichette delle ontologie (minuscolo con underscore): ${badCased.slice(0,4).map(h=>`"${h}"`).join(', ')}${badCased.length>4?'…':''}. Le LG AGID Open Data (Allegato B) raccomandano di allineare i nomi colonna alle etichette dei vocabolari del Catalogo Nazionale della Semantica dei Dati (schema.gov.it).`,
     });
   } else {
-    // Suggerisci rinomina snake_case per le colonne problematiche
     const toSnake = h => h.trim()
       .replace(/[àáâã]/g,'a').replace(/[èéêë]/g,'e').replace(/[ìíîï]/g,'i')
       .replace(/[òóôõ]/g,'o').replace(/[ùúûü]/g,'u')
@@ -1540,7 +1539,10 @@ function detectOntologiesDeterministic(headers, rows) {
     return cols.some(function(c){ return norm.indexOf(c)>=0; });
   };
 
-  // Dataset statistici aggregati PA (Consip, ANAC, ISTAT territoriale) → QB+CLV senza TI/PARK/POI spurii
+  var _isStatAggregato = has(['bando_sda','n_pa_appaltanti','base_asta']) ||
+    (has(['tipologia_amministrazione']) && has(['regione_pa','provincia_pa']) && has(['valore_economico','importo_totale','totale_importo']));
+  if(_isStatAggregato) { result.add('QB'); }
+
   var _isStatAggregato = has(['bando_sda','n_pa_appaltanti','base_asta']) ||
     (has(['tipologia_amministrazione']) && has(['regione_pa','provincia_pa']) && has(['valore_economico','importo_totale','totale_importo']));
   if(_isStatAggregato) { result.add('QB'); }
@@ -1548,15 +1550,8 @@ function detectOntologiesDeterministic(headers, rows) {
   // CLV — SOLO se nelle intestazioni ci sono campi indirizzo/coordinate strutturati
   if(hasH(['lat','lon','indirizzo','via','civico','comune','cap','latitudine','longitudine','stop_lat','stop_lon',
             'lat_wgs84','lon_wgs84','coord_lat','coord_lon','georef_lat','georef_lon',
-            'ubicazione_esercizio','n_civico','indirizzo_esercizio',
-            'coorx','coory','coor_x','coor_y','num_civic','num_civ','n_civ',
-            'tp_str_nom','tp_str_loc','geo_point','geometria','geom','location',
-            'coordinate']))
+            'ubicazione_esercizio','n_civico','indirizzo_esercizio','coorx','coory','coor_x','coor_y','num_civic','num_civ','n_civ','tp_str_nom','tp_str_loc','geo_point','geometria','geom','location','coordinate']))
     result.add('CLV');
-  // Stradario/civici con coordinate coorX/coorY → anche POI
-  if(hasH(['coorx','coory','coor_x','coor_y'])) { result.add('CLV'); result.add('POI'); }
-  // Sedi con colonna 'coordinate' o 'geo' contenente lat,lon come valore → CLV+POI
-  if(hasH(['coordinate','geo_point','geometria','geom'])) { result.add('CLV'); result.add('POI'); }
 
   // GTFS
   if(has(['stop_id','route_id','trip_id','agency_id','stop_lat','stop_lon','shape_id']) ||
@@ -1568,7 +1563,7 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['codice_scuola','codicescuola','denominazione_scuola','tipo_scuola','ciclo_scolastico',
           'ordine_scuola','grado_scolastico','codice_meccanografico']) ||
      (has(['scuola','liceo','comprensivo','istruzione']) && !has(['cig','importo','appalto','museo','biblioteca','ospedale','banca','dae','defibrillatore','aed']) && !allText.includes('dae-') && !allText.includes('defibrillator')))
-    result.add('SMAPIT')
+    result.add('SMAPIT');
   if(has(['tipo_atto','media_gg_approvazione','totale_mandati_collegati'])) { result.add('CPSV-AP'); result.add('TI'); result.add('QB'); }
   if(has(['anno_protocollo','tipo_protocollo','tipo_spedizione','numero_protocolli'])) { result.add('QB'); result.add('TI'); }
   if(has(['tipo_pubblicazione','numero_pubblicazioni']) && has(['anno'])) { result.add('QB'); result.add('TI'); }
@@ -1579,7 +1574,7 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['numero_componenti','di_cui_minorenni','totale_famiglie'])) { result.add('QB'); result.add('CPV'); }
   if(has(['anno_nascita','sesso','cittadinanza','totale_cittadini'])) { result.add('QB'); result.add('CPV'); }
   if(has(['totale_uomini','totale_donne','eta_media_uomini','eta_media_donne'])) { result.add('QB'); result.add('COV'); }
-  if(has(['ufficio','indirizzo_pec','email_pec','orari_pubblico','pec_ente'])) { result.add('COV'); result.add('CLV'); result.add('CPSV-AP'); }
+  if(has(['ufficio','pec','orari_pubblico'])) { result.add('COV'); result.add('CLV'); result.add('CPSV-AP'); }
   if(has(['permessi_rilasciati','entro_termini','fuori_termini'])) { result.add('QB'); result.add('TI'); result.add('CPSV-AP'); }
   if(!_isStatAggregato && has(['tipologia','totale']) && has(['anno']) && !has(['titolo','descrizione'])) { result.add('QB'); result.add('TI'); }
   if(has(['nome_associazione','latitudine','longitudine','categoria']) && has(['indirizzo'])) { result.add('COV'); result.add('CLV'); result.add('POI'); }
@@ -1610,7 +1605,7 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['tipo_stud','idoneita','fascia_isee']) && has(['ifp','tipo_corso'])) { result.add('QB'); result.add('CPV'); }
   if(!_isStatAggregato && (has(['trimestre','valore','unita_di_misura']) || has(['periodo','indice_tempestivita_pagamento']))) { result.add('QB'); result.add('TI'); }
   if(has(['codice_missione','descmissione','codiceprogramma','residuipresunti'])) { result.add('QB'); result.add('TI'); }
-  if(has(['descrizione_piano','descrizione_macro_ob','linea_di_azione','percentuale']) && !has(['stanziamento','capitolo','missione','programma','pdc'])) { result.add('CPSV-AP'); result.add('TI'); }
+  if(has(['descrizione_piano','descrizione_capitolo','descrizione_macro_ob','linea_di_azione','percentuale'])) { result.add('CPSV-AP'); result.add('TI'); }
   if(has(['cod_amm','des_amm','tipologia_istat','tipologia_amm']) && has(['cf','sito_istituzionale'])) { result.add('COV'); result.add('CLV'); }
   if(has(['codice_ipa','codice_uni_uo','descrizione_uo','codice_uni_aoo'])) { result.add('COV'); result.add('CLV'); }
   if(has(['id_servizio','tipologia_servizio','descrizione_servizio','url_servizio']) && has(['codice_ipa'])) { result.add('CPSV-AP'); result.add('COV'); }
@@ -1646,7 +1641,6 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['dug___denominazione_urban','duf___denominazione_urban','codice_catastale_ente','numero_delibera','data_delibera_istituzione'])) result.add('CLV');
   if(has(['cod_nazionale_struttura','denominazione_struttura','tipo_struttura','cod_nazionale_asl','denom_struttura','cod_struttura','cod_distretto_asl','comune_sede'])) result.add('SMAPIT');
   if(has(['totale_rette','totale_pagamenti','pasti_erogati']) && has(['anno','scuola','mensa','alunni'])) { result.add('QB'); result.add('SMAPIT'); }
-  if(has(['numvaccinazioni','fasciaeta','tipostruttura','tipovaccino']) && has(['asl','anno'])) { result.add('QB'); result.add('SMAPIT'); }
   if(has(['tipo_pratica','totale_pratiche']) && has(['anno'])) result.add('QB');
   if(has(['arrivi_italiani','presenze_italiani','arrivi_stranieri','presenze_stranieri'])) result.add('QB');
   if(has(['capitolo_di_bilancio','descrizione_capitolo','stanziamento_assestato'])) result.add('QB');
@@ -1681,8 +1675,7 @@ function detectOntologiesDeterministic(headers, rows) {
   // POI — R3-FIX: LATITUDINE/LONGITUDINE MAIUSCOLE + UTMX/UTMY
   var _hasPOIcoord = hasH(['lat','lon','latitudine','longitudine','utmx','utmy',
                             'x_wgs84','y_wgs84','coord_x','coord_y','longitude','latitude',
-                            'coordx','coordy','x_coord','y_coord',
-                            'coorx','coory','coor_x','coor_y','geo_point','geometria','geom']);
+                            'coordx','coordy','x_coord','y_coord','coorx','coory','coor_x','coor_y','geo_point','geometria','geom']);
   // OSM schema: osm_id + lat/lon → POI forte (defibrillatori, punti interesse OSM)
   var _hasOSMschema = has(['osm_id','osm_type']) && _hasPOIcoord;
   // IoT con coordinate → POI; IoT con data → TI (misurazioni temporali geolocalizzate)
@@ -1727,7 +1720,7 @@ function detectOntologiesDeterministic(headers, rows) {
   var _hasCOVStrong = has(['codice_ipa','codice_ente','partita_iva','codice_fiscale_ente','ragione_sociale','segnalatore','ente_segnalatore','soggetto_segnalante','amministrazione_titolare','nome_centro','nome_struttura','nome_presidio','azienda','ditta','impresa','societa']) &&
                       !has(['qualifica_dipendente','obbligo_trasparenza','titolo_corso','ore_formazione',
                              'cig','importo_aggiudicazione','tipo_percorso','valore_indicatore']);
-  var _hasCOVWeak   = hasH(['amministrazione','ente','pubblica_amministrazione','organizzazione','nome_centro','nome_struttura','unita_operativa','nome_presidio','azienda','ditta','impresa','societa',
+  var _hasCOVWeak   = hasH(['amministrazione','ente','pubblica_amministrazione','organizzazione','nome_centro','nome_struttura','unita_operativa','nome_presidio',
                            'comparto','inquadramento','codice_istituzione','codice_ente_bdap']);
   // Anti-falso-positivo: se insegna/ragione_sociale presente senza cup/cig → non PublicContract
   var _hasEsercizioSegnali = has(['insegna','insegna_commerciale','ragione_sociale','tipo_esercizio','categoria_esercizio']);
@@ -1840,10 +1833,6 @@ function detectOntologiesDeterministic(headers, rows) {
   if(has(['nome_servizio','canale_erogazione','requisiti_accesso','url_servizio']) && !has(['cig','appalto','gara']))
     result.add('CPSV-AP');
 
-
-  // PEG bilancio comunale — Piano Esecutivo Gestione
-  if(has(['stanziamento','pdc_missione','rendiconto','capitolo','missione','programma']) && has(['missione','programma'])) { result.add('QB'); result.add('CPSV-AP'); result.add('COV'); }
-  if(has(['stanziamento','pdc_missione','codice_direzione','centro_di_costo'])) { result.add('QB'); result.add('CPSV-AP'); result.add('COV'); }
   // ADMS — cataloghi / asset semantici
   // FIX4: ADMS richiede contesto specifico, non solo 'versione'
   if(has(['slug','version','creation_date','last_edit_date','api_url',

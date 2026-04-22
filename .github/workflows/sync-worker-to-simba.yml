@@ -1,0 +1,59 @@
+name: Sync worker.js to SIMBA rdf-mcp
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'worker.js'
+
+jobs:
+  sync-to-simba:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout CSV-to-RDF
+        uses: actions/checkout@v4
+
+      - name: Push worker.js to ckan-mcp-server-docker-ollama
+        env:
+          SYNC_TOKEN: ${{ secrets.SIMBA_SYNC_TOKEN }}
+        run: |
+          python3 - << 'EOF'
+          import json, os, base64, urllib.request
+
+          token = os.environ['SYNC_TOKEN']
+
+          # Leggi worker.js
+          with open('worker.js', 'rb') as f:
+              content = base64.b64encode(f.read()).decode()
+
+          # Ottieni SHA del file remoto
+          req = urllib.request.Request(
+              'https://api.github.com/repos/piersoft/ckan-mcp-server-docker-ollama/contents/rdf-mcp/worker.js',
+              headers={'Authorization': f'token {token}'}
+          )
+          try:
+              with urllib.request.urlopen(req) as r:
+                  remote_sha = json.load(r).get('sha', '')
+          except:
+              remote_sha = ''
+
+          print(f'Remote SHA: {remote_sha[:8] if remote_sha else "none (new file)"}')
+
+          payload = {
+              'message': 'sync: update rdf-mcp/worker.js from CSV-to-RDF (automated)',
+              'content': content
+          }
+          if remote_sha:
+              payload['sha'] = remote_sha
+
+          req2 = urllib.request.Request(
+              'https://api.github.com/repos/piersoft/ckan-mcp-server-docker-ollama/contents/rdf-mcp/worker.js',
+              data=json.dumps(payload).encode(),
+              headers={'Authorization': f'token {token}', 'Content-Type': 'application/json'},
+              method='PUT'
+          )
+          with urllib.request.urlopen(req2) as r:
+              result = json.load(r)
+              sha = result.get('content', {}).get('sha', '')[:8]
+              print(f'Sync OK: rdf-mcp/worker.js aggiornato, sha={sha}')
+          EOF

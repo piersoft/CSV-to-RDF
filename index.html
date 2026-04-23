@@ -1373,7 +1373,8 @@ function generateSuggestions(headers, ontos, stato) {
   // → suggerisci lo schema ufficiale ANNCSU
   const _normH = headers.map(normH);
   const _hasCiviciCols = _normH.some(h => ['num_civic','numero_civico','civico','n_civico',
-    'tp_str_nom','duf','dug','progr_nazionale_ac','progr_nazionale_accesso'].includes(h));
+    'tp_str_nom','duf','dug','progr_nazionale_ac','progr_nazionale_accesso',
+    'classe_toponimo','nome_toponimo','subalterno'].includes(h));
   const _usesANNCSU = (ontos||[]).some(o => o === 'ANNCSU_STRAD' || o === 'ANNCSU_INDIR');
   const _hasNonStandardCivici = _hasCiviciCols && !_usesANNCSU &&
     _normH.some(h => ['num_civic','tp_str_nom','tp_str_loc','tp_id','tp_str_cod','classe_toponimo','nome_toponimo','subalterno'].includes(h));

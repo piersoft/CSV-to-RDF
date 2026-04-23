@@ -2267,39 +2267,14 @@ function scoreLinkedData(headers, rows) {
   const warnings = [];
   const normHeaders = headers.map(normH);
 
-  // L1: intestazioni lowercase_underscore (10 pt)
-  const badCased = headers.filter(h => {
-    const s = String(h).trim();
-    return s && !/^[a-z][a-z0-9_]*$/.test(s);
-  });
-  if (badCased.length === 0) {
-    score += 10;
-  } else if (badCased.length <= headers.length * 0.4) {
-    score += 5;
-    warnings.push({
-      id: 'L1',
-      msg: `${badCased.length} intestazioni non seguono le etichette delle ontologie (minuscolo con underscore): ${badCased.slice(0,4).map(h=>`"${h}"`).join(', ')}${badCased.length>4?'…':''}. Le LG AGID Open Data (Allegato B) raccomandano di allineare i nomi colonna alle etichette dei vocabolari del Catalogo Nazionale della Semantica dei Dati (schema.gov.it).`,
-    });
-  } else {
-    const toSnake = h => h.trim()
-      .replace(/[àáâã]/g,'a').replace(/[èéêë]/g,'e').replace(/[ìíîï]/g,'i')
-      .replace(/[òóôõ]/g,'o').replace(/[ùúûü]/g,'u')
-      .replace(/([a-z])([A-Z])/g,'$1_$2')
-      .replace(/[\s\-]+/g,'_').toLowerCase()
-      .replace(/[^a-z0-9_]/g,'_').replace(/_+/g,'_').replace(/^_|_$/g,'');
-    const renameHints = badCased.map(h => `"${h}" → "${toSnake(h)}"`).join(', ');
-    warnings.push({
-      id: 'L1',
-      msg: `La maggior parte delle intestazioni non segue le etichette delle ontologie del Catalogo Nazionale della Semantica dei Dati. Suggerimento rinominazione: ${renameHints}.`,
-    });
-  }
+  // L1 rimosso: snake_case non è una norma obbligatoria
 
-  // L2: presenza di identificatore univoco (10 pt)
+  // L2: presenza di identificatore univoco (20 pt)
   const hasId = normHeaders.some(h =>
     ['id','codice','identifier','uuid','pk','key','cod'].some(id => h === id || h.startsWith(id+'_') || h.endsWith('_'+id))
   );
   if (hasId) {
-    score += 10;
+    score += 20;
   } else {
     warnings.push({
       id: 'L2',

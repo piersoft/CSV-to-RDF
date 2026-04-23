@@ -2012,7 +2012,7 @@ const ONTO_PATTERNS = {
     bonus:        ['lat','lon','civico','regione','cod_istat'],
     label:        'Indirizzi e Luoghi (CLV)',
     rename_map:   { 'ubicazione':'indirizzo','city':'comune','address':'indirizzo',
-                    'postal_code':'cap','citta':'comune' },
+                    'postal_code':'cap','location':'localita','citta':'comune' },
     add_suggest:  ['lat','lon'],
     doc_url:      'https://schema.gov.it/lodview/onto/CLV',
   },
@@ -2248,8 +2248,6 @@ function scoreOntologie(headers, rows, ontos) {
     'Cultural-ON': ['CLV','POI','TI'],
     'PARK':   ['CLV','POI'],
     'SMAPIT': ['CLV','POI'],
-    'ANNCSU_STRAD':  ['CLV','ANNCSU_INDIR','POI','L0'],
-    'ANNCSU_INDIR':  ['CLV','ANNCSU_STRAD','POI','L0'],
     'CPSV-AP':['CLV','COV','TI','PublicContract'],
     'RO':     ['QB','TI','COV'],
   };
@@ -2293,7 +2291,26 @@ function generateSuggestions(headers, ontos, stato) {
   const suggestions = [];
   const renamed_headers = {};
 
-  for (const onto of (ontos || [])) {
+  // Se il CSV contiene colonne tipiche di civici/indirizzi ma NON usa lo schema ANNCSU ufficiale
+  // → suggerisci lo schema ufficiale ANNCSU
+  const _normH = headers.map(normH);
+  const _hasCiviciCols = _normH.some(h => ['num_civic','numero_civico','civico','n_civico',
+    'tp_str_nom','duf','dug','progr_nazionale_ac','progr_nazionale_accesso'].includes(h));
+  const _usesANNCSU = (ontos||[]).some(o => o === 'ANNCSU_STRAD' || o === 'ANNCSU_INDIR');
+  const _hasNonStandardCivici = _hasCiviciCols && !_usesANNCSU &&
+    _normH.some(h => ['num_civic','tp_str_nom','tp_str_loc','tp_id','tp_str_cod'].includes(h));
+  if (_hasNonStandardCivici) {
+    suggestions.push({
+      onto: 'ANNCSU',
+      label: 'Stradario/Indirizzario ANNCSU (schema ufficiale Istat/Agenzia Entrate)',
+      doc_url: 'https://www.anncsu.gov.it/it/consultazione-dellarchivio/open-data/',
+      renames: null,
+      aggiungi: null,
+      nota: 'Questo CSV sembra contenere dati di indirizzi o civici. Per la massima interoperabilità usa le colonne ufficiali ANNCSU: PROGR_NAZIONALE_AC, DUG, DUF per lo stradario; PROGR_NAZIONALE_ACCESSO, CIVICO, LONGITUDINE, LATITUDINE per l'indirizzario. Fonte: Istat + Agenzia delle Entrate (anncsu.gov.it).',
+    });
+  }
+
+    for (const onto of (ontos || [])) {
     const pattern = ONTO_PATTERNS[onto];
     if (!pattern) continue;
 

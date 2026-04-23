@@ -1616,9 +1616,9 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       // Tipo: stringa semplice (non langlit), es. "10" o "25/A"
       if(_civicoIdx>=0 && row[_civicoIdx] && row[_civicoIdx].trim()){
         var _civVal=row[_civicoIdx].trim().replace(/"/g,'\\"');
-        addrTriples.push({pred:'clv:hasNumber',val:dq+_civVal+dq});
+        if(_civVal&&_civVal!=='0')addrTriples.push({pred:'clv:hasNumber',val:dq+_civVal+dq});
       }
-      var addrMap={indirizzo:'clv:fullAddress',via:'clv:fullAddress',strada:'clv:fullAddress',cap:'clv:postCode',numero_civico:'clv:hasNumber',civico:'clv:hasNumber',ubicazione_esercizio:'clv:fullAddress',indirizzo_esercizio:'clv:fullAddress',dislocazione:'clv:fullAddress',contrada:'clv:fullAddress',frazione:'clv:hasSpatialCoverage',localita:'clv:hasSpatialCoverage',provincia:'clv:hasProvince',comune:'clv:hasCity',citta:'clv:hasCity',regione:'clv:hasRegion'};
+      var addrMap={indirizzo:'clv:fullAddress',via:'clv:fullAddress',strada:'clv:fullAddress',cap:'clv:postCode',ubicazione_esercizio:'clv:fullAddress',indirizzo_esercizio:'clv:fullAddress',dislocazione:'clv:fullAddress',contrada:'clv:fullAddress',frazione:'clv:hasSpatialCoverage',localita:'clv:hasSpatialCoverage',provincia:'clv:hasProvince',comune:'clv:hasCity',citta:'clv:hasCity',regione:'clv:hasRegion'};
       // Se ANNCSU ha già popolato fullAddress, non duplicare con denominazione_strada da sola
       if(!_anncsuHandled){addrMap.denominazione_strada='clv:hasStreetToponym';addrMap.nome_strada='clv:hasStreetToponym';}
       Object.keys(addrMap).forEach(function(col){
@@ -1644,6 +1644,8 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
       var addrTriplesF=addrTriples.filter(function(t){
         if(t.pred==='_streetNode'){_streetNodesW.push(t.val);return false;}
         if(t.pred==='_civicNode'){_civicNodesW.push(t.val);return false;}
+        // Evita clv:hasAddress autoreferenziale quando subURI===addrURI
+        if(t.pred==='clv:hasAddress'&&t.val==='<'+addrURI+'>'){return false;}
         return true;
       });
       if(addrTriplesF.length>0){

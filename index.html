@@ -1969,6 +1969,30 @@ function detectOntologiesDeterministic(headers, rows) {
     result.add('AccessCondition');
   }
 
+  // ── Post-filter ANNCSU ────────────────────────────────────────────────────
+  // Se le colonne indicano uno schema stradario/indirizzario (DUG/DUF o varianti
+  // regionali come classe_toponimo/nome_toponimo), rimuovi QB, POI, COV, TI
+  // che sono falsi positivi per questo tipo di dataset
+  const _normForAnncsu = norm.map ? norm : headers.map(h =>
+    h.toLowerCase().trim().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'')
+  );
+  const _hasANNCSUcols = _normForAnncsu.some(h =>
+    ['dug','duf','classe_toponimo','nome_toponimo','progr_nazionale_ac',
+     'progr_nazionale_accesso','civico','num_civic'].includes(h)
+  );
+  if (_hasANNCSUcols) {
+    result.delete('QB');
+    result.delete('COV');
+    result.delete('TI');
+    // Rimuovi POI solo se le coordinate sono tutte 0 o assenti
+    const _latIdx = headers.indexOf ? headers.indexOf('latitude') : -1;
+    const _lonIdx = headers.indexOf ? headers.indexOf('longitude') : -1;
+    const _allZeroCoords = (_latIdx >= 0 && _lonIdx >= 0 && rows.length > 0 &&
+      rows.every(r => (r[_latIdx]||'0').trim() === '0' && (r[_lonIdx]||'0').trim() === '0'));
+    if (_allZeroCoords) result.delete('POI');
+    result.add('CLV');
+  }
+
   return Array.from(result);
 }
 

@@ -1385,6 +1385,7 @@ function generateSuggestions(headers, ontos, stato) {
       renames: null,
       aggiungi: null,
             nota: "Questo CSV sembra contenere dati di indirizzi/civici. Usa le colonne ufficiali ANNCSU: PROGR_NAZIONALE_AC, DUG, DUF (stradario); PROGR_NAZIONALE_ACCESSO, CIVICO, LONGITUDINE, LATITUDINE (indirizzario). Fonte: anncsu.gov.it",
+      renames: headers.filter(h => {const n=normH(h); return {classe_toponimo:"DUG",nome_toponimo:"DUF",numero:"CIVICO",subalterno:null,sezione_istat:null}[n]!==undefined && {classe_toponimo:"DUG",nome_toponimo:"DUF",numero:"CIVICO",subalterno:null,sezione_istat:null}[n]!==null;}).map(h => ({da:h, a:{classe_toponimo:"DUG",nome_toponimo:"DUF",numero:"CIVICO"}[normH(h)]})).filter(r=>r.a) || null,
     });
   }
 

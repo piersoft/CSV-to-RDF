@@ -1576,6 +1576,8 @@ function buildDeterministicTTL(csvText,ontos,ipa,ente){
     var timeVal=detGetTimeVal(nh,row);
     var timeURI=base+'time/'+idVal;
     if(timeVal&&ontos.indexOf('TI')>=0)triples.push({pred:'ti:atTime',val:'<'+timeURI+'>',raw:true});
+    // Se mainOnto=CLV il soggetto principale IS l'address — rimuovi clv:hasAddress self-ref
+    if(mainOnto==='CLV')triples=triples.filter(function(t){return t.pred!=='clv:hasAddress';});
     if(triples.length>0){
       ttl+='<'+subURI+'>';
       triples.forEach(function(t,ti){

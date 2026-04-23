@@ -2407,6 +2407,12 @@ function computeSemanticScore(headers, rows, ontos, title, description, rawMeta)
     };
   }
 
+  // ── Analisi contestuale titolo/descrizione/tag ─────────────────────────────
+  // Rileva pattern semantici nel testo del dataset per arricchire i suggerimenti
+  const _textCtx = ((title || '') + ' ' + (description || '')).toLowerCase();
+  const _CIVICI_PATTERN = /\b(civici|civico|numeri civici|stradario|toponomastica|indirizzario|odonimo|numerazione civica|anncsu|dug|duf)\b/;
+  const _isLikelyCivici = _CIVICI_PATTERN.test(_textCtx);
+
   const S = scoreStruttura(headers, rows, rawMeta);
   const O = scoreOntologie(headers, rows, ontos);
   const L = scoreLinkedData(headers, rows);
@@ -2427,6 +2433,30 @@ function computeSemanticScore(headers, rows, ontos, title, description, rawMeta)
   }
 
   const { suggestions, renamed_headers } = generateSuggestions(headers, ontos, stato);
+
+  // ── Suggerimento ANNCSU se il contesto testuale indica civici/stradario ─
+  if (_isLikelyCivici) {
+    const _alreadyAnncsu = suggestions.some(s => s.onto === 'ANNCSU' || s.onto === 'ANNCSU_STRAD' || s.onto === 'ANNCSU_INDIR');
+    if (!_alreadyAnncsu) {
+      suggestions.unshift({
+        onto: 'ANNCSU',
+        label: 'Stradario/Indirizzario ANNCSU — schema ufficiale Istat/Agenzia Entrate',
+        doc_url: 'https://www.anncsu.gov.it/it/consultazione-dellarchivio/open-data/',
+        renames: null,
+        aggiungi: null,
+        nota: "Il titolo o la descrizione del dataset suggerisce che contiene dati di indirizzi o civici. "
+              + "Usa le colonne ufficiali ANNCSU: "
+              + "PROGR_NAZIONALE_AC, DUG, DUF (stradario) — "
+              + "PROGR_NAZIONALE_ACCESSO, CIVICO, LONGITUDINE, LATITUDINE (indirizzario). "
+              + "Specifiche: https://www.istat.it/it/files/2022/05/Specifiche-tecniche-ANNCSU.pdf",
+      });
+    }
+    // Boost ontologie: aggiungi CLV se non già presente
+    if (!ontos.includes('CLV')) ontos = [...(ontos||[]), 'CLV'];
+    if (!ontos.includes('ANNCSU_INDIR') && !ontos.includes('ANNCSU_STRAD')) {
+      ontos = [...ontos, 'ANNCSU_INDIR'];
+    }
+  }
 
   return {
     stato,

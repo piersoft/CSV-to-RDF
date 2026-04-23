@@ -2298,7 +2298,7 @@ function generateSuggestions(headers, ontos, stato) {
     'tp_str_nom','duf','dug','progr_nazionale_ac','progr_nazionale_accesso'].includes(h));
   const _usesANNCSU = (ontos||[]).some(o => o === 'ANNCSU_STRAD' || o === 'ANNCSU_INDIR');
   const _hasNonStandardCivici = _hasCiviciCols && !_usesANNCSU &&
-    _normH.some(h => ['num_civic','tp_str_nom','tp_str_loc','tp_id','tp_str_cod'].includes(h));
+    _normH.some(h => ['num_civic','tp_str_nom','tp_str_loc','tp_id','tp_str_cod','classe_toponimo','nome_toponimo','subalterno'].includes(h));
   if (_hasNonStandardCivici) {
     suggestions.push({
       onto: 'ANNCSU',

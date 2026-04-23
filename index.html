@@ -1,9 +1,9 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.04.23.06 -->
+  <!-- build:v2026.04.23.07 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CSV-to-RDF v2026.04.23.06 — Linked Open Data PA</title>
+  <title>CSV-to-RDF v2026.04.23.07 — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
   <meta name="robots" content="index, follow"/>
   <link rel="canonical" href="https://piersoft.github.io/CSV-to-RDF/"/>
@@ -829,7 +829,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.04.23.06</span>
+<span id="app-version">v2026.04.23.07</span>
 </footer>
 
 <script>
@@ -1090,7 +1090,7 @@ const ONTO_PATTERNS = {
     bonus:        ['lat','lon','civico','regione','cod_istat'],
     label:        'Indirizzi e Luoghi (CLV)',
     rename_map:   { 'ubicazione':'indirizzo','city':'comune','address':'indirizzo',
-                    'postal_code':'cap','location':'localita','citta':'comune' },
+                    'postal_code':'cap','citta':'comune' },
     add_suggest:  ['lat','lon'],
     doc_url:      'https://schema.gov.it/lodview/onto/CLV',
   },
@@ -1195,24 +1195,6 @@ const ONTO_PATTERNS = {
                     'servizio':'nome_servizio' },
     add_suggest:  ['nome_servizio','url_servizio','canale_erogazione'],
     doc_url:      'https://joinup.ec.europa.eu/collection/cpsvap',
-  },
-  'ANNCSU_STRAD': {
-    required_any: ['dug','duf','progr_nazionale_ac','codice_istat','denom_localita',
-                   'tp_str_nom','tp_id'],
-    bonus:        ['duf','codice_comunale_od','data_delibera'],
-    label:        'Stradario ANNCSU (DUG/DUF)',
-    rename_map:   {},
-    add_suggest:  ['dug','duf'],
-    doc_url:      'https://www.anncsu.gov.it/it/consultazione-dellarchivio/open-data/',
-  },
-  'ANNCSU_INDIR': {
-    required_any: ['civico','progr_nazionale_accesso','longitudine','latitudine',
-                   'num_civic','tp_str_loc'],
-    bonus:        ['esponente','specificita','longitudine','latitudine'],
-    label:        'Indirizzario ANNCSU (CIVICO/coordinate)',
-    rename_map:   {},
-    add_suggest:  ['civico','longitudine','latitudine'],
-    doc_url:      'https://www.anncsu.gov.it/it/consultazione-dellarchivio/open-data/',
   },
   'SMAPIT': {
     required_any: ['codice_meccanografico','denominazione_istituto','tipo_scuola',
@@ -1344,6 +1326,8 @@ function scoreOntologie(headers, rows, ontos) {
     'Cultural-ON': ['CLV','POI','TI'],
     'PARK':   ['CLV','POI'],
     'SMAPIT': ['CLV','POI'],
+    'ANNCSU_STRAD':  ['CLV','ANNCSU_INDIR','POI','L0'],
+    'ANNCSU_INDIR':  ['CLV','ANNCSU_STRAD','POI','L0'],
     'CPSV-AP':['CLV','COV','TI','PublicContract'],
     'RO':     ['QB','TI','COV'],
   };

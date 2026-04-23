@@ -1442,6 +1442,35 @@ function generateSuggestions(headers, ontos, stato) {
     }
   }
 
+  // ── Suggerimenti da DET_COL_NORM per schemi ufficiali (ANNCSU, ecc.) ─────────
+  // Se ci sono colonne che DET_COL_NORM conosce ma non sono ancora nei suggested renames,
+  // aggiungile come rinominazioni specifiche per schema ufficiale
+  if (typeof DET_COL_NORM !== 'undefined') {
+    const detRenames = [];
+    headers.forEach(function(origH) {
+      const nk = normH(origH);
+      const mapped = DET_COL_NORM[nk];
+      // mapped esiste, non è _skip, diverso dalla chiave originale normalizzata
+      if (mapped && mapped !== '_skip' && mapped !== nk) {
+        // Non già suggerito in renamed_headers
+        if (!renamed_headers[origH]) {
+          detRenames.push({ da: origH, a: mapped });
+          renamed_headers[origH] = mapped;
+        }
+      }
+    });
+    if (detRenames.length > 0) {
+      // Raggruppa sotto un unico suggerimento "Schema dati ufficiale PA"
+      suggestions.push({
+        onto: 'DET_COL_NORM',
+        label: 'Schema dati ufficiale PA (rinomina consigliata)',
+        doc_url: 'https://schema.gov.it',
+        renames: detRenames,
+        aggiungi: null,
+      });
+    }
+  }
+
   return { suggestions, renamed_headers };
 }
 

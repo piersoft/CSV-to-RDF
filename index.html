@@ -1980,7 +1980,12 @@ function detectOntologiesDeterministic(headers, rows) {
     ['dug','duf','classe_toponimo','nome_toponimo','progr_nazionale_ac',
      'progr_nazionale_accesso','civico','num_civic'].includes(h)
   );
-  if (_hasANNCSUcols) {
+  // Colonne tipiche di POI — se presenti, non è uno stradario puro
+  const _hasPOIcols = _normForAnncsu.some(h =>
+    ['name','nome','denominazione','descrizione','telefono','email','e_mail',
+     'sito_web','categoria','tipo','tipologia'].includes(h)
+  );
+  if (_hasANNCSUcols && !_hasPOIcols) {
     result.delete('QB');
     result.delete('COV');
     result.delete('TI');

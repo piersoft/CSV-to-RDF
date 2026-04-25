@@ -364,8 +364,18 @@ const CLASS_REMAP = {
   }
 
   // --- Pipeline pubblica ----------------------------------------------------
-
-  
+  function normalizeTTL(ttl) {
+    if (!ttl || typeof ttl !== 'string') return ttl;
+    ttl = fixS1(ttl);
+    ttl = fixS2(ttl);
+    ttl = fixS3(ttl);
+    ttl = fixS5(ttl);
+    ttl = remapPrefixes(ttl);
+    ttl = remapClasses(ttl);
+    ttl = remapProperties(ttl);
+    ttl = ensurePrefixes(ttl);
+    return ttl;
+  }
 
 return normalizeTTL;
 })();

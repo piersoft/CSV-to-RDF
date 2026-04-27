@@ -476,8 +476,8 @@ stato_civile:{pred:'cpv:maritalStatus',type:'vocab_uri',vocab:'https://w3id.org/
 titolo_di_studio:{pred:'cpv:educationLevelID',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-people/education-level',onto:'CPV'},
 tipo_documento:{pred:'dct:type',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-documents/government-documents-types'},
 tipologia_atto:{pred:'dct:type',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/classifications-for-documents/municipal-notice-board'},
-categoria_poi:{pred:'poi:POIcategoryName',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/poi-category-classification'},
-,reftime:{pred:'ti:startTime',type:'typed',xsd:'xsd:dateTime',onto:'IoT'},stazione:{pred:'rdfs:label',type:'langlit',lang:'it',onto:'IoT'},value:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},agente_atm:{pred:'dct:description',type:'langlit',lang:'it',onto:'IoT'},inquinante:{pred:'dct:description',type:'langlit',lang:'it',onto:'IoT'}};
+categoria_poi:{pred:'poi:POIcategoryName',type:'vocab_uri',vocab:'https://w3id.org/italia/controlled-vocabulary/poi-category-classification'},reftime:{pred:'ti:startTime',type:'typed',xsd:'xsd:dateTime',onto:'IoT'},stazione:{pred:'rdfs:label',type:'langlit',lang:'it',onto:'IoT'},value:{pred:'iot:hasObservationValue',type:'typed',xsd:'xsd:decimal',onto:'IoT'},agente_atm:{pred:'dct:description',type:'langlit',lang:'it',onto:'IoT'},inquinante:{pred:'dct:description',type:'langlit',lang:'it',onto:'IoT'},
+};
 
 var ONTO_URI={'acco':'https://w3id.org/italia/onto/ACCO/','gtfs':'http://vocab.gtfs.org/terms#',
     'poi':'https://w3id.org/italia/onto/POI/','iot':'https://w3id.org/italia/onto/IoT/',

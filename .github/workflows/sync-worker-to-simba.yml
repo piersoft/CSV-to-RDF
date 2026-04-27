@@ -28,7 +28,7 @@ jobs:
 
           # Ottieni SHA del file remoto
           req = urllib.request.Request(
-              'https://api.github.com/repos/piersoft/ckan-mcp-server-docker-ollama/contents/rdf-mcp/worker.js',
+              'https://api.github.com/repos/piersoft/simba-chatbot/contents/rdf-mcp/worker.js',
               headers={'Authorization': f'token {token}'}
           )
           try:
@@ -47,7 +47,7 @@ jobs:
               payload['sha'] = remote_sha
 
           req2 = urllib.request.Request(
-              'https://api.github.com/repos/piersoft/ckan-mcp-server-docker-ollama/contents/rdf-mcp/worker.js',
+              'https://api.github.com/repos/piersoft/simba-chatbot/contents/rdf-mcp/worker.js',
               data=json.dumps(payload).encode(),
               headers={'Authorization': f'token {token}', 'Content-Type': 'application/json'},
               method='PUT'

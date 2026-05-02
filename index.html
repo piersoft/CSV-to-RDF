@@ -1347,6 +1347,35 @@ function scoreLinkedData(headers, rows) {
 
   // L1 rimosso: snake_case non è una norma obbligatoria
 
+  // O3: penalizza se molte colonne rilevate non hanno regola in DET_COL_RULES
+  // (evita falsi OTTIMALE quando le colonne finiscono in rdfs:comment)
+  const _normHdrs = headers.map(function(h){
+    return h.toLowerCase().trim()
+      .replace(/[àáâã]/g,'a').replace(/[èéêë]/g,'e')
+      .replace(/[ìíîï]/g,'i').replace(/[òóôõ]/g,'o').replace(/[ùúûü]/g,'u')
+      .replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+  });
+  const _hasDETrule = function(h){ return typeof DET_COL_RULES[h] !== 'undefined'; };
+  const _ontoCols = _normHdrs.filter(function(h){
+    // colonne che attivano ontologie ma non hanno regola
+    const isOntoCue = ['cig','cup','importo','spese','iva','lat','lon',
+      'latitude','longitude','lat_wgs84','lon_wgs84','denominazione',
+      'ragione_sociale','partita_iva','data','reftime','value'].some(function(k){
+        return h === k || h.startsWith(k+'_') || h.endsWith('_'+k);
+      });
+    return isOntoCue && !_hasDETrule(h);
+  });
+  if (_ontoCols.length >= 3) {
+    score = Math.max(0, score - 10);
+    warnings.push({
+      id: 'O3',
+      msg: _ontoCols.length + ' colonne semanticamente rilevanti non hanno una mappatura diretta alle ontologie: ' +
+        _ontoCols.slice(0,5).map(function(h){ return '"'+h+'"'; }).join(', ') +
+        (_ontoCols.length > 5 ? '...' : '') +
+        '. Il TTL generato potrebbe contenere rdfs:comment invece di proprietà semantiche.',
+    });
+  }
+
   // L2: presenza di identificatore univoco (20 pt)
   const hasId = normHeaders.some(h =>
     ['id','codice','identifier','uuid','pk','key','cod'].some(id => h === id || h.startsWith(id+'_') || h.endsWith('_'+id))

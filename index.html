@@ -1,9 +1,9 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.05.02.03 -->
+  <!-- build:v2026.05.02.04 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CSV-to-RDF v2026.05.02.03 — Linked Open Data PA</title>
+  <title>CSV-to-RDF v2026.05.02.04 — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
   <meta name="robots" content="index, follow"/>
   <link rel="canonical" href="https://piersoft.github.io/CSV-to-RDF/"/>
@@ -95,6 +95,7 @@
     .pill { font-family: var(--mono); font-size: 0.67rem; padding: 0.18rem 0.5rem; border-radius: 99px; background: var(--dg-blue-light); color: var(--dg-blue-dark); border: 1px solid #b3cef0; cursor: pointer; user-select: none; transition: all .15s; }
     .pill.active   { background: var(--dg-blue); color: white; border-color: var(--dg-blue); }
     .pill.col-pill { cursor: default; background: #f0f4f8; color: var(--dg-muted); border-color: var(--dg-border); }
+    .pill.pill-locked { cursor: not-allowed; opacity: 0.4; text-decoration: line-through; pointer-events: none; }
 
     .provider-tabs { display: flex; border: 1px solid var(--dg-border); border-radius: 4px; overflow: hidden; margin-bottom: 0.75rem; }
     .provider-tab  { flex: 1; padding: 0.45rem; text-align: center; font-size: 0.78rem; font-weight: 600; cursor: pointer; background: white; color: var(--dg-muted); border: none; border-right: 1px solid var(--dg-border); transition: all .15s; font-family: var(--sans); }
@@ -829,7 +830,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.05.02.03</span>
+<span id="app-version">v2026.05.02.04</span>
 </footer>
 
 <script>
@@ -962,6 +963,7 @@ function toggleKey(id) {
 window._userModifiedPills = false;
 document.querySelectorAll('#onto-selector .pill, #onto-selector-adv .pill').forEach(p =>
   p.addEventListener('click', () => {
+    if (p.classList.contains('pill-locked')) return; // bloccata da regola ontologica
     p.classList.toggle('active');
     window._userModifiedPills = true; // l'utente ha scelto manualmente
     const banner = document.getElementById('manual-pills-msg');
@@ -1004,6 +1006,21 @@ function setExampleOntos(ontos) {
   ontos.forEach(function(onto) {
     const pill = document.querySelector('[data-onto="' + onto + '"]');
     if (pill) pill.classList.add('active');
+  });
+  // Se PublicContract: blocca CLV e POI (non applicabili a contratti)
+  const _hasPC = ontos.includes('PublicContract');
+  ['CLV','POI'].forEach(function(o) {
+    const p = document.querySelector('[data-onto="' + o + '"]');
+    if (p) {
+      if (_hasPC) {
+        p.classList.remove('active');
+        p.classList.add('pill-locked');
+        p.title = 'Non applicabile a contratti pubblici (PublicContract)';
+      } else {
+        p.classList.remove('pill-locked');
+        p.removeAttribute('title');
+      }
+    }
   });
   // Nascondi banner manuale se visibile
   const banner = document.getElementById('manual-pills-msg');

@@ -1241,6 +1241,8 @@ function detectOntologiesDeterministic(headers, rows) {
     if (!_hasCOVcols) { result.delete('COV'); }
     result.delete('CPSV-AP');
     result.delete('CPV');
+    result.delete('CLV');
+    result.delete('POI');
     if (!_hasTIcols) { result.delete('TI'); }
   }
 

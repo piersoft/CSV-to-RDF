@@ -1376,32 +1376,7 @@ function scoreLinkedData(headers, rows) {
     });
   }
 
-  // O4: penalizza se colonne rilevanti non hanno regola in DET_COL_RULES
-  // (segnala che il TTL potrebbe contenere rdfs:comment invece di proprietà semantiche)
-  if (typeof DET_COL_RULES !== 'undefined') {
-    var _normHdrs4 = (headers||[]).map(function(h){
-      return h.toLowerCase().trim()
-        .replace(/[àáâã]/g,'a').replace(/[èéêë]/g,'e')
-        .replace(/[ìíîï]/g,'i').replace(/[òóôõ]/g,'o').replace(/[ùúûü]/g,'u')
-        .replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
-    });
-    var _unmapped = _normHdrs4.filter(function(h){
-      var isRelevant = /^(importo|spese|iva|cup|cig|lat$|lon$|latitude|longitude|denominazione|ragione_sociale|partita_iva|data$|reftime|value$|valore$)/.test(h);
-      return isRelevant && typeof DET_COL_RULES[h] === 'undefined';
-    });
-    if (_unmapped.length >= 3) {
-      score = Math.max(0, score - 10);
-      warnings.push({
-        id: 'O4',
-        msg: _unmapped.length + ' colonne semanticamente rilevanti non hanno una mappatura diretta alle ontologie: ' +
-          _unmapped.slice(0,5).map(function(h){ return '"'+h+'"'; }).join(', ') +
-          (_unmapped.length > 5 ? '...' : '') +
-          '. Il TTL generato potrebbe contenere rdfs:comment invece di proprietà semantiche.',
-      });
-    }
-  }
-
-    // L2: presenza di identificatore univoco (20 pt)
+  // L2: presenza di identificatore univoco (20 pt)
   const hasId = normHeaders.some(h =>
     ['id','codice','identifier','uuid','pk','key','cod'].some(id => h === id || h.startsWith(id+'_') || h.endsWith('_'+id))
   );

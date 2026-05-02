@@ -1376,7 +1376,29 @@ function scoreLinkedData(headers, rows) {
     });
   }
 
-  // L2: presenza di identificatore univoco (20 pt)
+  // O4: penalizza se colonne rilevanti non hanno regola in DET_COL_RULES
+  if (typeof DET_COL_RULES !== 'undefined') {
+    var _normHdrs4 = (headers||[]).map(function(h){
+      return h.toLowerCase().trim()
+        .replace(/[\xc0-\xff]/g,function(c){return 'aeiouaeiouaeiouaeiou'[c.charCodeAt(0)-192]||c;})
+        .replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+    });
+    var _unmapped4 = _normHdrs4.filter(function(h){
+      var isRel = /^(importo|spese|iva|cup$|lat$|lon$|latitude$|longitude$|denominazione$|ragione_sociale|partita_iva|reftime$|value$|valore$)/.test(h);
+      return isRel && typeof DET_COL_RULES[h] === 'undefined';
+    });
+    if (_unmapped4.length >= 3) {
+      score = Math.max(0, score - 10);
+      warnings.push({ id:'O4',
+        msg: _unmapped4.length + ' colonne semanticamente rilevanti non hanno una mappatura diretta alle ontologie: ' +
+          _unmapped4.slice(0,5).map(function(h){return '"'+h+'"';}).join(', ') +
+          (_unmapped4.length>5?'...':'')+
+          '. Il TTL generato potrebbe contenere rdfs:comment invece di proprietà semantiche.',
+      });
+    }
+  }
+
+    // L2: presenza di identificatore univoco (20 pt)
   const hasId = normHeaders.some(h =>
     ['id','codice','identifier','uuid','pk','key','cod'].some(id => h === id || h.startsWith(id+'_') || h.endsWith('_'+id))
   );

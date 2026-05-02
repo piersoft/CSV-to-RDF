@@ -2049,6 +2049,26 @@ function detectOntologiesDeterministic(headers, rows) {
     result.add('CLV');
   }
 
+  // Post-filter PublicContract: rimuovi ontologie spurie
+  // (COV, CPSV-AP, TI, CPV vengono spesso rilevate per falsi positivi)
+  const _hasPCcols = norm.some ? norm.some(function(h){
+    return ['cig','cup','stazione_appaltante','aggiudicatario',
+            'importo_base_gara','importo_aggiudicazione','importo_base'].includes(h);
+  }) : false;
+  if (_hasPCcols) {
+    // Rimuovi solo se non ci sono colonne specifiche per quelle ontologie
+    var _hasCOVcols = norm.some ? norm.some(function(h){
+      return ['ragione_sociale','partita_iva','cf_ente','codice_ipa'].includes(h);
+    }) : false;
+    var _hasTIcols = norm.some ? norm.some(function(h){
+      return ['data_inizio','data_fine','data_pubblicazione','reftime'].includes(h);
+    }) : false;
+    if (!_hasCOVcols) { result.delete('COV'); }
+    result.delete('CPSV-AP');
+    result.delete('CPV');
+    if (!_hasTIcols) { result.delete('TI'); }
+  }
+
   return Array.from(result);
 }
 

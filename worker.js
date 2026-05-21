@@ -2664,7 +2664,7 @@ export default {
     }
 
     const ipa    = (reqUrl.searchParams.get('ipa') || 'ente').toLowerCase().replace(/[^a-z0-9_]/g, '');
-    const paName = (reqUrl.searchParams.get('pa') || 'Ente Pubblico').replace(/[\r\n]/g, ' ').replace(/[<>"]/g, '').slice(0, 200);
+    const paName = (reqUrl.searchParams.get('pa') || 'Ente Pubblico').replace(/[^a-zA-Z0-9 \u00C0-\u00FF.,\'\-()\/ ]/g,'').slice(0, 200);
     const fmtReq = reqUrl.searchParams.get('fmt') || 'ttl';
     const ontoForced = reqUrl.searchParams.get('onto');
 

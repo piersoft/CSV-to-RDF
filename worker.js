@@ -2026,6 +2026,14 @@ const CORS_HEADERS = {
 };
 
 async function fetchCSV(url) {
+  // Sicurezza: blocca SSRF — solo https:// verso host pubblici
+  let _u;
+  try { _u = new URL(url); } catch { throw new Error('URL non valido'); }
+  if (_u.protocol !== 'https:') throw new Error('Solo URL https:// sono consentiti');
+  const _blocked = ['169.254.','10.','127.','0.0.0.0','::1','localhost','metadata.'];
+  if (_blocked.some(b => _u.hostname.startsWith(b) || _u.hostname === b.replace('.',''))){
+    throw new Error('URL non consentito');
+  }
   const resp = await fetch(url, {
     headers: { 'User-Agent': 'CSV2RDF-Worker/1.0 (https://github.com/piersoft/CSV-to-RDF)' },
     cf: { cacheTtl: 300, cacheEverything: true }
@@ -2656,7 +2664,7 @@ export default {
     }
 
     const ipa    = (reqUrl.searchParams.get('ipa') || 'ente').toLowerCase().replace(/[^a-z0-9_]/g, '');
-    const paName = reqUrl.searchParams.get('pa') || 'Ente Pubblico';
+    const paName = (reqUrl.searchParams.get('pa') || 'Ente Pubblico').replace(/[\r\n]/g, ' ').replace(/[<>"]/g, '').slice(0, 200);
     const fmtReq = reqUrl.searchParams.get('fmt') || 'ttl';
     const ontoForced = reqUrl.searchParams.get('onto');
 
@@ -2670,8 +2678,9 @@ export default {
         });
       }
 
+      const _allowedOntos = new Set(['QB','CLV','COV','POI','TI','CPSV','CPSV-AP','SMAPIT','SM','IoT','PublicContract','CPV','CPEV','GTFS','CulturalHeritage','Cultural-ON','ACCO','PARK','ADMS','NDC','Indicator','Project','Route','AtlasOfPaths','MU','Transparency','RPO','Learning','ANNCSU_INDIR','ANNCSU_STRAD','L0']);
       const ontos = ontoForced
-        ? ontoForced.split(',').map(o => o.trim())
+        ? ontoForced.split(',').map(o => o.trim()).filter(o => _allowedOntos.has(o))
         : detectOntologiesDeterministic(parsed.headers, parsed.rows);
 
       let ttl = buildDeterministicTTL(csvText, ontos, ipa, paName);

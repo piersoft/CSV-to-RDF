@@ -2089,6 +2089,7 @@ function detectOntologiesDeterministic(headers, rows, csvUrl) {
   }
 
   // ── URL CONTEXT BOOST ──────────────────────────────────────────────────────
+  // Rafforzamento ontologie basato sul nome/path dell'URL del CSV sorgente
   if (csvUrl) {
     var _u = csvUrl.toLowerCase();
     var _urlBoost = [

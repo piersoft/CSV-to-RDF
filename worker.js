@@ -2053,9 +2053,11 @@ async function fetchCSV(url) {
   // Sicurezza: blocca SSRF — solo https:// verso host pubblici
   let _u;
   try { _u = new URL(url); } catch { throw new Error('URL non valido'); }
-  if (_u.protocol !== 'https:') throw new Error('Solo URL https:// sono consentiti');
+  // Eccezione: URL interni Docker (es. http://backend:3001/tmp-csv/...)
+  const _isDockerInternal = _u.protocol === 'http:' && !_u.hostname.includes('.') && _u.port !== '';
+  if (!_isDockerInternal && _u.protocol !== 'https:') throw new Error('Solo URL https:// sono consentiti');
   const _blocked = ['169.254.','10.','127.','0.0.0.0','::1','localhost','metadata.'];
-  if (_blocked.some(b => _u.hostname.startsWith(b) || _u.hostname === b.replace('.',''))){
+  if (!_isDockerInternal && _blocked.some(b => _u.hostname.startsWith(b) || _u.hostname === b.replace('.',''))){
     throw new Error('URL non consentito');
   }
   const resp = await fetch(url, {

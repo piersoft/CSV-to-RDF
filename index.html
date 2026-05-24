@@ -1,9 +1,9 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <!-- build:v2026.05.02.04 -->
+  <!-- build:v2026.05.24.01 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CSV-to-RDF v2026.05.02.04 — Linked Open Data PA</title>
+  <title>CSV-to-RDF v2026.05.24.01 — Linked Open Data PA</title>
   <meta name="description" content="Trasforma CSV della PA italiana in Turtle RDF/TTL con le ontologie dati-semantic-assets. Strumento open source per Comuni, Regioni e Ministeri."/>
   <meta name="robots" content="index, follow"/>
   <link rel="canonical" href="https://piersoft.github.io/CSV-to-RDF/"/>
@@ -830,7 +830,7 @@ Strumento open source per la PA italiana &nbsp;&middot;&nbsp;
 <a href="https://github.com/piersoft/CSV-to-RDF" target="_blank" rel="noopener noreferrer">GitHub piersoft/CSV-to-RDF</a> &nbsp;&middot;&nbsp;
 <a href="https://github.com/italia/dati-semantic-assets" target="_blank" rel="noopener noreferrer">dati-semantic-assets</a> &nbsp;&middot;&nbsp;
 <a href="https://dati.gov.it" target="_blank" rel="noopener noreferrer">dati.gov.it</a> &nbsp;&middot;&nbsp;
-<span id="app-version">v2026.05.02.04</span>
+<span id="app-version">v2026.05.24.01</span>
 </footer>
 
 <script>
@@ -982,7 +982,7 @@ function resetToAutoDetect() {
   if (text) {
     const parsed = parseCSV(text);
     if (parsed) {
-      const ontos = detectOntologiesDeterministic(parsed.headers, parsed.rows);
+      const ontos = detectOntologiesDeterministic(parsed.headers, parsed.rows, csvUrl);
       if (ontos && ontos.length) {
         setExampleOntos(ontos);
         const msg = document.getElementById('auto-onto-msg');
@@ -1622,7 +1622,7 @@ function computeSemanticScore(headers, rows, ontos, title, description, rawMeta)
 // ── Export (compatibile browser + Node) ──────────────────────────────────────
 // ── Fine Semantic Gate ─────────────────────────────────────────────────────
 
-function detectOntologiesDeterministic(headers, rows) {
+function detectOntologiesDeterministic(headers, rows, csvUrl) {
   var norm = headers.map(function(h){
     return h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');
   });
@@ -2087,6 +2087,29 @@ function detectOntologiesDeterministic(headers, rows) {
     result.delete('POI');
     if (!_hasTIcols) { result.delete('TI'); }
   }
+
+  // ── URL CONTEXT BOOST ──────────────────────────────────────────────────────
+  if (csvUrl) {
+    var _u = csvUrl.toLowerCase();
+    var _urlBoost = [
+      { pat: /cultura|interesse_cultural|beni_cultural|patrimonio_cultural|luogo_cultura|luoghi_cultura|sito_archeolog|museo|archiv|biblioteche|monumenti/, add: ['CulturalHeritage'], del: ['ACCO','GTFS','PublicContract'] },
+      { pat: /ricettiv|strutture_ricettiv|albergh|hotel|bed_and_|b_and_b|agriturism|campeggi|ostell/, add: ['ACCO'], del: ['CulturalHeritage'] },
+      { pat: /parcheggi|parking|sosta|autopark/, add: ['PARK','POI'], del: [] },
+      { pat: /scuol|istruzion|scolastic|istitut/, add: ['SMAPIT','SM'], del: ['ACCO'] },
+      { pat: /defibrillator|\bdae\b/, add: ['POI','CLV','SM'], del: ['ACCO','CulturalHeritage'] },
+      { pat: /incidenti|sinistri_strad/, add: ['POI','TI'], del: ['ACCO'] },
+      { pat: /farmaci|farmacolog|farmacie/, add: ['POI','SM'], del: ['ACCO'] },
+      { pat: /appalti|contratti_pubbl|gare_appalto/, add: ['PublicContract'], del: ['CLV','POI','CulturalHeritage'] },
+      { pat: /trasport|fermat|stazion|gtfs/, add: ['GTFS'], del: ['ACCO'] },
+    ];
+    _urlBoost.forEach(function(rule) {
+      if (rule.pat.test(_u)) {
+        rule.add.forEach(function(o) { result.add(o); });
+        rule.del.forEach(function(o) { result.delete(o); });
+      }
+    });
+  }
+  // ── FINE URL CONTEXT BOOST ─────────────────────────────────────────────────
 
   return Array.from(result);
 }

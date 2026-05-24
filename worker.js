@@ -780,7 +780,7 @@ function detectFromCorpus(headers) {
   return [...new Set(mainResult)];
 }
 
-function detectOntologiesDeterministic(headers, rows) {
+function detectOntologiesDeterministic(headers, rows, csvUrl) {
   var norm = headers.map(function(h){
     return h.toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_').replace(/[^\w]/g,'');
   });
@@ -1245,6 +1245,30 @@ function detectOntologiesDeterministic(headers, rows) {
     result.delete('POI');
     if (!_hasTIcols) { result.delete('TI'); }
   }
+
+  // ── URL CONTEXT BOOST ──────────────────────────────────────────────────────
+  // Rafforzamento ontologie basato sul nome/path dell'URL del CSV sorgente
+  if (csvUrl) {
+    var _u = csvUrl.toLowerCase();
+    var _urlBoost = [
+      { pat: /cultura|interesse_cultural|beni_cultural|patrimonio_cultural|luogo_cultura|luoghi_cultura|sito_archeolog|museo|archiv|biblioteche|monumenti/, add: ['CulturalHeritage'], del: ['ACCO','GTFS','PublicContract'] },
+      { pat: /ricettiv|strutture_ricettiv|albergh|hotel|bed_and_|b_and_b|agriturism|campeggi|ostell/, add: ['ACCO'], del: ['CulturalHeritage'] },
+      { pat: /parcheggi|parking|sosta|autopark/, add: ['PARK','POI'], del: [] },
+      { pat: /scuol|istruzion|scolastic|istitut/, add: ['SMAPIT','SM'], del: ['ACCO'] },
+      { pat: /defibrillator|\bdae\b/, add: ['POI','CLV','SM'], del: ['ACCO','CulturalHeritage'] },
+      { pat: /incidenti|sinistri_strad/, add: ['POI','TI'], del: ['ACCO'] },
+      { pat: /farmaci|farmacolog|farmacie/, add: ['POI','SM'], del: ['ACCO'] },
+      { pat: /appalti|contratti_pubbl|gare_appalto/, add: ['PublicContract'], del: ['CLV','POI','CulturalHeritage'] },
+      { pat: /trasport|fermat|stazion|gtfs/, add: ['GTFS'], del: ['ACCO'] },
+    ];
+    _urlBoost.forEach(function(rule) {
+      if (rule.pat.test(_u)) {
+        rule.add.forEach(function(o) { result.add(o); });
+        rule.del.forEach(function(o) { result.delete(o); });
+      }
+    });
+  }
+  // ── FINE URL CONTEXT BOOST ─────────────────────────────────────────────────
 
   return Array.from(result);
 }
@@ -2681,7 +2705,7 @@ export default {
       const _allowedOntos = new Set(['QB','CLV','COV','POI','TI','CPSV','CPSV-AP','SMAPIT','SM','IoT','PublicContract','CPV','CPEV','GTFS','CulturalHeritage','Cultural-ON','ACCO','PARK','ADMS','NDC','Indicator','Project','Route','AtlasOfPaths','MU','Transparency','RPO','Learning','ANNCSU_INDIR','ANNCSU_STRAD','L0']);
       const ontos = ontoForced
         ? ontoForced.split(',').map(o => o.trim()).filter(o => _allowedOntos.has(o))
-        : detectOntologiesDeterministic(parsed.headers, parsed.rows);
+        : detectOntologiesDeterministic(parsed.headers, parsed.rows, csvUrl);
 
       let ttl = buildDeterministicTTL(csvText, ontos, ipa, paName);
       ttl = normalizeTTL(ttl);

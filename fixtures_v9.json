@@ -32471,6 +32471,696 @@
         "L0"
       ],
       "removed_temi": []
+    },
+    {
+      "seq": 493,
+      "id": "a8f9a61a-b3e4-4f43-b7ad-ec31fdb7af60",
+      "name": "colonnine_di_ricarica_elettrica___milano",
+      "title": "Colonnine di ricarica elettrica - Milano",
+      "org": "comune-di-milano",
+      "ente": "Comune di Milano",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "ENER"
+      ],
+      "tema_onto": [
+        "CLV",
+        "QB",
+        "POI"
+      ],
+      "tema_target": [
+        "CLV",
+        "QB",
+        "POI"
+      ],
+      "score": 0,
+      "resource_id": "",
+      "csv_url": "https://dati.comune.milano.it/dataset/0c7a321d-6055-4eed-bfb0-9bd2a8dabf88/resource/d9509257-9f88-4729-8905-c92f5bbda35f/download/ricarica_colonnine.csv",
+      "datastore": false,
+      "source": "url_,",
+      "headers": [],
+      "sample_rows": [],
+      "n_cols": 0,
+      "holder_name": "Comune di Milano",
+      "validation": "pending",
+      "confirmed_temi": [
+        "CLV",
+        "QB",
+        "POI"
+      ],
+      "removed_temi": [],
+      "added": "2026-06-01"
+    },
+    {
+      "seq": 494,
+      "id": "591845cd-e827-4791-be84-acd59614f215",
+      "name": "pannelli_fotovoltaici_numero_e_potenza___milano",
+      "title": "Pannelli fotovoltaici numero e potenza - Milano",
+      "org": "comune-di-milano",
+      "ente": "Comune di Milano",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "ENER"
+      ],
+      "tema_onto": [
+        "QB",
+        "Indicator"
+      ],
+      "tema_target": [
+        "QB",
+        "Indicator"
+      ],
+      "score": 0,
+      "resource_id": "",
+      "csv_url": "https://dati.comune.milano.it/dataset/37cb887b-710e-48a6-bb92-40a1b72394b4/resource/4a17e1ac-1f41-43ae-b5bf-86caadb88759/download/ds1539_pannelli_solari_fotovoltaici.csv",
+      "datastore": false,
+      "source": "url_,",
+      "headers": [],
+      "sample_rows": [],
+      "n_cols": 0,
+      "holder_name": "Comune di Milano",
+      "validation": "pending",
+      "confirmed_temi": [
+        "QB",
+        "Indicator"
+      ],
+      "removed_temi": [],
+      "added": "2026-06-01"
+    },
+    {
+      "seq": 495,
+      "id": "8ab36406-30ec-4a95-8a79-59cf1aa7d250",
+      "name": "produzione_energia_fotovoltaica___milano",
+      "title": "Produzione energia fotovoltaica - Milano",
+      "org": "comune-di-milano",
+      "ente": "Comune di Milano",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "ENER"
+      ],
+      "tema_onto": [
+        "QB",
+        "Indicator"
+      ],
+      "tema_target": [
+        "QB",
+        "Indicator"
+      ],
+      "score": 0,
+      "resource_id": "",
+      "csv_url": "https://dati.comune.milano.it/dataset/eb69de9f-c88c-47b8-a76a-798c7a998e19/resource/85c9a931-91fb-4522-b776-e0d578c95a24/download/produzione_di_energia_fotovoltaico_in_kwh.csv",
+      "datastore": false,
+      "source": "url_,",
+      "headers": [],
+      "sample_rows": [],
+      "n_cols": 0,
+      "holder_name": "Comune di Milano",
+      "validation": "pending",
+      "confirmed_temi": [
+        "QB",
+        "Indicator"
+      ],
+      "removed_temi": [],
+      "added": "2026-06-01"
+    },
+    {
+      "seq": 496,
+      "id": "de0ef4ae-3fbb-4d65-932d-7f1aba240a32",
+      "name": "teleriscaldamento_abitanti_serviti___milano",
+      "title": "Teleriscaldamento abitanti serviti - Milano",
+      "org": "comune-di-milano",
+      "ente": "Comune di Milano",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "ENER"
+      ],
+      "tema_onto": [
+        "QB",
+        "Indicator"
+      ],
+      "tema_target": [
+        "QB",
+        "Indicator"
+      ],
+      "score": 0,
+      "resource_id": "",
+      "csv_url": "https://dati.comune.milano.it/dataset/cd928235-ac48-40da-b203-b9ba22072927/resource/666e1ef1-be2a-48a1-b7b0-db2f0e7c6260/download/ds1536_abitanti_serviti_teleriscaldamento.csv",
+      "datastore": false,
+      "source": "url_,",
+      "headers": [],
+      "sample_rows": [],
+      "n_cols": 0,
+      "holder_name": "Comune di Milano",
+      "validation": "pending",
+      "confirmed_temi": [
+        "QB",
+        "Indicator"
+      ],
+      "removed_temi": [],
+      "added": "2026-06-01"
+    },
+    {
+      "seq": 497,
+      "id": "8d259c34-4d0b-4250-8441-758ff75a2df4",
+      "name": "consumi_energia_elettrica_serie_storica___milano",
+      "title": "Consumi energia elettrica serie storica - Milano",
+      "org": "comune-di-milano",
+      "ente": "Comune di Milano",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "ENER"
+      ],
+      "tema_onto": [
+        "QB",
+        "Indicator"
+      ],
+      "tema_target": [
+        "QB",
+        "Indicator"
+      ],
+      "score": 0,
+      "resource_id": "",
+      "csv_url": "https://dati.comune.milano.it/dataset/ccf1f52e-a07a-4dc5-b8bf-81d820cbad2a/resource/be0ea9d2-db96-4134-ac74-a23700ce6898/download/ds1537_consumogwh.csv",
+      "datastore": false,
+      "source": "url_,",
+      "headers": [],
+      "sample_rows": [],
+      "n_cols": 0,
+      "holder_name": "Comune di Milano",
+      "validation": "pending",
+      "confirmed_temi": [
+        "QB",
+        "Indicator"
+      ],
+      "removed_temi": [],
+      "added": "2026-06-01"
+    },
+    {
+      "seq": 498,
+      "id": "6fd2fb7b-9b99-45ff-82ba-a5293aa740bb",
+      "name": "transizione_illuminazione_led___milano",
+      "title": "Transizione illuminazione LED - Milano",
+      "org": "comune-di-milano",
+      "ente": "Comune di Milano",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "ENER"
+      ],
+      "tema_onto": [
+        "QB",
+        "Indicator"
+      ],
+      "tema_target": [
+        "QB",
+        "Indicator"
+      ],
+      "score": 0,
+      "resource_id": "",
+      "csv_url": "https://dati.comune.milano.it/dataset/e07b64f8-5bb8-46e4-8b2a-ab87050a1238/resource/eedcf1c3-159f-4541-8df9-9d8b98bbf01f/download/ds1576_luce_led_e_tradizionale.csv",
+      "datastore": false,
+      "source": "url_,",
+      "headers": [],
+      "sample_rows": [],
+      "n_cols": 0,
+      "holder_name": "Comune di Milano",
+      "validation": "pending",
+      "confirmed_temi": [
+        "QB",
+        "Indicator"
+      ],
+      "removed_temi": [],
+      "added": "2026-06-01"
+    },
+    {
+      "seq": 499,
+      "id": "8ad77e9c-2d3e-48e4-b157-df529c324fa3",
+      "name": "carburanti_anagrafica_impianti___milano",
+      "title": "Carburanti anagrafica impianti - Milano",
+      "org": "comune-di-milano",
+      "ente": "Comune di Milano",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "ENER"
+      ],
+      "tema_onto": [
+        "CLV",
+        "COV",
+        "POI",
+        "TI"
+      ],
+      "tema_target": [
+        "CLV",
+        "COV",
+        "POI",
+        "TI"
+      ],
+      "score": 0,
+      "resource_id": "",
+      "csv_url": "https://dati.comune.milano.it/dataset/18f3a84e-b9bb-485f-9f5d-b62d0ea9d6b2/resource/2421eb1a-b436-4f28-8f70-d9532a63ad60/download/anagrafica_impianti_attivi_mi_011025_final.csv",
+      "datastore": false,
+      "source": "url_,",
+      "headers": [],
+      "sample_rows": [],
+      "n_cols": 0,
+      "holder_name": "Comune di Milano",
+      "validation": "pending",
+      "confirmed_temi": [
+        "CLV",
+        "COV",
+        "POI",
+        "TI"
+      ],
+      "removed_temi": [],
+      "added": "2026-06-01"
+    },
+    {
+      "seq": 500,
+      "id": "e76e05cc-a035-4ffa-b832-36191fc69413",
+      "name": "tetti_verdi_esistenti___milano",
+      "title": "Tetti verdi esistenti - Milano",
+      "org": "comune-di-milano",
+      "ente": "Comune di Milano",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "ENVI"
+      ],
+      "tema_onto": [
+        "CLV",
+        "POI"
+      ],
+      "tema_target": [
+        "CLV",
+        "POI"
+      ],
+      "score": 0,
+      "resource_id": "",
+      "csv_url": "https://dati.comune.milano.it/dataset/24ca3cca-b29b-475f-b046-48f14d2b10be/resource/a1c64f25-ad23-4ec5-a61e-0be20847a587/download/ds1445_tetti_verdi_esistenti_4326.csv",
+      "datastore": false,
+      "source": "url_,",
+      "headers": [],
+      "sample_rows": [],
+      "n_cols": 0,
+      "holder_name": "Comune di Milano",
+      "validation": "pending",
+      "confirmed_temi": [
+        "CLV",
+        "POI"
+      ],
+      "removed_temi": [],
+      "added": "2026-06-01"
+    },
+    {
+      "seq": 501,
+      "id": "90326487-f020-4a73-bfed-e2839242cf5e",
+      "name": "alberi_monumentali___torino",
+      "title": "Alberi monumentali - Torino",
+      "org": "comune-di-torino",
+      "ente": "Comune di Torino",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "ENVI"
+      ],
+      "tema_onto": [
+        "CLV",
+        "POI",
+        "SM"
+      ],
+      "tema_target": [
+        "CLV",
+        "POI",
+        "SM"
+      ],
+      "score": 0,
+      "resource_id": "",
+      "csv_url": "https://risorse.comune.torino.it/opendata/ambiente/alberi_pregio.csv",
+      "datastore": false,
+      "source": "url_,",
+      "headers": [],
+      "sample_rows": [],
+      "n_cols": 0,
+      "holder_name": "Comune di Torino",
+      "validation": "pending",
+      "confirmed_temi": [
+        "CLV",
+        "POI",
+        "SM"
+      ],
+      "removed_temi": [],
+      "added": "2026-06-01"
+    },
+    {
+      "seq": 502,
+      "id": "97d81cdb-1d9a-4e34-a0e3-15b265d852ea",
+      "name": "aree_cani___torino",
+      "title": "Aree cani - Torino",
+      "org": "comune-di-torino",
+      "ente": "Comune di Torino",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "ENVI"
+      ],
+      "tema_onto": [
+        "CLV",
+        "POI"
+      ],
+      "tema_target": [
+        "CLV",
+        "POI"
+      ],
+      "score": 0,
+      "resource_id": "",
+      "csv_url": "https://risorse.comune.torino.it/opendata/geodata/verde/aree_cani_geo.csv",
+      "datastore": false,
+      "source": "url_,",
+      "headers": [],
+      "sample_rows": [],
+      "n_cols": 0,
+      "holder_name": "Comune di Torino",
+      "validation": "pending",
+      "confirmed_temi": [
+        "CLV",
+        "POI"
+      ],
+      "removed_temi": [],
+      "added": "2026-06-01"
+    },
+    {
+      "seq": 503,
+      "id": "eb566874-6e3a-40d8-ac71-a68dfd6c8b28",
+      "name": "centri_raccolta_rifiuti___torino",
+      "title": "Centri raccolta rifiuti - Torino",
+      "org": "comune-di-torino",
+      "ente": "Comune di Torino",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "ENVI"
+      ],
+      "tema_onto": [
+        "CLV",
+        "POI",
+        "SM"
+      ],
+      "tema_target": [
+        "CLV",
+        "POI",
+        "SM"
+      ],
+      "score": 0,
+      "resource_id": "",
+      "csv_url": "https://risorse.comune.torino.it/opendata/geodata/centri_raccolta_rifiuti.csv",
+      "datastore": false,
+      "source": "url_,",
+      "headers": [],
+      "sample_rows": [],
+      "n_cols": 0,
+      "holder_name": "Comune di Torino",
+      "validation": "pending",
+      "confirmed_temi": [
+        "CLV",
+        "POI",
+        "SM"
+      ],
+      "removed_temi": [],
+      "added": "2026-06-01"
+    },
+    {
+      "seq": 504,
+      "id": "f91289df-83b2-4637-94b9-cb68b7a56111",
+      "name": "aree_alluvionate_1994_2000___torino",
+      "title": "Aree alluvionate 1994-2000 - Torino",
+      "org": "comune-di-torino",
+      "ente": "Comune di Torino",
+      "categoria": "comune_grande",
+      "tema_dcat": [
+        "ENVI"
+      ],
+      "tema_onto": [
+        "QB",
+        "Indicator"
+      ],
+      "tema_target": [
+        "QB",
+        "Indicator"
+      ],
+      "score": 0,
+      "resource_id": "",
+      "csv_url": "https://risorse.comune.torino.it/opendata/ambiente/aree_alluvionate_1994-2000.csv",
+      "datastore": false,
+      "source": "url_,",
+      "headers": [],
+      "sample_rows": [],
+      "n_cols": 0,
+      "holder_name": "Comune di Torino",
+      "validation": "pending",
+      "confirmed_temi": [
+        "QB",
+        "Indicator"
+      ],
+      "removed_temi": [],
+      "added": "2026-06-01"
+    },
+    {
+      "seq": 505,
+      "id": "ae1a66f8-f2ee-434b-a8dc-1b07f9ecc479",
+      "name": "autorizzazioni_integrata_ambientale___lombardia",
+      "title": "Autorizzazioni Integrata Ambientale - Lombardia",
+      "org": "regione-lombardia",
+      "ente": "Regione Lombardia",
+      "categoria": "regione",
+      "tema_dcat": [
+        "ENVI"
+      ],
+      "tema_onto": [
+        "COV",
+        "CLV"
+      ],
+      "tema_target": [
+        "COV",
+        "CLV"
+      ],
+      "score": 0,
+      "resource_id": "",
+      "csv_url": "https://www.dati.lombardia.it/api/views/yiwg-8d9i/rows.csv?accessType=DOWNLOAD",
+      "datastore": false,
+      "source": "url_,",
+      "headers": [],
+      "sample_rows": [],
+      "n_cols": 0,
+      "holder_name": "Regione Lombardia",
+      "validation": "pending",
+      "confirmed_temi": [
+        "COV",
+        "CLV"
+      ],
+      "removed_temi": [],
+      "added": "2026-06-01"
+    },
+    {
+      "seq": 506,
+      "id": "08f6416d-4d4b-4f7b-bf94-9ec7b9481c60",
+      "name": "cave_cessate___lombardia",
+      "title": "Cave cessate - Lombardia",
+      "org": "regione-lombardia",
+      "ente": "Regione Lombardia",
+      "categoria": "regione",
+      "tema_dcat": [
+        "ENVI"
+      ],
+      "tema_onto": [
+        "CLV"
+      ],
+      "tema_target": [
+        "CLV"
+      ],
+      "score": 0,
+      "resource_id": "",
+      "csv_url": "https://www.dati.lombardia.it/api/views/rv4y-zxqp/rows.csv?accessType=DOWNLOAD",
+      "datastore": false,
+      "source": "url_,",
+      "headers": [],
+      "sample_rows": [],
+      "n_cols": 0,
+      "holder_name": "Regione Lombardia",
+      "validation": "pending",
+      "confirmed_temi": [
+        "CLV"
+      ],
+      "removed_temi": [],
+      "added": "2026-06-01"
+    },
+    {
+      "seq": 507,
+      "id": "5cc5c143-35cd-498c-94b5-2b19883e1449",
+      "name": "siti_contaminati_2024___lombardia",
+      "title": "Siti contaminati 2024 - Lombardia",
+      "org": "regione-lombardia",
+      "ente": "Regione Lombardia",
+      "categoria": "regione",
+      "tema_dcat": [
+        "ENVI"
+      ],
+      "tema_onto": [
+        "CLV"
+      ],
+      "tema_target": [
+        "CLV"
+      ],
+      "score": 0,
+      "resource_id": "",
+      "csv_url": "https://www.dati.lombardia.it/api/views/npku-858g/rows.csv?accessType=DOWNLOAD",
+      "datastore": false,
+      "source": "url_,",
+      "headers": [],
+      "sample_rows": [],
+      "n_cols": 0,
+      "holder_name": "Regione Lombardia",
+      "validation": "pending",
+      "confirmed_temi": [
+        "CLV"
+      ],
+      "removed_temi": [],
+      "added": "2026-06-01"
+    },
+    {
+      "seq": 508,
+      "id": "a8a759cf-a1e1-4878-b247-d46942db81d6",
+      "name": "interventi_dissesto_idrogeologico___puglia",
+      "title": "Interventi dissesto idrogeologico - Puglia",
+      "org": "regione-puglia",
+      "ente": "Regione Puglia",
+      "categoria": "regione",
+      "tema_dcat": [
+        "ENVI"
+      ],
+      "tema_onto": [
+        "PublicContract",
+        "CLV"
+      ],
+      "tema_target": [
+        "PublicContract",
+        "CLV"
+      ],
+      "score": 0,
+      "resource_id": "",
+      "csv_url": "https://dati.puglia.it/ckan/dataset/0c349fd6-8374-4ee9-a894-ebbda3c067c5/resource/7a054ea9-cf6d-49ac-93d1-c85972a186f4/download/elenco-degli-interventi-finanziati-contro-il-dissesto-idrogeologico.csv",
+      "datastore": false,
+      "source": "url_,",
+      "headers": [],
+      "sample_rows": [],
+      "n_cols": 0,
+      "holder_name": "Regione Puglia",
+      "validation": "pending",
+      "confirmed_temi": [
+        "PublicContract",
+        "CLV"
+      ],
+      "removed_temi": [],
+      "added": "2026-06-01"
+    },
+    {
+      "seq": 509,
+      "id": "52a23710-0f47-4795-be96-400dae1ac624",
+      "name": "raccolta_differenziata___san_pietro_in_lama",
+      "title": "Raccolta differenziata - San Pietro in Lama",
+      "org": "comune-di-san-pietro-in-lama",
+      "ente": "Comune di San Pietro in Lama",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "ENVI"
+      ],
+      "tema_onto": [
+        "QB"
+      ],
+      "tema_target": [
+        "QB"
+      ],
+      "score": 0,
+      "resource_id": "",
+      "csv_url": "https://dati.puglia.it/ckan/dataset/aa75c7b3-f713-4362-8383-993f60ed4dc0/resource/3d69d953-15f0-450e-a961-37516583b23e/download/raccolta_differenziata.csv",
+      "datastore": false,
+      "source": "url_,",
+      "headers": [],
+      "sample_rows": [],
+      "n_cols": 0,
+      "holder_name": "Comune di San Pietro in Lama",
+      "validation": "pending",
+      "confirmed_temi": [
+        "QB"
+      ],
+      "removed_temi": [],
+      "added": "2026-06-01"
+    },
+    {
+      "seq": 510,
+      "id": "b903e461-7982-4b80-8ab0-74ecf756ac53",
+      "name": "isole_ecologiche___supersano",
+      "title": "Isole ecologiche - Supersano",
+      "org": "comune-di-supersano",
+      "ente": "Comune di Supersano",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "ENVI"
+      ],
+      "tema_onto": [
+        "CLV",
+        "POI"
+      ],
+      "tema_target": [
+        "CLV",
+        "POI"
+      ],
+      "score": 0,
+      "resource_id": "",
+      "csv_url": "https://dati.puglia.it/ckan/dataset/8ee4438f-9bc4-4405-9bc1-361ae445f4b5/resource/dd5b0721-3811-441f-842c-eebcb91c8ad9/download/isole-eco.csv",
+      "datastore": false,
+      "source": "url_,",
+      "headers": [],
+      "sample_rows": [],
+      "n_cols": 0,
+      "holder_name": "Comune di Supersano",
+      "validation": "pending",
+      "confirmed_temi": [
+        "CLV",
+        "POI"
+      ],
+      "removed_temi": [],
+      "added": "2026-06-01"
+    },
+    {
+      "seq": 511,
+      "id": "9203247b-cf90-4184-b15c-7cbe4a060fca",
+      "name": "punti_luce___surano",
+      "title": "Punti luce - Surano",
+      "org": "comune-di-surano",
+      "ente": "Comune di Surano",
+      "categoria": "comune_piccolo",
+      "tema_dcat": [
+        "ENER"
+      ],
+      "tema_onto": [
+        "CLV",
+        "POI"
+      ],
+      "tema_target": [
+        "CLV",
+        "POI"
+      ],
+      "score": 0,
+      "resource_id": "",
+      "csv_url": "https://dati.puglia.it/ckan/dataset/2b3a2b91-a45f-45ea-b7cd-31d66b106a25/resource/dbfba92c-b238-41d1-a215-81d40e9ef79a/download/punti_luce.csv",
+      "datastore": false,
+      "source": "url_,",
+      "headers": [],
+      "sample_rows": [],
+      "n_cols": 0,
+      "holder_name": "Comune di Surano",
+      "validation": "pending",
+      "confirmed_temi": [
+        "CLV",
+        "POI"
+      ],
+      "removed_temi": [],
+      "added": "2026-06-01"
     }
   ]
 }

@@ -2056,8 +2056,24 @@ async function fetchCSV(url) {
   // Eccezione: URL interni Docker (es. http://backend:3001/tmp-csv/...)
   const _isDockerInternal = _u.protocol === 'http:' && !_u.hostname.includes('.') && _u.port !== '';
   if (!_isDockerInternal && _u.protocol !== 'https:') throw new Error('Solo URL https:// sono consentiti');
-  const _blocked = ['169.254.','10.','127.','0.0.0.0','::1','localhost','metadata.'];
-  if (!_isDockerInternal && _blocked.some(b => _u.hostname.startsWith(b) || _u.hostname === b.replace('.',''))){
+  const _host = _u.hostname.toLowerCase().replace(/^\[|\]$/g, '');
+  // Range privati / loopback / link-local / metadata (IPv4 + IPv6)
+  const _blockedPrefix = [
+    '127.','10.','192.168.','169.254.','0.',
+    '172.16.','172.17.','172.18.','172.19.','172.20.','172.21.','172.22.','172.23.',
+    '172.24.','172.25.','172.26.','172.27.','172.28.','172.29.','172.30.','172.31.',
+    '::1','fc','fd','::ffff:','fe80:'
+  ];
+  const _blockedExact = ['0.0.0.0','localhost','metadata.google.internal'];
+  // IP in forma numerica non puntata (decimale/ottale/esadecimale) → blocco prudenziale
+  const _isBareNumericIp = /^(0x[0-9a-f]+|[0-9]+)$/i.test(_host);
+  if (!_isDockerInternal && (
+        _isBareNumericIp ||
+        _blockedExact.includes(_host) ||
+        _host.endsWith('.localhost') ||
+        _host.endsWith('.internal') ||
+        _blockedPrefix.some(b => _host.startsWith(b))
+     )) {
     throw new Error('URL non consentito');
   }
   const resp = await fetch(url, {
@@ -2065,7 +2081,12 @@ async function fetchCSV(url) {
     cf: { cacheTtl: 300, cacheEverything: true }
   });
   if (!resp.ok) throw new Error(`HTTP ${resp.status} scaricando ${url}`);
+  // Cap dimensione: 50 MB (anti-DoS / esaurimento memoria)
+  const _MAX_BYTES = 50 * 1024 * 1024;
+  const _cl = parseInt(resp.headers.get('content-length') || '0', 10);
+  if (_cl && _cl > _MAX_BYTES) throw new Error('File CSV troppo grande (>50MB)');
   const buf = await resp.arrayBuffer();
+  if (buf.byteLength > _MAX_BYTES) throw new Error('File CSV troppo grande (>50MB)');
   const ct = resp.headers.get('content-type') || '';
   let text;
   if (ct.includes('charset=utf-8') || ct.includes('charset=UTF-8')) {

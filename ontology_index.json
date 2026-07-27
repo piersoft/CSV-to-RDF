@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-07-06T07:12:10.169907+00:00",
+    "generated_at": "2026-07-27T06:29:10.744699+00:00",
     "source": "github.com/italia/dati-semantic-assets",
     "total_ontologies": 30,
     "total_classes": 404,
@@ -11,7 +11,7 @@
     "prefix": "acco",
     "uri_base": "https://w3id.org/italia/onto/ACCO/",
     "ttl_file": "ACCO-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:11:55.111258+00:00",
+    "generated_at": "2026-07-27T06:29:00.988865+00:00",
     "classes": [
       "acco:Accommodation",
       "acco:AccommodationChain",
@@ -66,7 +66,7 @@
     "prefix": "adms",
     "uri_base": "https://w3id.org/italia/onto/ADMS/",
     "ttl_file": "ADMS-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:11:55.692303+00:00",
+    "generated_at": "2026-07-27T06:29:01.373596+00:00",
     "classes": [
       "adms:Concept",
       "adms:EvaluationCriteria",
@@ -174,7 +174,7 @@
     "prefix": "ac",
     "uri_base": "https://w3id.org/italia/onto/AccessCondition/",
     "ttl_file": "AccessCondition-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:11:56.259482+00:00",
+    "generated_at": "2026-07-27T06:29:01.734879+00:00",
     "classes": [
       "ac:AccessCondition",
       "ac:AdmissionType",
@@ -198,7 +198,7 @@
     "prefix": "aop",
     "uri_base": "https://w3id.org/italia/onto/AtlasOfPaths/",
     "ttl_file": "AtlasOfPaths-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:11:56.805115+00:00",
+    "generated_at": "2026-07-27T06:29:02.071109+00:00",
     "classes": [
       "aop:Path",
       "aop:PathPlan",
@@ -257,7 +257,7 @@
     "prefix": "clv",
     "uri_base": "https://w3id.org/italia/onto/CLV/",
     "ttl_file": "CLV-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:11:57.531502+00:00",
+    "generated_at": "2026-07-27T06:29:02.479611+00:00",
     "classes": [
       "clv:Address",
       "clv:AddressArea",
@@ -345,7 +345,7 @@
     "prefix": "cov",
     "uri_base": "https://w3id.org/italia/onto/COV/",
     "ttl_file": "COV-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:11:58.118288+00:00",
+    "generated_at": "2026-07-27T06:29:02.872288+00:00",
     "classes": [
       "cov:ActivityType",
       "cov:BalanceSheet",
@@ -437,7 +437,7 @@
     "prefix": "cpev",
     "uri_base": "https://w3id.org/italia/onto/CPEV/",
     "ttl_file": "CPEV-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:11:58.679613+00:00",
+    "generated_at": "2026-07-27T06:29:03.253080+00:00",
     "classes": [
       "cpev:Audience",
       "cpev:Event",
@@ -468,7 +468,7 @@
     "prefix": "cpsv",
     "uri_base": "http://purl.org/vocab/cpsv#",
     "ttl_file": "CPSV-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:11:59.268037+00:00",
+    "generated_at": "2026-07-27T06:29:03.625421+00:00",
     "classes": [
       "cpsv:Authentication",
       "cpsv:BusinessEvent",
@@ -546,7 +546,7 @@
     "prefix": "cpv",
     "uri_base": "https://w3id.org/italia/onto/CPV/",
     "ttl_file": "CPV-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:11:59.808900+00:00",
+    "generated_at": "2026-07-27T06:29:04.122624+00:00",
     "classes": [
       "cpv:Alive",
       "cpv:Dead",
@@ -610,7 +610,7 @@
     "prefix": "cis",
     "uri_base": "https://w3id.org/italia/onto/Cultural-ON/",
     "ttl_file": "Cultural-ON-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:12:00.361391+00:00",
+    "generated_at": "2026-07-27T06:29:04.516656+00:00",
     "classes": [
       "cis:ArchaeologicalArea",
       "cis:ArchaeologicalPark",
@@ -684,7 +684,7 @@
     "prefix": "indicator",
     "uri_base": "https://w3id.org/italia/onto/Indicator/",
     "ttl_file": "Indicator-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:12:01.034680+00:00",
+    "generated_at": "2026-07-27T06:29:04.933637+00:00",
     "classes": [
       "indicator:AccrualPeriodicity",
       "indicator:CalculationMethod",
@@ -735,7 +735,7 @@
     "prefix": "iot",
     "uri_base": "https://w3id.org/italia/onto/IoT/",
     "ttl_file": "IoT-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:12:01.589379+00:00",
+    "generated_at": "2026-07-27T06:29:05.303469+00:00",
     "classes": [
       "iot:Accuracy",
       "iot:Actuator",
@@ -790,7 +790,7 @@
     "prefix": "learn",
     "uri_base": "https://w3id.org/italia/onto/Learning/",
     "ttl_file": "Learning-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:12:02.202238+00:00",
+    "generated_at": "2026-07-27T06:29:05.696099+00:00",
     "classes": [
       "learn:AcademicTitle",
       "learn:AcademicYear",
@@ -870,7 +870,7 @@
     "prefix": "mu",
     "uri_base": "https://w3id.org/italia/onto/MU/",
     "ttl_file": "MU-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:12:02.729780+00:00",
+    "generated_at": "2026-07-27T06:29:06.035155+00:00",
     "classes": [
       "mu:MeasureType",
       "mu:MeasurementUnit",
@@ -893,7 +893,7 @@
     "prefix": "ndc",
     "uri_base": "https://w3id.org/italia/onto/NDC/",
     "ttl_file": "NDC-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:12:03.263848+00:00",
+    "generated_at": "2026-07-27T06:29:06.417206+00:00",
     "classes": [
       "ndc:DataService"
     ],
@@ -911,7 +911,7 @@
     "prefix": "park",
     "uri_base": "https://w3id.org/italia/onto/PARK/",
     "ttl_file": "PARK-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:12:03.870259+00:00",
+    "generated_at": "2026-07-27T06:29:06.792648+00:00",
     "classes": [
       "park:CarPark",
       "park:CarParkTypology",
@@ -939,7 +939,7 @@
     "prefix": "poi",
     "uri_base": "https://w3id.org/italia/onto/POI/",
     "ttl_file": "POI-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:12:04.412425+00:00",
+    "generated_at": "2026-07-27T06:29:07.161315+00:00",
     "classes": [
       "poi:MultiplePointOfInterest",
       "poi:POINameInTime",
@@ -971,7 +971,7 @@
     "prefix": "pot",
     "uri_base": "https://w3id.org/italia/onto/POT/",
     "ttl_file": "POT-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:12:04.947665+00:00",
+    "generated_at": "2026-07-27T06:29:07.505986+00:00",
     "classes": [
       "pot:Card",
       "pot:Currency",
@@ -1001,7 +1001,7 @@
     "prefix": "prj",
     "uri_base": "https://w3id.org/italia/onto/Project/",
     "ttl_file": "Project-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:12:05.488211+00:00",
+    "generated_at": "2026-07-27T06:29:07.892818+00:00",
     "classes": [
       "prj:Call",
       "prj:ProcurementProject",
@@ -1037,7 +1037,7 @@
     "prefix": "pc",
     "uri_base": "https://w3id.org/italia/onto/PublicContract/",
     "ttl_file": "PublicContract-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:12:06.156827+00:00",
+    "generated_at": "2026-07-27T06:29:08.269241+00:00",
     "classes": [
       "pc:AmendmentDocument",
       "pc:AmendmentRationale",
@@ -1166,7 +1166,7 @@
     "prefix": "ro",
     "uri_base": "https://w3id.org/italia/onto/RO/",
     "ttl_file": "RO-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:12:06.668223+00:00",
+    "generated_at": "2026-07-27T06:29:08.628605+00:00",
     "classes": [
       "ro:Role",
       "ro:TimeIndexedRole"
@@ -1187,7 +1187,7 @@
     "prefix": "rpo",
     "uri_base": "https://w3id.org/italia/onto/RPO/",
     "ttl_file": "RPO-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:12:07.207706+00:00",
+    "generated_at": "2026-07-27T06:29:08.989017+00:00",
     "classes": [
       "rpo:Citizenship",
       "rpo:Domicile",
@@ -1258,7 +1258,7 @@
     "prefix": "route",
     "uri_base": "https://w3id.org/italia/onto/Route/",
     "ttl_file": "Route-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:12:07.708897+00:00",
+    "generated_at": "2026-07-27T06:29:09.324866+00:00",
     "classes": [
       "route:Route",
       "route:RouteType",
@@ -1297,7 +1297,7 @@
     "prefix": "sm",
     "uri_base": "https://w3id.org/italia/onto/SM/",
     "ttl_file": "SM-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:12:08.336966+00:00",
+    "generated_at": "2026-07-27T06:29:09.646989+00:00",
     "classes": [
       "sm:ContactPoint",
       "sm:Email",
@@ -1361,7 +1361,7 @@
     "prefix": "ti",
     "uri_base": "https://w3id.org/italia/onto/TI/",
     "ttl_file": "TI-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:12:08.975170+00:00",
+    "generated_at": "2026-07-27T06:29:10.099010+00:00",
     "classes": [
       "ti:DayOfWeek",
       "ti:Duration",
@@ -1406,7 +1406,7 @@
     "prefix": "tr",
     "uri_base": "https://w3id.org/italia/onto/Transparency/",
     "ttl_file": "Transparency-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:12:09.582307+00:00",
+    "generated_at": "2026-07-27T06:29:10.420383+00:00",
     "classes": [
       "tr:Format",
       "tr:TransparencyActivity",
@@ -1454,7 +1454,7 @@
     "prefix": "l0",
     "uri_base": "https://w3id.org/italia/onto/l0/",
     "ttl_file": "l0-AP_IT.ttl",
-    "generated_at": "2026-07-06T07:12:10.169836+00:00",
+    "generated_at": "2026-07-27T06:29:10.744623+00:00",
     "classes": [
       "l0:Activity",
       "l0:Agent",
@@ -1497,7 +1497,7 @@
     "prefix": "gtfs",
     "uri_base": "external:http://vocab.gtfs.org/terms",
     "ttl_file": "external:http://vocab.gtfs.org/terms",
-    "generated_at": "2026-07-06T07:12:10.169862+00:00",
+    "generated_at": "2026-07-27T06:29:10.744651+00:00",
     "classes": [
       "gtfs:Agency",
       "gtfs:Calendar",
@@ -1556,7 +1556,7 @@
     "prefix": "smapit",
     "uri_base": "external:italian-school-AP_IT",
     "ttl_file": "external:italian-school-AP_IT",
-    "generated_at": "2026-07-06T07:12:10.169870+00:00",
+    "generated_at": "2026-07-27T06:29:10.744659+00:00",
     "classes": [
       "smapit:School",
       "smapit:HighSchool",
@@ -1584,7 +1584,7 @@
     "prefix": "ch",
     "uri_base": "wrapper-imports-arco:https://w3id.org/arco/ontology/arco",
     "ttl_file": "wrapper-imports-arco:https://w3id.org/arco/ontology/arco",
-    "generated_at": "2026-07-06T07:12:10.169874+00:00",
+    "generated_at": "2026-07-27T06:29:10.744665+00:00",
     "classes": [
       "ch:CulturalHeritage",
       "ch:CulturalProperty",

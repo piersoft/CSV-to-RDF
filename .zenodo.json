@@ -1,0 +1,46 @@
+{
+  "title": "CSV-to-RDF — convertitore da CSV a RDF/Turtle conforme alle ontologie OntoPiA per la PA italiana",
+  "description": "Strumento web a singola pagina HTML che trasforma i CSV della Pubblica Amministrazione italiana in RDF/Turtle conforme alle ontologie ufficiali dati-semantic-assets (OntoPiA) e ai vocabolari controllati di schema.gov.it. Il rilevamento delle ontologie è deterministico e si basa sugli header e sui valori del CSV, con copertura di 29 ontologie su tutti i 13 temi DCAT e un corpus di 330 fixture derivate da CSV reali della PA. Include un catalogo dei dataset ottimali, una guida operativa per gli enti, il collegamento facoltativo ai metadati DCAT di dati.gov.it per migliorare il riconoscimento, un passaggio opzionale di assistenza AI per le colonne non standard e una API REST implementata come Cloudflare Worker. La correttezza del rilevamento è verificata da test automatici a ogni build.",
+  "creators": [
+    {
+      "name": "Paolicelli, Francesco Piero",
+      "orcid": "0009-0001-2324-4193",
+      "affiliation": "Agenzia per l'Italia Digitale (AgID)"
+    }
+  ],
+  "license": "MIT",
+  "upload_type": "software",
+  "access_right": "open",
+  "language": "ita",
+  "keywords": [
+    "linked open data",
+    "RDF",
+    "Turtle",
+    "OntoPiA",
+    "schema.gov.it",
+    "DCAT-AP_IT",
+    "semantic web",
+    "CSV",
+    "public administration",
+    "Italy"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://piersoft.github.io/CSV-to-RDF/",
+      "relation": "isIdenticalTo",
+      "resource_type": "software",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/italia/dati-semantic-assets",
+      "relation": "references",
+      "resource_type": "software",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://schema.gov.it",
+      "relation": "references",
+      "scheme": "url"
+    }
+  ]
+}

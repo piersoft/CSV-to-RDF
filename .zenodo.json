@@ -8,7 +8,7 @@
       "affiliation": "Agenzia per l'Italia Digitale (AgID)"
     }
   ],
-  "license": "MIT",
+  "license": "agpl-3.0-or-later",
   "upload_type": "software",
   "access_right": "open",
   "language": "ita",

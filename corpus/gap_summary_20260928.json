@@ -1,0 +1,169 @@
+{
+  "generated_at": "2026-09-28T09:45:53.964060Z",
+  "target": 2000,
+  "total_attempted": 1410,
+  "total_ok": 1128,
+  "errors": {
+    "http_404": 6,
+    "file_too_large": 103,
+    "url_error": 131,
+    "error_The read operation timed out": 2,
+    "http_401": 1,
+    "http_410": 14,
+    "http_429": 16,
+    "error_timed out": 3,
+    "http_502": 2,
+    "http_403": 4
+  },
+  "by_tier": {
+    "Regioni": 296,
+    "Comuni": 420,
+    "Agenzie": 395,
+    "Ministeri": 17
+  },
+  "by_theme": {
+    "AGRI": 88,
+    "ECON": 89,
+    "EDUC": 72,
+    "ENER": 80,
+    "ENVI": 83,
+    "GOVE": 87,
+    "HEAL": 94,
+    "INTR": 49,
+    "JUST": 90,
+    "REGI": 73,
+    "SOCI": 80,
+    "TECH": 71,
+    "TRAN": 73,
+    "OP_DATPRO": 99
+  },
+  "encodings": {
+    "utf-8": 456,
+    "ascii": 461,
+    "cp862": 1,
+    "utf-8-bom": 65,
+    "iso8859-15": 43,
+    "Windows-1252": 57,
+    "MacRoman": 3,
+    "unknown": 16,
+    "cp437": 7,
+    "Windows-1257": 2,
+    "UTF-16": 8,
+    "iso8859-3": 2,
+    "hp-roman8": 1,
+    "Big5": 1,
+    "cp424": 3,
+    "iso8859-4": 1,
+    "cp857": 1
+  },
+  "separators": {
+    ",": 667,
+    ";": 431,
+    "|": 16,
+    "\t": 14
+  },
+  "anomalies": {
+    "windows_lineend": {
+      "count": 919,
+      "pct": 81.5
+    },
+    "header_not_row1": {
+      "count": 303,
+      "pct": 26.9
+    },
+    "total_rows": {
+      "count": 185,
+      "pct": 16.4
+    },
+    "non_utf8": {
+      "count": 146,
+      "pct": 12.9
+    },
+    "mixed_types": {
+      "count": 131,
+      "pct": 11.6
+    },
+    "date_italian": {
+      "count": 127,
+      "pct": 11.3
+    },
+    "empty_columns": {
+      "count": 86,
+      "pct": 7.6
+    },
+    "bool_italian": {
+      "count": 78,
+      "pct": 6.9
+    },
+    "utf8_bom": {
+      "count": 65,
+      "pct": 5.8
+    },
+    "mixed_separator": {
+      "count": 16,
+      "pct": 1.4
+    },
+    "coordinates_dms": {
+      "count": 2,
+      "pct": 0.2
+    }
+  },
+  "onto_detected": {
+    "QB": {
+      "count": 816,
+      "pct": 72.3
+    },
+    "CLV": {
+      "count": 353,
+      "pct": 31.3
+    },
+    "TI": {
+      "count": 279,
+      "pct": 24.7
+    },
+    "POI": {
+      "count": 184,
+      "pct": 16.3
+    },
+    "PublicOrg": {
+      "count": 167,
+      "pct": 14.8
+    },
+    "SMAPIT": {
+      "count": 70,
+      "pct": 6.2
+    },
+    "ACCO": {
+      "count": 52,
+      "pct": 4.6
+    },
+    "CPSV": {
+      "count": 48,
+      "pct": 4.3
+    },
+    "COV-AP_IT": {
+      "count": 41,
+      "pct": 3.6
+    },
+    "CPV": {
+      "count": 40,
+      "pct": 3.5
+    },
+    "GTFS": {
+      "count": 36,
+      "pct": 3.2
+    },
+    "Cultural-ON-eventi": {
+      "count": 22,
+      "pct": 2.0
+    },
+    "Cultural-ON": {
+      "count": 13,
+      "pct": 1.2
+    },
+    "IoT-AP_IT": {
+      "count": 5,
+      "pct": 0.4
+    }
+  }
+}
